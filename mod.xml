@@ -1,0 +1,12 @@
+<Mod
+	name="GKBRKN's Things"
+	description="Adds stuff."
+	request_no_api_restrictions="0" 
+> 
+</Mod>
+
+<!-- 
+	If a mod requires access to the full lua api e.g. os.* io.* it has to request access via 'request_no_api_restrictions="1"'.
+	It is recommended that other options are explored first, as we may completely disable those APIs in the future.
+	By default mods have access to the table, string, math and bit libraries and to the APIs exposed by the game.
+ -->
