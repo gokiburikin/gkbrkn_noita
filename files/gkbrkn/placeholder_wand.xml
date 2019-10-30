@@ -7,8 +7,8 @@
         entity_count="1" 
         entity_file="" 
         fast_projectile="0" 
-        mana_charge_speed="30"
-		mana_max="100"
+        mana_charge_speed="255"
+		mana_max="1000"
         max_amount_in_inventory="1" 
         reload_time_frames="0" 
         shooting_reduces_amount_in_inventory="0" 
@@ -20,8 +20,8 @@
         add_these_child_actions=""
         ><gun_config 
             shuffle_deck_when_empty="0"
-            reload_time="24"
-            deck_capacity="3" >
+            reload_time="10"
+            deck_capacity="10" >
         </gun_config>
         <gunaction_config 
             fire_rate_wait="10" >
@@ -36,7 +36,7 @@
 	
     <Base file="data/entities/base_item.xml" >
         <ItemComponent
-            item_name="duplicate_gun"
+            item_name="placeholder_wand"
             remove_on_death="1"
             play_hover_animation="1"
             collect_nondefault_actions="1" >

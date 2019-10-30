@@ -17,6 +17,8 @@ A collection of things I'm adding to Noita.
 - [ ] **Spell Efficiency** (*Projectile Modifier*): Most spell casts are free.
 - [x] **Golden Blessing** (*Projectile Modifier*): Projectiles bless enemies causing them to bleed gold and decay into gold upon death.
 - [x] **Magic Light** (*Projectile Modifier*): Projectiles clear the Fog of War.
+- [x] **Micro Shield** (*Projectile Modifier*): Projectiles reflect projectiles.
+- [x] **Spectral** (*Projectile Modifier*): Projectiles pass through terrain.
 
 ### Misc
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.

@@ -54,6 +54,12 @@ ACTIONS = {
     },
     MagicLight = {
         Enabled = true,
+    },
+    MicroShield = {
+        Enabled = true,
+    },
+    Spectral = {
+        Enabled = true,
     }
 }
 

@@ -166,6 +166,19 @@ function EntityComponentGetValue( entity_id, component_type_name, component_key,
     return default_value;
 end
 
+function EntityGetNamedChild( entity_id, name )
+    local children = EntityGetAllChildren( entity_id );
+	if children ~= nil then
+		for index,child_entity in pairs( children ) do
+			local child_entity_name = EntityGetName( child_entity );
+			
+			if child_entity_name == name then
+				return child_entity;
+            end
+        end
+    end
+end
+
 function EntityGetChildrenWithTag( entity_id, tag )
     local valid_children = {};
     local children = EntityGetAllChildren( entity_id );
@@ -225,10 +238,9 @@ function SetEntityCustomVariable( entity_id, tag, key, value )
     end
 end
 
-function CopyWandActions( base_wand, copy_wand )
-    local children = EntityGetAllChildren( base_wand );
-    
+function GetWandActions( wand )
     local actions = {};
+    local children = EntityGetAllChildren( wand );
     for i,v in ipairs( children ) do
         local all_comps = EntityGetAllComponents( v );
         local action_id = nil;
@@ -241,8 +253,12 @@ function CopyWandActions( base_wand, copy_wand )
             table.insert( actions, {action_id=action_id, permanent=permanent} );
         end
     end
+    return actions;
+end
+
+function CopyWandActions( base_wand, copy_wand )
+    local actions = GetWandActions( base_wand );
     for index,action_data in pairs( actions ) do
-        LogTable(action_data);
         if action_data.permanent ~= "1" then
             AddGunAction( copy_wand, action_data.action_id );
         else

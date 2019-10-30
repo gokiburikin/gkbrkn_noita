@@ -1,15 +1,19 @@
 --[[
 UTILITY
-    Spell Power (utility stat on wand stat windows)
+    TODO
+        Spell Power (utility stat on wand stat windows) (not yet possible?)
 
 ACTIONS
-    Mana Efficiency (Perk) needs gfx
-    Swarm Projectile Modifier (like Spellbundle, but a proper modifier and on enemies)
-    Sticky Projectile Modifier (stick to surfaces / enemies) (useful for what kinds of projectiles?)
+    TODO
+        Swarm Projectile Modifier (like Spellbundle, but a proper modifier and on enemies)
+        Sticky Projectile Modifier (stick to surfaces / enemies) (useful for what kinds of projectiles?)
 
 PERKS
     TODO
+        Life Steal (1% of damage dealt is returned as life)
+        Spell Steal ( n% gain an additional spell charge for a random (weighted by max use) spell in a random wand )
         Chaos (randomize projectile stuff)
+        Stunlock Immunity (might be possible with small levels of knockback protection?)
         A permanent +2 to Wand Capacity
         Projectile Repulsion Field (projectiles within range are subtly repelled)
         The ability to swallow an item (wand, spell, flask?) and spit it back up upon taking damage? Kind of weird, but has interesting utility. Basically a janky additional inventory slot.
@@ -39,39 +43,49 @@ if PERKS.Resilience.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list
 if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_mana_efficiency.lua" ); end
 if ACTIONS.Curse.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_curse.lua" ); end
 if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_magic_light.lua" ); end
+if ACTIONS.MicroShield.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_micro_shield.lua" ); end
+if ACTIONS.Spectral.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spectral.lua" ); end
 if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 
 local test_gui = GuiCreate();
 function OnPlayerSpawned( player_entity ) -- This runs when player entity has been created
     if SETTINGS.Debug then 
         dofile( "data/scripts/perks/perk.lua");
+        dofile("data/scripts/gun/procedural/gun_action_utils.lua");
         local x, y = EntityGetTransform( player_entity );
         local effect = GetGameEffectLoadTo( player_entity, "EDIT_WANDS_EVERYWHERE", true );
         if effect ~= nil then
-			ComponentSetValue( effect, "frames", "-1" )
+			ComponentSetValue( effect, "frames", "-1" );
 		end
-        --TryGivePerk( player_entity, "EDIT_WANDS_EVERYWHERE" );
-        --perk_spawn( x, y, "GKBRKN_DUPLICATE" );
         --TryGivePerk( player_entity, "GKBRKN_RESILIENCE" );
-        CreateItemActionEntity( "GKBRKN_CURSE", x, y );
-        EntityLoad( "data/entities/animals/deer.xml", x, y );
-        if MISC.GoldPickupTracker.Enabled and MISC.GoldPickupTracker.ShowTracker then
-            EntityAddComponent( player_entity, "SpriteComponent", { 
-                _tags="gkbrkn_gold_tracker,enabled_in_world",
-                image_file="files/gkbrkn/font_pixel_white.xml", 
-                emissive="1",
-                is_text_sprite="1",
-                offset_x="8", 
-                offset_y="-4", 
-                update_transform="1" ,
-                update_transform_rotation="0",
-                text="$111",
-                has_special_scale="1",
-                special_scale_x="0.67",
-                special_scale_y="0.67",
-                z_index="1.6",
-            } );
+        local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
+        AddGunAction( debug_wand, "GKBRKN_MICRO_SHIELD" );
+        AddGunAction( debug_wand, "GKBRKN_SPECTRAL" );
+        AddGunAction( debug_wand, "LIGHT_BULLET" );
+        local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
+        if inventory ~= nil then
+            EntityAddChild( inventory, debug_wand );
         end
+        EntityLoad( "data/entities/animals/deer.xml", x - 80, y );
+        EntityLoad( "data/entities/items/pickup/goldnugget.xml", x + 20, y - 20 );
+        EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
+    end
+    if MISC.GoldPickupTracker.Enabled and MISC.GoldPickupTracker.ShowTracker and EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
+        EntityAddComponent( player_entity, "SpriteComponent", { 
+            _tags="gkbrkn_gold_tracker,enabled_in_world",
+            image_file="files/gkbrkn/font_pixel_white.xml", 
+            emissive="1",
+            is_text_sprite="1",
+            offset_x="8", 
+            offset_y="-4", 
+            update_transform="1" ,
+            update_transform_rotation="0",
+            text="",
+            has_special_scale="1",
+            special_scale_x="0.6667",
+            special_scale_y="0.6667",
+            z_index="1.6",
+        } );
     end
 end
 

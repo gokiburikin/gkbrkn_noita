@@ -1,0 +1,32 @@
+<Entity tags="living_wand,wand_ghost">
+
+	<Base file="files/gkbrkn/living_wand_ghost.xml" >
+		<GenomeDataComponent 
+			herd_id="player"
+			food_chain_rank="7"
+			is_predator="1" >
+		</GenomeDataComponent>
+	</Base>
+
+	<LuaComponent 
+		_enabled="1"
+		remove_after_executed="1"
+        execute_on_added="1"
+		script_source_file="files/gkbrkn/perk_living_wand_execute.lua" >
+	</LuaComponent>
+
+    <LuaComponent 
+		_enabled="1"
+		execute_every_n_frame="10"
+        execute_on_added="1"
+		script_source_file="files/gkbrkn/teleport_to_parent.lua" >
+	</LuaComponent>
+
+	<AudioLoopComponent
+		file="data/audio/Desktop/animals.snd"
+		event_name="animals/ghost/movement_loop"
+		set_speed_parameter="1"
+		auto_play="1">
+	</AudioLoopComponent>
+
+</Entity>
