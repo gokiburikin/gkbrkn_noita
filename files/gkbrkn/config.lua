@@ -10,7 +10,7 @@ PERKS = {
         Enabled = false,
     }, 
     Duplicate = { -- NYI
-        Enabled = false,
+        Enabled = true,
     },
     BleedGold = {
         Enabled = true,
@@ -48,6 +48,12 @@ ACTIONS = {
     ManaEfficiency = {
         Enabled = false,
         Discount = 0.50,
+    },
+    Curse = {
+        Enabled = true,
+    },
+    MagicLight = {
+        Enabled = true,
     }
 }
 

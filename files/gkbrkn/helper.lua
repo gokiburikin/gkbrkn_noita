@@ -1,3 +1,5 @@
+dofile("data/scripts/gun/procedural/gun_action_utils.lua");
+
 function PackString( separator, ... )
 	local string = {};
 	for n=1,select( '#' , ... ) do
@@ -108,9 +110,7 @@ function CopyEntityComponentList( component_type_name, base_entity, copy_entity,
     end
 end
 
-function CopyEntityComponent( component_type_name, base_entity, copy_entity )
-    local base_component = EntityGetFirstComponent( base_entity, component_type_name );
-    local copy_component = EntityGetFirstComponent( copy_entity, component_type_name );
+function CopyComponentMembers( base_component, copy_component )
     if base_component ~= nil and copy_component ~= nil then
         for key,value in pairs( ComponentGetMembers( base_component ) ) do
             ComponentSetValue( copy_component, key, value );
@@ -118,14 +118,32 @@ function CopyEntityComponent( component_type_name, base_entity, copy_entity )
     end
 end
 
-function CopyEntityComponentObject( component_type_name, component_object_name, base_entity, copy_entity )
-    local base_component = EntityGetFirstComponent( base_entity, component_type_name );
-    local copy_component = EntityGetFirstComponent( copy_entity, component_type_name );
+function CopyListedComponentMembers( base_component, copy_component, ... )
+    if base_component ~= nil and copy_component ~= nil then
+        for index,key in pairs( {...} ) do
+            ComponentSetValue( copy_component, key, ComponentGetValue( base_component, key ) );
+        end
+    end
+end
+
+function CopyComponentObjectMembers( base_component, copy_component, component_object_name )
     if base_component ~= nil and copy_component ~= nil then
         for object_key in pairs( ComponentObjectGetMembers( base_component, component_object_name ) ) do
             ComponentObjectSetValue( copy_component, component_object_name, object_key, ComponentObjectGetValue( base_component, component_object_name, object_key ) );
         end
     end
+end
+
+function CopyEntityComponent( component_type_name, base_entity, copy_entity )
+    local base_component = EntityGetFirstComponent( base_entity, component_type_name );
+    local copy_component = EntityGetFirstComponent( copy_entity, component_type_name );
+    CopyComponentMembers( base_component, copy_component );
+end
+
+function CopyEntityComponentObject( component_type_name, component_object_name, base_entity, copy_entity )
+    local base_component = EntityGetFirstComponent( base_entity, component_type_name );
+    local copy_component = EntityGetFirstComponent( copy_entity, component_type_name );
+    CopyComponentObjectMembers( base_component, copy_component );
 end
 
 function EnableWandAbilityComponent(wand_id)
@@ -148,20 +166,78 @@ function EntityComponentGetValue( entity_id, component_type_name, component_key,
     return default_value;
 end
 
-function CopyWand( base_wand, copy_wand )
-    EnableWandAbilityComponent( base_wand );
-    EnableWandAbilityComponent( copy_wand );
-    CopyEntityComponent( "AbilityComponent", base_wand, copy_wand );
-    CopyEntityComponent( "HotspotComponent", base_wand, copy_wand );
-    Log( "sprite component", EntityGetFirstComponent( base_wand, "SpriteComponent" ) );
-    CopyEntityComponentObject( "AbilityComponent", "gun_config", base_wand, copy_wand );
-    CopyEntityComponentObject( "AbilityComponent", "gunaction_config", base_wand, copy_wand );
+function EntityGetChildrenWithTag( entity_id, tag )
+    local valid_children = {};
+    local children = EntityGetAllChildren( entity_id );
+    for index, child in pairs( children ) do
+        if EntityHasTag( child, tag ) then
+            table.insert( valid_children, child );
+        end
+    end
+    return valid_children;
+end
+
+function FindFirstComponentThroughTags( entity_id, ... )
+    return FindComponentThroughTags( entity_id, ...)[1];
+end
+
+function FindComponentThroughTags( entity_id, ... )
+    local matching_components = EntityGetAllComponents( entity_id );
+    local valid_components = {};
+    for _,tag in pairs( {...} ) do
+        for index,component in pairs( matching_components ) do
+            if ComponentGetValue( component, tag ) ~= "" and ComponentGetValue( component, tag ) ~= nil then
+                table.insert( valid_components, component );
+            end
+        end
+        matching_components = valid_components;
+        valid_components = {};
+    end
+    return matching_components;
+end
+
+function ComponentGetValueDefault( component_id, key, default )
+    local value = ComponentGetValue( component_id, key );
+    if value ~= nil and #value > 0 then
+        return value;
+    end
+    return default;
+end
+
+function CopyWandActions( base_wand, copy_wand )
+    local children = EntityGetAllChildren( base_wand );
     
-    local base_ability_component = EntityGetFirstComponent( base_wand, "AbilityComponent" );
-    Log( ComponentGetValue( base_ability_component, "sprite_file") );
-    local copy_ability_component = EntityGetFirstComponent( copy_wand, "AbilityComponent" );
-    Log( ComponentGetValue( copy_ability_component, "sprite_file") );
-    --CopyEntityComponentList( "SpriteComponent", base_wand, copy_wand, {"image_file","offset_x","offset_y"} );
+    local actions = {};
+    for i,v in ipairs( children ) do
+        local all_comps = EntityGetAllComponents( v );
+        local action_id = nil;
+        local permanent = false;
+        for i, c in ipairs( all_comps ) do
+            action_id = ComponentGetValueDefault( c, "action_id", action_id );
+            permanent = ComponentGetValueDefault( c, "permanently_attached", permanent );
+        end
+        if action_id ~= nil then
+            table.insert( actions, {action_id=action_id, permanent=permanent} );
+        end
+    end
+    for index,action_data in pairs( actions ) do
+        LogTable(action_data);
+        if action_data.permanent ~= "1" then
+            AddGunAction( copy_wand, action_data.action_id );
+        else
+            AddGunActionPermanent( copy_wand, action_data.action_id );
+        end
+    end
+end
+
+function CopyWand( base_wand, copy_wand )
+    local base_ability_component = FindFirstComponentThroughTags( base_wand, "charge_wait_frames" );
+    local copy_ability_component = FindFirstComponentThroughTags( copy_wand, "charge_wait_frames" );
+    CopyComponentMembers( base_ability_component, copy_ability_component );
+    CopyComponentObjectMembers( base_ability_component, copy_ability_component, "gun_config" );
+    CopyComponentObjectMembers( base_ability_component, copy_ability_component, "gunaction_config" );
+    CopyListedComponentMembers( FindFirstComponentThroughTags( base_wand, "z_index", "image_file" ), FindFirstComponentThroughTags( copy_wand, "z_index", "image_file" ), "image_file","offset_x","offset_y");
+    CopyWandActions( base_wand, copy_wand );
 end
 
 function TryGivePerk( player_entity_id, ... )

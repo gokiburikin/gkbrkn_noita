@@ -11,7 +11,7 @@ table.insert( perk_list,
             for i,damagemodel in ipairs( damagemodels ) do
                 ComponentSetValue( damagemodel, "blood_material", "gold" );
                 ComponentSetValue( damagemodel, "blood_spray_material", "gold" );
-                ComponentSetValue( damagemodel, "blood_multiplier", "1.5" );
+                ComponentSetValue( damagemodel, "blood_multiplier", "0.5" );
                 ComponentSetValue( damagemodel, "blood_sprite_directional", "data/particles/bloodsplatters/bloodsplatter_directional_yellow_$[1-3].xml" );
                 ComponentSetValue( damagemodel, "blood_sprite_large", "data/particles/bloodsplatters/bloodsplatter_yellow_$[1-3].xml" );
             end
