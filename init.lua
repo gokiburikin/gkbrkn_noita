@@ -55,6 +55,23 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
         --TryGivePerk( player_entity, "GKBRKN_RESILIENCE" );
         CreateItemActionEntity( "GKBRKN_CURSE", x, y );
         EntityLoad( "data/entities/animals/deer.xml", x, y );
+        if MISC.GoldPickupTracker.Enabled and MISC.GoldPickupTracker.ShowTracker then
+            EntityAddComponent( player_entity, "SpriteComponent", { 
+                _tags="gkbrkn_gold_tracker,enabled_in_world",
+                image_file="files/gkbrkn/font_pixel_white.xml", 
+                emissive="1",
+                is_text_sprite="1",
+                offset_x="8", 
+                offset_y="-4", 
+                update_transform="1" ,
+                update_transform_rotation="0",
+                text="$111",
+                has_special_scale="1",
+                special_scale_x="0.67",
+                special_scale_y="0.67",
+                z_index="1.6",
+            } );
+        end
     end
 end
 

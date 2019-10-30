@@ -1,3 +1,4 @@
+dofile( "files/gkbrkn/config.lua");
 local last_money = 0;
 local money_picked_total = 0;
 local money_picked_time_last = 0;
@@ -14,11 +15,22 @@ function GoldTrackerUpdate()
                 end
                 last_money = money;
             end
+            if money_picked_total > 0 then
+                local gold_tracker_text = EntityGetFirstComponent( player_entity_id, "SpriteComponent", "gkbrkn_gold_tracker");
+                if gold_tracker_text ~= nil then
+                    ComponentSetValue( gold_tracker_text, "text", "$"..money_picked_total );
+                end
+                if GameGetFrameNum() - money_picked_time_last >= MISC.GoldPickupTracker.TrackDuration then
+                    if MISC.GoldPickupTracker.ShowMessage then
+                        GamePrint( "Picked up "..money_picked_total.." Gold" );
+                    end
+                    money_picked_total = 0;
+                    if gold_tracker_text ~= nil then
+                        ComponentSetValue( gold_tracker_text, "text", " " );
+                    end
+                end
+            end
             break;
         end
-    end
-    if money_picked_total > 0 and GameGetFrameNum() - money_picked_time_last >= MISC.GoldPickupTracker.TrackDuration then
-        GamePrint( "Picked up "..money_picked_total.." Gold" );
-        money_picked_total = 0;
     end
 end

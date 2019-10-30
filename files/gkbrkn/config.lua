@@ -7,9 +7,9 @@ PERKS = {
         Enabled = true,
     },
     LivingWand = { -- NYI
-        Enabled = false,
+        Enabled = true,
     }, 
-    Duplicate = { -- NYI
+    Duplicate = {
         Enabled = true,
     },
     BleedGold = {
@@ -61,5 +61,7 @@ MISC = {
     GoldPickupTracker = {
         Enabled = true,
         TrackDuration = 120, -- in game frames
+        ShowMessage=false,
+        ShowTracker=true
     }
 }

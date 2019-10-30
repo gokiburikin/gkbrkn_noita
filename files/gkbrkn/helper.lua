@@ -204,6 +204,27 @@ function ComponentGetValueDefault( component_id, key, default )
     return default;
 end
 
+function GetEntityCustomVariable( entity_id, tag, key, default )
+   local variable_storage = EntityGetFirstComponent( entity_id, "VariableStorage", tag );
+   if variable_storage ~= nil then
+        return ComponentGetValue( variable_storage, "value_string" );
+   end
+   return default;
+end
+
+function SetEntityCustomVariable( entity_id, tag, key, value )
+    local variable_storage = EntityGetFirstComponent( entity_id, "VariableStorage", tag );
+    if variable_storage == nil then
+        EntityAddComponent( entity_id, "VariableStorage", {
+            _tags=tag,
+            name=key,
+            value_string=tostring(value),
+        });
+    else
+        ComponentSetValue( variable_storage, "value_string", tostring(value) );
+    end
+end
+
 function CopyWandActions( base_wand, copy_wand )
     local children = EntityGetAllChildren( base_wand );
     
