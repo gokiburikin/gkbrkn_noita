@@ -1,27 +1,48 @@
 dofile( "files/gkbrkn/helper.lua");
 
-stack_next_actions = 0;
-stack_projectiles = "";
-_add_projectile = add_projectile;
+gkbrkn = {
+    extra_projectiles = 0,
+    stack_next_actions = 0,
+    stack_projectiles = "",
+    _add_projectile = add_projectile,
+    _move_hand_to_discarded = move_hand_to_discarded
+}
 function add_projectile( filepath )
     if #deck == 0 then
-        stack_next_actions = 0;
+        gkbrkn.stack_next_actions = 0;
     end
-    if #stack_projectiles > 0 and stack_next_actions == 0 then
-        c.extra_entities = c.extra_entities..stack_projectiles;
-        stack_projectiles = "";
-        _add_projectile( filepath );
-    elseif stack_next_actions > 0 then
-        stack_next_actions = stack_next_actions - 1;
-        stack_projectiles = (stack_projectiles or "") .. filepath..",";
+    if #gkbrkn.stack_projectiles > 0 and gkbrkn.stack_next_actions == 0 then
+        c.extra_entities = c.extra_entities..gkbrkn.stack_projectiles;
+        gkbrkn.stack_projectiles = "";
+        for i=1,gkbrkn.extra_projectiles+1 do
+            gkbrkn._add_projectile( filepath );
+        end
+        gkbrkn.extra_projectiles = 0;
+    elseif gkbrkn.stack_next_actions > 0 then
+        gkbrkn.stack_next_actions = gkbrkn.stack_next_actions - 1;
+        gkbrkn.stack_projectiles = (gkbrkn.stack_projectiles or "") .. filepath..",";
         draw_action( 1 );
     else
-        _add_projectile( filepath );
+        for i=1,gkbrkn.extra_projectiles+1 do
+            gkbrkn._add_projectile( filepath );
+        end
+        gkbrkn.extra_projectiles = 0;
     end
 end
 
 function stack_next_action( amount )
-    stack_next_actions = stack_next_actions + amount;
+    gkbrkn.stack_next_actions = gkbrkn.stack_next_actions + amount;
+end
+
+function extra_projectiles( amount )
+    gkbrkn.extra_projectiles = gkbrkn.extra_projectiles + amount;
+end
+
+function move_hand_to_discarded()
+    gkbrkn._move_hand_to_discarded();
+    gkbrkn.stack_next_actions = 0;
+    gkbrkn.stack_projectiles = "";
+    gkbrkn.extra_projectiles = 0;
 end
 
 function multi_play_action( action, amount )

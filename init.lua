@@ -53,8 +53,12 @@ if ACTIONS.Buckshot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions
 if ACTIONS.SniperShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_arcane_shot.lua" ); end
 if ACTIONS.Multiply.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_multiply.lua" ); end
 if ACTIONS.SpellMerge.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spell_merge.lua" ); end
+if ACTIONS.ExtraProjectile.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_extra_projectile.lua" ); end
+if ACTIONS.GuaranteedCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_guaranteed_critical.lua" ); end
+if ACTIONS.ProjectileBurst.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_projectile_burst.lua" ); end
+if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
-ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" );
+if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
 
 local test_gui = GuiCreate();
 function OnPlayerSpawned( player_entity ) -- This runs when player entity has been created
@@ -84,15 +88,9 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 			ComponentSetValue( effect, "frames", "-1" );
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
-        --AddGunAction( debug_wand, "GKBRKN_MICRO_SHIELD" );
-        --AddGunAction( debug_wand, "GKBRKN_SPECTRAL" );
-        --AddGunAction( debug_wand, "GKBRKN_BUCKSHOT" );
         --AddGunAction( debug_wand, "GKBRKN_MULTIPLY" );
-        --AddGunAction( debug_wand, "GKBRKN_MULTIPLY" );
-        AddGunAction( debug_wand, "GKBRKN_SPELL_MERGE" );
-        AddGunAction( debug_wand, "GKBRKN_SPELL_MERGE" );
+        AddGunAction( debug_wand, "GKBRKN_PROJECTILE_BURST" );
         AddGunAction( debug_wand, "LIGHT_BULLET" );
-        AddGunAction( debug_wand, "HEAVY_BULLET" );
         --AddGunAction( debug_wand, "SPITTER" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then

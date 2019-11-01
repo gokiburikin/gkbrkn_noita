@@ -73,6 +73,18 @@ ACTIONS = {
     },
     SpellMerge = {
         Enabled = true,
+    },
+    ExtraProjectile = {
+        Enabled = true,
+    },
+    GuaranteedCritical = {
+        Enabled = true,
+    },
+    ProjectileBurst = {
+        Enabled = true,
+    },
+    Test = {
+        Enabled = SETTINGS.Debug
     }
 }
 
@@ -82,5 +94,8 @@ MISC = {
         TrackDuration = 120, -- in game frames
         ShowMessage=false,
         ShowTracker=true
+    },
+    CharmNerf = {
+        Enabled = true,
     }
 }

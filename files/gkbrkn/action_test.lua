@@ -8,10 +8,11 @@ table.insert( actions,
     type 		= ACTION_TYPE_MODIFIER,
     spawn_level                       = "2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1",
-    price = 320,
+    price = 190,
     mana = 0,
+    max_uses = 7,
     action 		= function()
-        stack_next_action( 1 );
+        c.damage_critical_chance = c.damage_critical_chance + 100;
         draw_actions( 1, true );
     end,
 });
