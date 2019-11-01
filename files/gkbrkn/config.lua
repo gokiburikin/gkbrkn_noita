@@ -8,6 +8,7 @@ PERKS = {
     },
     LivingWand = { -- NYI
         Enabled = true,
+        TeleportDistance = 256,
     }, 
     Duplicate = {
         Enabled = true,
@@ -59,6 +60,18 @@ ACTIONS = {
         Enabled = true,
     },
     Spectral = {
+        Enabled = true,
+    },
+    Buckshot = {
+        Enabled = true,
+    },
+    SniperShot = {
+        Enabled = true,
+    },
+    Multiply = { -- needs more consideration, could just take from multiply mod
+        Enabled = false,
+    },
+    SpellMerge = {
         Enabled = true,
     }
 }

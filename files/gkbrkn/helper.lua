@@ -267,14 +267,31 @@ function CopyWandActions( base_wand, copy_wand )
     end
 end
 
-function CopyWand( base_wand, copy_wand )
+function CopyWand( base_wand, copy_wand, copy_sprite, copy_actions )
     local base_ability_component = FindFirstComponentThroughTags( base_wand, "charge_wait_frames" );
     local copy_ability_component = FindFirstComponentThroughTags( copy_wand, "charge_wait_frames" );
     CopyComponentMembers( base_ability_component, copy_ability_component );
     CopyComponentObjectMembers( base_ability_component, copy_ability_component, "gun_config" );
     CopyComponentObjectMembers( base_ability_component, copy_ability_component, "gunaction_config" );
-    CopyListedComponentMembers( FindFirstComponentThroughTags( base_wand, "z_index", "image_file" ), FindFirstComponentThroughTags( copy_wand, "z_index", "image_file" ), "image_file","offset_x","offset_y");
-    CopyWandActions( base_wand, copy_wand );
+    if copy_sprite ~= false then
+        CopyListedComponentMembers( FindFirstComponentThroughTags( base_wand, "z_index", "image_file" ), FindFirstComponentThroughTags( copy_wand, "z_index", "image_file" ), "image_file","offset_x","offset_y");
+    end
+    if copy_actions ~= false then
+        CopyWandActions( base_wand, copy_wand );
+    end
+end
+
+function FindEntityInInventory( inventory, entity )
+    local inventory_items = EntityGetAllChildren( inventory );
+		
+    -- remove default items
+    if inventory_items ~= nil then
+        for i,item_entity in ipairs( inventory_items ) do
+            Log( i, item_entity );
+        end
+        --    GameKillInventoryItem( player_entity, item_entity )
+        --end
+    end
 end
 
 function TryGivePerk( player_entity_id, ... )
@@ -295,6 +312,15 @@ function TryAdjustDamageMultipliers( entity_id, resistances )
                 resistance = resistance * multiplier;
                 ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring(resistance) );
             end
+        end
+    end
+end
+
+function GetInventoryQuickActiveItem( entity )
+    if entity ~= nil then
+        local component = EntityGetFirstComponent( entity, "Inventory2Component" );
+        if component ~= nil then
+            return ComponentGetValue( component, "mActiveItem" );
         end
     end
 end

@@ -1,0 +1,9 @@
+<Entity tags="living_wand_anchor">
+    <InheritTransformComponent>
+        <Transform 
+            position.x="-20"
+            position.y="-20" 
+            >
+        </Transform>
+    </InheritTransformComponent>
+</Entity>
