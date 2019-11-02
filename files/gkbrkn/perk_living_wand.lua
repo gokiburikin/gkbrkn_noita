@@ -24,7 +24,7 @@ table.insert( perk_list, {
             GameKillInventoryItem( entity_who_picked, base_wand );
             EntityAddChild( entity_who_picked, EntityLoad( "files/gkbrkn/living_wand_anchor.xml" ) );
 
-            local copy_wand = EntityLoad( "files/gkbrkn/perk_living_wand.xml", x, y );
+            local copy_wand = EntityLoad( "files/gkbrkn/living_wand_ghost.xml", x, y );
             local living_wand = EntityGetWithTag( "gkbrkn_living_wand_"..tostring(copy_wand) )[1];
             CopyWand( base_wand, living_wand );
 

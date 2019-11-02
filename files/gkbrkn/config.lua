@@ -8,7 +8,7 @@ PERKS = {
     },
     LivingWand = { -- NYI
         Enabled = true,
-        TeleportDistance = 256,
+        TeleportDistance = 128,
     }, 
     Duplicate = {
         Enabled = true,
@@ -50,6 +50,10 @@ ACTIONS = {
         Enabled = false,
         Discount = 0.50,
     },
+    SpellEfficiency = {
+        Enabled = false,
+        RetainChance = 0.66,
+    },
     Curse = {
         Enabled = true,
     },
@@ -62,8 +66,8 @@ ACTIONS = {
     Spectral = {
         Enabled = true,
     },
-    Buckshot = {
-        Enabled = true,
+    Buckshot = { -- Deprecated
+        Enabled = false,
     },
     SniperShot = {
         Enabled = true,
@@ -81,6 +85,12 @@ ACTIONS = {
         Enabled = true,
     },
     ProjectileBurst = {
+        Enabled = true,
+    },
+    TriggerHit = {
+        Enabled = true,
+    },
+    TriggerTimer = {
         Enabled = true,
     },
     Test = {

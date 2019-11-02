@@ -14,7 +14,6 @@ A collection of things I'm adding to Noita.
 
 ### Projectiles
 - [x] **Arcane Shot**: A fast bolt of arcane energy.
-- [x] **Arcane Buckshot**: A small volley of arcane energy.
 
 ### Projectile Modifiers
 - [ ] **Mana Efficiency**: Spells drain much less mana.
@@ -27,7 +26,12 @@ A collection of things I'm adding to Noita.
 - [x] **Extra Projectile**: Duplicate a projectile.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
 - [x] **Perfect Critical**: Guarantee a critical hit.
+- [x] **Trigger: Hit**: Cast another spell upon collision.
+- [x] **Trigger: Time**: Cast another spell after a short duration.
 
 ### Misc
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
+
+### Deprecated
+- [x] **Arcane Buckshot**: A small volley of arcane energy.

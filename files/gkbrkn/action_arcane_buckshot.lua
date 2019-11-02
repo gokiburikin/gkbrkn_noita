@@ -11,8 +11,7 @@ table.insert( actions,
     price = 210,
     mana = 12,
     action 		= function()
-        add_projectile( "files/gkbrkn/action_arcane_buckshot.xml" );
-        add_projectile( "files/gkbrkn/action_arcane_buckshot.xml" );
+        extra_projectiles( 2 );
         add_projectile( "files/gkbrkn/action_arcane_buckshot.xml" );
 		c.fire_rate_wait = c.fire_rate_wait + 16;
 		current_reload_time = current_reload_time + 42;

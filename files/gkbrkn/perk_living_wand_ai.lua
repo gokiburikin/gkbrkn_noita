@@ -12,3 +12,8 @@ if distance_to_parent >= PERKS.LivingWand.TeleportDistance then
     local free_x, free_y = FindFreePositionForBody( teleport_x, teleport_y, 0, 0, 8 );
     EntitySetTransform( entity, free_x, free_y );
 end
+
+local aiComponent = EntityGetFirstComponent( entity, "AnimalAIComponent" )
+if aiComponent ~= nil then
+    ComponentSetValueVector2( aiComponent, "mHomePosition", teleport_x, teleport_y );
+end

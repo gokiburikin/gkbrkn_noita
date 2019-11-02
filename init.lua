@@ -20,6 +20,7 @@ PERKS
         Lava, Acid, Poison (Material) Immunities (impossible for now? can ignore _all_ materials, but not individual materials)
 
 FUTURE UPDATES
+    Trigger Actions (consider trying to fix duplicate support)
     Living Wand (should not fight player ever, even if berserked)
 
 ABANDONED
@@ -44,6 +45,7 @@ if PERKS.RapidFire.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.
 if PERKS.BleedGold.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_bleed_gold.lua" ); end
 if PERKS.Sturdy.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_sturdy.lua" ); end
 if PERKS.Resilience.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_resilience.lua" ); end
+if ACTIONS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spell_efficiency.lua" ); end
 if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_mana_efficiency.lua" ); end
 if ACTIONS.Curse.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_curse.lua" ); end
 if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_magic_light.lua" ); end
@@ -56,6 +58,8 @@ if ACTIONS.SpellMerge.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actio
 if ACTIONS.ExtraProjectile.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_extra_projectile.lua" ); end
 if ACTIONS.GuaranteedCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_guaranteed_critical.lua" ); end
 if ACTIONS.ProjectileBurst.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_projectile_burst.lua" ); end
+if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_hit.lua" ); end
+if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_timer.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
@@ -88,15 +92,28 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 			ComponentSetValue( effect, "frames", "-1" );
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
-        --AddGunAction( debug_wand, "GKBRKN_MULTIPLY" );
-        AddGunAction( debug_wand, "GKBRKN_PROJECTILE_BURST" );
+
+        AddGunAction( debug_wand, "GKBRKN_TRIGGER_HIT" );
         AddGunAction( debug_wand, "LIGHT_BULLET" );
-        --AddGunAction( debug_wand, "SPITTER" );
+        AddGunAction( debug_wand, "SCATTER_4" );
+        AddGunAction( debug_wand, "FIREBOMB" );
+        AddGunAction( debug_wand, "FIREBOMB" );
+        AddGunAction( debug_wand, "FIREBOMB" );
+        AddGunAction( debug_wand, "FIREBOMB" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
+            local inventory_items = EntityGetAllChildren( inventory );
+            if inventory_items ~= nil then
+                for i,item_entity in ipairs( inventory_items ) do
+                    GameKillInventoryItem( player_entity, item_entity );
+                end
+            end
             EntityAddChild( inventory, debug_wand );
             EntityAddChild( inventory, EntityLoad( "data/entities/items/pickup/egg_monster.xml") );
         end
+
+        --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
+
         EntityLoad( "data/entities/animals/chest_mimic.xml", x - 40, y );
         EntityLoad( "data/entities/items/pickup/goldnugget.xml", x + 20, y - 20 );
         EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );

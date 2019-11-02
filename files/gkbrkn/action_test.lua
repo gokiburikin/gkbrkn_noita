@@ -10,9 +10,9 @@ table.insert( actions,
     spawn_probability                 = "1,1,1,1,1",
     price = 190,
     mana = 0,
-    max_uses = 7,
     action 		= function()
-        c.damage_critical_chance = c.damage_critical_chance + 100;
+        --c.damage_critical_chance = c.damage_critical_chance + 100;
+        set_trigger_hit_world( 1 );
         draw_actions( 1, true );
     end,
 });

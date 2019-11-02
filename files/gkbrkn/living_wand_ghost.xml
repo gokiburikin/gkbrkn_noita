@@ -32,15 +32,16 @@
 		needs_food="0"
 		sense_creatures="1"
 		attack_ranged_enabled="0"
-		attack_melee_enabled="1"
+		attack_melee_enabled="0"
 		can_fly="0"
+        max_distance_to_move_from_home="999999"
 		path_distance_to_target_node_to_turn_around="3"
         preferred_job="JobDefault"
         creature_detection_range_x="300"
         creature_detection_range_y="300"
         creature_detection_angular_range_deg="360"
 		creature_detection_check_every_x_frames="30" 
-        attack_dash_enabled="1"
+        attack_dash_enabled="0"
         attack_ranged_entity_file=""
         attack_ranged_frames_between="40"
         aggressiveness_min="100"
@@ -52,26 +53,18 @@
 		iterations_max_no_goal="9999999"
 		search_depth_max_with_goal="145000"
 		iterations_max_with_goal="145000"
-		cost_of_flying="1100"
+		cost_of_flying="1"
 		distance_to_reach_node_x="4"
 		distance_to_reach_node_y="6"
 		frames_to_get_stuck="30"
 		frames_between_searches="20" 
 		y_walking_compensation="8"
-		can_fly="1"
+		can_fly="0"
 		can_jump="0"
 		jump_speed="200"
 		initial_jump_lob="1"
 		initial_jump_max_distance_x="100"
 		initial_jump_max_distance_y="60" >
-		<jump_trajectories>
-			<JumpTrajectory x="5" y="15" lob="1" />
-			<JumpTrajectory x="7" y="20" lob="1" />
-			<JumpTrajectory x="10" y="-60" lob="1" />
-			<JumpTrajectory x="40" y="-35" lob="1" />
-			<JumpTrajectory x="60" y="-40" lob="1" />
-			<JumpTrajectory x="60" y="75"  lob="1" />
-		</jump_trajectories>
 	</PathFindingComponent>
 
 	<PathFindingGridMarkerComponent
@@ -103,7 +96,7 @@
 		eff_hg_velocity_min_y="-40" 
 		eff_hg_damage_min="10"
     	eff_hg_damage_max="95"
-		effect_hit_ground="1" 
+		effect_hit_ground="0" 
 		gravity="0" 
 		buoyancy_check_offset_y="-6">
 	</CharacterDataComponent>
@@ -115,7 +108,7 @@
 	</GenomeDataComponent>
 
 	<ControlsComponent
-		enabled="0" >
+		enabled="1" >
 	</ControlsComponent>
 
 	<SpriteAnimatorComponent>
@@ -147,9 +140,27 @@
 
     <HomingComponent
         _enabled="1"
-        homing_velocity_multiplier="4"
+        homing_velocity_multiplier="12"
         target_tag="living_wand_anchor"
     >
     </HomingComponent>
-    
+
+    <LuaComponent 
+		_enabled="1"
+		remove_after_executed="1"
+        execute_on_added="1"
+		script_source_file="files/gkbrkn/perk_living_wand_execute.lua" >
+	</LuaComponent>
+
+    <LuaComponent 
+		_enabled="1"
+		execute_every_n_frame="10"
+		script_source_file="files/gkbrkn/perk_living_wand_ai.lua" >
+	</LuaComponent>
+
+    <LuaComponent 
+		_enabled="1"
+		execute_every_n_frame="1"
+		script_source_file="files/gkbrkn/perk_living_wand_control.lua" >
+	</LuaComponent>
 </Entity>
