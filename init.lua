@@ -1,4 +1,11 @@
 --[[
+
+Mana Recharge Passive
+    Wands mana charges more quickly when holstered
+Lucky Favour
+    A small chance to evade damage
+
+
 UTILITY
     TODO
         Spell Power (utility stat on wand stat windows) (not yet possible?)
@@ -10,8 +17,6 @@ ACTIONS
 
 PERKS
     TODO
-        Life Steal (1% of damage dealt is returned as life)
-        Spell Steal ( n% gain an additional spell charge for a random (weighted by max use) spell in a random wand )
         Chaos (randomize projectile stuff)
         Stunlock Immunity (might be possible with small levels of knockback protection?)
         A permanent +2 to Wand Capacity
@@ -24,8 +29,12 @@ FUTURE UPDATES
     Living Wand (should not fight player ever, even if berserked)
 
 ABANDONED
-    Duplicate Projectile Modifier (dupe->quadshot->spark bolt = 4 spark bolts) (will be difficult) [someone already made this]
+    Life Steal (1% of damage dealt is returned as life)
+        probably overpowered
+    Spell Steal ( n% gain an additional spell charge for a random (weighted by max use) spell in a random wand )
+        probably overpowered
     Slot Machine (official mechanic)
+        could still be done buuuuuuuut...
     The ability to swallow an item (wand, spell, flask?) and spit it back up upon taking damage? Kind of weird, but has interesting utility. Basically a janky additional inventory slot.
     Projectile Repulsion Field (official mechanic)
 
@@ -45,6 +54,7 @@ if PERKS.RapidFire.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.
 if PERKS.BleedGold.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_bleed_gold.lua" ); end
 if PERKS.Sturdy.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_sturdy.lua" ); end
 if PERKS.Resilience.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_resilience.lua" ); end
+if PERKS.LostTreasure.Enabled then dofile( "files/gkbrkn/perk_lost_treasure_update.lua"); ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_lost_treasure.lua" ); end
 if ACTIONS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spell_efficiency.lua" ); end
 if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_mana_efficiency.lua" ); end
 if ACTIONS.Curse.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_curse.lua" ); end
@@ -60,11 +70,12 @@ if ACTIONS.GuaranteedCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/g
 if ACTIONS.ProjectileBurst.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_projectile_burst.lua" ); end
 if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_hit.lua" ); end
 if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_timer.lua" ); end
+--if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_death.lua" ); end
+if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_draw_deck.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
 
-local test_gui = GuiCreate();
 function OnPlayerSpawned( player_entity ) -- This runs when player entity has been created
     if MISC.GoldPickupTracker.Enabled and MISC.GoldPickupTracker.ShowTracker and EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
         EntityAddComponent( player_entity, "SpriteComponent", { 
@@ -93,13 +104,8 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
 
-        AddGunAction( debug_wand, "GKBRKN_TRIGGER_HIT" );
-        AddGunAction( debug_wand, "LIGHT_BULLET" );
-        AddGunAction( debug_wand, "SCATTER_4" );
-        AddGunAction( debug_wand, "FIREBOMB" );
-        AddGunAction( debug_wand, "FIREBOMB" );
-        AddGunAction( debug_wand, "FIREBOMB" );
-        AddGunAction( debug_wand, "FIREBOMB" );
+        AddGunAction( debug_wand, "GKBRKN_ACTION_TEST" );
+        AddGunAction( debug_wand, "FIREBALL" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
             local inventory_items = EntityGetAllChildren( inventory );
@@ -109,19 +115,25 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
                 end
             end
             EntityAddChild( inventory, debug_wand );
-            EntityAddChild( inventory, EntityLoad( "data/entities/items/pickup/egg_monster.xml") );
         end
 
         --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
+        perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
 
-        EntityLoad( "data/entities/animals/chest_mimic.xml", x - 40, y );
-        EntityLoad( "data/entities/items/pickup/goldnugget.xml", x + 20, y - 20 );
-        EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
+        EntityLoad( "data/entities/animals/chest_mimic.xml", x + 40, y );
+        for i=1,10 do
+            EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 20, y - 20 );
+        end
+        --EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
     end
 end
 
+
 function OnWorldPostUpdate()
+    --DEBUG_MARK( 0, 0, "dwidjwdi", 0, 0, 1 );
     if GoldTrackerUpdate ~= nil then GoldTrackerUpdate(); end
+    if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
+    
     --[[
     local players = EntityGetWithTag( "player_unit" );
     if players ~= nil then

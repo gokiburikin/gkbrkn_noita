@@ -1,7 +1,9 @@
 dofile( "files/gkbrkn/config.lua");
+
 local last_money = 0;
 local money_picked_total = 0;
 local money_picked_time_last = 0;
+
 function GoldTrackerUpdate()
     local players = EntityGetWithTag( "player_unit" );
     if players ~= nil then

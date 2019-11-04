@@ -9,7 +9,7 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "0,1,1,1,1,1,1",
     price = 250,
-    mana = 5,
+    mana = 10,
     action 		= function()
         set_trigger_hit_world( 1 );
         draw_actions( 1, true );

@@ -42,6 +42,9 @@ PERKS = {
             electricity=0.35,
             ice=0.35,
         },
+    },
+    LostTreasure = {
+        Enabled = true,
     }
 }
 
@@ -70,9 +73,9 @@ ACTIONS = {
         Enabled = false,
     },
     SniperShot = {
-        Enabled = true,
+        Enabled = false,
     },
-    Multiply = { -- needs more consideration, could just take from multiply mod
+    Multiply = {
         Enabled = false,
     },
     SpellMerge = {
@@ -93,6 +96,12 @@ ACTIONS = {
     TriggerTimer = {
         Enabled = true,
     },
+    TriggerDeath = {
+        Enabled = true,
+    },
+    DrawDeck = {
+        Enabled = true,
+    },
     Test = {
         Enabled = SETTINGS.Debug
     }
@@ -102,8 +111,8 @@ MISC = {
     GoldPickupTracker = {
         Enabled = true,
         TrackDuration = 120, -- in game frames
-        ShowMessage=false,
-        ShowTracker=true
+        ShowMessage = false,
+        ShowTracker = true
     },
     CharmNerf = {
         Enabled = true,

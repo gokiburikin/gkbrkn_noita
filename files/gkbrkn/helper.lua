@@ -27,6 +27,20 @@ function Log( ... )
     print_error( PackString(" ", ... ) );
 end
 
+function LogCompact( ... )
+    local length = 0;
+    local log = {};
+    for k,v in pairs( {...} ) do
+        table.insert( log, v );
+        length = length + #v;
+        if length > 80 then
+            table.insert(log,"\n");
+            length = 0;
+        end
+    end
+    Log( unpack( log ) );
+end
+
 local screen_log_queue = {};
 local screen_log_max = 20;
 local screen_log_interval = 0.333;
@@ -56,7 +70,7 @@ function LogTable( t )
     end
 end
 
-function LogTableCompact( t )
+function LogTableCompact( t, show_keys )
     if type(t) == "table" then
         local length = 0;
         local log = {};
@@ -217,20 +231,20 @@ function ComponentGetValueDefault( component_id, key, default )
     return default;
 end
 
-function GetEntityCustomVariable( entity_id, tag, key, default )
-   local variable_storage = EntityGetFirstComponent( entity_id, "VariableStorage", tag );
+function GetEntityCustomVariable( entity_id, variable_storage_tag, key, default )
+   local variable_storage = EntityGetFirstComponent( entity_id, "VariableStorage", variable_storage_tag );
    if variable_storage ~= nil then
         return ComponentGetValue( variable_storage, "value_string" );
    end
    return default;
 end
 
-function SetEntityCustomVariable( entity_id, tag, key, value )
-    local variable_storage = EntityGetFirstComponent( entity_id, "VariableStorage", tag );
+function SetEntityCustomVariable( entity_id, variable_storage_tag, variable_name, value )
+    local variable_storage = EntityGetFirstComponent( entity_id, "VariableStorage", variable_storage_tag );
     if variable_storage == nil then
         EntityAddComponent( entity_id, "VariableStorage", {
             _tags=tag,
-            name=key,
+            name=variable_name,
             value_string=tostring(value),
         });
     else

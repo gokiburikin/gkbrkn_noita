@@ -11,9 +11,10 @@ A collection of things I'm adding to Noita.
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.
 - [x] **Spell Efficiency**: Some spell casts are free.
+- [x] **Lost Treasure**: Spawn gold that was left behind.
 
 ### Projectiles
-- [x] **Arcane Shot**: A fast bolt of arcane energy.
+- [ ] *None so far*
 
 ### Projectile Modifiers
 - [ ] **Mana Efficiency**: Spells drain much less mana.
@@ -34,4 +35,5 @@ A collection of things I'm adding to Noita.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
 
 ### Deprecated
+- [x] **Arcane Shot**: A fast bolt of arcane energy.
 - [x] **Arcane Buckshot**: A small volley of arcane energy.
