@@ -7,7 +7,6 @@ local projectile_component = EntityGetFirstComponent( entity_id, "ProjectileComp
 if projectile_component ~= nil then
     local total_bounces = ComponentGetValue( projectile_component, "bounces_left" );
     local total_damage = ComponentGetValue( projectile_component, "damage" );
-    GamePrint(total_bounces.."/"..total_damage);
     EntityAddComponent( entity_id, "VariableStorageComponent", {
         _tags="gkbrkn_bounces_last",
         name="gkbrkn_bounces_last",

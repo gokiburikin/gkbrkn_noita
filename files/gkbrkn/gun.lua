@@ -174,7 +174,6 @@ function duplicate_draw_action( amount, instant_reload_if_empty )
         local drawn_before = state_cards_drawn;
         local ldda = dda;
         dda = dda + 1;
-        Log("duplicate_draw_action",ldda);
         local next_natural_action_index = #deck;
         for index,action in pairs( deck ) do
             if action.clone ~= true then

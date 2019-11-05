@@ -10,11 +10,9 @@ table.insert( perk_list, {
     func = function( entity_perk_item, entity_who_picked, item_name )
         local x, y = EntityGetTransform( entity_who_picked );
         local tracker = EntityGetFirstComponent( entity_who_picked, "VariableStorageComponent", tracker_variable );
-        GamePrint(tostring(tracker));
         if tracker ~= nil then
             local spawner = EntityLoad( "files/gkbrkn/perk_lost_treasure_spawner.xml", 0, 0 );
             local current_lost_treasure_count = tonumber(ComponentGetValue( tracker, "value_string" ));
-            GamePrint("lost treasure "..current_lost_treasure_count);
             EntityAddComponent( spawner, "VariableStorageComponent", {
                 _tags=tracker_variable,
                 name=tracker_variable,
