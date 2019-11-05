@@ -72,6 +72,7 @@ if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actio
 if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_timer.lua" ); end
 --if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_death.lua" ); end
 if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_draw_deck.lua" ); end
+if ACTIONS.Orbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_orbit.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
@@ -105,7 +106,7 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
 
         AddGunAction( debug_wand, "GKBRKN_ACTION_TEST" );
-        AddGunAction( debug_wand, "FIREBALL" );
+        AddGunAction( debug_wand, "LIGHT_BULLET" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
             local inventory_items = EntityGetAllChildren( inventory );
@@ -122,7 +123,7 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 
         EntityLoad( "data/entities/animals/chest_mimic.xml", x + 40, y );
         for i=1,10 do
-            EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 20, y - 20 );
+            EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
         end
         --EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
     end
@@ -133,6 +134,9 @@ function OnWorldPostUpdate()
     --DEBUG_MARK( 0, 0, "dwidjwdi", 0, 0, 1 );
     if GoldTrackerUpdate ~= nil then GoldTrackerUpdate(); end
     if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
+    if MaxHealthHealUpdate ~= nil then MaxHealthHealUpdate(); end
+    --GameCreateParticle( "gold", -0, -100, 1, 0, 0, false )
+    --GamePrint( #EntityGetWithTag("gkbrkn_action_orbit") );
     
     --[[
     local players = EntityGetWithTag( "player_unit" );

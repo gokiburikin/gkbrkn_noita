@@ -102,6 +102,9 @@ ACTIONS = {
     DrawDeck = {
         Enabled = true,
     },
+    Orbit = {
+        Enabled = true,
+    },
     Test = {
         Enabled = SETTINGS.Debug
     }

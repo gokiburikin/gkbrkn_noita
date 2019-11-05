@@ -1,3 +1,4 @@
+dofile( "files/gkbrkn/helper.lua");
 table.insert( actions,
 {
     id          = "GKBRKN_ACTION_TEST",
@@ -11,6 +12,7 @@ table.insert( actions,
     price = 190,
     mana = 25,
     action 		= function()
-        
+        c.extra_entities = c.extra_entities .. "files/gkbrkn/action_lifetime_damage.xml,";
+        draw_actions( 1, true );
     end,
 });

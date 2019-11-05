@@ -4,7 +4,8 @@ gkbrkn = {
     TRIGGER_TYPE = {
         Timer=1,
         Hit=2,
-        Death=3
+        Death=3,
+        Instant=4,
     },
     extra_projectiles = 0,
     stack_next_actions = 0,
@@ -70,6 +71,15 @@ function add_projectile( filepath )
             add_projectile_trigger_death( filepath, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Hit then
             add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
+        elseif trigger_type == gkbrkn.TRIGGER_TYPE.Instant then
+            if reflecting then 
+                Reflection_RegisterProjectile( filepath )
+                return;
+            end
+        
+            BeginProjectile( filepath );
+                draw_shot( create_shot( trigger_action_draw_count ), true );
+            EndProjectile()
         else
             gkbrkn._add_projectile( filepath );
         end
@@ -94,6 +104,13 @@ end
 function set_trigger_death( action_draw_count )
     table.insert( gkbrkn.trigger_queue, {
         type=gkbrkn.TRIGGER_TYPE.Death,
+        action_draw_count=action_draw_count,
+    });
+end
+
+function set_trigger_instant( action_draw_count )
+    table.insert( gkbrkn.trigger_queue, {
+        type=gkbrkn.TRIGGER_TYPE.Instant,
         action_draw_count=action_draw_count,
     });
 end
