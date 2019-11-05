@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_SPELL_MERGE",
     name 		= "Spell Merge",
-    description = "Combine multiple spells into one",
+    description = "Cast 2 spells, the first merged with the second",
     sprite 		= "files/gkbrkn/action_spell_merge.png",
     sprite_unidentified = "files/gkbrkn/action_spell_merge.png",
     type 		= ACTION_TYPE_MODIFIER,

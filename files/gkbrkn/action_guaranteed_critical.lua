@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_GUARANTEED_CRITICAL",
     name 		= "Perfect Critical",
-    description = "A small favour ensures your spell deals critical damage",
+    description = "Cast a spell that is guaranteed to deal critical damage",
     sprite 		= "files/gkbrkn/action_guaranteed_critical.png",
     sprite_unidentified = "files/gkbrkn/action_guaranteed_critical.png",
     type 		= ACTION_TYPE_MODIFIER,

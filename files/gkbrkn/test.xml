@@ -1,29 +1,8 @@
 <Entity >
-    <LightComponent 
-        _tags="enabled_in_world,enabled_in_hand"
-        _enabled="1" 
-        r="255"
-        g="0"
-        b="255"
-        radius="128"
-        fade_out_time="0.75" >
-    </LightComponent>
-
-    <SpriteComponent 
-        _tags="enabled_in_hand"
-        alpha="0.4"
-        image_file="data/particles/torch_fog_of_war_hole.xml"
-        smooth_filtering="0"
-        fog_of_war_hole="1"
-        has_special_scale="1"
-        special_scale_x="3"
-        special_scale_y="3" >
-    </SpriteComponent>
-
-    <InheritTransformComponent
-		_tags="enabled_in_world,enabled_in_hand" >
-	</InheritTransformComponent>
-
+    <WormAttractorComponent 
+    radius="10000"
+        >
+    </WormAttractorComponent>
     <ParticleEmitterComponent 
 		_tags="enabled_in_hand,item_identified"
 		emitted_material_name="spark_blue"
@@ -51,4 +30,5 @@
 		emission_interval_max_frames="1"
 		is_emitting="1" >
 	</ParticleEmitterComponent>
+
 </Entity>

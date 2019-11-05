@@ -63,6 +63,9 @@ ACTIONS = {
     MagicLight = {
         Enabled = true,
     },
+    Revelation = {
+        Enabled = true,
+    },
     MicroShield = {
         Enabled = true,
     },

@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_CURSE",
     name 		= "Golden Blessing",
-    description = "Turn your foes to gold from the inside out",
+    description = "Cast a spell that makes enemies it hits bleed gold",
     sprite 		= "files/gkbrkn/action_curse.png",
     sprite_unidentified = "files/gkbrkn/action_curse.png",
     type 		= ACTION_TYPE_MODIFIER,

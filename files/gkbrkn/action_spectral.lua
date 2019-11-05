@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_SPECTRAL",
     name 		= "Spectral Shot",
-    description = "Projectiles pass through materials",
+    description = "Cast a spell that passes through materials",
     sprite 		= "files/gkbrkn/action_spectral.png",
     sprite_unidentified = "files/gkbrkn/action_spectral.png",
     type 		= ACTION_TYPE_MODIFIER,

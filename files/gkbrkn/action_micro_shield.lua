@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_MICRO_SHIELD",
     name 		= "Micro Shield",
-    description = "Projectiles reflect projectiles",
+    description = "Cast a spell that reflects projectiles",
     sprite 		= "files/gkbrkn/action_micro_shield.png",
     sprite_unidentified = "files/gkbrkn/action_micro_shield.png",
     type 		= ACTION_TYPE_MODIFIER,

@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_EXTRA_PROJECTILE",
     name 		= "Extra Projectile",
-    description = "Spend mana to duplicate a projectile",
+    description = "Cast a spell that gains an additional projectile",
     sprite 		= "files/gkbrkn/action_extra_projectile.png",
     sprite_unidentified = "files/gkbrkn/action_extra_projectile.png",
     type 		= ACTION_TYPE_DRAW_MANY,

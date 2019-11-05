@@ -24,11 +24,15 @@ A collection of things I'm adding to Noita.
 - [x] **Magic Light**: Projectiles clear the Fog of War.
 - [x] **Micro Shield**: Projectiles reflect projectiles.
 - [x] **Spectral**: Projectiles pass through terrain.
+- [x] **Gravity Well**: Cast 2 spells, the first attracts projectiles.
 - [x] **Extra Projectile**: Duplicate a projectile.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
 - [x] **Perfect Critical**: Guarantee a critical hit.
 - [x] **Trigger: Hit**: Cast another spell upon collision.
 - [x] **Trigger: Time**: Cast another spell after a short duration.
+- [x] **Trigger: Death**: Cast another spell after a short duration.
+- [x] **Damage Plus: Bounce**: Damage up for each bounce.
+- [x] **Damage Plus: Time**: Damage up over time.
 
 ### Misc
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.

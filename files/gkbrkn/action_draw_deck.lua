@@ -2,7 +2,7 @@ table.insert( actions,
 {
 		id          = "GKBRKN_DRAW_DECK",
 		name 		= "Draw All",
-		description = "Draw all of the remaining cards in the deck",
+		description = "Simultaneously cast all spells",
 		sprite 		= "files/gkbrkn/action_draw_deck.png",
 		sprite_unidentified = "files/gkbrkn/action_draw_deck.png",
 		type 		= ACTION_TYPE_DRAW_MANY,

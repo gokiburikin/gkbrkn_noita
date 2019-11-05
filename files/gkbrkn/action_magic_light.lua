@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_MAGIC_LIGHT",
     name 		= "Magic Light",
-    description = "A magic light that cuts through the darkness",
+    description = "Cast a spell that cuts through darkness",
     sprite 		= "files/gkbrkn/action_magic_light.png",
     sprite_unidentified = "files/gkbrkn/action_magic_light.png",
     type 		= ACTION_TYPE_MODIFIER,

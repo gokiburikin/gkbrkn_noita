@@ -8,8 +8,7 @@ function IsGoldNuggetLostTreasureSpawned( entity )
 end
 
 function IsGoldNuggetLostTreasure( entity )
-    local component = EntityGetFirstComponent( entity, "LuaComponent", script_tag );
-    return component ~= nil;
+    return EntityHasTag( entity, "gkbrkn_lost_treasure_seen" );
 end
 
 function PerkLostTreasureUpdate()
@@ -30,25 +29,19 @@ function PerkLostTreasureUpdate()
                     local components = EntityGetComponent( entity, "LuaComponent" );
                     if components ~= nil then
                         for _,component in pairs(components) do
+                            -- TODO there needs to be a better more future proofed way to get gold nuggets
                             if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                                table.insert( natural_nuggets, entity );
+                                EntityAddTag( entity, "gkbrkn_lost_treasure_seen" );
+                                EntityAddComponent( entity, "LuaComponent", {
+                                    execute_on_removed="1",
+                                    execute_every_n_frame="-1",
+                                    script_source_file = "files/gkbrkn/perk_lost_treasure_removed.lua",
+                                });
                             end
                         end
                     end
                 end
             end
-        end
-        for index,nugget in pairs( natural_nuggets ) do
-            local component = EntityAddComponent( nugget, "LuaComponent", {
-                _tags=script_tag,
-                execute_on_added="1",
-                execute_every_n_frame="-1",
-                script_source_file = "files/gkbrkn/perk_lost_treasure_init.lua",
-            });
-            local component = EntityAddComponent( nugget, "LuaComponent", {
-                _tags=script_tag,
-                script_item_picked_up = "files/gkbrkn/perk_lost_treasure_pickup.lua",
-            });
         end
     end
 end

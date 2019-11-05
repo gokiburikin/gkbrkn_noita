@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_PROJECTILE_BURST",
     name 		= "Projectile Burst",
-    description = "Duplicate a projectile multiple times",
+    description = "Cast a spell that gains 4 additional projectiles",
     sprite 		= "files/gkbrkn/action_projectile_burst.png",
     sprite_unidentified = "files/gkbrkn/action_projectile_burst.png",
     type 		= ACTION_TYPE_DRAW_MANY,

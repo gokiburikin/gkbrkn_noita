@@ -1,5 +1,11 @@
 --[[
 
+HitEffect considerations
+    ElectricitySourceComponent
+    DamageNearbyEntitiesComponent
+    WormAttractorComponent
+
+
 Mana Recharge Passive
     Wands mana charges more quickly when holstered
 Lucky Favour
@@ -59,6 +65,7 @@ if ACTIONS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_
 if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_mana_efficiency.lua" ); end
 if ACTIONS.Curse.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_curse.lua" ); end
 if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_magic_light.lua" ); end
+if ACTIONS.Revelation.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_revelation.lua" ); end
 if ACTIONS.MicroShield.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_micro_shield.lua" ); end
 if ACTIONS.Spectral.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spectral.lua" ); end
 if ACTIONS.Buckshot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_arcane_buckshot.lua" ); end
@@ -107,8 +114,7 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
 
-        AddGunAction( debug_wand, "GKBRKN_ACTION_BOUNCE_DAMAGE" );
-        AddGunAction( debug_wand, "GKBRKN_ACTION_LIFETIME_DAMAGE" );
+        AddGunAction( debug_wand, "GKBRKN_REVELATION" );
         AddGunAction( debug_wand, "RUBBER_BALL" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
