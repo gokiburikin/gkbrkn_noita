@@ -105,6 +105,12 @@ ACTIONS = {
     Orbit = {
         Enabled = true,
     },
+    LifetimeDamage = {
+        Enabled = true,
+    },
+    BounceDamage = {
+        Enabled = true,
+    },
     Test = {
         Enabled = SETTINGS.Debug
     }

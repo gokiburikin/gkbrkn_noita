@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_TRIGGER_TIMER",
     name 		= "Trigger: Timer",
-    description = "Cast another spell upon collision",
+    description = "Cast a spell that casts another spell after a timer runs out",
     sprite 		= "files/gkbrkn/action_trigger_timer.png",
     sprite_unidentified = "files/gkbrkn/action_trigger_timer.png",
     type 		= ACTION_TYPE_MODIFIER,

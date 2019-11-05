@@ -1,4 +1,7 @@
-local entity_id = GetUpdatedEntityID();
-local x, y = EntityGetTransform( entity_id );
+local entity = GetUpdatedEntityID();
+local x, y = EntityGetTransform( entity );
 
-GamePrint( EntityGetParent( entity_id ) );
+local projectile_component = EntityGetFirstComponent( entity, "ProjectileComponent" );
+if projectile_component ~= nil then
+    ComponentSetValue( projectile_component, "damage", tostring(tonumber(ComponentGetValue( projectile_component, "damage" ) + 0.02) ) );
+end

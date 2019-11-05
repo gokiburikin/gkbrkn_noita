@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_TRIGGER_HIT",
     name 		= "Trigger: Hit",
-    description = "Cast a another spell upon collision",
+    description = "Cast a spell that casts another spell upon collision",
     sprite 		= "files/gkbrkn/action_trigger_hit.png",
     sprite_unidentified = "files/gkbrkn/action_trigger_hit.png",
     type 		= ACTION_TYPE_MODIFIER,

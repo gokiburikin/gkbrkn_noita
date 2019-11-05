@@ -70,9 +70,11 @@ if ACTIONS.GuaranteedCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/g
 if ACTIONS.ProjectileBurst.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_projectile_burst.lua" ); end
 if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_hit.lua" ); end
 if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_timer.lua" ); end
---if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_death.lua" ); end
+if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_death.lua" ); end
 if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_draw_deck.lua" ); end
 if ACTIONS.Orbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_orbit.lua" ); end
+if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_lifetime_damage.lua" ); end
+if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_bounce_damage.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
@@ -105,8 +107,9 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
 
-        AddGunAction( debug_wand, "GKBRKN_ACTION_TEST" );
-        AddGunAction( debug_wand, "LIGHT_BULLET" );
+        AddGunAction( debug_wand, "GKBRKN_ACTION_BOUNCE_DAMAGE" );
+        AddGunAction( debug_wand, "GKBRKN_ACTION_LIFETIME_DAMAGE" );
+        AddGunAction( debug_wand, "RUBBER_BALL" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
             local inventory_items = EntityGetAllChildren( inventory );
