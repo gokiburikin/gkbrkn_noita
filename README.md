@@ -6,7 +6,7 @@ A collection of things I'm adding to Noita.
 - [x] **Enraged**: Gain Berserk permanently.
 - [x] **Golden Blood**: You bleed gold.
 - [x] **Knockback Immunity**: Immunity to knockback and recoil.
-- [x] **Living Wand**: Turn a random wand in your inventory into a permanent familiar.
+- [ ] **Living Wand**: Turn a random wand in your inventory into a permanent familiar.
 - [x] **Mana Efficiency**: Spells drain slightly less mana.
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.

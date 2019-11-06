@@ -114,7 +114,8 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
 
-        AddGunAction( debug_wand, "GKBRKN_REVELATION" );
+        AddGunAction( debug_wand, "HEAVY_BULLET" );
+        AddGunAction( debug_wand, "LIGHT_BULLET" );
         AddGunAction( debug_wand, "RUBBER_BALL" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
@@ -127,8 +128,8 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
             EntityAddChild( inventory, debug_wand );
         end
 
-        --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
-        perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
+        TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
+        --perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
 
         EntityLoad( "data/entities/animals/chest_mimic.xml", x + 40, y );
         for i=1,10 do

@@ -7,7 +7,7 @@ PERKS = {
         Enabled = true,
     },
     LivingWand = { -- NYI
-        Enabled = true,
+        Enabled = false,
         TeleportDistance = 128,
     }, 
     Duplicate = {

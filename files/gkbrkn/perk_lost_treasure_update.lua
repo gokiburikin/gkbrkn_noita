@@ -1,5 +1,5 @@
 local last_gold_check = 0;
-local check_radius = 256;
+local check_radius = 192;
 local gold_check_interval = 40;
 local script_tag = "gkbrkn_lost_treasure_gold_nugget";
 
