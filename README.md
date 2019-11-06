@@ -30,7 +30,7 @@ A collection of things I'm adding to Noita.
 - [x] **Perfect Critical**: Guarantee a critical hit.
 - [x] **Trigger: Hit**: Cast another spell upon collision.
 - [x] **Trigger: Time**: Cast another spell after a short duration.
-- [x] **Trigger: Death**: Cast another spell after a short duration.
+- [x] **Trigger: Death**: Cast another spell after the spell expires.
 - [x] **Damage Plus: Bounce**: Damage up for each bounce.
 - [x] **Damage Plus: Time**: Damage up over time.
 

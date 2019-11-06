@@ -33,10 +33,17 @@ function PerkLostTreasureUpdate()
                             if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
                                 EntityAddTag( entity, "gkbrkn_lost_treasure_seen" );
                                 EntityAddComponent( entity, "LuaComponent", {
+                                    execute_every_n_frame = "-1",
+                                    remove_after_executed = "1",
+                                    script_item_picked_up = "files/gkbrkn/perk_lost_treasure_pickup.lua",
+                                });
+                                EntityAddComponent( entity, "LuaComponent", {
                                     execute_on_removed="1",
                                     execute_every_n_frame="-1",
                                     script_source_file = "files/gkbrkn/perk_lost_treasure_removed.lua",
                                 });
+                                local ex, ey = EntityGetTransform( player );
+                                --GamePrint( "New nuggy found at "..ex..", "..ey );
                             end
                         end
                     end
