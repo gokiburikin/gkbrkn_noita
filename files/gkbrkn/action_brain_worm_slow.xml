@@ -1,0 +1,7 @@
+<Entity>
+<LuaComponent
+    execute_every_n_frame="1"
+    script_source_file="files/gkbrkn/action_brain_worm_slow_update.lua"
+    >
+</LuaComponent>
+</Entity>

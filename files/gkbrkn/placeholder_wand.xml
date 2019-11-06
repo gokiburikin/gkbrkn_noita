@@ -15,7 +15,7 @@
         sprite_file="files/gkbrkn/placeholder_wand_gfx.xml" 
         swim_propel_amount="0" 
         throw_as_item="0" 
-        ui_name="Bolt staff" 
+        ui_name="Placeholder Wand" 
         use_gun_script="1" 
         add_these_child_actions=""
         ><gun_config 
@@ -24,7 +24,7 @@
             deck_capacity="12" >
         </gun_config>
         <gunaction_config 
-            fire_rate_wait="30" >
+            fire_rate_wait="15" >
         </gunaction_config>
     </AbilityComponent>
 	

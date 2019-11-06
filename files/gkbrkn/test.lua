@@ -1,0 +1,1 @@
+GamePrint("test");

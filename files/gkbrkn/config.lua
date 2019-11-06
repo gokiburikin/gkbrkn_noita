@@ -116,6 +116,9 @@ ACTIONS = {
     BounceDamage = {
         Enabled = true,
     },
+    BrainWorm = {
+        Enabled = true,
+    },
     Test = {
         Enabled = SETTINGS.Debug
     }

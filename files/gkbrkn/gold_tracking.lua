@@ -14,6 +14,7 @@ if wallet ~= nil then
     end
     last_money = money;
 end
+
 if money_picked_total > 0 then
     local gold_tracker_text = EntityGetFirstComponent( entity_id, "SpriteComponent", "gkbrkn_gold_tracker");
     if gold_tracker_text ~= nil then

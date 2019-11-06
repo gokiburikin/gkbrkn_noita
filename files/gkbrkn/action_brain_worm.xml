@@ -1,0 +1,16 @@
+<Entity >
+    <CollisionTriggerComponent
+      width="96"
+      height="96" 
+      radius="48"
+      destroy_this_entity_when_triggered="0"
+      required_tag="mortal" >
+  	</CollisionTriggerComponent>
+	<LuaComponent
+        remove_after_executed="0"
+        execute_on_removed="0"
+	    execute_every_n_frame="-1"
+		script_collision_trigger_hit="files/gkbrkn/action_brain_worm_collision.lua"
+		>
+	</LuaComponent>
+</Entity>

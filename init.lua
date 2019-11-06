@@ -1,5 +1,11 @@
 --[[
 
+kill streaks events
+grze events
+passives as mini perks
+    greed
+
+
 HitEffect considerations
     ElectricitySourceComponent
     DamageNearbyEntitiesComponent
@@ -82,6 +88,7 @@ if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions
 if ACTIONS.Orbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_orbit.lua" ); end
 if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_lifetime_damage.lua" ); end
 if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_bounce_damage.lua" ); end
+if ACTIONS.BrainWorm.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_brain_worm.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 --if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
@@ -141,8 +148,8 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
 		end
         local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
 
-        AddGunAction( debug_wand, "HEAVY_BULLET" );
-        AddGunAction( debug_wand, "LIGHT_BULLET" );
+        AddGunAction( debug_wand, "GKBRKN_BRAIN_WORM" );
+        --AddGunAction( debug_wand, "CHAINSAW" );
         AddGunAction( debug_wand, "RUBBER_BALL" );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
@@ -158,7 +165,14 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
         --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
         --perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
 
-        EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
+        --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
+        local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
+        local damage_models = EntityGetComponent( target_dummy, "DamageModelComponent" );
+        for _,damage_model in pairs( damage_models ) do
+            ComponentSetValue( damage_model, "max_hp", 1000 );
+            ComponentSetValue( damage_model, "hp", 1000 );
+        end
+
         EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
         for i=1,10 do
             EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
@@ -171,6 +185,29 @@ end
 function OnWorldPostUpdate()
     --DEBUG_MARK( 0, 0, "dwidjwdi", 0, 0, 1 );
     if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
+
+    --[[
+    local players = EntityGetWithTag( "player_unit" );
+    for _,player in pairs( players ) do
+        local x, y = EntityGetTransform( player );
+        local nearby_entities = EntityGetInRadius( x, y, 128 );
+        for _,entity in pairs( nearby_entities ) do
+            if EntityHasTag( entity, "gkbrkn_bad_aimer" ) == false then
+                local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" );
+                if animal_ais ~= nil then
+                    for _,ai in pairs( animal_ais ) do
+                        ComponentSetValue( ai, "creature_detection_range_x", "100" );
+                        ComponentSetValue( ai, "creature_detection_range_y", "100" );
+                        --ComponentSetValue( ai, "attack_ranged_frames_between", "10" );
+                        GamePrint("made enemy "..entity.." suck at detection");
+                    end
+                    EntityAddTag( entity, "gkbrkn_bad_aimer" );
+                end
+            end
+        end
+    end
+    ]]
+
     --GameCreateParticle( "gold", -0, -100, 1, 0, 0, false )
     --GamePrint( #EntityGetWithTag("gkbrkn_action_orbit") );
     
