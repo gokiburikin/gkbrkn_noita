@@ -1,5 +1,5 @@
 # gkbrkn_noita
-A collection of things I'm adding to Noita.
+A collection of things I'm adding to Noita. This mod contains a CONFIG.lua file. Use it to make local changes. Some things are disabled by default!
 
 ### Perks
 - [x] **Duplicate**: Duplicate a random wand in your inventory.
@@ -17,8 +17,6 @@ A collection of things I'm adding to Noita.
 - [ ] *None so far*
 
 ### Projectile Modifiers
-- [ ] **Mana Efficiency**: Spells drain much less mana.
-- [ ] **Spell Efficiency**: Most spell casts are free.
 - [x] **Spell Merge**: Combine multiple spells into one.
 - [x] **Golden Blessing**: Projectiles bless enemies causing them to bleed gold and decay into gold upon death.
 - [x] **Magic Light**: Projectiles clear the Fog of War.
@@ -36,8 +34,12 @@ A collection of things I'm adding to Noita.
 
 ### Misc
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
-- [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
+- [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets. *(Disabled by default)*
+- [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies. *(Disabled by default)*
+- [x] **Heal New Health**: Heals the health gained from max health pickups. *(Disabled by default)*
 
 ### Deprecated
-- [x] **Arcane Shot**: A fast bolt of arcane energy.
-- [x] **Arcane Buckshot**: A small volley of arcane energy.
+- [x] **Arcane Shot**: A fast bolt of arcane energy. *(Official spell exists)*
+- [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
+- [ ] **Mana Efficiency**: Spells drain much less mana. *(Abandoned until a better solution is found)*
+- [ ] **Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*

@@ -1,3 +1,5 @@
+_GKBRKN_CONFIG = true;
+
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
 }
@@ -127,6 +129,17 @@ MISC = {
         ShowTracker = true
     },
     CharmNerf = {
+        Enabled = false,
+    },
+    InvincibilityFrames = {
+        Enabled = false,
+        Duration = 40,
+        Flash = true,
+    },
+    HealOnMaxHealthUp = {
         Enabled = true,
+        HealToMax = false
     }
 }
+
+GamePrint("CONFIG"..tostring(math.random()));

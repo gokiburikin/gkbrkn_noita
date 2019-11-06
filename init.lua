@@ -83,7 +83,7 @@ if ACTIONS.Orbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lu
 if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_lifetime_damage.lua" ); end
 if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_bounce_damage.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
-if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
+--if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
 
 function OnPlayerSpawned( player_entity ) -- This runs when player entity has been created
@@ -103,7 +103,34 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
             special_scale_y="0.6667",
             z_index="1.6",
         } );
+        EntityAddComponent( player_entity, "LuaComponent", {
+            script_source_file="files/gkbrkn/gold_tracking.lua",
+            execute_on_added="1",
+            execute_every_n_frame="1",
+        });
     end
+
+    if MISC.InvincibilityFrames.Enabled then
+        EntityAddComponent( player_entity, "LuaComponent", {
+            execute_every_n_frame="-1",
+            script_damage_received="files/gkbrkn/invincibility_frames.lua",
+        });
+        if MISC.InvincibilityFrames.Flash then
+            EntityAddComponent( player_entity, "LuaComponent", {
+                script_source_file="files/gkbrkn/invincibility_frames_flash.lua",
+                execute_every_n_frame="1",
+            });
+        end
+    end
+
+    if MISC.HealOnMaxHealthUp.Enabled then
+        EntityAddComponent( player_entity, "LuaComponent", {
+            script_source_file="files/gkbrkn/max_health_heal.lua",
+            execute_on_added="1",
+            execute_every_n_frame="1",
+        });
+    end
+
     if SETTINGS.Debug then 
         dofile( "data/scripts/perks/perk.lua");
         dofile("data/scripts/gun/procedural/gun_action_utils.lua");
@@ -129,9 +156,10 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
         end
 
         --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
-        perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
+        --perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
 
-        EntityLoad( "data/entities/animals/chest_mimic.xml", x + 40, y );
+        EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
+        EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
         for i=1,10 do
             EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
         end
@@ -142,9 +170,7 @@ end
 
 function OnWorldPostUpdate()
     --DEBUG_MARK( 0, 0, "dwidjwdi", 0, 0, 1 );
-    if GoldTrackerUpdate ~= nil then GoldTrackerUpdate(); end
     if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
-    if MaxHealthHealUpdate ~= nil then MaxHealthHealUpdate(); end
     --GameCreateParticle( "gold", -0, -100, 1, 0, 0, false )
     --GamePrint( #EntityGetWithTag("gkbrkn_action_orbit") );
     

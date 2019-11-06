@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_REVELATION",
     name 		= "Revelation",
-    description = "Cast a spell that reveals enemies",
+    description = "Cast a spell that reveals enemies upon collision",
     sprite 		= "files/gkbrkn/action_revelation.png",
     sprite_unidentified = "files/gkbrkn/action_revelation.png",
     type 		= ACTION_TYPE_MODIFIER,
