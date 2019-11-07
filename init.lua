@@ -89,6 +89,7 @@ if ACTIONS.Orbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lu
 if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_lifetime_damage.lua" ); end
 if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_bounce_damage.lua" ); end
 if ACTIONS.BrainWorm.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_brain_worm.lua" ); end
+if ACTIONS.CollisionDetection.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_collision_detection.lua" ); end
 if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
 --if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
@@ -117,6 +118,9 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
         });
     end
 
+    --local platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
+    --ComponentSetValue( platforming, "run_velocity", "500" );
+
     if MISC.InvincibilityFrames.Enabled then
         EntityAddComponent( player_entity, "LuaComponent", {
             execute_every_n_frame="-1",
@@ -141,16 +145,10 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
     if SETTINGS.Debug then 
         dofile( "data/scripts/perks/perk.lua");
         dofile("data/scripts/gun/procedural/gun_action_utils.lua");
-        local x, y = EntityGetTransform( player_entity );
         local effect = GetGameEffectLoadTo( player_entity, "EDIT_WANDS_EVERYWHERE", true );
-        if effect ~= nil then
-			ComponentSetValue( effect, "frames", "-1" );
-		end
-        local debug_wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
+        if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
 
-        AddGunAction( debug_wand, "GKBRKN_BRAIN_WORM" );
-        --AddGunAction( debug_wand, "CHAINSAW" );
-        AddGunAction( debug_wand, "RUBBER_BALL" );
+        local x, y = EntityGetTransform( player_entity );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
             local inventory_items = EntityGetAllChildren( inventory );
@@ -159,7 +157,15 @@ function OnPlayerSpawned( player_entity ) -- This runs when player entity has be
                     GameKillInventoryItem( player_entity, item_entity );
                 end
             end
-            EntityAddChild( inventory, debug_wand );
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "GKBRKN_MAGIC_LIGHT", "RECHARGE", "GKBRKN_COLLISION_DETECTION", "SCATTER_4",
+                "LIGHT_BULLET", "LIGHT_BULLET", "LIGHT_BULLET", "RECHARGE", "LIGHT_BULLET"
+            ));
+
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "GKBRKN_MAGIC_LIGHT", "RECHARGE", "AVOIDANCE", "SCATTER_4",
+                "LIGHT_BULLET", "LIGHT_BULLET", "LIGHT_BULLET", "RECHARGE", "LIGHT_BULLET"
+            ));
         end
 
         --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );

@@ -24,7 +24,8 @@ extra_modifiers["gkbrkn_no_recoil"] = function()
 	shot_effects.recoil_knockback = -999999;
 end
 
-
+--[[
 extra_modifiers["gkbrkn_no_recoil"] = function()
     c.extra_entities = c.extra_entities.."files/gkbrkn/magic_light_sprite.xml";
 end
+]]

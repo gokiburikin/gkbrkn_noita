@@ -11,9 +11,7 @@ table.insert( actions,
     price = 100,
     mana = 7,
     action 		= function()
-        c.fire_rate_wait = 0;
-        current_reload_time = 0;
-        c.extra_entities = c.extra_entities .. "files/gkbrkn/action_brain_worm.xml,";
+        c.extra_entities = c.extra_entities .. "files/gkbrkn/action_test.xml,";
         draw_actions( 1, true );
     end,
 });

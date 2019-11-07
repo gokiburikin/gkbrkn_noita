@@ -31,6 +31,8 @@ A collection of things I'm adding to Noita. This mod contains a CONFIG.lua file.
 - [x] **Trigger: Death**: Cast another spell after the spell expires.
 - [x] **Damage Plus: Bounce**: Damage up for each bounce.
 - [x] **Damage Plus: Time**: Damage up over time.
+- [x] **Collision Detection**: Projectiles attempt to avoid world collisions.
+- [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 
 ### Misc
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.

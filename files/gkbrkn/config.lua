@@ -119,6 +119,9 @@ ACTIONS = {
     BrainWorm = {
         Enabled = true,
     },
+    CollisionDetection = {
+        Enabled = true,
+    },
     Test = {
         Enabled = SETTINGS.Debug
     }
@@ -144,5 +147,3 @@ MISC = {
         HealToMax = false
     }
 }
-
-GamePrint("CONFIG"..tostring(math.random()));

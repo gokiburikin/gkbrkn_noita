@@ -338,3 +338,11 @@ function GetInventoryQuickActiveItem( entity )
         end
     end
 end
+
+function CreateWand( x, y, ... )
+    local wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
+    for _,action in pairs( {...} ) do
+        AddGunAction( wand, action );
+    end
+    return wand;
+end
