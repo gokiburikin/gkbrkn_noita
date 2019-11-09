@@ -12,10 +12,10 @@ PERKS = {
         Enabled = false,
         TeleportDistance = 128,
     }, 
-    Duplicate = {
+    DuplicateWand = {
         Enabled = true,
     },
-    BleedGold = {
+    GoldenBlood = {
         Enabled = true,
     },
     SpellEfficiency = {
@@ -24,7 +24,7 @@ PERKS = {
     },
     ManaEfficiency = {
         Enabled = true,
-        Discount = 0.20,
+        Discount = 0.33,
     },
     RapidFire = {
         Enabled = true,
@@ -32,7 +32,7 @@ PERKS = {
         CastDelayAdjustment = function( castDelay ) return castDelay * 0.5 end,
         SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 8 end,
     },
-    Sturdy = {
+    KnockbackImmunity = {
         Enabled = true,
     },
     Resilience = {
@@ -59,7 +59,7 @@ ACTIONS = {
         Enabled = false,
         RetainChance = 0.66,
     },
-    Curse = {
+    GoldenBlessing = {
         Enabled = true,
     },
     MagicLight = {
@@ -71,7 +71,7 @@ ACTIONS = {
     MicroShield = {
         Enabled = true,
     },
-    Spectral = {
+    SpectralShot = {
         Enabled = true,
     },
     Buckshot = { -- Deprecated
@@ -80,8 +80,8 @@ ACTIONS = {
     SniperShot = {
         Enabled = false,
     },
-    Multiply = {
-        Enabled = false,
+    DuplicateSpell = {
+        Enabled = true,
     },
     SpellMerge = {
         Enabled = true,
@@ -89,7 +89,7 @@ ACTIONS = {
     ExtraProjectile = {
         Enabled = true,
     },
-    GuaranteedCritical = {
+    PerfectCritical = {
         Enabled = true,
     },
     ProjectileBurst = {
@@ -107,7 +107,7 @@ ACTIONS = {
     DrawDeck = {
         Enabled = true,
     },
-    Orbit = {
+    ProjectileGravityWell = {
         Enabled = true,
     },
     LifetimeDamage = {
@@ -116,10 +116,28 @@ ACTIONS = {
     BounceDamage = {
         Enabled = true,
     },
-    BrainWorm = {
+    PathCorrection = {
         Enabled = true,
     },
     CollisionDetection = {
+        Enabled = true,
+    },
+    PowerShot = {
+        Enabled = true,
+    },
+    ShimmeringTreasure = {
+        Enabled = true,
+    },
+    NgonPattern = {
+        Enabled = true,
+    },
+    ShuffleDeck = {
+        Enabled = true,
+    },
+    BreakCast = {
+        Enabled = true,
+    },
+    ProjectileOrbit = {
         Enabled = true,
     },
     Test = {
@@ -143,7 +161,13 @@ MISC = {
         Flash = true,
     },
     HealOnMaxHealthUp = {
-        Enabled = true,
+        Enabled = false,
         HealToMax = false
+    },
+    LooseSpellGeneration = {
+        Enabled = false,
+    },
+    LimitedAmmo = {
+        Enabled = false,
     }
 }

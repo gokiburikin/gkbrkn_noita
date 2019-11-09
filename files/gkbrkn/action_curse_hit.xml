@@ -1,7 +1,0 @@
-<Entity >
-    <LuaComponent 
-		_enabled="1" 
-        script_damage_received="files/gkbrkn/action_curse_hit.lua"
-        >
-   </LuaComponent>
-</Entity>

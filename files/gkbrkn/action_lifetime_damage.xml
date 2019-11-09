@@ -1,7 +1,0 @@
-<Entity>
-    <LuaComponent
-		script_source_file="files/gkbrkn/action_lifetime_damage_update.lua"
-		execute_every_n_frame="1"
-		>
-	</LuaComponent>
-</Entity>

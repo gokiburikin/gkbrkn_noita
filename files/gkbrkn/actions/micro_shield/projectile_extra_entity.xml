@@ -1,0 +1,18 @@
+<Entity>
+
+    <InheritTransformComponent>
+		<Transform 
+			only_position="1"
+			position.x="0" 
+			position.y="0" >
+		</Transform>
+	</InheritTransformComponent>
+
+    <EnergyShieldComponent 
+        _tags="enabled_in_hand,item_identified__LEGACY"
+        recharge_speed="1.00"
+        energy_required_to_shield="0.0"
+		radius="8.0" >
+    </EnergyShieldComponent>
+
+</Entity>

@@ -1,22 +1,40 @@
 --[[
 
+changelog for commit messages:
+    Adjust Collision Detection (Speed Multiplier down, Lifetime Up)
+    Add Power Shot (damage, mass, world penetration)
+    Add Shimmering Treasure (physics items shine)
+    Add Duplicate Spell
+    Add Break Cast
+    Add Ngon Pattern
+    Add Shuffle Deck
+    Add Limited Ammo (give infinite use projectiles limited uses)
+    Add Loose Spell Generation (allows any spell to appear on any level wand)
+    Fix Bounce Damage not counting the first bounce
+    Buff Bounce Damage
+    Nerf Path Correction (detection range down)
+    Adjust Magic Light particle emitter
+    File path refactoring
+    General code cleanup
+
 kill streaks events
 grze events
 passives as mini perks
     greed
-
 
 HitEffect considerations
     ElectricitySourceComponent
     DamageNearbyEntitiesComponent
     WormAttractorComponent
 
-
+Projectile Mods
+    Shuffle Deck (randomize the remaining deck)
+    N-gon (cast the remaining spells in a circle)
+    Break Cast (prevent any further draws this cast)
 Mana Recharge Passive
     Wands mana charges more quickly when holstered
 Lucky Favour
     A small chance to evade damage
-
 
 UTILITY
     TODO
@@ -54,176 +72,64 @@ ABANDONED
 
 dofile( "files/gkbrkn/helper.lua");
 dofile( "files/gkbrkn/config.lua");
-ModLuaFileAppend( "data/scripts/gun/gun.lua", "files/gkbrkn/gun.lua" );
-ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/gun_extra_modifiers.lua" );
-if PERKS.Enraged.Enabled then ModLuaFileAppend( "data/translations/common.csv", "files/gkbrkn/common.csv" ); end
-if PERKS.Enraged.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_enraged.lua" ); end
-if PERKS.LivingWand.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_living_wand.lua" ); end
-if PERKS.Duplicate.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_duplicate.lua" ); end
-if PERKS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_spell_efficiency.lua" ); end
-if PERKS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_mana_efficiency.lua" ); end
-if PERKS.RapidFire.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_rapid_fire.lua" ); end
-if PERKS.BleedGold.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_bleed_gold.lua" ); end
-if PERKS.Sturdy.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_sturdy.lua" ); end
-if PERKS.Resilience.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_resilience.lua" ); end
-if PERKS.LostTreasure.Enabled then dofile( "files/gkbrkn/perk_lost_treasure_update.lua"); ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perk_lost_treasure.lua" ); end
-if ACTIONS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spell_efficiency.lua" ); end
-if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_mana_efficiency.lua" ); end
-if ACTIONS.Curse.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_curse.lua" ); end
-if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_magic_light.lua" ); end
-if ACTIONS.Revelation.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_revelation.lua" ); end
-if ACTIONS.MicroShield.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_micro_shield.lua" ); end
-if ACTIONS.Spectral.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spectral.lua" ); end
-if ACTIONS.Buckshot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_arcane_buckshot.lua" ); end
-if ACTIONS.SniperShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_arcane_shot.lua" ); end
-if ACTIONS.Multiply.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_multiply.lua" ); end
-if ACTIONS.SpellMerge.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_spell_merge.lua" ); end
-if ACTIONS.ExtraProjectile.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_extra_projectile.lua" ); end
-if ACTIONS.GuaranteedCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_guaranteed_critical.lua" ); end
-if ACTIONS.ProjectileBurst.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_projectile_burst.lua" ); end
-if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_hit.lua" ); end
-if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_timer.lua" ); end
-if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_trigger_death.lua" ); end
-if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_draw_deck.lua" ); end
-if ACTIONS.Orbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_orbit.lua" ); end
-if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_lifetime_damage.lua" ); end
-if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_bounce_damage.lua" ); end
-if ACTIONS.BrainWorm.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_brain_worm.lua" ); end
-if ACTIONS.CollisionDetection.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_collision_detection.lua" ); end
-if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/action_test.lua" ); end
---if MISC.GoldPickupTracker.Enabled then dofile( "files/gkbrkn/gold_tracking.lua"); end
-if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/drop_money.lua" ); end
+ModLuaFileAppend( "data/scripts/gun/gun.lua", "files/gkbrkn/append_gun.lua" );
+ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/append_gun_extra_modifiers.lua" );
+if PERKS.DuplicateWand.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/duplicate_wand/init.lua" ); end
+if PERKS.Enraged.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/enraged/init.lua" ); end
+if PERKS.GoldenBlood.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/golden_blood/init.lua" ); end
+if PERKS.LivingWand.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/living_wand/init.lua" ); end
+if PERKS.LostTreasure.Enabled then
+    dofile( "files/gkbrkn/perk_lost_treasure_update.lua");
+    ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/lost_treasure/init.lua" );
+end
+if PERKS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_efficiency/init.lua" ); end
+if PERKS.RapidFire.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/rapid_fire/init.lua" ); end
+if PERKS.Resilience.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/resilience/init.lua" ); end
+if PERKS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/spell_efficiency/init.lua" ); end
+if PERKS.KnockbackImmunity.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/knockback_immunity/init.lua" ); end
 
-function OnPlayerSpawned( player_entity ) -- This runs when player entity has been created
-    if MISC.GoldPickupTracker.Enabled and MISC.GoldPickupTracker.ShowTracker and EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
-        EntityAddComponent( player_entity, "SpriteComponent", { 
-            _tags="gkbrkn_gold_tracker,enabled_in_world",
-            image_file="files/gkbrkn/font_pixel_white.xml", 
-            emissive="1",
-            is_text_sprite="1",
-            offset_x="8", 
-            offset_y="-4", 
-            update_transform="1" ,
-            update_transform_rotation="0",
-            text="",
-            has_special_scale="1",
-            special_scale_x="0.6667",
-            special_scale_y="0.6667",
-            z_index="1.6",
-        } );
-        EntityAddComponent( player_entity, "LuaComponent", {
-            script_source_file="files/gkbrkn/gold_tracking.lua",
-            execute_on_added="1",
-            execute_every_n_frame="1",
-        });
+if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/bounce_damage/init.lua" ); end
+if ACTIONS.BreakCast.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/break_cast/init.lua" ); end
+if ACTIONS.Buckshot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/arcane_buckshot/init.lua" ); end
+if ACTIONS.CollisionDetection.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/collision_detection/init.lua" ); end
+if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/draw_deck/init.lua" ); end
+if ACTIONS.DuplicateSpell.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/duplicate/init.lua" ); end
+if ACTIONS.ExtraProjectile.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/extra_projectile/init.lua" ); end
+if ACTIONS.GoldenBlessing.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/golden_blessing/init.lua" ); end
+if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/lifetime_damage/init.lua" ); end
+if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/magic_light/init.lua" ); end
+if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/mana_efficiency/init.lua" ); end
+if ACTIONS.MicroShield.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/micro_shield/init.lua" ); end
+if ACTIONS.NgonPattern.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/ngon_pattern/init.lua" ); end
+if ACTIONS.PathCorrection.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/path_correction/init.lua" ); end
+if ACTIONS.PerfectCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/perfect_critical/init.lua" ); end
+if ACTIONS.PowerShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/power_shot/init.lua" ); end
+if ACTIONS.ProjectileBurst.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_burst/init.lua" ); end
+if ACTIONS.ProjectileGravityWell.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_gravity_well/init.lua" ); end
+if ACTIONS.ProjectileOrbit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_orbit/init.lua" ); end
+if ACTIONS.Revelation.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/revelation/init.lua" ); end
+if ACTIONS.ShimmeringTreasure.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/shimmering_treasure/init.lua" ); end
+if ACTIONS.ShuffleDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/shuffle_deck/init.lua" ); end
+if ACTIONS.SpectralShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/spectral_shot/init.lua" ); end
+if ACTIONS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/spell_efficiency/init.lua" ); end
+if ACTIONS.SpellMerge.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/spell_merge/init.lua" ); end
+if ACTIONS.SniperShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/arcane_shot/init.lua" ); end
+if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
+if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_hit/init.lua" ); end
+if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_timer/init.lua" ); end
+if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_death/init.lua" ); end
+
+if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" ); end
+
+function OnPlayerSpawned( player_entity ) DoFileEnvironment( "files/gkbrkn/player_spawned.lua", { player_entity = player_entity } ); end
+function OnWorldPostUpdate() DoFileEnvironment( "files/gkbrkn/world_post_update.lua" ); end
+
+function OnModPostInit()
+    if MISC.LooseSpellGeneration.Enabled then
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
     end
-
-    --local platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
-    --ComponentSetValue( platforming, "run_velocity", "500" );
-
-    if MISC.InvincibilityFrames.Enabled then
-        EntityAddComponent( player_entity, "LuaComponent", {
-            execute_every_n_frame="-1",
-            script_damage_received="files/gkbrkn/invincibility_frames.lua",
-        });
-        if MISC.InvincibilityFrames.Flash then
-            EntityAddComponent( player_entity, "LuaComponent", {
-                script_source_file="files/gkbrkn/invincibility_frames_flash.lua",
-                execute_every_n_frame="1",
-            });
-        end
-    end
-
-    if MISC.HealOnMaxHealthUp.Enabled then
-        EntityAddComponent( player_entity, "LuaComponent", {
-            script_source_file="files/gkbrkn/max_health_heal.lua",
-            execute_on_added="1",
-            execute_every_n_frame="1",
-        });
-    end
-
-    if SETTINGS.Debug then 
-        dofile( "data/scripts/perks/perk.lua");
-        dofile("data/scripts/gun/procedural/gun_action_utils.lua");
-        local effect = GetGameEffectLoadTo( player_entity, "EDIT_WANDS_EVERYWHERE", true );
-        if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
-
-        local x, y = EntityGetTransform( player_entity );
-        local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
-        if inventory ~= nil then
-            local inventory_items = EntityGetAllChildren( inventory );
-            if inventory_items ~= nil then
-                for i,item_entity in ipairs( inventory_items ) do
-                    GameKillInventoryItem( player_entity, item_entity );
-                end
-            end
-            EntityAddChild( inventory, CreateWand( x, y, 
-                "GKBRKN_MAGIC_LIGHT", "RECHARGE", "GKBRKN_COLLISION_DETECTION", "SCATTER_4",
-                "LIGHT_BULLET", "LIGHT_BULLET", "LIGHT_BULLET", "RECHARGE", "LIGHT_BULLET"
-            ));
-
-            EntityAddChild( inventory, CreateWand( x, y, 
-                "GKBRKN_MAGIC_LIGHT", "RECHARGE", "AVOIDANCE", "SCATTER_4",
-                "LIGHT_BULLET", "LIGHT_BULLET", "LIGHT_BULLET", "RECHARGE", "LIGHT_BULLET"
-            ));
-        end
-
-        --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
-        --perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
-
-        --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
-        local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
-        local damage_models = EntityGetComponent( target_dummy, "DamageModelComponent" );
-        for _,damage_model in pairs( damage_models ) do
-            ComponentSetValue( damage_model, "max_hp", 1000 );
-            ComponentSetValue( damage_model, "hp", 1000 );
-        end
-
-        EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
-        for i=1,10 do
-            EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
-        end
-        --EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
+    if MISC.LimitedAmmo.Enabled then
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
     end
 end
 
-
-function OnWorldPostUpdate()
-    --DEBUG_MARK( 0, 0, "dwidjwdi", 0, 0, 1 );
-    if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
-
-    --[[
-    local players = EntityGetWithTag( "player_unit" );
-    for _,player in pairs( players ) do
-        local x, y = EntityGetTransform( player );
-        local nearby_entities = EntityGetInRadius( x, y, 128 );
-        for _,entity in pairs( nearby_entities ) do
-            if EntityHasTag( entity, "gkbrkn_bad_aimer" ) == false then
-                local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" );
-                if animal_ais ~= nil then
-                    for _,ai in pairs( animal_ais ) do
-                        ComponentSetValue( ai, "creature_detection_range_x", "100" );
-                        ComponentSetValue( ai, "creature_detection_range_y", "100" );
-                        --ComponentSetValue( ai, "attack_ranged_frames_between", "10" );
-                        GamePrint("made enemy "..entity.." suck at detection");
-                    end
-                    EntityAddTag( entity, "gkbrkn_bad_aimer" );
-                end
-            end
-        end
-    end
-    ]]
-
-    --GameCreateParticle( "gold", -0, -100, 1, 0, 0, false )
-    --GamePrint( #EntityGetWithTag("gkbrkn_action_orbit") );
-    
-    --[[
-    local players = EntityGetWithTag( "player_unit" );
-    if players ~= nil then
-        for index,player_entity_id in pairs( players ) do
-            local component = EntityGetFirstComponent( player_entity_id, "Inventory2Component" );
-            GamePrint( component.."@ herd"..ComponentGetValue( component, "mActiveItem" ) );
-        end
-    end
-    ]]
-end

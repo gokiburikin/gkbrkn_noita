@@ -1,5 +1,11 @@
 dofile("data/scripts/gun/procedural/gun_action_utils.lua");
 
+function DoFileEnvironment( filepath, environment )
+    if environment == nil then environment = {} end
+    local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = _G } ) ) );
+    if status == false then print_error( result ); end
+end
+
 function PackString( separator, ... )
 	local string = {};
 	for n=1,select( '#' , ... ) do
@@ -289,6 +295,8 @@ function CopyWand( base_wand, copy_wand, copy_sprite, copy_actions )
     CopyComponentObjectMembers( base_ability_component, copy_ability_component, "gunaction_config" );
     if copy_sprite ~= false then
         CopyListedComponentMembers( FindFirstComponentThroughTags( base_wand, "z_index", "image_file" ), FindFirstComponentThroughTags( copy_wand, "z_index", "image_file" ), "image_file","offset_x","offset_y");
+        local base_hotspot = EntityGetFirstComponent( base_wand, "HotspotComponent", "shoot_pos" );
+        GamePrint(tostring(base_hotspot));
     end
     if copy_actions ~= false then
         CopyWandActions( base_wand, copy_wand );

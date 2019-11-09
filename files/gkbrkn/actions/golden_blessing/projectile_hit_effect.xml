@@ -1,0 +1,7 @@
+<Entity >
+    <LuaComponent 
+		_enabled="1" 
+        script_damage_received="files/gkbrkn/actions/golden_blessing/projectile_damage_received.lua"
+        >
+   </LuaComponent>
+</Entity>
