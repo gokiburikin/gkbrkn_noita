@@ -43,13 +43,13 @@ A collection of things I'm adding to Noita. This mod contains a CONFIG.lua file.
 ### Multicast Spells
 - [x] **Draw Deck**: Draw all remaining spells.
 - [x] **Duplicate Spell**: Cast the next spell twice.
-- [x] **N-gon Pattern**: Cast all remaining spells in a circular pattern.
+- [x] **Formation N-gon**: Cast all remaining spells in a circular pattern.
 
 ### Misc Features
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets. *(Disabled by default)*
 - [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies. *(Disabled by default)*
-- [x] **Heal New Health**: Heals the health gained from max health pickups. *(Disabled by default)*
+- [x] **Heal On Max Health Up**: Heals the health gained from max health pickups. *(Disabled by default)*
 - [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand. *(Disabled by default)*
 - [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses. *(Disabled by default)*
 
