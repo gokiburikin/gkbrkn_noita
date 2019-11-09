@@ -128,7 +128,7 @@ ACTIONS = {
     ShimmeringTreasure = {
         Enabled = true,
     },
-    NgonPattern = {
+    NgonShape = {
         Enabled = true,
     },
     ShuffleDeck = {

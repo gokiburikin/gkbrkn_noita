@@ -1,7 +1,7 @@
 table.insert( actions,
 {
     id          = "GKBRKN_LIFETIME_DAMAGE",
-    name 		= "Damage Plus: Time",
+    name 		= "Damage Plus - Time",
     description = "Increases the damage done by a spell over time",
     sprite 		= "files/gkbrkn/actions/lifetime_damage/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/lifetime_damage/icon.png",

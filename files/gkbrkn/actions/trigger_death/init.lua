@@ -1,7 +1,7 @@
 table.insert( actions,
 {
     id          = "GKBRKN_TRIGGER_DEATH",
-    name 		= "Trigger: Death",
+    name 		= "Trigger - Death",
     description = "Cast a spell that casts another spell when it expires",
     sprite 		= "files/gkbrkn/actions/trigger_death/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/trigger_death/icon.png",

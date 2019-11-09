@@ -1,7 +1,7 @@
 table.insert( actions,
 {
     id          = "GKBRKN_BOUNCE_DAMAGE",
-    name 		= "Damage Plus: Bounce",
+    name 		= "Damage Plus - Bounce",
     description = "Increases the damage done by the spell with each bounce",
     sprite 		= "files/gkbrkn/actions/bounce_damage/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/bounce_damage/icon.png",

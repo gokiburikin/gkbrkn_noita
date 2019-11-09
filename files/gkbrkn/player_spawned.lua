@@ -91,7 +91,8 @@ if SETTINGS.Debug then
         ]]
 
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_PROJECTILE_ORBIT","SCATTER_4","LIGHT_BULLET","LIGHT_BULLET", "LIGHT_BULLET","LIGHT_BULLET"
+            "GKBRKN_PROJECTILE_ORBIT","LIGHT_BULLET","LIGHT_BULLET_TRIGGER","LIGHT_BULLET_TRIGGER_2",
+            "HEAVY_BULLET", "CHAINSAW", "LIGHTNING", "SLOW_BULLET"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
             "RECHARGE", "GKBRKN_COLLISION_DETECTION", 
