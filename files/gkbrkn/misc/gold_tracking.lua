@@ -16,14 +16,16 @@ if wallet ~= nil then
 end
 
 if money_picked_total > 0 then
-    local gold_tracker_text = EntityGetFirstComponent( entity_id, "SpriteComponent", "gkbrkn_gold_tracker");
-    if gold_tracker_text ~= nil then
-        ComponentSetValue( gold_tracker_text, "text", "$"..money_picked_total );
-        local fade_percent = 1 - (GameGetFrameNum() - money_picked_time_last) / MISC.GoldPickupTracker.TrackDuration;
-        ComponentSetValue( gold_tracker_text, "alpha", tostring(math.pow(fade_percent,0.2)) );
+    if  HasFlagPersistent(MISC.GoldPickupTracker.ShowTrackerEnabled) then
+        local gold_tracker_text = EntityGetFirstComponent( entity_id, "SpriteComponent", "gkbrkn_gold_tracker");
+        if gold_tracker_text ~= nil then
+            ComponentSetValue( gold_tracker_text, "text", "$"..money_picked_total );
+            local fade_percent = 1 - (GameGetFrameNum() - money_picked_time_last) / MISC.GoldPickupTracker.TrackDuration;
+            ComponentSetValue( gold_tracker_text, "alpha", tostring(math.pow(fade_percent,0.2)) );
+        end
     end
     if GameGetFrameNum() - money_picked_time_last >= MISC.GoldPickupTracker.TrackDuration then
-        if MISC.GoldPickupTracker.ShowMessage then
+        if HasFlagPersistent( MISC.GoldPickupTracker.ShowMessageEnabled ) then
             GamePrint( "Picked up "..money_picked_total.." Gold" );
         end
         money_picked_total = 0;

@@ -145,29 +145,113 @@ ACTIONS = {
     }
 }
 
+OPTIONS = {
+    {
+        Name = "Gold Tracking",
+    },
+    {
+        Name = "Show Log Message",
+        PersistentFlag = "gkbrkn_gold_tracking_message",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Show In World",
+        PersistentFlag = "gkbrkn_gold_tracking_in_world",
+        SubOption = true,
+        RequiresRestart = true,
+        EnabledByDefault = true,
+    },
+    {
+        Name = "Invincibility Frames",
+    },
+    {
+        Name = "Enabled",
+        PersistentFlag = "gkbrkn_invincibility_frames",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Show Flashing",
+        PersistentFlag = "gkbrkn_invincibility_frame_flashing",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Heal New Health",
+    },
+    {
+        Name = "Enabled",
+        PersistentFlag = "gkbrkn_max_health_heal",
+        SubOption = true,
+    },
+    {
+        Name = "Heal To Full",
+        PersistentFlag = "gkbrkn_max_health_heal_full",
+        SubOption = true,
+    },
+    {
+        Name = "Charm Nerf",
+        PersistentFlag = "gkbrkn_charm_nerf",
+        RequiresRestart = true,
+    },
+    {
+        Name = "Any Spell On Any Wand",
+        PersistentFlag = "gkbrkn_loose_spell_generation",
+        RequiresRestart = true,
+    },
+    {
+        Name = "Limited Ammo",
+        PersistentFlag = "gkbrkn_limited_ammo",
+        RequiresRestart = true,
+    },
+    {
+        Name = "Disable Random Spells",
+        PersistentFlag = "gkbrkn_disable_spells",
+        RequiresRestart = true,
+    },
+    {
+        Name = "Quick Swap",
+        PersistentFlag = "gkbrkn_quick_swap",
+        RequiresRestart = true,
+    },
+    {
+        Name = "Less Particles",
+        PersistentFlag = "gkbrkn_less_particles",
+    }
+}
+
 MISC = {
     GoldPickupTracker = {
-        Enabled = true,
         TrackDuration = 120, -- in game frames
-        ShowMessage = false,
-        ShowTracker = true
+        ShowMessageEnabled = "gkbrkn_gold_tracking_message",
+        ShowTrackerEnabled = "gkbrkn_gold_tracking_in_world",
     },
     CharmNerf = {
-        Enabled = false,
+        Enabled = "gkbrkn_gold_tracking_in_world",
     },
     InvincibilityFrames = {
-        Enabled = false,
         Duration = 40,
-        Flash = true,
+        Enabled = "gkbrkn_invincibility_frames",
+        FlashEnabled = "gkbrkn_invincibility_frames_flashing",
     },
     HealOnMaxHealthUp = {
-        Enabled = false,
-        HealToMax = false
+        Enabled = "gkbrkn_max_health_heal",
+        HealToMaxEnabled = "gkbrkn_max_health_heal_full",
     },
     LooseSpellGeneration = {
-        Enabled = false,
+        Enabled = "gkbrkn_loose_spell_generation",
     },
     LimitedAmmo = {
-        Enabled = false,
+        Enabled = "gkbrkn_limited_ammo",
+    },
+    DisableSpells = {
+        Enabled = "gkbrkn_disable_spells",
+    },
+    QuickSwap = {
+        Enabled = "gkbrkn_quick_swap",
+    },
+    LessParticles = {
+        Enabled = "gkbrkn_less_particles",
     }
 }

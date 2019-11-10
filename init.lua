@@ -1,26 +1,18 @@
 --[[
 
 changelog for commit messages:
-    Adjust Collision Detection (Speed Multiplier down, Lifetime Up)
-    Add Power Shot (damage, mass, world penetration)
-    Add Shimmering Treasure (physics items shine)
-    Add Duplicate Spell
-    Add Break Cast
-    Add Ngon Pattern
-    Add Shuffle Deck
-    Add Limited Ammo (give infinite use projectiles limited uses)
-    Add Loose Spell Generation (allows any spell to appear on any level wand)
-    Fix Bounce Damage not counting the first bounce
-    Buff Bounce Damage
-    Nerf Path Correction (detection range down)
-    Adjust Magic Light particle emitter
-    File path refactoring
-    General code cleanup
+    Update README and spell descriptions
+    Add Disable Spells
+    Add Quick Swap (second inventory)
+    Add Less Particles
+    Add basic in-game config menu (more to come)
 
 kill streaks events
 grze events
 passives as mini perks
     greed
+
+in game mod config menu (AddPersistentFlag)
 
 HitEffect considerations
     ElectricitySourceComponent
@@ -28,13 +20,18 @@ HitEffect considerations
     WormAttractorComponent
 
 Projectile Mods
-    Shuffle Deck (randomize the remaining deck)
-    N-gon (cast the remaining spells in a circle)
-    Break Cast (prevent any further draws this cast)
+    Copy Spell (cast the next spell_
 Mana Recharge Passive
     Wands mana charges more quickly when holstered
 Lucky Favour
     A small chance to evade damage
+
+TODO
+    make proj mods work for enemies (use herd id to find actual enemies)
+    add spell nerfs (heavy shot, damage plus, increase mana, chainsaw, luminous drill?)
+    disable spell wrapping (mostly for testing purposes)
+    low particles mode
+    golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
 
 UTILITY
     TODO
@@ -49,14 +46,9 @@ PERKS
     TODO
         Chaos (randomize projectile stuff)
         Stunlock Immunity (might be possible with small levels of knockback protection?)
-        A permanent +2 to Wand Capacity
     NYI
         Dual Wield would probably be an excessively difficulty task to implement, but it would be cool if you could designate a Wand to dual wield.
         Lava, Acid, Poison (Material) Immunities (impossible for now? can ignore _all_ materials, but not individual materials)
-
-FUTURE UPDATES
-    Trigger Actions (consider trying to fix duplicate support)
-    Living Wand (should not fight player ever, even if berserked)
 
 ABANDONED
     Life Steal (1% of damage dealt is returned as life)
@@ -72,6 +64,14 @@ ABANDONED
 
 dofile( "files/gkbrkn/helper.lua");
 dofile( "files/gkbrkn/config.lua");
+if HasFlagPersistent("gkbrkn_first_launch") == false then
+    AddFlagPersistent("gkbrkn_first_launch")
+    for _,option in pairs(OPTIONS) do
+        if option.EnabledByDefault == true then
+            AddFlagPersistent( option.PersistentFlag );
+        end
+    end
+end
 ModLuaFileAppend( "data/scripts/gun/gun.lua", "files/gkbrkn/append_gun.lua" );
 ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/append_gun_extra_modifiers.lua" );
 if PERKS.DuplicateWand.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/duplicate_wand/init.lua" ); end
@@ -125,10 +125,10 @@ function OnPlayerSpawned( player_entity ) DoFileEnvironment( "files/gkbrkn/playe
 function OnWorldPostUpdate() DoFileEnvironment( "files/gkbrkn/world_post_update.lua" ); end
 
 function OnModPostInit()
-    if MISC.LooseSpellGeneration.Enabled then
+    if HasFlagPersistent(MISC.LooseSpellGeneration.Enabled) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
     end
-    if MISC.LimitedAmmo.Enabled then
+    if HasFlagPersistent(MISC.LimitedAmmo.Enabled) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
     end
 end

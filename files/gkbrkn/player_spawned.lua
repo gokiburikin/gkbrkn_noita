@@ -1,24 +1,26 @@
-if MISC.GoldPickupTracker.Enabled and MISC.GoldPickupTracker.ShowTracker and EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
-    EntityAddComponent( player_entity, "SpriteComponent", { 
-        _tags="gkbrkn_gold_tracker,enabled_in_world",
-        image_file="files/gkbrkn/font_pixel_white.xml", 
-        emissive="1",
-        is_text_sprite="1",
-        offset_x="8", 
-        offset_y="-4", 
-        update_transform="1" ,
-        update_transform_rotation="0",
-        text="",
-        has_special_scale="1",
-        special_scale_x="0.6667",
-        special_scale_y="0.6667",
-        z_index="1.6",
-    } );
-    EntityAddComponent( player_entity, "LuaComponent", {
-        script_source_file="files/gkbrkn/misc/gold_tracking.lua",
-        execute_on_added="1",
-        execute_every_n_frame="1",
-    });
+if HasFlagPersistent(MISC.GoldPickupTracker.ShowTrackerEnabled) or HasFlagPersistent(MISC.GoldPickupTracker.ShowMessageEnabled) then
+    if EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
+        EntityAddComponent( player_entity, "SpriteComponent", { 
+            _tags="gkbrkn_gold_tracker,enabled_in_world",
+            image_file="files/gkbrkn/font_pixel_white.xml", 
+            emissive="1",
+            is_text_sprite="1",
+            offset_x="8", 
+            offset_y="-4", 
+            update_transform="1" ,
+            update_transform_rotation="0",
+            text="",
+            has_special_scale="1",
+            special_scale_x="0.6667",
+            special_scale_y="0.6667",
+            z_index="1.6",
+        } );
+        EntityAddComponent( player_entity, "LuaComponent", {
+            script_source_file="files/gkbrkn/misc/gold_tracking.lua",
+            execute_on_added="1",
+            execute_every_n_frame="1",
+        });
+    end
 end
 
 --[[
@@ -31,7 +33,7 @@ if platforming ~= nil then
 end
 ]]
 
-if MISC.InvincibilityFrames.Enabled then
+if HasFlagPersistent(MISC.InvincibilityFrames.Enabled) then
     if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames" ) == nil then
         EntityAddComponent( player_entity, "LuaComponent", {
             _tags="gkbrkn_invincibility_frames",
@@ -39,7 +41,7 @@ if MISC.InvincibilityFrames.Enabled then
             script_damage_received="files/gkbrkn/misc/invincibility_frames.lua",
         });
     end
-    if MISC.InvincibilityFrames.Flash and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames_flash" ) == nil then
+    if HasFlagPersistent(MISC.InvincibilityFrames.FlashEnabled) and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames_flash" ) == nil then
         EntityAddComponent( player_entity, "LuaComponent", {
             _tags="gkbrkn_invincibility_frames_flash",
             script_source_file="files/gkbrkn/misc/invincibility_frames_flash.lua",
@@ -48,7 +50,7 @@ if MISC.InvincibilityFrames.Enabled then
     end
 end
 
-if MISC.HealOnMaxHealthUp.Enabled and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_max_health_heal" ) == nil then
+if HasFlagPersistent(MISC.HealOnMaxHealthUp.Enabled) and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_max_health_heal" ) == nil then
     EntityAddComponent( player_entity, "LuaComponent", {
         _tags="gkbrkn_max_health_heal",
         script_source_file="files/gkbrkn/misc/max_health_heal.lua",
@@ -57,15 +59,24 @@ if MISC.HealOnMaxHealthUp.Enabled and EntityGetFirstComponent( player_entity, "L
     });
 end
 
-if PERKS.LostTreasure.Enabled then
-    if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_lost_treasure" ) == nil then
-        EntityAddComponent( player_entity, "LuaComponent", {
-            _tags="gkbrkn_lost_treasure",
-            script_source_file="files/gkbrkn/perks/lost_treasure/player_update.lua",
-            execute_every_n_frame="10"
-        });
-    end
+if PERKS.LostTreasure.Enabled and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_lost_treasure" ) == nil then
+    EntityAddComponent( player_entity, "LuaComponent", {
+        _tags="gkbrkn_lost_treasure",
+        script_source_file="files/gkbrkn/perks/lost_treasure/player_update.lua",
+        execute_every_n_frame="10"
+    });
 end
+
+if HasFlagPersistent(MISC.DisableSpells.Enabled) then
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/disable_spells.lua" );
+end
+
+if HasFlagPersistent(MISC.QuickSwap.Enabled) then
+    local quick_swap_inventory = EntityCreateNew("gkbrkn_swap_inventory");
+    EntityAddChild( player_entity, quick_swap_inventory );
+end
+
+EntityLoad('files/gkbrkn/gui/container.xml');
 
 if SETTINGS.Debug then 
     dofile( "data/scripts/perks/perk.lua");

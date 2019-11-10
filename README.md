@@ -1,5 +1,5 @@
 # gkbrkn_noita
-A collection of things I'm adding to Noita. This mod contains a CONFIG.lua file. Use it to make local changes. Some things are disabled by default!
+A collection of things I'm adding to Noita. This mod contains an in-game config menu. Use it to toggle options.
 
 ### Perks
 - [x] **Duplicate**: Duplicate a random wand in your inventory.
@@ -41,17 +41,20 @@ A collection of things I'm adding to Noita. This mod contains a CONFIG.lua file.
 - [x] **Shuffle Deck**: Randomizes the order all remaining spells are cast.
 
 ### Multicast Spells
-- [x] **Draw Deck**: Draw all remaining spells.
+- [x] **Draw Deck**: Simultaneously cast all remaining spells.
 - [x] **Duplicate Spell**: Cast the next spell twice.
-- [x] **Formation N-gon**: Cast all remaining spells in a circular pattern.
+- [x] **Formation N-gon**: Simultaneously cast all remaining spells in a circular pattern.
 
 ### Misc Features
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
-- [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets. *(Disabled by default)*
-- [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies. *(Disabled by default)*
-- [x] **Heal On Max Health Up**: Heals the health gained from max health pickups. *(Disabled by default)*
-- [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand. *(Disabled by default)*
-- [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses. *(Disabled by default)*
+- [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
+- [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
+- [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
+- [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand.
+- [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.
+- [x] **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
+- [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
+- [x] **Less Particles (WIP)**: Enable to reduce cosmetic particle emission.
 
 ### Deprecated
 - [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*

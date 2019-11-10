@@ -22,6 +22,67 @@ if #tracked_projectiles > 0 then
     end
 end
 
+if HasFlagPersistent( "gkbrkn_test") == false then
+    GamePrint( "added persistent flag gkbrkn_test" );
+    AddFlagPersistent( "gkbrkn_test")
+end
+
+local players = EntityGetWithTag( "player_unit" );
+quick_swapped = false;
+for _,player in pairs( players ) do
+    local x,y = EntityGetTransform( player );
+    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+        local nearby_entities = EntityGetInRadius( x, y, 256 );
+        for _,nearby in pairs( nearby_entities ) do
+            if EntityHasTag( nearby, "gkbrkn_less_particles" ) == false then
+                EntityAddTag( nearby, "gkbrkn_less_particles" );
+                local particle_emitters = EntityGetComponent( nearby, "ParticleEmitterComponent" ) or {};
+                for _,emitter in pairs( particle_emitters ) do
+                    if ComponentGetValue( emitter, "create_real_particles" ) == "0" then
+                        --EntitySetComponentIsEnabled( nearby, emitter, false );
+                        ComponentSetValue( emitter, "emission_interval_max_frames", "10" );
+                        ComponentSetValue( emitter, "count_min", "1" );
+                        ComponentSetValue( emitter, "count_max", "1" );
+                        ComponentSetValue( emitter, "collide_with_grid", "0" );
+                        --ComponentSetValue( emitter, "trail_gap", tostring( math.max(tonumber( ComponentGetValue( emitter, "trail_gap" ) ), 5 )) );
+                        ComponentSetValue( emitter, "airflow_force", "0" );
+                    end
+                end
+            end
+        end
+    end
+
+    local controls = EntityGetFirstComponent( player, "ControlsComponent" );
+    if controls ~= nil then
+        local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
+        local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
+        if alt_fire == "1" and GameGetFrameNum() == tonumber(alt_fire_frame) then
+            if quick_swapped == false then
+                quick_swapped = true;
+                local inventory = nil;
+                local swap_inventory = nil;
+                for _,child in pairs(EntityGetAllChildren( player )) do
+                    if EntityGetName(child) == "inventory_quick" then
+                        inventory = child;
+                    elseif EntityGetName(child) == "gkbrkn_swap_inventory" then
+                        swap_inventory = child;
+                    end
+                end
+                if inventory ~= nil and swap_inventory ~= nil then
+                    local inventory_entities = EntityGetAllChildren( inventory ) or {};
+                    local swap_inventory_entities = EntityGetAllChildren( swap_inventory ) or {};
+                    for _,child in pairs(inventory_entities) do EntityRemoveFromParent( child ); end
+                    for _,child in pairs(swap_inventory_entities) do EntityRemoveFromParent( child ); end
+                    for _,child in pairs(inventory_entities) do EntityAddChild( swap_inventory, child ); end
+                    for _,child in pairs(swap_inventory_entities) do EntityAddChild( inventory, child ); end
+                end
+            end
+        else
+            quick_swapped = false;
+        end
+    end
+end
+
 --[[
     local players = EntityGetWithTag( "player_unit" );
     for _,player in pairs( players ) do

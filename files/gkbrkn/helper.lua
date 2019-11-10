@@ -30,7 +30,7 @@ function PackString( separator, ... )
 end
 
 function Log( ... )
-    print_error( PackString(" ", ... ) );
+    GamePrint( PackString(" ", ... ) );
 end
 
 function LogCompact( ... )
