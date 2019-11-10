@@ -19,7 +19,7 @@
         use_gun_script="1" 
         add_these_child_actions=""
         ><gun_config 
-            shuffle_deck_when_empty="0"
+            shuffle_deck_when_empty="1"
             reload_time="30"
             deck_capacity="20" >
         </gun_config>

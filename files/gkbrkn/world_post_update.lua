@@ -22,13 +22,7 @@ if #tracked_projectiles > 0 then
     end
 end
 
-if HasFlagPersistent( "gkbrkn_test") == false then
-    GamePrint( "added persistent flag gkbrkn_test" );
-    AddFlagPersistent( "gkbrkn_test")
-end
-
 local players = EntityGetWithTag( "player_unit" );
-quick_swapped = false;
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
     if HasFlagPersistent( MISC.LessParticles.Enabled ) then
@@ -45,23 +39,22 @@ for _,player in pairs( players ) do
                         ComponentSetValue( emitter, "count_max", "1" );
                         ComponentSetValue( emitter, "collide_with_grid", "0" );
                         --ComponentSetValue( emitter, "trail_gap", tostring( math.max(tonumber( ComponentGetValue( emitter, "trail_gap" ) ), 5 )) );
-                        ComponentSetValue( emitter, "airflow_force", "0" );
+                        --ComponentSetValue( emitter, "airflow_force", "0" );
                     end
                 end
             end
         end
     end
 
-    local controls = EntityGetFirstComponent( player, "ControlsComponent" );
-    local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
-    if controls ~= nil and inventory2 ~= nil then
-        local active_item = ComponentGetValue( inventory2, "mActiveItem" );
-        if active_item == nil or EntityHasTag( active_item, "wand" ) == true then
-            local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
-            local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
-            if alt_fire == "1" and GameGetFrameNum() == tonumber(alt_fire_frame) then
-                if quick_swapped == false then
-                    quick_swapped = true;
+    if HasFlagPersistent(MISC.QuickSwap.Enabled) then
+        local controls = EntityGetFirstComponent( player, "ControlsComponent" );
+        local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
+        if controls ~= nil and inventory2 ~= nil then
+            local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+            if active_item == nil or EntityHasTag( active_item, "wand" ) == true then
+                local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
+                local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
+                if alt_fire == "1" and GameGetFrameNum() == tonumber(alt_fire_frame) then
                     local inventory = nil;
                     local swap_inventory = nil;
                     for _,child in pairs(EntityGetAllChildren( player )) do
@@ -80,8 +73,6 @@ for _,player in pairs( players ) do
                         for _,child in pairs(swap_inventory_entities) do EntityAddChild( inventory, child ); end
                     end
                 end
-            else
-                quick_swapped = false;
             end
         end
     end

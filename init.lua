@@ -1,13 +1,9 @@
 --[[
 
 changelog for commit messages:
-    Update README and spell descriptions
-    Add Disable Spells
-    Add Quick Swap (second inventory)
-    Add Less Particles
-    Add basic in-game config menu (more to come)
+    Add Order Deck
+    Add Always Cast
     Nerf Rapid Fire ( 50% reduction -> 33% reduction, +8 Spread to +12 Spread )
-    Fix invincibility frames flash
 
 kill streaks events
 grze events
@@ -89,6 +85,8 @@ if PERKS.RapidFire.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.
 if PERKS.Resilience.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/resilience/init.lua" ); end
 if PERKS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/spell_efficiency/init.lua" ); end
 if PERKS.KnockbackImmunity.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/knockback_immunity/init.lua" ); end
+if PERKS.AlwaysCast.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/always_cast/init.lua" ); end
+if PERKS.WIP.Enabled then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/wip/init.lua" ); end
 
 if ACTIONS.BounceDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/bounce_damage/init.lua" ); end
 if ACTIONS.BreakCast.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/break_cast/init.lua" ); end
@@ -103,6 +101,7 @@ if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actio
 if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/mana_efficiency/init.lua" ); end
 if ACTIONS.MicroShield.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/micro_shield/init.lua" ); end
 if ACTIONS.NgonShape.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/ngon_shape/init.lua" ); end
+if ACTIONS.OrderDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/order_deck/init.lua" ); end
 if ACTIONS.PathCorrection.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/path_correction/init.lua" ); end
 if ACTIONS.PerfectCritical.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/perfect_critical/init.lua" ); end
 if ACTIONS.PowerShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/power_shot/init.lua" ); end
@@ -116,21 +115,30 @@ if ACTIONS.SpectralShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_act
 if ACTIONS.SpellEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/spell_efficiency/init.lua" ); end
 if ACTIONS.SpellMerge.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/spell_merge/init.lua" ); end
 if ACTIONS.SniperShot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/arcane_shot/init.lua" ); end
-if ACTIONS.Test.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
+if ACTIONS.WIP.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
 if ACTIONS.TriggerHit.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_hit/init.lua" ); end
 if ACTIONS.TriggerTimer.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_timer/init.lua" ); end
 if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_death/init.lua" ); end
 
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" ); end
 
-function OnPlayerSpawned( player_entity ) DoFileEnvironment( "files/gkbrkn/player_spawned.lua", { player_entity = player_entity } ); end
-function OnWorldPostUpdate() DoFileEnvironment( "files/gkbrkn/world_post_update.lua" ); end
+function OnModPreInit()
+    RemoveFlagPersistent("gkbrkn_loose_spell_generation_init");
+end
+
+function OnPlayerSpawned( player_entity )
+    DoFileEnvironment( "files/gkbrkn/player_spawned.lua", { player_entity = player_entity } );
+end
+
+function OnWorldPostUpdate()
+    DoFileEnvironment( "files/gkbrkn/world_post_update.lua" );
+end
 
 function OnModPostInit()
-    if HasFlagPersistent(MISC.LooseSpellGeneration.Enabled) then
+    if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
     end
-    if HasFlagPersistent(MISC.LimitedAmmo.Enabled) then
+    if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
     end
 end

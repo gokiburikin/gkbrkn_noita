@@ -1,7 +1,19 @@
 # gkbrkn_noita
 A collection of things I'm adding to Noita. This mod contains an in-game config menu. Use it to toggle options.
 
+### Misc Features
+- [x] **Gold Counter**: Add a message showing how much gold was picked recently.
+- [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
+- [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
+- [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
+- [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand.
+- [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.
+- [x] **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
+- [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
+- [x] **Less Particles (WIP)**: Enable to reduce cosmetic particle emission.
+
 ### Perks
+- [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
 - [x] **Duplicate**: Duplicate a random wand in your inventory.
 - [x] **Enraged**: Gain Berserk permanently.
 - [x] **Golden Blood**: You bleed gold.
@@ -38,23 +50,13 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Shimmering Treasure**: Treasure catches your eye.
 
 ### Other Spells
-- [x] **Shuffle Deck**: Randomizes the order all remaining spells are cast.
+- [x] **Order Deck**: Correct the order of all remaining spells.
+- [x] **Shuffle Deck**: Randomize the order of all remaining spells.
 
 ### Multicast Spells
 - [x] **Draw Deck**: Simultaneously cast all remaining spells.
 - [x] **Duplicate Spell**: Cast the next spell twice.
 - [x] **Formation N-gon**: Simultaneously cast all remaining spells in a circular pattern.
-
-### Misc Features
-- [x] **Gold Counter**: Add a message showing how much gold was picked recently.
-- [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
-- [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
-- [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
-- [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand.
-- [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.
-- [x] **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
-- [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
-- [x] **Less Particles (WIP)**: Enable to reduce cosmetic particle emission.
 
 ### Deprecated
 - [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*

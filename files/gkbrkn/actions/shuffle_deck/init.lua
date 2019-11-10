@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_SHUFFLE_DECK",
     name 		= "Shuffle Deck",
-    description = "Randomize the order all remaining spells will be cast",
+    description = "Randomize the order of all remaining spells",
     sprite 		= "files/gkbrkn/actions/shuffle_deck/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/shuffle_deck/icon.png",
     type 		= ACTION_TYPE_MODIFIER,

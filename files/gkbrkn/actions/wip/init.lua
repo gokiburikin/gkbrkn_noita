@@ -11,6 +11,6 @@ table.insert( actions,
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 100,
     action 		= function()
-        dofile( "files/gkbrkn/actions/wip/action.lua");
+        DoFilEnvironment( "files/gkbrkn/actions/wip/action.lua");
     end,
 });

@@ -4,6 +4,7 @@ function DoFileEnvironment( filepath, environment )
     if environment == nil then environment = {} end
     local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = _G } ) ) );
     if status == false then print_error( result ); end
+    return environment;
 end
 
 function PackString( separator, ... )

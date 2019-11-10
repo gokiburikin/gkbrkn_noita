@@ -102,8 +102,8 @@ if SETTINGS.Debug then
         ]]
 
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_PROJECTILE_ORBIT","LIGHT_BULLET","LIGHT_BULLET_TRIGGER","LIGHT_BULLET_TRIGGER_2",
-            "HEAVY_BULLET", "CHAINSAW", "LIGHTNING", "SLOW_BULLET"
+            "GKBRKN_ORDER_DECK","LIGHT_BULLET","HEAVY_BULLET","RUBBER_BALL",
+            "BULLET", "SLOW_BULLET"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
             "RECHARGE", "GKBRKN_COLLISION_DETECTION", 
@@ -112,7 +112,7 @@ if SETTINGS.Debug then
     end
 
     --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
-    --perk_spawn( x, y, "GKBRKN_LOST_TREASURE" );
+    perk_spawn( x, y, "GKBRKN_ALWAYS_CAST" );
 
     --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
     local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );

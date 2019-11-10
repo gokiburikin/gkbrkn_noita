@@ -1,2 +1,5 @@
-c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/wip/projectile_extra_entity.xml,"
-draw_actions(1,true);
+local before = gun.shuffle_deck_when_empty;
+gun.shuffle_deck_when_empty = false;
+order_deck();
+gun.shuffle_deck_when_empty = before;
+draw_actions( 1, true );

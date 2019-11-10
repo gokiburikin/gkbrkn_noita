@@ -47,6 +47,12 @@ PERKS = {
     },
     LostTreasure = {
         Enabled = true,
+    },
+    AlwaysCast = {
+        Enabled = true,
+    },
+    WIP = {
+        Enabled = SETTINGS.Debug,
     }
 }
 
@@ -87,6 +93,9 @@ ACTIONS = {
         Enabled = true,
     },
     ExtraProjectile = {
+        Enabled = true,
+    },
+    OrderDeck = {
         Enabled = true,
     },
     PerfectCritical = {
@@ -140,7 +149,7 @@ ACTIONS = {
     ProjectileOrbit = {
         Enabled = true,
     },
-    Test = {
+    WIP = {
         Enabled = SETTINGS.Debug
     }
 }
