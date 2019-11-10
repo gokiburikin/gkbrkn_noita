@@ -28,9 +28,9 @@ PERKS = {
     },
     RapidFire = {
         Enabled = true,
-        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime * 0.5 end,
-        CastDelayAdjustment = function( castDelay ) return castDelay * 0.5 end,
-        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 8 end,
+        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime * 0.33 end,
+        CastDelayAdjustment = function( castDelay ) return castDelay * 0.33 end,
+        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 end,
     },
     KnockbackImmunity = {
         Enabled = true,
@@ -173,7 +173,7 @@ OPTIONS = {
     },
     {
         Name = "Show Flashing",
-        PersistentFlag = "gkbrkn_invincibility_frame_flashing",
+        PersistentFlag = "gkbrkn_invincibility_frames_flashing",
         SubOption = true,
         RequiresRestart = true,
     },

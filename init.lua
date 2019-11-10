@@ -6,6 +6,8 @@ changelog for commit messages:
     Add Quick Swap (second inventory)
     Add Less Particles
     Add basic in-game config menu (more to come)
+    Nerf Rapid Fire ( 50% reduction -> 33% reduction, +8 Spread to +12 Spread )
+    Fix invincibility frames flash
 
 kill streaks events
 grze events
