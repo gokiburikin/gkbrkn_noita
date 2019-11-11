@@ -1,4 +1,5 @@
 dofile("data/scripts/lib/utilities.lua");
+if _GKBRKN_HELPER == nil then dofile("files/gkbrkn/helper.lua"); end
 
 table.insert( perk_list, {
 	id = "GKBRKN_ALWAYS_CAST",
@@ -20,9 +21,14 @@ table.insert( perk_list, {
 
         local children = EntityGetAllChildren( base_wand );
         local actions = {};
+        local ability_component = WandGetAbilityComponent( base_wand );
+            if ability_component ~= nil then
+            local deck_capacity = tonumber( ComponentObjectGetValue( ability_component, "gun_config", "deck_capacity" ) );
+            ComponentObjectSetValue( ability_component, "gun_config", "deck_capacity", tostring( deck_capacity + 1 ) );
+        end
         for i,v in ipairs( children ) do
-            local all_comps = EntityGetAllComponents( v );
-            for _,component in pairs(all_comps) do
+            local components = EntityGetAllComponents( v );
+            for _,component in pairs(components) do
                 if ComponentGetValue( component, "permanently_attached" ) == "0" then
                     table.insert( actions, component );
                 end
