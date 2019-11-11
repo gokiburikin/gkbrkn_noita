@@ -25,6 +25,7 @@ end
 local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
+
     if HasFlagPersistent( MISC.LessParticles.Enabled ) then
         local nearby_entities = EntityGetInRadius( x, y, 256 );
         for _,nearby in pairs( nearby_entities ) do

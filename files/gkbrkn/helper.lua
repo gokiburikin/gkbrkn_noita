@@ -1,5 +1,7 @@
 dofile("data/scripts/gun/procedural/gun_action_utils.lua");
 
+_GKBRKN_HELPER = true;
+
 function DoFileEnvironment( filepath, environment )
     if environment == nil then environment = {} end
     local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = _G } ) ) );
@@ -31,7 +33,7 @@ function PackString( separator, ... )
 end
 
 function Log( ... )
-    GamePrint( PackString(" ", ... ) );
+    print_error( PackString(" ", ... ) );
 end
 
 function LogCompact( ... )
@@ -165,6 +167,17 @@ function CopyEntityComponentObject( component_type_name, component_object_name, 
     local base_component = EntityGetFirstComponent( base_entity, component_type_name );
     local copy_component = EntityGetFirstComponent( copy_entity, component_type_name );
     CopyComponentObjectMembers( base_component, copy_component );
+end
+
+function WandGetAbilityComponent( wand )
+    local components = EntityGetAllComponents( wand );
+    for i, component in ipairs( components ) do
+        for key, value in pairs( ComponentGetMembers( component ) ) do
+            if key == "mItemRecoil" then
+                return component;
+            end
+        end
+    end
 end
 
 function EnableWandAbilityComponent(wand_id)

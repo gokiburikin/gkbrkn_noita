@@ -45,6 +45,9 @@ PERKS = {
             ice=0.35,
         },
     },
+    PassiveRecharge = {
+        Enabled = true,
+    },
     LostTreasure = {
         Enabled = true,
     },
@@ -147,6 +150,9 @@ ACTIONS = {
         Enabled = true,
     },
     ProjectileOrbit = {
+        Enabled = true,
+    },
+    PassiveRecharge = {
         Enabled = true,
     },
     WIP = {

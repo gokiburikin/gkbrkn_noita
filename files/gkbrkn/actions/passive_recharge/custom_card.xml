@@ -1,0 +1,24 @@
+<Entity tags="card_action">
+    <Base file="data/entities/base_custom_card.xml" > 
+		<SpriteComponent 
+			image_file="files/gkbrkn/actions/passive_recharge/icon.png" 
+			>
+		</SpriteComponent>
+		
+		<ItemActionComponent 
+			_tags="enabled_in_world"
+			action_id="GKBRKN_PASSIVE_RECHARGE" >
+		</ItemActionComponent>
+	</Base>
+
+    <InheritTransformComponent
+		_tags="enabled_in_world,enabled_in_hand" >
+	</InheritTransformComponent>
+
+	<LuaComponent
+	    _tags="enabled_in_inventory"
+	    execute_every_n_frame="1"
+		script_source_file="files/gkbrkn/actions/wip/action_update.lua"
+		>
+	</LuaComponent>
+</Entity>
