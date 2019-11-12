@@ -28,8 +28,8 @@ PERKS = {
     },
     RapidFire = {
         Enabled = true,
-        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime * 0.33 / #hand end,
-        CastDelayAdjustment = function( castDelay ) return castDelay * 0.33  / #hand end,
+        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime - rechargeTime * 0.33 / #hand end,
+        CastDelayAdjustment = function( castDelay ) return castDelay - castDelay * 0.33 / #hand end,
         SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 / #hand end,
     },
     KnockbackImmunity = {
