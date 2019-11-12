@@ -3,6 +3,8 @@ local pos_x, pos_y = EntityGetTransform( entity_id );
 
 local projectile_component = EntityGetFirstComponent( entity_id, "ProjectileComponent" );
 if projectile_component ~= nil then
+    local bounce_energy = tonumber( ComponentGetValue( projectile_component, "bounce_energy" ) );
+    ComponentSetValue( projectile_component, tostring( bounce_energy * 1.25 ) );
     local total_bounces = ComponentGetValue( projectile_component, "bounces_left" );
     local total_damage = ComponentGetValue( projectile_component, "damage" );
     EntityAddComponent( entity_id, "VariableStorageComponent", {

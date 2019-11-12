@@ -28,9 +28,9 @@ PERKS = {
     },
     RapidFire = {
         Enabled = true,
-        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime * 0.33 end,
-        CastDelayAdjustment = function( castDelay ) return castDelay * 0.33 end,
-        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 end,
+        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime * 0.33 / #hand end,
+        CastDelayAdjustment = function( castDelay ) return castDelay * 0.33  / #hand end,
+        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 / #hand end,
     },
     KnockbackImmunity = {
         Enabled = true,
@@ -155,6 +155,9 @@ ACTIONS = {
     PassiveRecharge = {
         Enabled = true,
     },
+    ManaRecharge = {
+        Enabled = true,
+    },
     WIP = {
         Enabled = SETTINGS.Debug
     }
@@ -206,6 +209,29 @@ OPTIONS = {
         SubOption = true,
     },
     {
+        Name = "Less Particles",
+    },
+    {
+        Name = "Enabled",
+        PersistentFlag = "gkbrkn_less_particles",
+        SubOption = true,
+        ToggleCallback = function()
+            for _,entity in pairs( EntityGetWithTag("gkbrkn_less_particles") or {} ) do
+                EntityRemoveTag( entity, "gkbrkn_less_particles" );
+            end
+        end
+    },
+    {
+        Name = "Disable Cosmetic Particles",
+        PersistentFlag = "gkbrkn_less_particles_disable",
+        SubOption = true,
+        ToggleCallback = function()
+            for _,entity in pairs( EntityGetWithTag("gkbrkn_less_particles") or {} ) do
+                EntityRemoveTag( entity, "gkbrkn_less_particles" );
+            end
+        end
+    },
+    {
         Name = "Charm Nerf",
         PersistentFlag = "gkbrkn_charm_nerf",
         RequiresRestart = true,
@@ -231,8 +257,9 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
-        Name = "Less Particles",
-        PersistentFlag = "gkbrkn_less_particles",
+        Name = "Tweak Spells",
+        PersistentFlag = "gkbrkn_tweak_spells",
+        RequiresRestart = true,
     }
 }
 
@@ -268,5 +295,9 @@ MISC = {
     },
     LessParticles = {
         Enabled = "gkbrkn_less_particles",
+        DisableCosmeticParticles = "gkbrkn_less_particles_disable"
+    },
+    TweakSpells = {
+        Enabled = "gkbrkn_tweak_spells",
     }
 }

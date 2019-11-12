@@ -102,16 +102,20 @@ if SETTINGS.Debug then
         ]]
 
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_PASSIVE_RECHARGE","LIGHT_BULLET"
+            "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
+            ,"RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
-            "RECHARGE", "GKBRKN_COLLISION_DETECTION", 
-            "BURST_4", "LIGHT_BULLET", "LIGHT_BULLET", "LIGHT_BULLET", "LIGHT_BULLET"
+            "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
+            ,"GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","LIGHT_BULLET"
         ));
     end
 
-    --TryGivePerk( player_entity, "GKBRKN_LIVING_WAND" );
-    perk_spawn( x, y, "GKBRKN_ALWAYS_CAST" );
+    TryGivePerk( player_entity, "GKBRKN_ENRAGED" );
+    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+    perk_spawn( x, y, "GKBRKN_RAPID_FIRE" );
 
     --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
     local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );

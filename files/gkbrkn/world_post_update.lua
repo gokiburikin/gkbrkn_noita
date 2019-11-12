@@ -26,28 +26,69 @@ local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
 
-    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
-        local nearby_entities = EntityGetInRadius( x, y, 256 );
-        for _,nearby in pairs( nearby_entities ) do
-            if EntityHasTag( nearby, "gkbrkn_less_particles" ) == false then
-                EntityAddTag( nearby, "gkbrkn_less_particles" );
-                local particle_emitters = EntityGetComponent( nearby, "ParticleEmitterComponent" ) or {};
-                for _,emitter in pairs( particle_emitters ) do
-                    if ComponentGetValue( emitter, "create_real_particles" ) == "0" then
-                        --EntitySetComponentIsEnabled( nearby, emitter, false );
-                        ComponentSetValue( emitter, "emission_interval_max_frames", "10" );
-                        ComponentSetValue( emitter, "count_min", "1" );
-                        ComponentSetValue( emitter, "count_max", "1" );
-                        ComponentSetValue( emitter, "collide_with_grid", "0" );
-                        --ComponentSetValue( emitter, "trail_gap", tostring( math.max(tonumber( ComponentGetValue( emitter, "trail_gap" ) ), 5 )) );
-                        --ComponentSetValue( emitter, "airflow_force", "0" );
-                    end
+    --[[
+    local cape = EntityGetNamedChild( player, "cape" );
+    if cape ~= nil then
+        local verlet = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
+        if verlet ~= nil then
+            local culled = ComponentGetValue( verlet, "m_is_culled_previous" );
+            if culled == "1" then
+                local cx, cy = EntityGetTransform( cape );
+                GamePrint("trying to fix cape");
+                local inherit = EntityGetFirstComponent( cape, "InheritTransformComponent" );
+                if inherit~= nil then
+                    EntitySetComponentIsEnabled( cape, inherit, false );
+                    EntitySetTransform( cape, x, y);
+                end
+                --EntitySetComponentIsEnabled( cape, verlet, false );
+                --EntitySetComponentIsEnabled( cape, verlet, true );
+                ComponentSetValue( verlet, "follow_entity_transform", "1" );
+                local px, py = ComponentGetValueVector2( verlet, "m_position_previous" );
+                GamePrint( cx.."/"..cy.." || "..x.."/"..y);
+                --ComponentSetValueVector2( verlet,"m_position_previous", x, y );
+                --ComponentSetValue( verlet, "m_position_previous", tostring(x) );
+                --ComponentSetValue( verlet, "m_position_previous", tostring(y) );
+                --Log( "cape is missing" );
+            end
+            --EntitySetTransform( cape, Random( -100, 100 ), Random( -100, 100 ) ) ;
+        end
+    end
+    ]]
+
+    --[[
+    local children = EntityGetAllChildren( player );
+    local valid_wands = {};
+    local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
+    local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+    for key, child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+            break;
+        end
+    end
+
+    for _,wand in pairs(valid_wands) do
+        if wand ~= active_item then
+            local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
+            if ability ~= nil then
+                local mana = tonumber( ComponentGetValue( ability, "mana" ) );
+                GamePrint(mana );
+                local max_mana = tonumber( ComponentGetValue( ability, "mana_max" ) );
+                if mana < max_mana then
+                    ComponentSetValue( ability, "mana", tostring( mana + 10 / 40 ) );
+                else
+                    ComponentSetValue( ability, "mana", tostring( max_mana ) );
                 end
             end
         end
     end
+    ]]
 
-    if HasFlagPersistent(MISC.QuickSwap.Enabled) then
+    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+        DoFileEnvironment("files/gkbrkn/misc/less_particles.lua", { x = x, y = y });
+    end
+
+    if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
         local controls = EntityGetFirstComponent( player, "ControlsComponent" );
         local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
         if controls ~= nil and inventory2 ~= nil then

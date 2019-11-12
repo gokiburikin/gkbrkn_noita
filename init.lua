@@ -1,11 +1,17 @@
 --[[
 
+changelog
+    fix rapid fire extra modifier thanks to newly gained information about extra modifiers
+    fix golden blood working on the boss which stopped the end portal from spawning
+    fix power shot stopping some projectiles from bouncing
+    fix duplicate spell being misnamed causing it to never load
+    buff damage plus - bounce (+3 bounces, +25% bounce energy)
+    improve less particles, add disable cosmetic particles
+
 kill streaks events
 grze events
 passives as mini perks
     greed
-
-in game mod config menu (AddPersistentFlag)
 
 HitEffect considerations
     ElectricitySourceComponent
@@ -14,16 +20,17 @@ HitEffect considerations
 
 Projectile Mods
     Copy Spell (cast the next spell_
-Mana Recharge Passive
-    Wands mana charges more quickly when holstered
 Lucky Favour
     A small chance to evade damage
 
 TODO
+    look into what it takes to perform actions with an AbilityComponent
+
+TODO
+    deprecate spell efficiency and mana efficiency (perks can stack easily now)
     make proj mods work for enemies (use herd id to find actual enemies)
-    add spell nerfs (heavy shot, damage plus, increase mana, chainsaw, luminous drill?)
+        path correction
     disable spell wrapping (mostly for testing purposes)
-    low particles mode
     golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
 
 UTILITY
@@ -38,12 +45,14 @@ ACTIONS
 PERKS
     TODO
         Chaos (randomize projectile stuff)
-        Stunlock Immunity (might be possible with small levels of knockback protection?)
     NYI
         Dual Wield would probably be an excessively difficulty task to implement, but it would be cool if you could designate a Wand to dual wield.
-        Lava, Acid, Poison (Material) Immunities (impossible for now? can ignore _all_ materials, but not individual materials)
 
 ABANDONED
+    Lava, Acid, Poison (Material) Immunities (impossible for now? can ignore _all_ materials, but not individual materials)
+        damage_materials cached or something
+    Stunlock Immunity (might be possible with small levels of knockback protection?)
+        just don't think it's possible right now
     Life Steal (1% of damage dealt is returned as life)
         probably overpowered
     Spell Steal ( n% gain an additional spell charge for a random (weighted by max use) spell in a random wand )
@@ -89,12 +98,13 @@ if ACTIONS.BreakCast.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_action
 if ACTIONS.Buckshot.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/arcane_buckshot/init.lua" ); end
 if ACTIONS.CollisionDetection.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/collision_detection/init.lua" ); end
 if ACTIONS.DrawDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/draw_deck/init.lua" ); end
-if ACTIONS.DuplicateSpell.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/duplicate/init.lua" ); end
+if ACTIONS.DuplicateSpell.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/duplicate_spell/init.lua" ); end
 if ACTIONS.ExtraProjectile.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/extra_projectile/init.lua" ); end
 if ACTIONS.GoldenBlessing.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/golden_blessing/init.lua" ); end
 if ACTIONS.LifetimeDamage.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/lifetime_damage/init.lua" ); end
 if ACTIONS.MagicLight.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/magic_light/init.lua" ); end
 if ACTIONS.ManaEfficiency.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/mana_efficiency/init.lua" ); end
+if ACTIONS.ManaRecharge.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/mana_recharge/init.lua" ); end
 if ACTIONS.MicroShield.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/micro_shield/init.lua" ); end
 if ACTIONS.NgonShape.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/ngon_shape/init.lua" ); end
 if ACTIONS.OrderDeck.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/order_deck/init.lua" ); end
@@ -119,8 +129,23 @@ if ACTIONS.TriggerDeath.Enabled then ModLuaFileAppend( "data/scripts/gun/gun_act
 
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" ); end
 
+if HasFlagPersistent( MISC.TweakSpells.Enabled ) then
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
+end
+
+if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
+end
+
+if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
+end
+
+
 function OnModPreInit()
     RemoveFlagPersistent("gkbrkn_loose_spell_generation_init");
+    RemoveFlagPersistent("gkbrkn_tweak_spells_init");
+    RemoveFlagPersistent("gkbrkn_upgraded_spells_init");
 end
 
 function OnPlayerSpawned( player_entity )
@@ -131,12 +156,11 @@ function OnWorldPostUpdate()
     DoFileEnvironment( "files/gkbrkn/world_post_update.lua" );
 end
 
-function OnModPostInit()
-    if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
-        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
-    end
-    if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
-        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
-    end
+--[[
+function OnWorldInitialized()
 end
 
+function OnModPostInit()
+end
+
+]]

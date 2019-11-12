@@ -12,20 +12,11 @@ extra_modifiers["gkbrkn_mana_efficiency"] = function()
 end
 
 extra_modifiers["gkbrkn_rapid_fire"] = function()
-    if #deck == 0 then
-        current_reload_time = PERKS.RapidFire.RechargeTimeAdjustment( current_reload_time );
-    end
+    current_reload_time = PERKS.RapidFire.RechargeTimeAdjustment( current_reload_time );
     c.fire_rate_wait = PERKS.RapidFire.CastDelayAdjustment( c.fire_rate_wait );
     c.spread_degrees = PERKS.RapidFire.SpreadDegreesAdjustment( c.spread_degrees );
 end
 
 extra_modifiers["gkbrkn_no_recoil"] = function()
-    --ExploreGlobals();
 	shot_effects.recoil_knockback = -999999;
 end
-
---[[
-extra_modifiers["gkbrkn_no_recoil"] = function()
-    c.extra_entities = c.extra_entities.."files/gkbrkn/magic_light_sprite.xml";
-end
-]]

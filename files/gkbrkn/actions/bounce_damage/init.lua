@@ -12,6 +12,7 @@ table.insert( actions,
     mana = 7,
     action 		= function()
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/bounce_damage/projectile_extra_entity.xml,";
+        c.bounces = c.bounces + 3;
         draw_actions( 1, true );
     end,
 });

@@ -12,18 +12,19 @@ gui_id = 1707;
 gui_open = false;
 gui_require_restart = false;
 
-function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags )
+function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback )
     table.insert( options, {
         name = name,
         flag = flag,
         require_restart = require_restart,
         sub_option = sub_option,
         required_flags = required_flags,
+        toggle_callback = toggle_callback,
     } );
 end
 
 for _,option in pairs( OPTIONS ) do
-    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption );
+    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.ToggleCallback );
 end
 
 function do_gui()
@@ -60,7 +61,8 @@ function do_option( option, index )
         if option.sub_option then
             text = text.. "    ";
         end
-        if HasFlagPersistent( option.flag ) then
+        local option_enabled = HasFlagPersistent( option.flag );
+        if option_enabled then
             text = text .. "[x]";
         else
             text = text .. "[ ]";
@@ -70,10 +72,13 @@ function do_option( option, index )
             if option.require_restart == true then
                 gui_require_restart = true;
             end
-            if HasFlagPersistent( option.flag ) then
+            if option_enabled then
                 RemoveFlagPersistent( option.flag );
             else
                 AddFlagPersistent( option.flag );
+            end
+            if option.toggle_callback ~= nil then
+                option.toggle_callback( not option_enabled );
             end
         end
     else

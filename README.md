@@ -11,6 +11,7 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
 - [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
 - [x] **Less Particles (WIP)**: Enable to reduce cosmetic particle emission.
+- [x] **Tweak Spells (WIP)**: Change base game spells for balance reasons.
 
 ### Perks
 - [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
@@ -48,6 +49,8 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 
 ### Passive Spells
 - [x] **Shimmering Treasure**: Treasure catches your eye.
+- [x] **Mana Recharge**: Your wand charges mana slightly faster.
+- [x] **Passive Recharge**: Your wand recharges even when holstered.
 
 ### Other Spells
 - [x] **Order Deck**: Correct the order of all remaining spells.
@@ -61,6 +64,6 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 ### Deprecated
 - [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
 - [x] **Arcane Shot**: A fast bolt of arcane energy. *(Official spell exists)*
-- [ ] **Mana Efficiency**: Spells drain much less mana. *(Abandoned until a better solution is found)*
+- [ ] **Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*
 - [ ] **Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
 - [ ] **Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
