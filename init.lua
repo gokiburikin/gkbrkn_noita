@@ -1,12 +1,6 @@
 --[[
 
 changelog
-    fix rapid fire extra modifier thanks to newly gained information about extra modifiers
-    fix golden blood working on the boss which stopped the end portal from spawning
-    fix power shot stopping some projectiles from bouncing
-    fix duplicate spell being misnamed causing it to never load
-    buff damage plus - bounce (+3 bounces, +25% bounce energy)
-    improve less particles, add disable cosmetic particles
 
 kill streaks events
 grze events
@@ -25,10 +19,11 @@ Lucky Favour
 
 TODO
     look into what it takes to perform actions with an AbilityComponent
+    add a disable cosmetic particles blacklist for certain entities (might not be possible)
 
 TODO
     deprecate spell efficiency and mana efficiency (perks can stack easily now)
-    make proj mods work for enemies (use herd id to find actual enemies)
+    make proj mods work for enemies (use herd id to find shooter enemies) (probably won't work until they fix the herd component issue)
         path correction
     disable spell wrapping (mostly for testing purposes)
     golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
@@ -39,11 +34,14 @@ UTILITY
 
 ACTIONS
     TODO
+        cut duration
+        super bounce
         Swarm Projectile Modifier (like Spellbundle, but a proper modifier and on enemies)
         Sticky Projectile Modifier (stick to surfaces / enemies) (useful for what kinds of projectiles?)
 
 PERKS
     TODO
+        Gold Rush ( enemies explode into more and more gold as your kill streak continues
         Chaos (randomize projectile stuff)
     NYI
         Dual Wield would probably be an excessively difficulty task to implement, but it would be cool if you could designate a Wand to dual wield.

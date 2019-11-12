@@ -232,6 +232,27 @@ OPTIONS = {
         end
     },
     {
+        Name = "Random Start",
+    },
+    {
+        Name = "Enabled",
+        PersistentFlag = "gkbrkn_random_start",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Default Wand Generation",
+        PersistentFlag = "gkbrkn_random_start_default_wands",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Random Cape Colour",
+        PersistentFlag = "gkbrkn_random_start_random_cape",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
         Name = "Charm Nerf",
         PersistentFlag = "gkbrkn_charm_nerf",
         RequiresRestart = true,
@@ -299,5 +320,13 @@ MISC = {
     },
     TweakSpells = {
         Enabled = "gkbrkn_tweak_spells",
+    },
+    RandomStart = {
+        Enabled = "gkbrkn_random_start",
+        RandomFlasks = 1,
+        MinimumHP = 50,
+        MaximumHP = 150,
+        DefaultWandGenerationEnabled = "gkbrkn_random_start_default_wands",
+        RandomCapeColorEnabled = "gkbrkn_random_start_random_cape",
     }
 }

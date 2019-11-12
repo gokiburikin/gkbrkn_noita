@@ -1,3 +1,5 @@
+
+local game_frame = GameGetFrameNum();
 if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
 
 local tracked_projectiles = EntityGetWithTag( "gkbrkn_projectile_orbit" );
@@ -71,14 +73,9 @@ for _,player in pairs( players ) do
         if wand ~= active_item then
             local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
             if ability ~= nil then
-                local mana = tonumber( ComponentGetValue( ability, "mana" ) );
-                GamePrint(mana );
-                local max_mana = tonumber( ComponentGetValue( ability, "mana_max" ) );
-                if mana < max_mana then
-                    ComponentSetValue( ability, "mana", tostring( mana + 10 / 40 ) );
-                else
-                    ComponentSetValue( ability, "mana", tostring( max_mana ) );
-                end
+                local charge_wait = tonumber( ComponentGetValue( ability, "mNextFrameUsable" ) );
+                --ComponentSetValue( ability, "mNextFrameUsable", "0" )
+                GamePrint(charge_wait - game_frame );
             end
         end
     end
@@ -87,6 +84,21 @@ for _,player in pairs( players ) do
     if HasFlagPersistent( MISC.LessParticles.Enabled ) then
         DoFileEnvironment("files/gkbrkn/misc/less_particles.lua", { x = x, y = y });
     end
+
+    --[[
+    local paused = HasFlagPersistent("gkbrkn_paused");
+    if GameGetFrameNum() % 40 == 0 then
+        GamePrint( tostring( paused ) );
+        if paused then
+            RemoveFlagPersistent("gkbrkn_paused");
+            ModMagicNumbersFileAdd( "files/gkbrkn/misc/unpause_simulation.xml" );
+        else
+            AddFlagPersistent("gkbrkn_paused");
+            ModMagicNumbersFileAdd( "files/gkbrkn/misc/pause_simulation.xml" );
+        end
+        GamePrint( "physics toggle" );
+    end
+    ]]
 
     if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
         local controls = EntityGetFirstComponent( player, "ControlsComponent" );

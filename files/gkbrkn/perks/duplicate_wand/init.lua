@@ -22,5 +22,9 @@ table.insert( perk_list, {
         local base_wand = random_from_array( valid_wands );
         local copy_wand = EntityLoad( "files/gkbrkn/placeholder_wand.xml", x, y-8 );
         CopyWand( base_wand, copy_wand );
+        local item = EntityGetFirstComponent( copy_wand, "ItemComponent" );
+        if item ~= nil then
+            ComponentSetValue( item, "play_hover_animation", "1" );
+        end
 	end,
 });

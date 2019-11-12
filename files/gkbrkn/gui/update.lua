@@ -6,11 +6,13 @@ if not async then
     dofile( "data/scripts/lib/coroutines.lua" )
 end
 
-options = {}
-gui = gui or GuiCreate();
-gui_id = 1707;
-gui_open = false;
-gui_require_restart = false;
+local options = {}
+local gui = gui or GuiCreate();
+local gui_id = 1707;
+local gui_open = false;
+local gui_require_restart = false;
+local wrap_threshold = 15;
+local wrap_size = 25;
 
 function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback )
     table.insert( options, {
@@ -40,7 +42,13 @@ function do_gui()
     GuiLayoutEnd( gui );
     GuiLayoutBeginVertical( gui, 1, 12 );
     if gui_open then
+        local wrap_index = 0;
         for index,option in pairs( options ) do
+            if option.sub_option == nil and index > ( wrap_index + 1 ) * wrap_threshold then
+                wrap_index = wrap_index + 1;
+                GuiLayoutEnd( gui );
+                GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 12 );
+            end
             do_option( option, index );
         end
         GuiText( gui, 0, 0, " ");

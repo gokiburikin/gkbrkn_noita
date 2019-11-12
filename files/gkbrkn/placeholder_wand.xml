@@ -7,8 +7,8 @@
         entity_count="1" 
         entity_file="" 
         fast_projectile="0" 
-        mana_charge_speed="99999"
-		mana_max="99999"
+        mana_charge_speed="10"
+		mana_max="100"
         max_amount_in_inventory="1" 
         reload_time_frames="0" 
         shooting_reduces_amount_in_inventory="0" 
@@ -20,7 +20,7 @@
         add_these_child_actions=""
         ><gun_config 
             shuffle_deck_when_empty="0"
-            reload_time="120"
+            reload_time="30"
             deck_capacity="20" >
         </gun_config>
         <gunaction_config 
@@ -38,15 +38,43 @@
         <ItemComponent
             item_name="placeholder_wand"
             remove_on_death="1"
-            play_hover_animation="1"
             collect_nondefault_actions="1" >
         </ItemComponent>
-        <SimplePhysicsComponent _enabled="0">
-        </SimplePhysicsComponent>
-    </Base>
+   </Base>
 
-    <ManaReloaderComponent
+   <Base file="data/entities/base_wand_pickup.xml" > <LuaComponent _enabled="0" script_item_picked_up="" /> </Base>
+<ManaReloaderComponent
         _tags="enabled_in_world,enabled_in_hand,enabled_in_inventory" >
     </ManaReloaderComponent>
+
+    <SpriteParticleEmitterComponent
+		sprite_file="data/particles/ray.xml" 
+		delay="0"
+		lifetime="1.5"
+		color.r="1" color.g="1" color.b="1" color.a="0.5"
+		color_change.r="0" color_change.g="0" color_change.b="0" color_change.a="-0.5"
+		velocity.x="0" velocity.y="0"
+		gravity.x="0" gravity.y="0"
+		velocity_slowdown="0"
+		rotation="0"
+		angular_velocity="0"
+		scale.x="1" scale.y="0"
+		scale_velocity.x="-0.2" scale_velocity.y="4"
+		emission_interval_min_frames="3"
+		emission_interval_max_frames="6"
+		emissive="1"
+		additive="1"
+		count_min="1" count_max="1"
+		use_velocity_as_rotation="1"
+		randomize_position.min_x="-5"
+		randomize_position.max_x="5"
+		randomize_position.min_y="-5"
+		randomize_position.max_y="5"
+		randomize_velocity.min_x="-30"
+		randomize_velocity.max_x="30"
+		randomize_velocity.min_y="-30"
+		randomize_velocity.max_y="30"
+		velocity_always_away_from_center="1">
+	</SpriteParticleEmitterComponent>
     
 </Entity>

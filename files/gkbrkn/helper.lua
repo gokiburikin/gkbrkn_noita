@@ -309,8 +309,11 @@ function CopyWand( base_wand, copy_wand, copy_sprite, copy_actions )
     CopyComponentObjectMembers( base_ability_component, copy_ability_component, "gunaction_config" );
     if copy_sprite ~= false then
         CopyListedComponentMembers( FindFirstComponentThroughTags( base_wand, "z_index", "image_file" ), FindFirstComponentThroughTags( copy_wand, "z_index", "image_file" ), "image_file","offset_x","offset_y");
-        local base_hotspot = EntityGetFirstComponent( base_wand, "HotspotComponent", "shoot_pos" );
-        GamePrint(tostring(base_hotspot));
+        local base_hotspot = FindFirstComponentThroughTags( base_wand, "transform_with_scale" );
+        local copy_hotspot = EntityGetFirstComponent( copy_wand, "HotspotComponent", "shoot_pos" );
+        CopyComponentMembers( base_hotspot, copy_hotspot );
+        local base_hotspot_x, base_hotspot_y = ComponentGetValueVector2( base_hotspot, "offset" );
+        ComponentSetValueVector2( copy_hotspot, "offset", base_hotspot_x, base_hotspot_y );
     end
     if copy_actions ~= false then
         CopyWandActions( base_wand, copy_wand );

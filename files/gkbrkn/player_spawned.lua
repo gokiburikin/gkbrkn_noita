@@ -1,3 +1,7 @@
+if HasFlagPersistent(MISC.RandomStart.Enabled) then
+    DoFileEnvironment( "files/gkbrkn/misc/random_start/init.lua", {player_entity = player_entity} );
+end
+
 if HasFlagPersistent(MISC.GoldPickupTracker.ShowTrackerEnabled) or HasFlagPersistent(MISC.GoldPickupTracker.ShowMessageEnabled) then
     if EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
         EntityAddComponent( player_entity, "SpriteComponent", { 
@@ -22,6 +26,15 @@ if HasFlagPersistent(MISC.GoldPickupTracker.ShowTrackerEnabled) or HasFlagPersis
         });
     end
 end
+
+--[[
+local jetpack_component = EntityGetFirstComponent( player_entity, "ParticleEmitterComponent" );
+while jetpack_component ~= nil do
+    EntitySetComponentIsEnabled( player_entity, jetpack_component, false );
+    GamePrint( "disabled "..jetpack_component );
+    jetpack_component = EntityGetFirstComponent( player_entity, "jetpack" );
+end
+]]
 
 --[[
 local platforming = EntityGetComponent( player_entity, "CharacterPlatformingComponent" )
@@ -102,20 +115,19 @@ if SETTINGS.Debug then
         ]]
 
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
-            ,"RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL","RUBBER_BALL"
+            "GKBRKN_ACTION_WIP","SLOW_BULLET","LIGHT_BULLET"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
             "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
-            ,"GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","LIGHT_BULLET"
+            ,"GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","CHAINSAW"
         ));
     end
 
-    TryGivePerk( player_entity, "GKBRKN_ENRAGED" );
+    --TryGivePerk( player_entity, "GKBRKN_ENRAGED" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    perk_spawn( x, y, "GKBRKN_RAPID_FIRE" );
+    perk_spawn( x, y, "GKBRKN_DUPLICATE_WAND" );
 
     --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
     local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
