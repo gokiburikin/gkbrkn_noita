@@ -2,21 +2,26 @@ dofile("files/gkbrkn/config.lua");
 dofile("files/gkbrkn/helper.lua");
 
 extra_modifiers["gkbrkn_spell_efficiency"] = function()
-    if current_action.uses_remaining > 0 and Random() <= PERKS.SpellEfficiency.RetainChance then
+    if current_action.uses_remaining > 0 and Random() <= CONTENT[PERKS.SpellEfficiency].options.RetainChance then
         current_action.uses_remaining = current_action.uses_remaining + 1;
     end
 end
 
 extra_modifiers["gkbrkn_mana_efficiency"] = function()
-    mana = mana + c.action_mana_drain * PERKS.ManaEfficiency.Discount;
+    mana = mana + c.action_mana_drain * CONTENT[PERKS.ManaEfficiency].options.Discount;
 end
 
 extra_modifiers["gkbrkn_rapid_fire"] = function()
-    current_reload_time = PERKS.RapidFire.RechargeTimeAdjustment( current_reload_time );
-    c.fire_rate_wait = PERKS.RapidFire.CastDelayAdjustment( c.fire_rate_wait );
-    c.spread_degrees = PERKS.RapidFire.SpreadDegreesAdjustment( c.spread_degrees );
+    local options = CONTENT[PERKS.RapidFire].options;
+    current_reload_time = options.RechargeTimeAdjustment( current_reload_time );
+    c.fire_rate_wait = options.CastDelayAdjustment( c.fire_rate_wait );
+    c.spread_degrees = options.SpreadDegreesAdjustment( c.spread_degrees );
 end
 
 extra_modifiers["gkbrkn_no_recoil"] = function()
 	shot_effects.recoil_knockback = -999999;
+end
+
+extra_modifiers["gkbrkn_extra_projectile"] = function()
+    --current_action.action();
 end

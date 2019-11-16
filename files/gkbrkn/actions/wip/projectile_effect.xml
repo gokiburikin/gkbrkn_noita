@@ -1,0 +1,11 @@
+<Entity>
+    <InheritTransformComponent>
+    </InheritTransformComponent>
+    
+    <GameEffectComponent 
+        effect="EDIT_WANDS_EVERYWHERE"
+        frames="400"
+        disable_movement="0"
+    >
+	</GameEffectComponent >
+</Entity>

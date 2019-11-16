@@ -3,7 +3,8 @@ local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local penetration = tonumber( ComponentGetValue( projectile, "ground_penetration_coeff" ) );
-    if penetration > 0 then
+    local bounces = tonumber( ComponentGetValue( projectile, "bounces_left" ) );
+    if penetration > 0 or bounces == 0 then
         ComponentSetValue( projectile, "ground_penetration_coeff", tostring( math.max( 1, penetration * 2 ) ) );
     end
 end

@@ -27,6 +27,7 @@ if HasFlagPersistent(MISC.GoldPickupTracker.ShowTrackerEnabled) or HasFlagPersis
     end
 end
 
+
 --[[
 local jetpack_component = EntityGetFirstComponent( player_entity, "ParticleEmitterComponent" );
 while jetpack_component ~= nil do
@@ -72,7 +73,7 @@ if HasFlagPersistent(MISC.HealOnMaxHealthUp.Enabled) and EntityGetFirstComponent
     });
 end
 
-if PERKS.LostTreasure.Enabled and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_lost_treasure" ) == nil then
+if CONTENT[PERKS.LostTreasure].enabled() and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_lost_treasure" ) == nil then
     EntityAddComponent( player_entity, "LuaComponent", {
         _tags="gkbrkn_lost_treasure",
         script_source_file="files/gkbrkn/perks/lost_treasure/player_update.lua",
@@ -80,11 +81,7 @@ if PERKS.LostTreasure.Enabled and EntityGetFirstComponent( player_entity, "LuaCo
     });
 end
 
-if HasFlagPersistent(MISC.DisableSpells.Enabled) then
-    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/disable_spells.lua" );
-end
-
-if HasFlagPersistent(MISC.QuickSwap.Enabled) then
+if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     local quick_swap_inventory = EntityCreateNew("gkbrkn_swap_inventory");
     EntityAddChild( player_entity, quick_swap_inventory );
 end
@@ -94,6 +91,15 @@ EntityLoad('files/gkbrkn/gui/container.xml');
 if SETTINGS.Debug then 
     dofile( "data/scripts/perks/perk.lua");
     dofile( "data/scripts/gun/procedural/gun_action_utils.lua" );
+
+    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+    --perk_spawn( x, y, "GKBRKN_MATERIAL_COMPRESSION" );
+    --perk_spawn( x + 20, y - 20, "GKBRKN_MATERIAL_COMPRESSION" );
     
     local effect = GetGameEffectLoadTo( player_entity, "EDIT_WANDS_EVERYWHERE", true );
     if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
@@ -115,19 +121,21 @@ if SETTINGS.Debug then
         ]]
 
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_ACTION_WIP","SLOW_BULLET","LIGHT_BULLET"
+            "FIRE_TRAIL","LIGHT_BULLET"
         ));
+        EntityAddChild( inventory, CreateWand( x, y, 
+            "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","SPEED","BLACK_HOLE","SPEED","BLACK_HOLE","SPEED","BLACK_HOLE"
+        ));
+        --[[
         EntityAddChild( inventory, CreateWand( x, y, 
             "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
             ,"GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","CHAINSAW"
         ));
+        ]]
     end
 
-    --TryGivePerk( player_entity, "GKBRKN_ENRAGED" );
-    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    perk_spawn( x, y, "GKBRKN_DUPLICATE_WAND" );
+    --local screen_fill = EntityLoad( "files/gkbrkn/misc/screen_fill.xml", 0, 0 );
+    --EntityAddChild( player_entity, screen_fill );
 
     --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
     local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
@@ -138,10 +146,10 @@ if SETTINGS.Debug then
     end
 
     --[[
-        EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
-        for i=1,10 do
-            EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
-        end
-        EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
     ]]
+    EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
+    for i=1,10 do
+        EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
+    end
+    --EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
 end

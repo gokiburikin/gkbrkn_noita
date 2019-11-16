@@ -12,6 +12,7 @@ table.insert( actions,
     mana = 7,
     action 		= function()
         stack_next_action( 1 );
+        c.speed_multiplier = c.speed_multiplier * 0.9;
         draw_actions( 1, true );
     end,
 });

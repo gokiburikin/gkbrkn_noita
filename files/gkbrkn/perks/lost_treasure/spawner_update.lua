@@ -7,7 +7,6 @@ if tracker ~= nil then
     if current_lost_treasure_count > 0 then
         local x,y = EntityGetTransform( entity );
         local nugget = EntityLoad( "data/entities/items/pickup/goldnugget.xml", x, y );
-        EntityAddTag( nugget, "gkbrkn_lost_treasure_nugget" );
         ComponentSetValue( tracker, "value_string", tostring(current_lost_treasure_count-1) );
     else
         remove = true;

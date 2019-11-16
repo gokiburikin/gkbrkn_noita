@@ -2,6 +2,14 @@ dofile("data/scripts/gun/procedural/gun_action_utils.lua");
 
 _GKBRKN_HELPER = true;
 
+function map(func, array)
+    local new_array = {};
+    for i,v in ipairs(array) do
+      new_array[i] = func(v);
+    end
+    return new_array;
+  end
+
 function DoFileEnvironment( filepath, environment )
     if environment == nil then environment = {} end
     local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = _G } ) ) );

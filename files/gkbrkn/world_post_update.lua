@@ -1,4 +1,3 @@
-
 local game_frame = GameGetFrameNum();
 if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
 
@@ -27,7 +26,8 @@ end
 local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
-
+    --local genome = EntityGetFirstComponent( player, "GenomeDataComponent" );
+    --GamePrint( "herd id: ".. ComponentGetValue( genome, "herd_id" ) );
     --[[
     local cape = EntityGetNamedChild( player, "cape" );
     if cape ~= nil then
@@ -57,6 +57,10 @@ for _,player in pairs( players ) do
     end
     ]]
 
+    if CONTENT[PERKS.MaterialCompression].enabled() then
+        DoFileEnvironment( "files/gkbrkn/perks/material_compression/player_update.lua", { player = player } );
+    end
+
     --[[
     local children = EntityGetAllChildren( player );
     local valid_wands = {};
@@ -81,8 +85,22 @@ for _,player in pairs( players ) do
     end
     ]]
 
+    local player_velocity = EntityGetFirstComponent( player, "VelocityComponent" );
+    local test = EntityGetWithTag( "acquire_parent_velocity" ) or {};
+    if #test > 0 then
+        for _,entity in pairs(test) do
+            local vx, vy = ComponentGetValueVector2( player_velocity, "mVelocity" );
+            --EntitySetTransform( entity, x, y );
+            EntitySetTransform( entity, x + vx, y + vy );
+        end
+    end
+
     if HasFlagPersistent( MISC.LessParticles.Enabled ) then
         DoFileEnvironment("files/gkbrkn/misc/less_particles.lua", { x = x, y = y });
+    end
+
+    if HasFlagPersistent( MISC.GoldDecay.Enabled ) then
+        DoFileEnvironment("files/gkbrkn/misc/gold_decay/update.lua", { x = x, y = y });
     end
 
     --[[

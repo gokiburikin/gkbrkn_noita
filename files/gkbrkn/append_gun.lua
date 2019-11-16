@@ -25,13 +25,12 @@ gkbrkn = {
     _draw_actions = draw_actions,
     _add_projectile = add_projectile,
     _move_hand_to_discarded = move_hand_to_discarded,
-    _play_action = play_action,
     _draw_action = draw_action,
 }
 
---function play_action( action )
---    gkbrkn._play_action( action );
---end
+function handle_extra_modifier( id, modifier_index, stack_depth )
+    
+end
 
 function reduce_mana_usage( multiplier )
     -- nyi 
@@ -63,6 +62,9 @@ function draw_action( instant_reload_if_empty )
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
     local result = false;
     if gkbrkn.skip_cards <= 0 then
+        --for index,extra_modifier in pairs( active_extra_modifiers ) do
+        --    handle_extra_modifier( extra_modifier, index, gkbrkn.draw_action_stack_size );
+        --end
         result = gkbrkn._draw_action( instant_reload_if_empty );
     else
         gkbrkn.skip_cards = gkbrkn.skip_cards - 1;
@@ -70,9 +72,11 @@ function draw_action( instant_reload_if_empty )
     end
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size - 1;
-    gkbrkn.stack_next_actions = 0;
-    gkbrkn.stack_projectiles = "";
-    gkbrkn.extra_projectiles = 0;
+    if gkbrkn.draw_action_stack_size == 0 then
+        gkbrkn.stack_next_actions = 0;
+        gkbrkn.stack_projectiles = "";
+        gkbrkn.extra_projectiles = 0;
+    end
     return result;
 end
 
@@ -94,14 +98,12 @@ function add_projectile( filepath )
         c.extra_entities = c.extra_entities..gkbrkn.stack_projectiles;
         gkbrkn.stack_projectiles = "";
         projectiles_to_add = projectiles_to_add + gkbrkn.extra_projectiles + 1;
-        gkbrkn.extra_projectiles = 0;
     elseif gkbrkn.stack_next_actions > 0 then
         gkbrkn.stack_next_actions = gkbrkn.stack_next_actions - 1;
         gkbrkn.stack_projectiles = (gkbrkn.stack_projectiles or "") .. filepath..",";
         draw_action( 1 );
     else
         projectiles_to_add = projectiles_to_add + gkbrkn.extra_projectiles + 1;
-        gkbrkn.extra_projectiles = 0;
     end
     for i=1,projectiles_to_add do
         table.insert( gkbrkn.projectile_actions, current_action.id );

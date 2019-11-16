@@ -1,3 +1,3 @@
 function item_pickup( entity_item, entity_pickupper, item_name )
-    EntityAddTag( entity_item, "gkbrkn_lost_treasure_picked" );
+    EntityRemoveComponent( entity_item, EntityGetFirstComponent( entity_item, "LuaComponent", "gkbrkn_lost_treasure" ) );
 end 
