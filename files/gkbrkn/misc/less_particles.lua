@@ -5,7 +5,7 @@ for _,nearby in pairs( nearby_entities ) do
         EntityAddTag( nearby, "gkbrkn_less_particles" );
         local particle_emitters = EntityGetComponent( nearby, "ParticleEmitterComponent" ) or {};
         for _,emitter in pairs( particle_emitters ) do
-            if ComponentGetValue( emitter, "create_real_particles" ) == "0" then
+            if ComponentGetValue( emitter, "create_real_particles" ) == "0" and ComponentGetValue( emitter, "emit_real_particles" ) == "0" then
                 if disable then
                     EntitySetComponentIsEnabled( nearby, emitter, false );
                 else
