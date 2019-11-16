@@ -33,7 +33,7 @@ local edit_callbacks = {
         end
     end,
     CHAINSAW = function( action, index )
-        action.mana = 5;
+        action.mana = 3;
     end
 }
 for i=#actions,1,-1 do
