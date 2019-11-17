@@ -10,21 +10,14 @@ api issues
     
 
 changelog
-    fix the power shot fix fix
-    add 0.9x speed multiplier to spell merge
-    fix extra projectiles not working with multi cast spells
-    buff rapid fire to 50% reduction up from 33%
-    add super bounce (bounce energ up)
-    nerf bounce damage by moving the bounce energy buff to its own spell
-    add wand shops only
-    add copy spell
-    rename duplicate spell to double cast
-    reduced the price of double cast
-    add gold decay
-    simplify lost treasure again reducing tag usage
-    add material compression
-    add modification field
-    deprecated micro shield
+    add missing credit
+    rename gravity well to projectile gravity well
+    reduce range of projectile gravity well
+    fix some negligible issues with max health recovery
+    add healthier heart
+    add invincibility frames (perk)
+    add mana recovery (perk)
+    fix resilience
 
 kill streaks events
 grze events
@@ -62,9 +55,11 @@ ACTIONS
 
 PERKS
     TODO
+        Double Cast (all spells cast twice)
         Lucky Dodge (small chance to evade damage) (can't be implemented how i want it yet)
         Crit Crits (crits can crit) (probably can't do this yet)
         Wand Merge (merge two wands into a new wand with the best aspects of either wand)
+        True Spell Merge (combine the properties of all projectiles fired in the cast)
         Lucky Draw (reset the perk reroll cost)
         Gold Rush (enemies explode into more and more gold as your kill streak continues)
         Chaos (randomize projectile stuff)
@@ -89,6 +84,7 @@ ABANDONED
 
 dofile( "files/gkbrkn/helper.lua");
 dofile( "files/gkbrkn/config.lua");
+dofile( "files/gkbrkn/lib/variables.lua");
 dofile( "data/scripts/lib/utilities.lua");
 if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
@@ -112,6 +108,7 @@ if CONTENT[PERKS.GoldenBlood].enabled() then ModLuaFileAppend( "data/scripts/per
 if CONTENT[PERKS.LivingWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/living_wand/init.lua" ); end
 if CONTENT[PERKS.LostTreasure].enabled() then dofile( "files/gkbrkn/perk_lost_treasure_update.lua"); ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/lost_treasure/init.lua" ); end
 if CONTENT[PERKS.ManaEfficiency].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_efficiency/init.lua" ); end
+if CONTENT[PERKS.ManaRecovery].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_recovery/init.lua" ); end
 if CONTENT[PERKS.MaterialCompression].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/material_compression/init.lua" ); end
 if CONTENT[PERKS.PassiveRecharge].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/passive_recharge/init.lua" ); end
 if CONTENT[PERKS.RapidFire].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/rapid_fire/init.lua" ); end
@@ -119,7 +116,9 @@ if CONTENT[PERKS.Resilience].enabled() then ModLuaFileAppend( "data/scripts/perk
 if CONTENT[PERKS.SpellEfficiency].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/spell_efficiency/init.lua" ); end
 if CONTENT[PERKS.KnockbackImmunity].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/knockback_immunity/init.lua" ); end
 if CONTENT[PERKS.AlwaysCast].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/always_cast/init.lua" ); end
-if CONTENT[PERKS.WIP].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/wip/init.lua" ); end
+if CONTENT[PERKS.HealthierHeart].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/healthier_heart/init.lua" ); end
+if CONTENT[PERKS.InvincibilityFrames].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/invincibility_frames/init.lua" ); end
+if CONTENT[PERKS.ExtraProjectile].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/extra_projectile/init.lua" ); end
 
 if CONTENT[ACTIONS.BounceDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/bounce_damage/init.lua" ); end
 if CONTENT[ACTIONS.BreakCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/break_cast/init.lua" ); end
@@ -143,6 +142,7 @@ if CONTENT[ACTIONS.PathCorrection].enabled() then ModLuaFileAppend( "data/script
 if CONTENT[ACTIONS.PerfectCritical].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/perfect_critical/init.lua" ); end
 if CONTENT[ACTIONS.PowerShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/power_shot/init.lua" ); end
 if CONTENT[ACTIONS.ProjectileBurst].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_burst/init.lua" ); end
+if CONTENT[ACTIONS.ProjectileEqualization].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_equalization/init.lua" ); end
 if CONTENT[ACTIONS.ProjectileGravityWell].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_gravity_well/init.lua" ); end
 if CONTENT[ACTIONS.ProjectileOrbit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_orbit/init.lua" ); end
 if CONTENT[ACTIONS.Revelation].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/revelation/init.lua" ); end
@@ -153,10 +153,14 @@ if CONTENT[ACTIONS.SpellEfficiency].enabled() then ModLuaFileAppend( "data/scrip
 if CONTENT[ACTIONS.SpellMerge].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/spell_merge/init.lua" ); end
 if CONTENT[ACTIONS.ArcaneShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/arcane_shot/init.lua" ); end
 if CONTENT[ACTIONS.SuperBounce].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/super_bounce/init.lua" ); end
-if CONTENT[ACTIONS.WIP].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
 if CONTENT[ACTIONS.TriggerHit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_hit/init.lua" ); end
 if CONTENT[ACTIONS.TriggerTimer].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_timer/init.lua" ); end
 if CONTENT[ACTIONS.TriggerDeath].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_death/init.lua" ); end
+
+if SETTINGS.Debug == true then
+    if CONTENT[ACTIONS.WIP].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
+    if CONTENT[PERKS.WIP].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/wip/init.lua" ); end
+end
 
 if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" ); end
 

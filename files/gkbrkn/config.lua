@@ -83,10 +83,20 @@ PERKS = {
         SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 / #hand end,
     } ),
     KnockbackImmunity = register_content( CONTENT_TYPE.Perk, "knockback_immunity","Knockback Immunity" ),
-    Resilience = register_content( CONTENT_TYPE.Perk, "resilience","Resilience" ),
+    Resilience = register_content( CONTENT_TYPE.Perk, "resilience","Resilience", { Resistances = {
+        fire=0.35,
+        radioactive=0.35,
+        poison=0.35,
+        electricity=0.35,
+        ice=0.35,
+    }} ),
     PassiveRecharge = register_content( CONTENT_TYPE.Perk, "passive_recharge","Passive Recharge" ),
     LostTreasure = register_content( CONTENT_TYPE.Perk, "lost_treasure","Lost Treasure" ),
     AlwaysCast = register_content( CONTENT_TYPE.Perk, "always_cast","Always Cast" ),
+    HealthierHeart = register_content( CONTENT_TYPE.Perk, "healthier_heart","Healthier Heart" ),
+    InvincibilityFrames = register_content( CONTENT_TYPE.Perk, "invincibility_frames","Invincibility Frames" ),
+    ExtraProjectile = register_content( CONTENT_TYPE.Perk, "extra_projectile","Extra Projectile" ),
+    ManaRecovery = register_content( CONTENT_TYPE.Perk, "mana_recovery","Mana Recovery" ),
     WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true ),
 }
 
@@ -111,6 +121,7 @@ ACTIONS = {
     TriggerTimer = register_content( CONTENT_TYPE.Action, "trigger_timer","Trigger - Timer" ),
     TriggerDeath = register_content( CONTENT_TYPE.Action, "trigger_death","Trigger - Death" ),
     DrawDeck = register_content( CONTENT_TYPE.Action, "draw_deck","Draw Deck" ),
+    ProjectileEqualization = register_content( CONTENT_TYPE.Action, "projectile_equalization","Projectile Equalization" ),
     ProjectileGravityWell = register_content( CONTENT_TYPE.Action, "projectile_gravity_well","Projectile Gravity Well" ),
     LifetimeDamage = register_content( CONTENT_TYPE.Action, "damage_lifetime","Damage Plus - Lifetime" ),
     BounceDamage = register_content( CONTENT_TYPE.Action, "damage_bounce","Damage Plus - Bounce" ),
@@ -279,7 +290,7 @@ MISC = {
     },
     HealOnMaxHealthUp = {
         Enabled = "gkbrkn_max_health_heal",
-        HealToMaxEnabled = "gkbrkn_max_health_heal_full",
+        FullHeal = "gkbrkn_max_health_heal_full",
     },
     LooseSpellGeneration = {
         Enabled = "gkbrkn_loose_spell_generation",

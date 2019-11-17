@@ -1,7 +1,7 @@
 # gkbrkn_noita
 A collection of things I'm adding to Noita. This mod contains an in-game config menu. Use it to toggle options and custom content.
 
-### Misc Features
+### Misc Features (13)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
@@ -13,28 +13,32 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
 - [x] **Less Particles (WIP)**: Enable to reduce cosmetic particle emission.
 - [x] **Tweak Spells (WIP)**: Change base game spells for balance reasons.
-- [x] **Random Start**: Start runs with two random wands, a random flask, and a perk.
+- [x] **Random Start**: Start runs with two wands with random spells and stats, random max hp, a random flask, and a perk.
 - [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
 
-### Perks
+### Perks (14)
 - [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
 - [x] **Duplicate**: Duplicate a random wand in your inventory.
 - [x] **Enraged**: Gain Berserk permanently.
+- [x] **Extra Projectile**: Spells you cast gain an additional projectile.
 - [x] **Golden Blood**: You bleed gold.
+- [x] **Healthier Heart**: You heal for the amount gained when gaining maximum health.
+- [x] **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
 - [x] **Knockback Immunity**: Immunity to knockback and recoil.
 - [x] **Lost Treasure**: Spawn Gold Nuggets that were left behind.
-- [x] **Material Compression**: Your flasks can now hold twice as much.
+- [x] **Mana Recovery**: Your wands charge more quickly.
+- [x] **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
 - [x] **Passive Recharge**: Your wands recharge even when holstered.
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.
 
-### Projectile Modifier Spells
+### Projectile Modifier Spells (20)
 - [x] **Break Cast**: Stop the current spell cast.
 - [x] **Collision Detection**: Projectiles attempt to avoid world collisions.
 - [x] **Extra Projectile**: Duplicate a projectile.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
 - [x] **Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold.
-- [x] **Magic Light**: Projectiles clear the Fog of War.
+- [x] **Magic Light**: Projectiles reveal that which lurks in the darkness.
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - [x] **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
@@ -50,25 +54,25 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Damage Plus: Bounce**: Damage up for each bounce.
 - [x] **Damage Plus: Time**: Damage up over time.
 
-### Static Projectile Spells
-- [x] **Modification Field**: A field of modification magic.
+### Static Projectile Spells (1)
+- [x] **Modification Field**: A field of modification magic. (Concept by curry_murmurs)
 
-### Passive Spells
+### Passive Spells (3)
 - [x] **Shimmering Treasure**: Treasure catches your eye.
 - [x] **Mana Recharge**: Your wand charges mana slightly faster.
 - [x] **Passive Recharge**: Your wand recharges even when holstered.
 
-### Other Spells
+### Other Spells (2)
 - [x] **Order Deck**: Correct the order of all remaining spells.
 - [x] **Shuffle Deck**: Randomize the order of all remaining spells.
 
-### Multicast Spells
+### Multicast Spells (4)
 - [x] **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
 - [x] **Double Cast**: Cast the next spell twice.
 - [x] **Draw Deck**: Simultaneously cast all remaining spells.
 - [x] **Formation N-gon**: Simultaneously cast all remaining spells in a circular pattern.
 
-### Deprecated
+### Deprecated (6)
 - [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
 - [x] **Arcane Shot**: A fast bolt of arcane energy. *(Official spell exists)*
 - [x] **Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*

@@ -1,4 +1,8 @@
-dofile( "files/gkbrkn/helper.lua");
+if _ONCE == nil then
+    _ONCE = true;
+    dofile( "files/gkbrkn/helper.lua");
+    dofile( "files/gkbrkn/lib/variables.lua");
+end
 
 gkbrkn = {
     TRIGGER_TYPE = {
@@ -90,7 +94,8 @@ function add_projectile( filepath )
         trigger_action_draw_count = gkbrkn.trigger_queue[1].action_draw_count;
         table.remove( gkbrkn.trigger_queue, 1 );
     end
-    local projectiles_to_add = 0;
+    local player = GetUpdatedEntityID();
+    local projectiles_to_add = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
     if #deck == 0 then
         gkbrkn.stack_next_actions = 0;
     end

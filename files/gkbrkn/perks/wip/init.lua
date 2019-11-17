@@ -1,5 +1,4 @@
 dofile("files/gkbrkn/helper.lua");
-dofile("files/gkbrkn/config.lua");
 table.insert( perk_list, {
 	id = "GKBRKN_PERK_WIP",
 	ui_name = "WIP Perk",

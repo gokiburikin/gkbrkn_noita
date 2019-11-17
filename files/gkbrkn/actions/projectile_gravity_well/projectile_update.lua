@@ -1,6 +1,6 @@
 dofile( "data/scripts/lib/utilities.lua" );
 
-local gravity_well_distance = 256;
+local gravity_well_distance = 128;
 local maximum_strength = 128;
 local entity_id = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity_id );

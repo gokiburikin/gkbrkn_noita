@@ -7,6 +7,6 @@ table.insert( perk_list, {
 	ui_icon = "files/gkbrkn/perks/resilience/icon_ui.png",
     perk_icon = "files/gkbrkn/perks/resilience/icon_ig.png",
     func = function( entity_perk_item, entity_who_picked, item_name )
-        TryAdjustDamageMultipliers( entity_who_picked, PERKS.Resilience.Resistances );
+        TryAdjustDamageMultipliers( entity_who_picked, CONTENT[PERKS.Resilience].options.Resistances );
 	end,
 });

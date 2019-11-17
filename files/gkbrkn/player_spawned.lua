@@ -1,8 +1,10 @@
-if HasFlagPersistent(MISC.RandomStart.Enabled) then
-    DoFileEnvironment( "files/gkbrkn/misc/random_start/init.lua", {player_entity = player_entity} );
+local x, y = EntityGetTransform( player_entity );
+
+if HasFlagPersistent( MISC.RandomStart.Enabled ) then
+    DoFileEnvironment( "files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
 end
 
-if HasFlagPersistent(MISC.GoldPickupTracker.ShowTrackerEnabled) or HasFlagPersistent(MISC.GoldPickupTracker.ShowMessageEnabled) then
+if HasFlagPersistent( MISC.GoldPickupTracker.ShowTrackerEnabled ) or HasFlagPersistent( MISC.GoldPickupTracker.ShowMessageEnabled ) then
     if EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
         EntityAddComponent( player_entity, "SpriteComponent", { 
             _tags="gkbrkn_gold_tracker,enabled_in_world",
@@ -47,24 +49,42 @@ if platforming ~= nil then
 end
 ]]
 
-if HasFlagPersistent(MISC.InvincibilityFrames.Enabled) then
-    if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames" ) == nil then
-        EntityAddComponent( player_entity, "LuaComponent", {
-            _tags="gkbrkn_invincibility_frames",
-            execute_every_n_frame="-1",
-            script_damage_received="files/gkbrkn/misc/invincibility_frames.lua",
-        });
+if HasFlagPersistent( MISC.InvincibilityFrames.Enabled ) then
+    EntitySetVariableNumber( player_entity, "gkbrkn_invincibility_frames", MISC.InvincibilityFrames.Duration or 0 )
+end
+
+if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames" ) == nil then
+    EntityAddComponent( player_entity, "LuaComponent", {
+        _tags="gkbrkn_invincibility_frames",
+        execute_every_n_frame="-1",
+        script_damage_received="files/gkbrkn/misc/invincibility_frames.lua",
+    });
+end
+
+if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames_flash" ) == nil then
+    EntityAddComponent( player_entity, "LuaComponent", {
+        _tags="gkbrkn_invincibility_frames_flash",
+        script_source_file="files/gkbrkn/misc/invincibility_frames_flash.lua",
+        execute_every_n_frame="1",
+    });
+end
+
+EntityAddComponent( player_entity, "LuaComponent", {
+    script_source_file="files/gkbrkn/perks/mana_recovery/player_update.lua",
+    execute_every_n_frame="1",
+});
+
+if HasFlagPersistent( MISC.HealOnMaxHealthUp.Enabled ) then
+    local target = 1.0;
+    if HasFlagPersistent( MISC.HealOnMaxHealthUp.FullHeal ) then
+        target = 1000.0;
     end
-    if HasFlagPersistent(MISC.InvincibilityFrames.FlashEnabled) and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_invincibility_frames_flash" ) == nil then
-        EntityAddComponent( player_entity, "LuaComponent", {
-            _tags="gkbrkn_invincibility_frames_flash",
-            script_source_file="files/gkbrkn/misc/invincibility_frames_flash.lua",
-            execute_every_n_frame="1",
-        });
+    if EntityGetVariableString( player_entity, "gkbrkn_max_health_recovery", 0.0 ) < target then
+        EntitySetVariableString( player_entity, "gkbrkn_max_health_recovery", target );
     end
 end
 
-if HasFlagPersistent(MISC.HealOnMaxHealthUp.Enabled) and EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_max_health_heal" ) == nil then
+if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_max_health_heal" ) == nil then
     EntityAddComponent( player_entity, "LuaComponent", {
         _tags="gkbrkn_max_health_heal",
         script_source_file="files/gkbrkn/misc/max_health_heal.lua",
@@ -98,8 +118,10 @@ if SETTINGS.Debug then
     --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    --perk_spawn( x, y, "GKBRKN_MATERIAL_COMPRESSION" );
+    perk_spawn( x, y, "GKBRKN_RESILIENCE" );
     --perk_spawn( x + 20, y - 20, "GKBRKN_MATERIAL_COMPRESSION" );
+
+    GamePrint( player_entity );
     
     local effect = GetGameEffectLoadTo( player_entity, "EDIT_WANDS_EVERYWHERE", true );
     if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
@@ -121,7 +143,7 @@ if SETTINGS.Debug then
         ]]
 
         EntityAddChild( inventory, CreateWand( x, y, 
-            "FIRE_TRAIL","LIGHT_BULLET"
+        "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_PROJECTILE_EQUALIZATION","GKBRKN_DRAW_DECK","LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET","RUBBER_BALL"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
             "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","SPEED","BLACK_HOLE","SPEED","BLACK_HOLE","SPEED","BLACK_HOLE"

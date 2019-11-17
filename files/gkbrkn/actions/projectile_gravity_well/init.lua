@@ -1,7 +1,7 @@
 table.insert( actions,
 {
     id          = "GKBRKN_PROJECTILE_GRAVITY_WELL",
-    name 		= "Gravity Well",
+    name 		= "Projectile Gravity Well",
     description = "Cast a spell that attracts projectiles and casts another spell after a short timer runs out",
     sprite 		= "files/gkbrkn/actions/projectile_gravity_well/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/projectile_gravity_well/icon.png",

@@ -24,6 +24,7 @@
             deck_capacity="20" >
         </gun_config>
         <gunaction_config 
+            spread_degrees="2" 
             fire_rate_wait="15" >
         </gunaction_config>
     </AbilityComponent>
