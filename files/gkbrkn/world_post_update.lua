@@ -168,97 +168,23 @@ end
 local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
-    --local genome = EntityGetFirstComponent( player, "GenomeDataComponent" );
-    --GamePrint( "herd id: ".. ComponentGetValue( genome, "herd_id" ) );
-    --[[
-    local cape = EntityGetNamedChild( player, "cape" );
-    if cape ~= nil then
-        local verlet = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
-        if verlet ~= nil then
-            local culled = ComponentGetValue( verlet, "m_is_culled_previous" );
-            if culled == "1" then
-                local cx, cy = EntityGetTransform( cape );
-                GamePrint("trying to fix cape");
-                local inherit = EntityGetFirstComponent( cape, "InheritTransformComponent" );
-                if inherit~= nil then
-                    EntitySetComponentIsEnabled( cape, inherit, false );
-                    EntitySetTransform( cape, x, y);
-                end
-                --EntitySetComponentIsEnabled( cape, verlet, false );
-                --EntitySetComponentIsEnabled( cape, verlet, true );
-                ComponentSetValue( verlet, "follow_entity_transform", "1" );
-                local px, py = ComponentGetValueVector2( verlet, "m_position_previous" );
-                GamePrint( cx.."/"..cy.." || "..x.."/"..y);
-                --ComponentSetValueVector2( verlet,"m_position_previous", x, y );
-                --ComponentSetValue( verlet, "m_position_previous", tostring(x) );
-                --ComponentSetValue( verlet, "m_position_previous", tostring(y) );
-                --Log( "cape is missing" );
-            end
-            --EntitySetTransform( cape, Random( -100, 100 ), Random( -100, 100 ) ) ;
-        end
+
+    local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "mortal" );
+    if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
+        DoFileEnvironment( "files/gkbrkn/misc/champion_enemies.lua", { nearby_entities = nearby_entities } );
     end
-    ]]
+
+    nearby_entities = EntityGetInRadius( x, y, 256 );
+    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+        DoFileEnvironment( "files/gkbrkn/misc/less_particles.lua", { nearby_entities = nearby_entities } );
+    end
+    if HasFlagPersistent( MISC.GoldDecay.Enabled ) then
+        DoFileEnvironment( "files/gkbrkn/misc/gold_decay/update.lua", { nearby_entities = nearby_entities } );
+    end
 
     if CONTENT[PERKS.MaterialCompression].enabled() then
         DoFileEnvironment( "files/gkbrkn/perks/material_compression/player_update.lua", { player = player } );
     end
-
-    --[[
-    local children = EntityGetAllChildren( player );
-    local valid_wands = {};
-    local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
-    local active_item = ComponentGetValue( inventory2, "mActiveItem" );
-    for key, child in pairs( children ) do
-        if EntityGetName( child ) == "inventory_quick" then
-            valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
-            break;
-        end
-    end
-
-    for _,wand in pairs(valid_wands) do
-        if wand ~= active_item then
-            local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
-            if ability ~= nil then
-                local charge_wait = tonumber( ComponentGetValue( ability, "mNextFrameUsable" ) );
-                --ComponentSetValue( ability, "mNextFrameUsable", "0" )
-                GamePrint(charge_wait - game_frame );
-            end
-        end
-    end
-    ]]
-
-    local player_velocity = EntityGetFirstComponent( player, "VelocityComponent" );
-    local test = EntityGetWithTag( "acquire_parent_velocity" ) or {};
-    if #test > 0 then
-        for _,entity in pairs(test) do
-            local vx, vy = ComponentGetValueVector2( player_velocity, "mVelocity" );
-            --EntitySetTransform( entity, x, y );
-            EntitySetTransform( entity, x + vx, y + vy );
-        end
-    end
-
-    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
-        DoFileEnvironment("files/gkbrkn/misc/less_particles.lua", { x = x, y = y });
-    end
-
-    if HasFlagPersistent( MISC.GoldDecay.Enabled ) then
-        DoFileEnvironment("files/gkbrkn/misc/gold_decay/update.lua", { x = x, y = y });
-    end
-
-    --[[
-    local paused = HasFlagPersistent("gkbrkn_paused");
-    if GameGetFrameNum() % 40 == 0 then
-        GamePrint( tostring( paused ) );
-        if paused then
-            RemoveFlagPersistent("gkbrkn_paused");
-            ModMagicNumbersFileAdd( "files/gkbrkn/misc/unpause_simulation.xml" );
-        else
-            AddFlagPersistent("gkbrkn_paused");
-            ModMagicNumbersFileAdd( "files/gkbrkn/misc/pause_simulation.xml" );
-        end
-        GamePrint( "physics toggle" );
-    end
-    ]]
 
     if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
         local controls = EntityGetFirstComponent( player, "ControlsComponent" );
@@ -290,6 +216,76 @@ for _,player in pairs( players ) do
             end
         end
     end
+    
+    --local genome = EntityGetFirstComponent( player, "GenomeDataComponent" );
+    --GamePrint( "herd id: ".. ComponentGetValue( genome, "herd_id" ) );
+    --[[
+    local cape = EntityGetNamedChild( player, "cape" );
+    if cape ~= nil then
+        local verlet = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
+        if verlet ~= nil then
+            local culled = ComponentGetValue( verlet, "m_is_culled_previous" );
+            if culled == "1" then
+                local cx, cy = EntityGetTransform( cape );
+                GamePrint("trying to fix cape");
+                local inherit = EntityGetFirstComponent( cape, "InheritTransformComponent" );
+                if inherit~= nil then
+                    EntitySetComponentIsEnabled( cape, inherit, false );
+                    EntitySetTransform( cape, x, y);
+                end
+                --EntitySetComponentIsEnabled( cape, verlet, false );
+                --EntitySetComponentIsEnabled( cape, verlet, true );
+                ComponentSetValue( verlet, "follow_entity_transform", "1" );
+                local px, py = ComponentGetValueVector2( verlet, "m_position_previous" );
+                GamePrint( cx.."/"..cy.." || "..x.."/"..y);
+                --ComponentSetValueVector2( verlet,"m_position_previous", x, y );
+                --ComponentSetValue( verlet, "m_position_previous", tostring(x) );
+                --ComponentSetValue( verlet, "m_position_previous", tostring(y) );
+                --Log( "cape is missing" );
+            end
+            --EntitySetTransform( cape, Random( -100, 100 ), Random( -100, 100 ) ) ;
+        end
+    end
+    ]]
+
+    --[[
+    local children = EntityGetAllChildren( player );
+    local valid_wands = {};
+    local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
+    local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+    for key, child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+            break;
+        end
+    end
+
+    for _,wand in pairs(valid_wands) do
+        if wand ~= active_item then
+            local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
+            if ability ~= nil then
+                local charge_wait = tonumber( ComponentGetValue( ability, "mNextFrameUsable" ) );
+                --ComponentSetValue( ability, "mNextFrameUsable", "0" )
+                GamePrint(charge_wait - game_frame );
+            end
+        end
+    end
+    ]]
+
+    --[[
+    local paused = HasFlagPersistent("gkbrkn_paused");
+    if GameGetFrameNum() % 40 == 0 then
+        GamePrint( tostring( paused ) );
+        if paused then
+            RemoveFlagPersistent("gkbrkn_paused");
+            ModMagicNumbersFileAdd( "files/gkbrkn/misc/unpause_simulation.xml" );
+        else
+            AddFlagPersistent("gkbrkn_paused");
+            ModMagicNumbersFileAdd( "files/gkbrkn/misc/pause_simulation.xml" );
+        end
+        GamePrint( "physics toggle" );
+    end
+    ]]
 end
 
 --[[

@@ -5,6 +5,7 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
+- [x] **Champion enemies (WIP)**: A small amount of enemies will be champions.
 - [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
 - [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
 - [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand.

@@ -1,8 +1,3 @@
---[[ because gun_actions is called a quadrillion times, this has to run every time instead of once
-if HasFlagPersistent( "gkbrkn_tweak_spells_init" ) == false then
-    AddFlagPersistent( "gkbrkn_tweak_spells_init" );
-end
-]]
 local edit_callbacks = {
     MANA_REDUCE = function( action, index )
         table.remove( actions, index );

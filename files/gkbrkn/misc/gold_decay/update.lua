@@ -1,5 +1,4 @@
 local last_gold_check = 0;
-local check_radius = 192;
 local gold_check_interval = 40;
 
 function IsGoldNuggetTracked( entity ) return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_gold_decay" ) ~= nil; end
@@ -10,7 +9,6 @@ if now - last_gold_check >= gold_check_interval then
     -- iterate through all components of all entities around all players to find
     -- nuggets we haven't tracked
     local natural_nuggets = {};
-    local nearby_entities = EntityGetInRadius( x, y, check_radius );
     for _,entity in pairs( nearby_entities ) do
         -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
         -- we probably don't want to consider this nugget anyway

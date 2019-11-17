@@ -1,4 +1,3 @@
-local nearby_entities = EntityGetInRadius( x, y, 256 );
 local disable = HasFlagPersistent( MISC.LessParticles.DisableCosmeticParticles );
 for _,nearby in pairs( nearby_entities ) do
     if EntityHasTag( nearby, "gkbrkn_less_particles" ) == false then

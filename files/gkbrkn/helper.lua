@@ -350,8 +350,8 @@ function TryGivePerk( player_entity_id, ... )
     end
 end
 
-function TryAdjustDamageMultipliers( entity_id, resistances )
-    local damage_models = EntityGetComponent( entity_id, "DamageModelComponent" );
+function TryAdjustDamageMultipliers( entity, resistances )
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
     if damage_models ~= nil then
         for index,damage_model in pairs( damage_models ) do
             for damage_type,multiplier in pairs( resistances ) do
@@ -359,6 +359,20 @@ function TryAdjustDamageMultipliers( entity_id, resistances )
                 resistance = resistance * multiplier;
                 ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring(resistance) );
             end
+        end
+    end
+end
+
+function TryAdjustMaxHealth( entity, callback )
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+    if damage_models ~= nil then
+        for index,damage_model in pairs( damage_models ) do
+            local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
+            local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+            local new_max = callback( max_hp, current_hp );
+            local regained = new_max - current_hp;
+            ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
+            ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
         end
     end
 end

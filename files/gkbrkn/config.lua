@@ -250,6 +250,10 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
+        Name = "Champion Enemies",
+        PersistentFlag = "gkbrkn_champion_enemies",
+    },
+    {
         Name = "Quick Swap",
         PersistentFlag = "gkbrkn_quick_swap",
         RequiresRestart = true,
@@ -300,6 +304,9 @@ MISC = {
     },
     DisableSpells = {
         Enabled = "gkbrkn_disable_spells",
+    },
+    ChampionEnemies = {
+        Enabled = "gkbrkn_champion_enemies",
     },
     QuickSwap = {
         Enabled = "gkbrkn_quick_swap",

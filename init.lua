@@ -5,19 +5,13 @@ api issues
             entity created / loaded
             projectile fired from wand
             
-    no overriding of base game events in a modular interpoable way (currently have to overwrite or keep custom code up to date
+    no overriding of base game events in a modular interoperable way (currently have to overwrite or keep custom code up to date
         with every change)
     
 
 changelog
-    add missing credit
-    rename gravity well to projectile gravity well
-    reduce range of projectile gravity well
-    fix some negligible issues with max health recovery
-    add healthier heart
-    add invincibility frames (perk)
-    add mana recovery (perk)
-    fix resilience
+    fix charm nerf always being applied
+    add champion enemies
 
 kill streaks events
 grze events
@@ -41,6 +35,7 @@ TODO
         this could be emulated just as well by using trigger on death and an alt path correction that searches for a target upon spawning
     modifier that applies the next modifier to all projectiles in the wand
     make enemies imperfect / take time to aim towards you
+    try a pathfinding algorithm
 
 UTILITY
     TODO
@@ -106,7 +101,7 @@ if CONTENT[PERKS.DuplicateWand].enabled() then ModLuaFileAppend( "data/scripts/p
 if CONTENT[PERKS.Enraged].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/enraged/init.lua" ); end
 if CONTENT[PERKS.GoldenBlood].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/golden_blood/init.lua" ); end
 if CONTENT[PERKS.LivingWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/living_wand/init.lua" ); end
-if CONTENT[PERKS.LostTreasure].enabled() then dofile( "files/gkbrkn/perk_lost_treasure_update.lua"); ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/lost_treasure/init.lua" ); end
+if CONTENT[PERKS.LostTreasure].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/lost_treasure/init.lua" ); end
 if CONTENT[PERKS.ManaEfficiency].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_efficiency/init.lua" ); end
 if CONTENT[PERKS.ManaRecovery].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_recovery/init.lua" ); end
 if CONTENT[PERKS.MaterialCompression].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/material_compression/init.lua" ); end
@@ -162,7 +157,9 @@ if SETTINGS.Debug == true then
     if CONTENT[PERKS.WIP].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/wip/init.lua" ); end
 end
 
-if MISC.CharmNerf.Enabled then ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" ); end
+if HasFlagPersistent( MISC.CharmNerf.Enabled ) then
+    ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
+end
 
 if HasFlagPersistent( MISC.TweakSpells.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
@@ -184,13 +181,6 @@ if HasFlagPersistent( MISC.DisableSpells.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/disable_spells.lua" );
 end
 
-
-function OnModPreInit()
-    RemoveFlagPersistent("gkbrkn_loose_spell_generation_init");
-    RemoveFlagPersistent("gkbrkn_tweak_spells_init");
-    RemoveFlagPersistent("gkbrkn_upgraded_spells_init");
-end
-
 function OnPlayerSpawned( player_entity )
     DoFileEnvironment( "files/gkbrkn/player_spawned.lua", { player_entity = player_entity } );
 end
@@ -198,12 +188,3 @@ end
 function OnWorldPostUpdate()
     DoFileEnvironment( "files/gkbrkn/world_post_update.lua" );
 end
-
---[[
-function OnWorldInitialized()
-end
-
-function OnModPostInit()
-end
-
-]]
