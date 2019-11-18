@@ -7,7 +7,9 @@ if #projectile_entities == tonumber( GlobalsGetValue( "gkbrkn_projectiles_fired"
     for i,projectile in pairs(projectile_entities) do
         EntityRemoveTag( projectile, "gkbrkn_projectile_gravity_well" );
         if previous_projectile ~= nil then
-            EntityAddChild( leader, projectile );
+            if EntityGetParent( projectile ) == 0 then
+                EntityAddChild( leader, projectile );
+            end
             EntityAddComponent( projectile, "LuaComponent", { script_source_file="files/gkbrkn/actions/wip/projectile_update.lua", execute_event_n_frame="1" } );
         else
             leader = projectile;

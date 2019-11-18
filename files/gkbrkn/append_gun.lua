@@ -11,18 +11,19 @@ gkbrkn = {
         Death=3,
         Instant=4,
     },
+    reset_on_draw = false,
     extra_projectiles = 0,
     projectile_tracker = 0,
     stack_next_actions = 0,
     draw_cards_remaining = 0,
     instant_reload_if_empty = true,
-    projectile_actions = {},
     stack_projectiles = "",
     trigger_data = {
         type = 0,
         action_draw_count = 1,
         delay_frames = 0,
     },
+    projectiles_fired = 0,
     skip_cards = 0,
     trigger_queue = {},
     draw_action_stack_size = 0,
@@ -51,18 +52,31 @@ function skip_cards( amount )
     gkbrkn.skip_cards = gkbrkn.draw_cards_remaining;
 end
 
-function move_hand_to_discarded()
+function reset_per_casts()
     delete_cloned_actions();
+    gkbrkn.projectiles_fired = 0;
+    gkbrkn.stack_next_actions = 0;
+    gkbrkn.stack_projectiles = "";
+    gkbrkn.extra_projectiles = 0;
+end
+
+function move_hand_to_discarded()
+    GlobalsSetValue( "gkbrkn_projectiles_fired", gkbrkn.projectiles_fired );
     gkbrkn._move_hand_to_discarded();
+    gkbrkn.reset_on_draw = true;
 end
 
 function draw_actions( how_many, instant_reload_if_empty )
-    gkbrkn.draw_cards_remaining = how_many;
     gkbrkn.instant_reload_if_empty = instant_reload_if_empty;
     gkbrkn._draw_actions( how_many, instant_reload_if_empty );
 end
 
 function draw_action( instant_reload_if_empty )
+    if gkbrkn.reset_on_draw == true then
+        gkbrkn.reset_on_draw = false;
+        reset_per_casts();
+    end
+    gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining + 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
     local result = false;
     if gkbrkn.skip_cards <= 0 then
@@ -76,11 +90,6 @@ function draw_action( instant_reload_if_empty )
     end
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size - 1;
-    if gkbrkn.draw_action_stack_size == 0 then
-        gkbrkn.stack_next_actions = 0;
-        gkbrkn.stack_projectiles = "";
-        gkbrkn.extra_projectiles = 0;
-    end
     return result;
 end
 
@@ -111,7 +120,7 @@ function add_projectile( filepath )
         projectiles_to_add = projectiles_to_add + gkbrkn.extra_projectiles + 1;
     end
     for i=1,projectiles_to_add do
-        table.insert( gkbrkn.projectile_actions, current_action.id );
+        gkbrkn.projectiles_fired = gkbrkn.projectiles_fired + 1;
         if trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
             add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Death then

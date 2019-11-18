@@ -7,8 +7,8 @@
         entity_count="1" 
         entity_file="" 
         fast_projectile="0" 
-        mana_charge_speed="50"
-		mana_max="300"
+        mana_charge_speed="999999"
+		mana_max="999999"
         max_amount_in_inventory="1" 
         reload_time_frames="0" 
         shooting_reduces_amount_in_inventory="0" 
@@ -25,7 +25,7 @@
         </gun_config>
         <gunaction_config 
             spread_degrees="2" 
-            fire_rate_wait="15" >
+            fire_rate_wait="30" >
         </gunaction_config>
     </AbilityComponent>
 	

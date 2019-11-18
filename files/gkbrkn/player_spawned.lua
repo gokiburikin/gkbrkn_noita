@@ -121,11 +121,6 @@ if SETTINGS.Debug then
     perk_spawn( x, y, "GKBRKN_RESILIENCE" );
     --perk_spawn( x + 20, y - 20, "GKBRKN_MATERIAL_COMPRESSION" );
 
-    GamePrint( player_entity );
-    
-    local effect = GetGameEffectLoadTo( player_entity, "EDIT_WANDS_EVERYWHERE", true );
-    if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
-
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if inventory2 ~= nil then
         ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
@@ -141,13 +136,20 @@ if SETTINGS.Debug then
             end
         end
         ]]
-
         EntityAddChild( inventory, CreateWand( x, y, 
-        "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_PROJECTILE_EQUALIZATION","GKBRKN_DRAW_DECK","LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET","RUBBER_BALL"
+            "GKBRKN_SPELL_MERGE","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","SPEED","BLACK_HOLE","SPEED","BLACK_HOLE","SPEED","BLACK_HOLE"
+            "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
         ));
+        --[[
+        EntityAddChild( inventory, CreateWand( x, y, 
+            "GKBRKN_ACTION_WIP","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","BUBBLESHOT"
+        ));
+        EntityAddChild( inventory, CreateWand( x, y, 
+            "CHAOTIC_ARC","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","RUBBER_BALL"
+        ));
+        ]]
         --[[
         EntityAddChild( inventory, CreateWand( x, y, 
             "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
@@ -158,14 +160,6 @@ if SETTINGS.Debug then
 
     --local screen_fill = EntityLoad( "files/gkbrkn/misc/screen_fill.xml", 0, 0 );
     --EntityAddChild( player_entity, screen_fill );
-
-    --EntityLoad( "data/entities/animals/sniper.xml", x + 80, y );
-    local target_dummy = EntityLoad( "data/entities/animals/chest_mimic.xml", x + 80, y );
-    local damage_models = EntityGetComponent( target_dummy, "DamageModelComponent" );
-    for _,damage_model in pairs( damage_models ) do
-        ComponentSetValue( damage_model, "max_hp", 1000 );
-        ComponentSetValue( damage_model, "hp", 1000 );
-    end
 
     --[[
     ]]

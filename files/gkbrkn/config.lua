@@ -121,7 +121,6 @@ ACTIONS = {
     TriggerTimer = register_content( CONTENT_TYPE.Action, "trigger_timer","Trigger - Timer" ),
     TriggerDeath = register_content( CONTENT_TYPE.Action, "trigger_death","Trigger - Death" ),
     DrawDeck = register_content( CONTENT_TYPE.Action, "draw_deck","Draw Deck" ),
-    ProjectileEqualization = register_content( CONTENT_TYPE.Action, "projectile_equalization","Projectile Equalization" ),
     ProjectileGravityWell = register_content( CONTENT_TYPE.Action, "projectile_gravity_well","Projectile Gravity Well" ),
     LifetimeDamage = register_content( CONTENT_TYPE.Action, "damage_lifetime","Damage Plus - Lifetime" ),
     BounceDamage = register_content( CONTENT_TYPE.Action, "damage_bounce","Damage Plus - Bounce" ),

@@ -1,7 +1,7 @@
 # gkbrkn_noita
 A collection of things I'm adding to Noita. This mod contains an in-game config menu. Use it to toggle options and custom content.
 
-### Misc Features (13)
+### Misc Features (14)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
@@ -43,11 +43,11 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - [x] **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
-- [x] **Projectile Gravity Well**: Cast a spell that attracts projectiles and casts another spell after a short timer runs out.
-- [x] **Projectile Orbit**: Cast a spell that other spells cast at the same time will orbit.
+- [x] **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
+- [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - [x] **Revelation**: Cast a spell that reveals enemies upon collision.
 - [x] **Spectral Shot**: Cast a spell that passes through terrain.
-- [x] **Spell Merge**: Combine multiple spells into one.
+- [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 - [x] **Super Bounce**: Cast a spell that bounces more energetically.
 - [x] **Trigger: Hit**: Cast another spell upon collision.
 - [x] **Trigger: Time**: Cast another spell after a short duration.

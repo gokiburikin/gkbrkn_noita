@@ -10,8 +10,11 @@ api issues
     
 
 changelog
-    fix charm nerf always being applied
-    add champion enemies
+    update append_gun to support projectile tracking and fix a potential issue
+    rework spell merge to be closer to my intended concept
+    update projectile orbit to not occur a frame late
+    update projectile gravity well to only affect spells in the same cast
+    remove projectile equalization (prototype of true spell merge)
 
 kill streaks events
 grze events
@@ -137,7 +140,6 @@ if CONTENT[ACTIONS.PathCorrection].enabled() then ModLuaFileAppend( "data/script
 if CONTENT[ACTIONS.PerfectCritical].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/perfect_critical/init.lua" ); end
 if CONTENT[ACTIONS.PowerShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/power_shot/init.lua" ); end
 if CONTENT[ACTIONS.ProjectileBurst].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_burst/init.lua" ); end
-if CONTENT[ACTIONS.ProjectileEqualization].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_equalization/init.lua" ); end
 if CONTENT[ACTIONS.ProjectileGravityWell].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_gravity_well/init.lua" ); end
 if CONTENT[ACTIONS.ProjectileOrbit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/projectile_orbit/init.lua" ); end
 if CONTENT[ACTIONS.Revelation].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/revelation/init.lua" ); end

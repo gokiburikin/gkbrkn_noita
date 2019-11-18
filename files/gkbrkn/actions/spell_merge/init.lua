@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_SPELL_MERGE",
     name 		= "Spell Merge",
-    description = "Cast 2 spells, the first merged with the second",
+    description = "Cast 2 spells of which the first is merged with the second",
     sprite 		= "files/gkbrkn/actions/spell_merge/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/spell_merge/icon.png",
     type 		= ACTION_TYPE_MODIFIER,
@@ -11,8 +11,7 @@ table.insert( actions,
     price = 190,
     mana = 7,
     action 		= function()
-        stack_next_action( 1 );
-        c.speed_multiplier = c.speed_multiplier * 0.9;
-        draw_actions( 1, true );
+        c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/spell_merge/projectile_extra_entity.xml,";
+        draw_actions( 2, true );
     end,
 });

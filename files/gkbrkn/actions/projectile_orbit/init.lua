@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_PROJECTILE_ORBIT",
     name 		= "Projectile Orbit",
-    description = "Casts a spell that other spells cast at the same time will orbit",
+    description = "Cast 2 spells of which the second will orbit the first",
     sprite 		= "files/gkbrkn/actions/projectile_orbit/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/projectile_orbit/icon.png",
     type 		= ACTION_TYPE_MODIFIER,
@@ -11,6 +11,6 @@ table.insert( actions,
     price = 100,
     action 		= function()
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/projectile_orbit/projectile_extra_entity.xml,";
-        draw_actions( 1, true );
+        draw_actions( 2, true );
     end,
 });
