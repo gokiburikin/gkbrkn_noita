@@ -1,11 +1,16 @@
+if _ONCE == nil then
+    _ONCE = true;
+    dofile( "files/gkbrkn/lib/variables.lua");
+end
+
 local random_offset = 8;
 local maximum_strength = 96;
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
-if projectile ~= nil then
-    local parent = EntityGetParent( entity );
+local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
+if parent ~= 0 and EntityGetIsAlive(parent) then
+    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     local parent_projectile = EntityGetFirstComponent( parent, "ProjectileComponent" );
     local px, py = EntityGetTransform( parent );
     px = px + Random( -random_offset, random_offset );

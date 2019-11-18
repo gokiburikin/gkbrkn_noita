@@ -1,3 +1,5 @@
+dofile( "files/gkbrkn/lib/variables.lua");
+
 function EntitiesAverageMemberList( entities, component_type, member_list, rounded, overrides )
     local averages = {};
     local overridden = {};
@@ -52,7 +54,7 @@ local projectile_entities = EntityGetWithTag("gkbrkn_spell_merge");
 if #projectile_entities == tonumber( GlobalsGetValue( "gkbrkn_projectiles_fired", -1 ) ) then
     local leader = projectile_entities[1];
     EntitiesAverageMemberList( projectile_entities, "ProjectileComponent", {
-        "damage", "lifetime", "bounces_left", "bounce_energy",
+         "lifetime", "bounces_left", "bounce_energy",
         "ground_penetration_coeff", "knockback_force", "ragdoll_force_multiplier", "camera_shake_when_shot",
         "angular_velocity", "friction"
     },
@@ -77,16 +79,14 @@ if #projectile_entities == tonumber( GlobalsGetValue( "gkbrkn_projectiles_fired"
     end
     local average_angle = mean_angle( angles );
     average_velocity_magnitude = math.sqrt(average_velocity_magnitude / #projectile_entities);
-    for i,entity in pairs(projectile_entities) do
-        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
-        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
-        local angle = math.atan2( vy, vx );
-        ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
-        if entity ~= leader then
-            if EntityGetParent( entity ) == 0 then
-                EntityAddChild( leader, entity );
-                EntityAddComponent( entity, "InheritTransformComponent" );
-            end
+    for i,entity in pairs( projectile_entities ) do
+        if entity == leader then
+            local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local angle = math.atan2( vy, vx );
+            ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
+        else
+            EntitySetVariableString( entity, "gkbrkn_soft_parent", tostring( leader ) );
         end
     end
 end

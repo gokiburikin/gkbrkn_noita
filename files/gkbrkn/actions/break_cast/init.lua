@@ -10,6 +10,8 @@ table.insert( actions,
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 50,
     action 		= function()
+        c.fire_rate_wait = c.fire_rate_wait - 15;
+        current_reload_time = current_reload_time - 15;
         skip_cards();
     end,
 });

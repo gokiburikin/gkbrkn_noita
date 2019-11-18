@@ -10,11 +10,10 @@ api issues
     
 
 changelog
-    update append_gun to support projectile tracking and fix a potential issue
-    rework spell merge to be closer to my intended concept
-    update projectile orbit to not occur a frame late
-    update projectile gravity well to only affect spells in the same cast
-    remove projectile equalization (prototype of true spell merge)
+    buff Break Cast
+    rework projectile orbit, projectile gravity well, and spell merge to use soft parenting so the children don't expire when the parent does
+    adjust all spells to they can appear anywhere on any wand
+    don't average damage in spell merge since all spells persist now
 
 kill streaks events
 grze events
@@ -29,7 +28,6 @@ HitEffect considerations
 TODO
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
-    deprecate spell efficiency and mana efficiency (perks can stack easily now)
     make proj mods work for enemies (use herd id to find shooter enemies) (probably won't work until they fix the herd component issue)
         path correction
     golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
