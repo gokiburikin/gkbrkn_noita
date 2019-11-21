@@ -10,7 +10,7 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 350,
-    mana = 20,
+    mana = 30,
     action 		= function()
         local drawn = false;
         for index,action in pairs(deck) do

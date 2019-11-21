@@ -7,7 +7,7 @@ table.insert( actions,
     sprite_unidentified = "files/gkbrkn/actions/double_cast/icon.png",
     type 		= ACTION_TYPE_DRAW_MANY,
     spawn_level                       = "0,1,2,3,4,5,6",
-    spawn_probability                 = "0.1,0.1,0.1,0.1,0.1,0.1,0.1",
+    spawn_probability                 = "0.2,0.2,0.2,0.2,0.2,0.2,0.2",
     price = 500,
     mana = 50,
     action 		= function()

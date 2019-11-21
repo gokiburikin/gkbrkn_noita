@@ -2,6 +2,17 @@ dofile("data/scripts/gun/procedural/gun_action_utils.lua");
 
 _GKBRKN_HELPER = true;
 
+function benchmark( callback, iterations )
+    if iterations == nil then
+        iterations = 1;
+    end
+    local t = GameGetRealWorldTimeSinceStarted();
+    for i=1,iterations do
+        callback();
+    end
+    return GameGetRealWorldTimeSinceStarted() - t;
+end
+
 function map(func, array)
     local new_array = {};
     for i,v in ipairs(array) do

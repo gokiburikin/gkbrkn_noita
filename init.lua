@@ -10,10 +10,22 @@ api issues
     
 
 changelog
-    buff Break Cast
-    rework projectile orbit, projectile gravity well, and spell merge to use soft parenting so the children don't expire when the parent does
-    adjust all spells to they can appear anywhere on any wand
-    don't average damage in spell merge since all spells persist now
+    buff Tweak Spells - Heavy Shot
+    nerf Damage Plus - Lifetime
+    nerf Extra Projectile
+    slightly nerf Tweak Spells - Damage Plus
+    slightly nerf Formation - N-gon
+    slightly nerf Draw All
+    increase Double Cast weighting
+    change all spells marked Passive as Projectile Modifier for now since Passive spells don't show up in random generation
+    more work on champions, remove the additional gold drop (triple health affects natural gold drops)
+    rephrase revelation's description for better clarity
+    properly deprecate deprecated content
+    add install instructions
+    add energy shield particle effect to Micro Shield
+    fix a typo in the config menu
+    fix Break Cast costing mana
+    fix Super Bounce adding the wrong extra_entity
 
 kill streaks events
 grze events
@@ -26,10 +38,10 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
+    make wand shops only wands not stealable
+    stack projectile modifiers (gradius)
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
-    make proj mods work for enemies (use herd id to find shooter enemies) (probably won't work until they fix the herd component issue)
-        path correction
     golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
     spell drop chance (drop money override, a chance to drop a spell of equal value)
     shot that targets another enemy in line of sight when killing 
@@ -151,6 +163,7 @@ if CONTENT[ACTIONS.SuperBounce].enabled() then ModLuaFileAppend( "data/scripts/g
 if CONTENT[ACTIONS.TriggerHit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_hit/init.lua" ); end
 if CONTENT[ACTIONS.TriggerTimer].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_timer/init.lua" ); end
 if CONTENT[ACTIONS.TriggerDeath].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_death/init.lua" ); end
+if CONTENT[ACTIONS.TimeSplit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/time_split/init.lua" ); end
 
 if SETTINGS.Debug == true then
     if CONTENT[ACTIONS.WIP].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end

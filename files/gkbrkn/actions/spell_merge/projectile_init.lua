@@ -1,4 +1,7 @@
-dofile( "files/gkbrkn/lib/variables.lua");
+if _ONCE == nil then
+    _ONCE = true;
+    dofile( "files/gkbrkn/lib/variables.lua");
+end
 
 function EntitiesAverageMemberList( entities, component_type, member_list, rounded, overrides )
     local averages = {};
@@ -78,7 +81,7 @@ if #projectile_entities == tonumber( GlobalsGetValue( "gkbrkn_projectiles_fired"
 
     end
     local average_angle = mean_angle( angles );
-    average_velocity_magnitude = math.sqrt(average_velocity_magnitude / #projectile_entities);
+    average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
     for i,entity in pairs( projectile_entities ) do
         if entity == leader then
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );

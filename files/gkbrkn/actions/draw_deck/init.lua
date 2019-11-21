@@ -9,7 +9,7 @@ table.insert( actions,
 		spawn_level                       = "0,1,2,3,4,5,6", -- BURST_4
 		spawn_probability                 = "1,1,1,1,1,1,1", -- BURST_4
 		price = 280,
-		mana = 20,
+		mana = 30,
         action 		= function()
 			draw_actions( #deck, true );
 		end,

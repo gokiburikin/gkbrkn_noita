@@ -11,7 +11,7 @@ table.insert( actions,
     price = 90,
     mana = 3,
     action 		= function()
-        c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/wip/projectile_extra_entity.xml,";
+        c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/super_bounce/projectile_extra_entity.xml,";
         c.bounces = c.bounces + 2;
         draw_actions( 1, true );
     end,

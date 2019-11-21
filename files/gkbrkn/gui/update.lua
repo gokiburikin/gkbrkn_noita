@@ -25,7 +25,9 @@ local page = 0;
 local id_offset = 0;
 local sorted_content = {};
 for index,content in pairs( CONTENT ) do
-    table.insert( sorted_content, { id=index, name=content.name } );
+    if content.visible() then
+        table.insert( sorted_content, { id=index, name=content.name } );
+    end
 end
 table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 

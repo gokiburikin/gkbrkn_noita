@@ -3,11 +3,12 @@ local edit_callbacks = {
         table.remove( actions, index );
     end,
     HEAVY_SHOT = function( action, index )
-        action.mana = 85;
+        action.mana = 35;
         action.action = function()
-            c.damage_projectile_add = c.damage_projectile_add + 0.6
-			c.fire_rate_wait    = c.fire_rate_wait + 20
-			current_reload_time    = current_reload_time + 60
+            c.damage_projectile_add = c.damage_projectile_add + 0.8
+            c.damage_critical_chance = c.damage_critical_chance + 0.24
+			c.fire_rate_wait    = c.fire_rate_wait + 30
+			current_reload_time    = current_reload_time + 20
 			c.gore_particles    = c.gore_particles + 10
 			c.speed_multiplier = c.speed_multiplier * 0.3
 			shot_effects.recoil_knockback = shot_effects.recoil_knockback + 50.0
@@ -20,7 +21,7 @@ local edit_callbacks = {
         action.action = function()
 			c.damage_projectile_add = c.damage_projectile_add + 0.4
 			c.gore_particles    = c.gore_particles + 5
-			c.fire_rate_wait    = c.fire_rate_wait + 5
+			c.fire_rate_wait    = c.fire_rate_wait + 10
 			current_reload_time    = current_reload_time + 15
 			c.extra_entities    = c.extra_entities .. "data/entities/particles/tinyspark_yellow.xml,"
 			shot_effects.recoil_knockback = shot_effects.recoil_knockback + 10.0
@@ -29,6 +30,7 @@ local edit_callbacks = {
     end,
     CHAINSAW = function( action, index )
         action.mana = 3;
+        c.fire_rate_wait = math.min( c.fire_rate_wait, 1 );
     end
 }
 for i=#actions,1,-1 do

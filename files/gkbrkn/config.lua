@@ -1,5 +1,10 @@
 _GKBRKN_CONFIG = true;
 
+SETTINGS = {
+    Debug = DebugGetIsDevBuild(),
+    ShowDeprecatedContent = DebugGetIsDevBuild(),
+}
+
 CONTENT_TYPE = {
     Action = 1,
     Perk = 2,
@@ -19,7 +24,7 @@ CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
 }
 
 CONTENT = {}
-function register_content( type, key, display_name, options, disabled_by_default )
+function register_content( type, key, display_name, options, disabled_by_default, deprecated )
     local content_id = #CONTENT + 1;
     local content = {
         id = content_id,
@@ -27,7 +32,15 @@ function register_content( type, key, display_name, options, disabled_by_default
         key = key,
         name = CONTENT_TYPE_DISPLAY_NAME_PREFIX[type]..display_name,
         disabled_by_default = disabled_by_default,
-        enabled = function() return HasFlagPersistent( get_content_flag( content_id ) ) == false end,
+        deprecated = deprecated,
+        enabled = function()
+            if SETTINGS.ShowDeprecatedContent == true or deprecated ~= true then
+                return HasFlagPersistent( get_content_flag( content_id ) ) == false
+            end
+        end,
+        visible = function()
+            return SETTINGS.ShowDeprecatedContent == true or deprecated ~= true
+        end,
         toggle = function( force )
             local flag = get_content_flag( content_id );
             if force == true then
@@ -59,24 +72,20 @@ function get_content_flag( content_id )
     end
 end
 
-SETTINGS = {
-    Debug = DebugGetIsDevBuild(),
-}
-
 PERKS = {
     Enraged = register_content( CONTENT_TYPE.Perk, "enraged","Enraged" ),
     LivingWand = register_content( CONTENT_TYPE.Perk, "living_wand","Living Wand", {
         TeleportDistance = 128
-    }, true ),
+    }, true, true ),
     DuplicateWand = register_content( CONTENT_TYPE.Perk, "duplicate_wand","Duplicate Wand" ),
     GoldenBlood = register_content( CONTENT_TYPE.Perk, "golden_blood","Golden Blood" ),
     SpellEfficiency = register_content( CONTENT_TYPE.Perk, "spell_efficiency","Spell Efficiency", {
         RetainChance = 0.33
-    }, true ),
+    }, true, true ),
     MaterialCompression = register_content( CONTENT_TYPE.Perk, "material_compression","Material Compression" ),
     ManaEfficiency = register_content( CONTENT_TYPE.Perk, "mana_efficiency","Mana Efficiency", {
         Discount = 0.33
-    }, true ),
+    }, true, true ),
     RapidFire = register_content( CONTENT_TYPE.Perk, "rapid_fire","Rapid Fire", {
         RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime - rechargeTime * 0.50 / #hand end,
         CastDelayAdjustment = function( castDelay ) return castDelay - castDelay * 0.50 / #hand end,
@@ -97,20 +106,20 @@ PERKS = {
     InvincibilityFrames = register_content( CONTENT_TYPE.Perk, "invincibility_frames","Invincibility Frames" ),
     ExtraProjectile = register_content( CONTENT_TYPE.Perk, "extra_projectile","Extra Projectile" ),
     ManaRecovery = register_content( CONTENT_TYPE.Perk, "mana_recovery","Mana Recovery" ),
-    WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true ),
+    WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true, not SETTINGS.Debug ),
 }
 
 ACTIONS = {
-    ManaEfficiency = register_content( CONTENT_TYPE.Action, "mana_efficiency","Mana Efficiency", nil, true ),
-    SpellEfficiency =  register_content( CONTENT_TYPE.Action, "spell_efficiency","Spell Efficiency", nil, true ),
+    ManaEfficiency = register_content( CONTENT_TYPE.Action, "mana_efficiency","Mana Efficiency", nil, true, true ),
+    SpellEfficiency =  register_content( CONTENT_TYPE.Action, "spell_efficiency","Spell Efficiency", nil, true, true ),
     GoldenBlessing = register_content( CONTENT_TYPE.Action, "golden_blessing","Golden Blessing" ),
     MagicLight = register_content( CONTENT_TYPE.Action, "magic_light","Magic Light" ),
     Revelation = register_content( CONTENT_TYPE.Action, "revelation","Revelation" ),
-    MicroShield = register_content( CONTENT_TYPE.Action, "micro_shield","Micro Shield", nil, true ),
+    MicroShield = register_content( CONTENT_TYPE.Action, "micro_shield","Micro Shield", nil, true, true ),
     ModificationField = register_content( CONTENT_TYPE.Action, "modification_field","Modification Field" ),
     SpectralShot = register_content( CONTENT_TYPE.Action, "spectral_shot","Spectral Shot" ),
-    ArcaneBuckshot = register_content( CONTENT_TYPE.Action, "arcane_buckshot","Arcane Buckshot", nil, true ),
-    ArcaneShot = register_content( CONTENT_TYPE.Action, "arcane_shot","Arcane Shot", nil, true ),
+    ArcaneBuckshot = register_content( CONTENT_TYPE.Action, "arcane_buckshot","Arcane Buckshot", nil, true, true ),
+    ArcaneShot = register_content( CONTENT_TYPE.Action, "arcane_shot","Arcane Shot", nil, true, true ),
     DoubleCast = register_content( CONTENT_TYPE.Action, "double_cast","Double Cast" ),
     SpellMerge = register_content( CONTENT_TYPE.Action, "spell_merge","Spell Merge" ),
     ExtraProjectile = register_content( CONTENT_TYPE.Action, "extra_projectile","Extra Projectile" ),
@@ -125,7 +134,7 @@ ACTIONS = {
     LifetimeDamage = register_content( CONTENT_TYPE.Action, "damage_lifetime","Damage Plus - Lifetime" ),
     BounceDamage = register_content( CONTENT_TYPE.Action, "damage_bounce","Damage Plus - Bounce" ),
     PathCorrection = register_content( CONTENT_TYPE.Action, "path_correction","Path Correction" ),
-    CollisionDetection = register_content( CONTENT_TYPE.Action, "collision_detection","Collection Detection" ),
+    CollisionDetection = register_content( CONTENT_TYPE.Action, "collision_detection","Collision Detection" ),
     PowerShot = register_content( CONTENT_TYPE.Action, "power_shot","Power Shot" ),
     ShimmeringTreasure = register_content( CONTENT_TYPE.Action, "shimmering_treasure","Shimmering Treasure" ),
     NgonShape = register_content( CONTENT_TYPE.Action, "ngon_shape","N-gon Shape" ),
@@ -136,7 +145,8 @@ ACTIONS = {
     ManaRecharge = register_content( CONTENT_TYPE.Action, "mana_recharge","Mana Recharge" ),
     SuperBounce = register_content( CONTENT_TYPE.Action, "super_bounce","Super Bounce" ),
     CopySpell = register_content( CONTENT_TYPE.Action, "copy_spell","Copy Spell" ),
-    WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true )
+    TimeSplit = register_content( CONTENT_TYPE.Action, "time_split","Time Split" ),
+    WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true, not SETTINGS.Debug )
 }
 
 OPTIONS = {

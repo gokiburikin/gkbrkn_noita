@@ -1,5 +1,5 @@
 # gkbrkn_noita
-A collection of things I'm adding to Noita. This mod contains an in-game config menu. Use it to toggle options and custom content.
+A collection of things I'm adding to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
 
 ### Misc Features (14)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
@@ -35,25 +35,26 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 
 ### Projectile Modifier Spells (20)
 - [x] **Break Cast**: Stop the current spell cast.
-- [x] **Collision Detection**: Projectiles attempt to avoid world collisions.
+- [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions.
+- [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
+- [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
 - [x] **Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold.
-- [x] **Magic Light**: Projectiles reveal that which lurks in the darkness.
+- [x] **Magic Light**: Cast a spell that cuts through the darkness.
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - [x] **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
 - [x] **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
 - [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
-- [x] **Revelation**: Cast a spell that reveals enemies upon collision.
+- [x] **Revelation**: Cast a spell that reveals the area around the enemy it hits.
 - [x] **Spectral Shot**: Cast a spell that passes through terrain.
 - [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 - [x] **Super Bounce**: Cast a spell that bounces more energetically.
+- [x] **Time Split**: Equalize current cast delay and recharge time.
 - [x] **Trigger: Hit**: Cast another spell upon collision.
 - [x] **Trigger: Time**: Cast another spell after a short duration.
 - [x] **Trigger: Death**: Cast another spell after the spell expires.
-- [x] **Damage Plus: Bounce**: Damage up for each bounce.
-- [x] **Damage Plus: Time**: Damage up over time.
 
 ### Static Projectile Spells (1)
 - [x] **Modification Field**: A field of modification magic. (Concept by curry_murmurs)

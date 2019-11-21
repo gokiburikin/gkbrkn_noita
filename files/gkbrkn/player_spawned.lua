@@ -118,7 +118,6 @@ if SETTINGS.Debug then
     --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
     --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    perk_spawn( x, y, "GKBRKN_RESILIENCE" );
     --perk_spawn( x + 20, y - 20, "GKBRKN_MATERIAL_COMPRESSION" );
 
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
@@ -132,12 +131,13 @@ if SETTINGS.Debug then
         local inventory_items = EntityGetAllChildren( inventory );
         if inventory_items ~= nil then
             for i,item_entity in ipairs( inventory_items ) do
-                GameKillInventoryItem( player_entity, item_entity );
+                local item = EntityGetFirstComponent( item_entity, "ItemComponent" );
+                GamePrint( tostring( item ) or "nil");
             end
         end
         ]]
         EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_SPELL_MERGE","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
+            "GKBRKN_TIME_SPLIT","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
         ));
         EntityAddChild( inventory, CreateWand( x, y, 
             "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
@@ -163,6 +163,7 @@ if SETTINGS.Debug then
 
     --[[
     ]]
+    --EntityLoad( "data/entities/animals/tank.xml", x - 80, y );
     EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
     for i=1,10 do
         EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );

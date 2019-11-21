@@ -1,9 +1,55 @@
 local game_frame = GameGetFrameNum();
-if PerkLostTreasureUpdate ~= nil then PerkLostTreasureUpdate(); end
 
 local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
+
+    if game_frame % 60 == 0 then
+        --[[ Stain Data
+        local status_effect_data = EntityGetFirstComponent( player, "StatusEffectDataComponent" );
+        if status_effect_data ~= nil then
+            local vector_size = ComponentGetVectorSize( status_effect_data, "stain_effects", "float" );
+            local replacement = {};
+            for i=0,vector_size-1 do
+                replacement[i+1] = 1.0;
+                GamePrint( ComponentGetVectorValue( status_effect_data, "stain_effects", "float", i ) or "nil" );
+            end
+            ComponentSetValue( status_effect_data, "stain_effects", replacement );
+        end
+        ]]
+        --[[ Inventory Slot
+        local inventory = EntityGetNamedChild( player, "inventory_quick" );
+        if inventory ~= nil then
+            local inventory_items = EntityGetAllChildren( inventory ) or {};
+            if inventory_items ~= nil then
+                for i,item_entity in pairs( inventory_items ) do
+                    local item = FindFirstComponentThroughTags( item_entity, "item_name" );
+                    if item ~= nil then
+                        GamePrint( EntityGetFirstComponent( item_entity, "ItemComponent" ) );
+                        --local x,y = ComponentGetValueVector2( item, "inventory_slot" );
+                        --GamePrint( x .. "/"..y );
+                        --local vector_size = ComponentGetVectorSize( item, "inventory_slot", "int" );
+                        --GamePrint(vector_size);
+                        local x = ComponentGetVectorValue( item, "inventory_slot", "int", 0 );
+                        local y = ComponentGetVectorValue( item, "inventory_slot", "int", 1 );
+                        GamePrint( x or "nil" );
+                        GamePrint( y or "nil" );
+                    end
+                    --local components = EntityGetAllComponents( item_entity ) or {};
+                    --GamePrint(#components);
+                    --local item = EntityGetFirstComponent( item_entity, "ItemComponent" );
+                    --GamePrint(tostring(item));
+                    --if item ~= nil then
+                    --    local vector_size = ComponentGetVectorSize( item, "inventory_slot", "int" );
+                    --    GamePrint(vector_size);
+                    --end
+                    --local item = EntityGetFirstComponent( item_entity, "ItemComponent" );
+                    --GamePrint( tostring( item ) or "nil");
+                end
+            end
+        end
+        ]]
+    end
 
     local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "mortal" );
     if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
@@ -23,36 +69,19 @@ for _,player in pairs( players ) do
     end
 
     if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
-        local controls = EntityGetFirstComponent( player, "ControlsComponent" );
-        local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
-        if controls ~= nil and inventory2 ~= nil then
-            local active_item = ComponentGetValue( inventory2, "mActiveItem" );
-            if active_item == nil or EntityHasTag( active_item, "wand" ) == true then
-                local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
-                local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
-                if alt_fire == "1" and GameGetFrameNum() == tonumber(alt_fire_frame) then
-                    local inventory = nil;
-                    local swap_inventory = nil;
-                    for _,child in pairs(EntityGetAllChildren( player )) do
-                        if EntityGetName(child) == "inventory_quick" then
-                            inventory = child;
-                        elseif EntityGetName(child) == "gkbrkn_swap_inventory" then
-                            swap_inventory = child;
-                        end
-                    end
-                    if inventory ~= nil and swap_inventory ~= nil then
-                        local inventory_entities = EntityGetAllChildren( inventory ) or {};
-                        local swap_inventory_entities = EntityGetAllChildren( swap_inventory ) or {};
-                        for _,child in pairs(inventory_entities) do EntityRemoveFromParent( child ); end
-                        for _,child in pairs(swap_inventory_entities) do EntityRemoveFromParent( child ); end
-                        for _,child in pairs(inventory_entities) do EntityAddChild( swap_inventory, child ); end
-                        for _,child in pairs(swap_inventory_entities) do EntityAddChild( inventory, child ); end
-                    end
-                end
-            end
+        DoFileEnvironment( "files/gkbrkn/misc/quick_swap.lua", { player = player } );
+    end
+
+    --[[ Healing 
+    local damage_models = EntityGetComponent( player, "DamageModelComponent" );
+    if damage_models ~= nil then
+        for index,damage_model in pairs( damage_models ) do
+            local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+            ComponentSetValue( damage_model, "hp", tostring( max_hp ) );
         end
     end
-    
+    ]]
+
     --local genome = EntityGetFirstComponent( player, "GenomeDataComponent" );
     --GamePrint( "herd id: ".. ComponentGetValue( genome, "herd_id" ) );
     --[[

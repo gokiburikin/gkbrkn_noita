@@ -9,9 +9,10 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 320,
-    mana = 9,
+    mana = 15,
     action 		= function()
-        c.spread_degrees = c.spread_degrees + 3;
+        c.spread_degrees = c.spread_degrees + 2;
+        c.speed_multiplier = c.speed_multiplier * 0.9;
         extra_projectiles( 1 );
         draw_actions( 1, true );
     end,

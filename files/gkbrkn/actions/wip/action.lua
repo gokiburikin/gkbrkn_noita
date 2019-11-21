@@ -1,2 +1,3 @@
-c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/wip/projectile_extra_entity.xml,";
-draw_actions( 1, true );
+local sum = (c.fire_rate_wait + current_reload_time) * 0.5;
+c.fire_rate_wait = sum;
+current_reload_time = sum;

@@ -9,6 +9,7 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 50,
+    mana = 0,
     action 		= function()
         c.fire_rate_wait = c.fire_rate_wait - 15;
         current_reload_time = current_reload_time - 15;
