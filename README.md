@@ -1,7 +1,7 @@
 # gkbrkn_noita
 A collection of things I'm adding to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
 
-### Misc Features (14)
+### Misc Features (15)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
@@ -16,6 +16,7 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Tweak Spells (WIP)**: Change base game spells for balance reasons.
 - [x] **Random Start**: Start runs with two wands with random spells and stats, random max hp, a random flask, and a perk.
 - [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
+- [x] **Extended Wand Generation**: Include unused spell types in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
 
 ### Perks (14)
 - [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
@@ -33,9 +34,9 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.
 
-### Projectile Modifier Spells (20)
-- [x] **Break Cast**: Stop the current spell cast.
-- [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions.
+### Projectile Modifier Spells (18)
+- [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
+- [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan)
 - [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
@@ -45,11 +46,8 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - [x] **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
-- [x] **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
-- [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - [x] **Revelation**: Cast a spell that reveals the area around the enemy it hits.
 - [x] **Spectral Shot**: Cast a spell that passes through terrain.
-- [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 - [x] **Super Bounce**: Cast a spell that bounces more energetically.
 - [x] **Time Split**: Equalize current cast delay and recharge time.
 - [x] **Trigger: Hit**: Cast another spell upon collision.
@@ -68,11 +66,15 @@ A collection of things I'm adding to Noita. This mod contains an in-game config 
 - [x] **Order Deck**: Correct the order of all remaining spells.
 - [x] **Shuffle Deck**: Randomize the order of all remaining spells.
 
-### Multicast Spells (4)
+### Multicast Spells (8)
 - [x] **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
 - [x] **Double Cast**: Cast the next spell twice.
 - [x] **Draw Deck**: Simultaneously cast all remaining spells.
-- [x] **Formation N-gon**: Simultaneously cast all remaining spells in a circular pattern.
+- [x] **Formation - N-gon**: Simultaneously cast all remaining spells in a circular pattern.
+- [x] **Formation - Stack**: Cast 3 spells that stack vertically.
+- [x] **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
+- [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
+- [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 
 ### Deprecated (6)
 - [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*

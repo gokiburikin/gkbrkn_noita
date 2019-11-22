@@ -3,6 +3,7 @@ _GKBRKN_CONFIG = true;
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = DebugGetIsDevBuild(),
+    Version = "c46"
 }
 
 CONTENT_TYPE = {
@@ -146,6 +147,7 @@ ACTIONS = {
     SuperBounce = register_content( CONTENT_TYPE.Action, "super_bounce","Super Bounce" ),
     CopySpell = register_content( CONTENT_TYPE.Action, "copy_spell","Copy Spell" ),
     TimeSplit = register_content( CONTENT_TYPE.Action, "time_split","Time Split" ),
+    FormationStack = register_content( CONTENT_TYPE.Action, "formation_stack","Formation Stack" ),
     WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true, not SETTINGS.Debug )
 }
 
@@ -239,6 +241,11 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
+        Name = "Disable Random Spells",
+        PersistentFlag = "gkbrkn_disable_spells",
+        RequiresRestart = true,
+    },
+    {
         Name = "Charm Nerf",
         PersistentFlag = "gkbrkn_charm_nerf",
         RequiresRestart = true,
@@ -251,11 +258,6 @@ OPTIONS = {
     {
         Name = "Limited Ammo",
         PersistentFlag = "gkbrkn_limited_ammo",
-        RequiresRestart = true,
-    },
-    {
-        Name = "Disable Random Spells",
-        PersistentFlag = "gkbrkn_disable_spells",
         RequiresRestart = true,
     },
     {
@@ -275,6 +277,11 @@ OPTIONS = {
     {
         Name = "Wand Shops Only",
         PersistentFlag = "gkbrkn_wand_shops_only",
+        RequiresRestart = true,
+    },
+    {
+        Name = "Extended Wand Generation",
+        PersistentFlag = "gkbrkn_extended_wand_generation",
         RequiresRestart = true,
     },
     {
@@ -337,6 +344,9 @@ MISC = {
     },
     WandShopsOnly = {
         Enabled = "gkbrkn_wand_shops_only",
+    },
+    ExtendedWandGeneration = {
+        Enabled = "gkbrkn_extended_wand_generation",
     },
     ShowFPS = {
         Enabled = "gkbrkn_show_fps",

@@ -57,7 +57,7 @@ function do_gui()
     id_offset = 0;
     GuiStartFrame(gui);
     GuiLayoutBeginVertical( gui, 87, 0 );
-    local main_text = "[GKBRKN Config]";
+    local main_text = "[GKBRKN "..SETTINGS.Version.."]";
     if gui_require_restart == true then
         main_text = main_text.."*"
     end

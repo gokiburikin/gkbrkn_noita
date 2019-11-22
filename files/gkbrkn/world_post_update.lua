@@ -4,7 +4,73 @@ local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
 
+        --[[
     if game_frame % 60 == 0 then
+        local inventory = EntityGetFirstComponent( player, "InventoryComponent" );
+        local children = EntityGetAllChildren( player );
+        for key, child in pairs( children ) do
+            if EntityGetName( child ) == "inventory_full" then
+                local items = EntityGetAllChildren( child ) or {};
+                for _,item in pairs( items ) do
+                    local components = EntityGetAllComponents( item, "ItemActionComponent" );
+                    for _,component in pairs( components ) do
+                        local action_id = ComponentGetValue( component, "action_id" );
+                        if action_id ~= "" then
+                            GamePrint( action_id );
+                        end
+                    end
+                    --GamePrint( EntityGetName( item ) );
+                end
+                --valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+                --break;
+            end
+        end
+        if game_frame % 120 == 0 then
+            GamePrint("tick");
+        else
+            GamePrint("tock");
+        end
+        local children = EntityGetAllChildren( player );
+        local valid_wands = {};
+        local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
+        local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+        if EntityHasTag( active_item, "wand" ) then
+            table.insert( valid_wands, active_item );
+        end
+        ]]
+        --for key, child in pairs( children ) do
+        --    if EntityGetName( child ) == "inventory_quick" and active_item == child then
+        --        valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+        --        break;
+        --    end
+        --end
+
+        --for _,wand in pairs(valid_wands) do
+        --    WandExplodeRandomAction( wand );
+        --end
+        --[[ Wand Hotspot 
+        local children = EntityGetAllChildren( player );
+        local valid_wands = {};
+        local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
+        local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+        for key, child in pairs( children ) do
+            if EntityGetName( child ) == "inventory_quick" then
+                valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+                break;
+            end
+        end
+
+        for _,wand in pairs(valid_wands) do
+            if wand ~= active_item then
+                local hotspot = FindFirstComponentThroughTags( wand, "transform_with_scale" );
+                if hotspot ~= nil then
+                    local x, y = ComponentGetValueVector2( hotspot, "offset" );
+                    GamePrint( x.."/"..y );
+                    ComponentSetValueVector2( hotspot, "offset", Random( -10, 10 ), Random( -10, 10 ) );
+                end
+            end
+        end
+        ]]
         --[[ Stain Data
         local status_effect_data = EntityGetFirstComponent( player, "StatusEffectDataComponent" );
         if status_effect_data ~= nil then
@@ -48,8 +114,8 @@ for _,player in pairs( players ) do
                 end
             end
         end
-        ]]
     end
+        ]]
 
     local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "mortal" );
     if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
@@ -109,30 +175,6 @@ for _,player in pairs( players ) do
                 --Log( "cape is missing" );
             end
             --EntitySetTransform( cape, Random( -100, 100 ), Random( -100, 100 ) ) ;
-        end
-    end
-    ]]
-
-    --[[
-    local children = EntityGetAllChildren( player );
-    local valid_wands = {};
-    local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
-    local active_item = ComponentGetValue( inventory2, "mActiveItem" );
-    for key, child in pairs( children ) do
-        if EntityGetName( child ) == "inventory_quick" then
-            valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
-            break;
-        end
-    end
-
-    for _,wand in pairs(valid_wands) do
-        if wand ~= active_item then
-            local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
-            if ability ~= nil then
-                local charge_wait = tonumber( ComponentGetValue( ability, "mNextFrameUsable" ) );
-                --ComponentSetValue( ability, "mNextFrameUsable", "0" )
-                GamePrint(charge_wait - game_frame );
-            end
         end
     end
     ]]

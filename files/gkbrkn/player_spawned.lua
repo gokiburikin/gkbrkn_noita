@@ -79,8 +79,8 @@ if HasFlagPersistent( MISC.HealOnMaxHealthUp.Enabled ) then
     if HasFlagPersistent( MISC.HealOnMaxHealthUp.FullHeal ) then
         target = 1000.0;
     end
-    if EntityGetVariableString( player_entity, "gkbrkn_max_health_recovery", 0.0 ) < target then
-        EntitySetVariableString( player_entity, "gkbrkn_max_health_recovery", target );
+    if EntityGetVariableNumber( player_entity, "gkbrkn_max_health_recovery", 0.0 ) < target then
+        EntitySetVariableNumber( player_entity, "gkbrkn_max_health_recovery", target );
     end
 end
 
@@ -106,67 +106,76 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     EntityAddChild( player_entity, quick_swap_inventory );
 end
 
-EntityLoad('files/gkbrkn/gui/container.xml');
-
 if SETTINGS.Debug then 
-    dofile( "data/scripts/perks/perk.lua");
-    dofile( "data/scripts/gun/procedural/gun_action_utils.lua" );
+    if GameHasFlagRun("gkbrkn_debug_player_spawned") == false then
+        GameAddFlagRun("gkbrkn_debug_player_spawned");
+        dofile( "data/scripts/perks/perk.lua");
+        dofile( "data/scripts/gun/procedural/gun_action_utils.lua" );
+        --dofile( "data/scripts/items/generate_shop_item.lua" );
 
-    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
-    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
-    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
-    --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
-    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-    --perk_spawn( x + 20, y - 20, "GKBRKN_MATERIAL_COMPRESSION" );
+        --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+        --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+        --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+        --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
+        --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+        --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+        --perk_spawn( x + 20, y - 20, "GKBRKN_ALWAYS_CAST" );
 
-    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
-    if inventory2 ~= nil then
-        ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
-    end
-    local x, y = EntityGetTransform( player_entity );
-    local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
-    if inventory ~= nil then
-        --[[
-        local inventory_items = EntityGetAllChildren( inventory );
-        if inventory_items ~= nil then
-            for i,item_entity in ipairs( inventory_items ) do
-                local item = EntityGetFirstComponent( item_entity, "ItemComponent" );
-                GamePrint( tostring( item ) or "nil");
-            end
+        local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
+        if inventory2 ~= nil then
+            ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
         end
-        ]]
-        EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_TIME_SPLIT","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
-        ));
-        EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET","BUBBLESHOT"
-        ));
-        --[[
-        EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_ACTION_WIP","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","BUBBLESHOT"
-        ));
-        EntityAddChild( inventory, CreateWand( x, y, 
-            "CHAOTIC_ARC","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","RUBBER_BALL"
-        ));
-        ]]
-        --[[
-        EntityAddChild( inventory, CreateWand( x, y, 
-            "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
-            ,"GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","CHAINSAW"
-        ));
-        ]]
-    end
+        local x, y = EntityGetTransform( player_entity );
+        local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
+        if inventory ~= nil then
+            --[[
+            local inventory_items = EntityGetAllChildren( inventory );
+            if inventory_items ~= nil then
+                for i,item_entity in ipairs( inventory_items ) do
+                    local item = EntityGetFirstComponent( item_entity, "ItemComponent" );
+                    GamePrint( tostring( item ) or "nil");
+                end
+            end
+            ]]
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "GKBRKN_ACTION_WIP"
+            ));
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","LIGHT_BULLET","LIGHT_BULLET","LIGHT_BULLET"
+            ));
+            --[[
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "GKBRKN_ACTION_WIP","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","BUBBLESHOT"
+            ));
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "CHAOTIC_ARC","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","GKBRKN_DOUBLE_CAST","RUBBER_BALL"
+            ));
+            ]]
+            --[[
+            EntityAddChild( inventory, CreateWand( x, y, 
+                "GKBRKN_MANA_RECHARGE","GKBRKN_MANA_RECHARGE","CRITICAL_HIT","DAMAGE","HEAVY_SHOT","GKBRKN_DRAW_DECK"
+                ,"GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","GKBRKN_DUPLICATE_SPELL","CHAINSAW"
+            ));
+            ]]
+        end
 
-    --local screen_fill = EntityLoad( "files/gkbrkn/misc/screen_fill.xml", 0, 0 );
-    --EntityAddChild( player_entity, screen_fill );
+        --local screen_fill = EntityLoad( "files/gkbrkn/misc/screen_fill.xml", 0, 0 );
+        --EntityAddChild( player_entity, screen_fill );
 
-    --[[
-    ]]
-    --EntityLoad( "data/entities/animals/tank.xml", x - 80, y );
-    EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
-    for i=1,10 do
-        EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
+        --[[
+        ]]
+        --EntityLoad( "data/entities/animals/tank.xml", x - 80, y );
+        EntityLoad( "data/entities/items/pickup/heart.xml", x + 40, y );
+        for i=1,10 do
+            EntityLoad( "data/entities/items/pickup/goldnugget.xml", x - 40, y - 20 );
+        end
+        --[[
+        generate_shop_wand( x-40, y, false );
+        generate_shop_wand( x-20, y, false );
+        generate_shop_wand( x, y, false );
+        generate_shop_wand( x+20, y, false );
+        generate_shop_wand( x+40, y, false );
+        ]]
+        --EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
     end
-    --EntityLoad( "data/entities/projectiles/deck/touch_gold.xml", x +30, y + 20 );
 end

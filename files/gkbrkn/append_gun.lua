@@ -28,31 +28,20 @@ gkbrkn = {
     trigger_queue = {},
     draw_action_stack_size = 0,
     _draw_actions = draw_actions,
+    _play_action = play_action,
     _add_projectile = add_projectile,
     _move_hand_to_discarded = move_hand_to_discarded,
     _draw_action = draw_action,
 }
 
-function handle_extra_modifier( id, modifier_index, stack_depth )
-    
-end
-
-function reduce_mana_usage( multiplier )
-    -- nyi 
-end
-
-function reduce_spell_usage( multiplier ) 
-    -- nyi 
-end
-
 function skip_cards( amount )
     if amount == nil then
-        amount = gkbrkn.draw_cards_remaining;
+        amount = #deck;
     end
-    gkbrkn.skip_cards = gkbrkn.draw_cards_remaining;
+    gkbrkn.skip_cards = amount;
 end
 
-function reset_per_casts()
+local reset_per_casts = function()
     delete_cloned_actions();
     gkbrkn.projectiles_fired = 0;
     gkbrkn.stack_next_actions = 0;
@@ -66,16 +55,26 @@ function move_hand_to_discarded()
     gkbrkn.reset_on_draw = true;
 end
 
+function play_action( action )
+    if gkbrkn.reset_on_draw == true then
+        gkbrkn.reset_on_draw = false;
+        reset_per_casts();
+    end
+    gkbrkn._play_action(action);
+end
+
 function draw_actions( how_many, instant_reload_if_empty )
     gkbrkn.instant_reload_if_empty = instant_reload_if_empty;
     gkbrkn._draw_actions( how_many, instant_reload_if_empty );
 end
 
+function discard_action()
+    local action = deck[1];
+    table.remove( deck, 1 );
+    table.insert( discarded, action );
+end
+
 function draw_action( instant_reload_if_empty )
-    if gkbrkn.reset_on_draw == true then
-        gkbrkn.reset_on_draw = false;
-        reset_per_casts();
-    end
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining + 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
     local result = false;
@@ -86,10 +85,12 @@ function draw_action( instant_reload_if_empty )
         result = gkbrkn._draw_action( instant_reload_if_empty );
     else
         gkbrkn.skip_cards = gkbrkn.skip_cards - 1;
+        gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
         result = true;
+        discard_action();
     end
-    gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size - 1;
+    gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     return result;
 end
 
@@ -169,14 +170,6 @@ function set_trigger_instant( action_draw_count )
         type=gkbrkn.TRIGGER_TYPE.Instant,
         action_draw_count=action_draw_count,
     });
-end
-
-function retain_spell_cast( chance )
-    if current_action ~= nil and current_action.uses_remaining ~= nil then
-        if gkbrkn.draw_action_stack_size <= 1 and current_action.uses_remaining > 0 and math.random() <= chance then
-            current_action.uses_remaining = current_action.uses_remaining + 1;
-        end
-    end
 end
 
 function stack_next_action( amount )

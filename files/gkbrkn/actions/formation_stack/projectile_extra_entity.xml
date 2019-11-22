@@ -2,6 +2,6 @@
     <LuaComponent 
 		remove_after_executed="1"
         execute_on_added="1"
-		script_source_file="files/gkbrkn/actions/spell_merge/projectile_init.lua" >
+		script_source_file="files/gkbrkn/actions/formation_stack/projectile_init.lua" >
 	</LuaComponent>
 </Entity>

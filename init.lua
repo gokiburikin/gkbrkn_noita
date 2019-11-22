@@ -7,25 +7,26 @@ api issues
             
     no overriding of base game events in a modular interoperable way (currently have to overwrite or keep custom code up to date
         with every change)
+
+    not enough returning of important values in widely use functions
+
+    too much blackboxing of otherwise important game information (the biome levels in generate_shop_item for example)
     
 
 changelog
-    buff Tweak Spells - Heavy Shot
-    nerf Damage Plus - Lifetime
-    nerf Extra Projectile
-    slightly nerf Tweak Spells - Damage Plus
-    slightly nerf Formation - N-gon
-    slightly nerf Draw All
-    increase Double Cast weighting
-    change all spells marked Passive as Projectile Modifier for now since Passive spells don't show up in random generation
-    more work on champions, remove the additional gold drop (triple health affects natural gold drops)
-    rephrase revelation's description for better clarity
-    properly deprecate deprecated content
-    add install instructions
-    add energy shield particle effect to Micro Shield
-    fix a typo in the config menu
-    fix Break Cast costing mana
-    fix Super Bounce adding the wrong extra_entity
+    fix (hopefully) an issue where enabling Heal New Health caused the configuration interface to fail to load on loading a saved game
+    fix (hopefully) wand shops only wands found outside the holy mountain having no price
+    add extended wand generation
+    revert previous passive type changes in favour of extended wand generation
+    nerf Break Cast
+    fix a regression where extra projectiles failed when always cast
+    lower Draw All, Formation - N-gon spell weighting
+    move Extended Wand Generation from generate_shop_wand to generate_gun
+    move gui initialization to be earlier in mod initialzation
+    add formation stack
+    rework Break Cast to skip all remaining spells
+    re-categorize some projectile modifiers as draw many
+    re-implement Projectile Orbit, Projectile Gravity Well, Spell Merge using new projectile capture logic
 
 kill streaks events
 grze events
@@ -38,8 +39,8 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
-    make wand shops only wands not stealable
     stack projectile modifiers (gradius)
+    figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
     golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
@@ -94,6 +95,7 @@ dofile( "files/gkbrkn/helper.lua");
 dofile( "files/gkbrkn/config.lua");
 dofile( "files/gkbrkn/lib/variables.lua");
 dofile( "data/scripts/lib/utilities.lua");
+
 if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
     for _,content in pairs(CONTENT) do
@@ -107,9 +109,10 @@ if HasFlagPersistent("gkbrkn_first_launch") == false then
         end
     end
 end
+
 ModLuaFileAppend( "data/scripts/gun/gun.lua", "files/gkbrkn/append_gun.lua" );
 ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/append_gun_extra_modifiers.lua" );
-
+    
 if CONTENT[PERKS.DuplicateWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/duplicate_wand/init.lua" ); end
 if CONTENT[PERKS.Enraged].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/enraged/init.lua" ); end
 if CONTENT[PERKS.GoldenBlood].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/golden_blood/init.lua" ); end
@@ -164,11 +167,13 @@ if CONTENT[ACTIONS.TriggerHit].enabled() then ModLuaFileAppend( "data/scripts/gu
 if CONTENT[ACTIONS.TriggerTimer].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_timer/init.lua" ); end
 if CONTENT[ACTIONS.TriggerDeath].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_death/init.lua" ); end
 if CONTENT[ACTIONS.TimeSplit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/time_split/init.lua" ); end
-
+if CONTENT[ACTIONS.FormationStack].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/formation_stack/init.lua" ); end
 if SETTINGS.Debug == true then
     if CONTENT[ACTIONS.WIP].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
     if CONTENT[PERKS.WIP].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/wip/init.lua" ); end
 end
+
+--ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/action_info.lua" );
 
 if HasFlagPersistent( MISC.CharmNerf.Enabled ) then
     ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
@@ -186,6 +191,10 @@ if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
 end
 
+if HasFlagPersistent( MISC.ExtendedWandGeneration.Enabled ) then
+    ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "files/gkbrkn/misc/extended_wand_generation.lua" );
+end
+
 if HasFlagPersistent( MISC.WandShopsOnly.Enabled ) then
     ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "files/gkbrkn/misc/wand_shops_only.lua" );
 end
@@ -195,6 +204,9 @@ if HasFlagPersistent( MISC.DisableSpells.Enabled ) then
 end
 
 function OnPlayerSpawned( player_entity )
+    if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then
+        EntityLoad('files/gkbrkn/gui/container.xml');
+    end
     DoFileEnvironment( "files/gkbrkn/player_spawned.lua", { player_entity = player_entity } );
 end
 

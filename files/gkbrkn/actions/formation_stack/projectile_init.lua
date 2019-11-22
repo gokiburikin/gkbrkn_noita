@@ -1,3 +1,3 @@
 local entity = GetUpdatedEntityID();
 GlobalsSetValue( "gkbrkn_fired_projectiles", GlobalsGetValue( "gkbrkn_fired_projectiles", "" )..entity.."," );
-EntityAddTag( entity, "gkbrkn_projectile_gravity_well" );
+EntityAddTag( entity, "gkbrkn_formation_stack" );
