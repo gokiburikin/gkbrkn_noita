@@ -30,8 +30,10 @@ local edit_callbacks = {
     end,
     CHAINSAW = function( action, index )
         action.mana = 3;
-        c.fire_rate_wait = math.min( c.fire_rate_wait, 1 );
-    end
+        action.action = function()
+            c.fire_rate_wait = math.min( c.fire_rate_wait, 1 );
+        end
+    end,
 }
 for i=#actions,1,-1 do
     local action = actions[i];

@@ -7,6 +7,6 @@ table.insert( perk_list, {
 	ui_icon = "files/gkbrkn/perks/mana_recovery/icon_ui.png",
     perk_icon = "files/gkbrkn/perks/mana_recovery/icon_ig.png",
     func = function( entity_perk_item, entity_who_picked, item_name )
-        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_mana_recovery", 0.0, function( value ) return value + 0.625; end );
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_mana_recovery", 0.0, function( value ) return value + 0.833; end );
 	end,
 });

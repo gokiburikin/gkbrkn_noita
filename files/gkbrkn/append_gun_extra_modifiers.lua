@@ -1,5 +1,7 @@
-dofile("files/gkbrkn/config.lua");
-dofile("files/gkbrkn/helper.lua");
+if _GKBRKN_GUN_EXTRA_MODIFIERS_INIT == nil then
+    _GKBRKN_GUN_EXTRA_MODIFIERS_INIT = true;
+    dofile("files/gkbrkn/config.lua");
+end
 
 extra_modifiers["gkbrkn_spell_efficiency"] = function()
     if current_action.uses_remaining > 0 and Random() <= CONTENT[PERKS.SpellEfficiency].options.RetainChance then

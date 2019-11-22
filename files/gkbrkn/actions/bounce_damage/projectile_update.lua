@@ -11,7 +11,7 @@ if projectile_component ~= nil then
         local current_damage = tonumber(ComponentGetValue( projectile_component, "damage" ));
         local bounces_done = last_bounces - current_bounces;
         if bounces_done > 0 then
-            local new_damage = current_damage + initial_damage * 0.50 * bounces_done;
+            local new_damage = current_damage + initial_damage * 0.50;
             ComponentSetValue( last_bounces_variable_component, "value_int", current_bounces );
             ComponentSetValue( projectile_component, "damage", tostring(new_damage) );
             local particle_emitter = EntityGetFirstComponent( entity_id, "ParticleEmitterComponent", "gkbrkn_dynamic_damage_particles" );

@@ -119,7 +119,7 @@ for _,player in pairs( players ) do
 
     local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "mortal" );
     if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/champion_enemies.lua", { nearby_entities = nearby_entities } );
+        DoFileEnvironment( "files/gkbrkn/misc/champion_enemies/world_update.lua", { nearby_entities = nearby_entities } );
     end
 
     nearby_entities = EntityGetInRadius( x, y, 256 );

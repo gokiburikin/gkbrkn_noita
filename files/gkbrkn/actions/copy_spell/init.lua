@@ -1,4 +1,3 @@
-dofile( "files/gkbrkn/helper.lua");
 table.insert( actions,
 {
     id          = "GKBRKN_COPY_SPELL",

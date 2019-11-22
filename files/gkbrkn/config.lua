@@ -3,7 +3,7 @@ _GKBRKN_CONFIG = true;
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = DebugGetIsDevBuild(),
-    Version = "c46"
+    Version = "c47"
 }
 
 CONTENT_TYPE = {

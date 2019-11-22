@@ -28,10 +28,10 @@ for _,entity in pairs( nearby_entities ) do
             end
             local emitter = EntityAddComponent( entity, "ParticleEmitterComponent", {
                 emitted_material_name="spark_red",
-                x_pos_offset_min="-5",
-                x_pos_offset_max="5",
-                y_pos_offset_min="-5",
-                y_pos_offset_max="5",
+                x_pos_offset_min="-8",
+                x_pos_offset_max="8",
+                y_pos_offset_min="-8",
+                y_pos_offset_max="8",
                 x_vel_min="-0",
                 x_vel_max="0",
                 y_vel_min="-100",
@@ -45,8 +45,8 @@ for _,entity in pairs( nearby_entities ) do
                 create_real_particles="0",
                 emit_cosmetic_particles="1",
                 render_on_grid="1",
-                emission_interval_min_frames="1",
-                emission_interval_max_frames="1",
+                emission_interval_min_frames="2",
+                emission_interval_max_frames="5",
                 draw_as_long="1",
                 is_emitting="1"
             } );
@@ -57,11 +57,10 @@ for _,entity in pairs( nearby_entities ) do
                 g="40",
                 b="0"
             });
-            --[[ Gold Powder Drop
+            --[[ Rewards Drop ]]
             EntityAddComponent( entity, "LuaComponent", {
-                script_damage_received="files/gkbrkn/misc/champion_damage_received.lua"
+                script_damage_received="files/gkbrkn/misc/champion_enemies/champion_damage_received.lua"
             });
-            ]]
             TryAdjustMaxHealth( entity, function( max_hp ) return max_hp * 3; end );
         end
         --[[

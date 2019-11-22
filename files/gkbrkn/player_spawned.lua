@@ -6,23 +6,8 @@ end
 
 if HasFlagPersistent( MISC.GoldPickupTracker.ShowTrackerEnabled ) or HasFlagPersistent( MISC.GoldPickupTracker.ShowMessageEnabled ) then
     if EntityGetFirstComponent( player_entity, "SpriteComponent", "gkbrkn_gold_tracker" ) == nil then
-        EntityAddComponent( player_entity, "SpriteComponent", { 
-            _tags="gkbrkn_gold_tracker,enabled_in_world",
-            image_file="files/gkbrkn/font_pixel_white.xml", 
-            emissive="1",
-            is_text_sprite="1",
-            offset_x="8", 
-            offset_y="-4", 
-            update_transform="1" ,
-            update_transform_rotation="0",
-            text="",
-            has_special_scale="1",
-            special_scale_x="0.6667",
-            special_scale_y="0.6667",
-            z_index="1.6",
-        } );
         EntityAddComponent( player_entity, "LuaComponent", {
-            script_source_file="files/gkbrkn/misc/gold_tracking.lua",
+            script_source_file="files/gkbrkn/misc/gold_tracking/player_update.lua",
             execute_on_added="1",
             execute_every_n_frame="1",
         });
@@ -107,6 +92,8 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
 end
 
 if SETTINGS.Debug then 
+    --local effect = GetGameEffectLoadTo( player_entity, "NO_DAMAGE_FLASH", true );
+    --if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
     if GameHasFlagRun("gkbrkn_debug_player_spawned") == false then
         GameAddFlagRun("gkbrkn_debug_player_spawned");
         dofile( "data/scripts/perks/perk.lua");

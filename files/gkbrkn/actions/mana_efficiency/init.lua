@@ -1,5 +1,3 @@
-dofile( "files/gkbrkn/helper.lua" );
-
 table.insert( actions,
 {
     id          = "GKBRKN_MANA_EFFICIENCY",
@@ -15,6 +13,5 @@ table.insert( actions,
     action 		= function()
         reduce_mana_usage( 0.5 );
         draw_actions( 1, true );
-        --mana = math.floor( mana + c.action_mana_drain * 0.5 + 0.5 );
     end,
 });

@@ -1,6 +1,3 @@
-dofile( "files/gkbrkn/config.lua");
-dofile( "files/gkbrkn/helper.lua" );
-
 table.insert( actions,
 {
     id          = "GKBRKN_SPELL_EFFICIENCY",

@@ -8,12 +8,13 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
                 total_health = total_health + ComponentGetValue( damage_model, "max_hp" );
             end
             local x, y = EntityGetTransform( entity );
-            local gold_reward = math.ceil( total_health * 2.5 ) + 30;
-            while gold_reward > 0 do
-                local to_spawn = math.min( 5, gold_reward );
-                gold_reward = gold_reward - to_spawn;
-                GameCreateParticle( "gold", x + Random( -2, 2 ), y + Random( -2, 2 ), to_spawn, Random( -10, 10 ), Random( -100, 0 ), false, true );
-            end
+            local gold_reward = math.ceil( total_health / 6 );
+            local extra_gold = EntityLoad( "data/entities/items/pickup/goldnugget.xml", x + Random( -2, 2 ), y - 8 + Random( -2, 2 ) );
+            --while gold_reward > 0 do
+            --    local to_spawn = math.min( 5, gold_reward );
+            --    gold_reward = gold_reward - to_spawn;
+            --    GameCreateParticle( "gold", x + Random( -2, 2 ), y + Random( -2, 2 ), to_spawn, Random( -10, 10 ), Random( -100, 0 ), false, true );
+            --end
         end
     end
 end

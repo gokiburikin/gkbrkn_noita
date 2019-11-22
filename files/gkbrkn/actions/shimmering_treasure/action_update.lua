@@ -1,4 +1,3 @@
-dofile( "files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 local check_radius = 256;
@@ -12,13 +11,18 @@ for _,nearby in pairs( nearby_entities ) do
         shimmer = true;
     end
     if shimmer == false then
-        local components = EntityGetComponent( nearby, "LuaComponent" );
-        if components ~= nil then
-            for _,component in pairs(components) do
-                -- TODO there needs to be a better more future proofed way to get gold nuggets
-                if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                    shimmer = true;
-                end
+        local item = EntityGetFirstComponent( nearby, "ItemComponent" );
+        if item ~= nil then
+            shimmer = ComponentGetValue( item, "auto_pickup" ) == "1"
+        end
+    end
+    if shimmer == false then
+        local components = EntityGetComponent( nearby, "LuaComponent" ) or {};
+        for _,component in pairs(components) do
+            -- TODO there needs to be a better more future proofed way to get gold nuggets
+            if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
+                shimmer = true;
+                break;
             end
         end
     end

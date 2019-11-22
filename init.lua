@@ -13,20 +13,7 @@ api issues
     too much blackboxing of otherwise important game information (the biome levels in generate_shop_item for example)
     
 
-changelog
-    fix (hopefully) an issue where enabling Heal New Health caused the configuration interface to fail to load on loading a saved game
-    fix (hopefully) wand shops only wands found outside the holy mountain having no price
-    add extended wand generation
-    revert previous passive type changes in favour of extended wand generation
-    nerf Break Cast
-    fix a regression where extra projectiles failed when always cast
-    lower Draw All, Formation - N-gon spell weighting
-    move Extended Wand Generation from generate_shop_wand to generate_gun
-    move gui initialization to be earlier in mod initialzation
-    add formation stack
-    rework Break Cast to skip all remaining spells
-    re-categorize some projectile modifiers as draw many
-    re-implement Projectile Orbit, Projectile Gravity Well, Spell Merge using new projectile capture logic
+changelog -m "Fix Tweak Spells" -m "Improve Gold Tracker display rate" -m "Add additional gold from champions again" -m "Fix Lesser Particles removing some gameplay affected particles" -m "Add Sprite Particle Emitters to Lesser Particles" -m "Add more treasures to Shimmer Treasures" -m "Slightly buff Mana Recovery (37.5 -> 50 Mana Charge speed)"
 
 kill streaks events
 grze events
@@ -39,7 +26,6 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
-    stack projectile modifiers (gradius)
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
@@ -50,6 +36,16 @@ TODO
     modifier that applies the next modifier to all projectiles in the wand
     make enemies imperfect / take time to aim towards you
     try a pathfinding algorithm
+    champions should have different types
+        melee - more melee damage
+        projectile - more projectiles and attack speed
+        dash - super dash attacls
+        chaotic blood - replace their blood with a random material
+        fasty - much greater mobility
+        teleport - constantly affected by teleport
+        burning - immune to fire, spreads fires
+        freezing - immune to ice, freezes stuff
+        shooter - add a random ranged attack
 
 UTILITY
     TODO

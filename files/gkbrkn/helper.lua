@@ -1,4 +1,6 @@
-dofile("data/scripts/gun/procedural/gun_action_utils.lua");
+if _ONCE == nil then
+    dofile("data/scripts/gun/procedural/gun_action_utils.lua");
+end
 
 _GKBRKN_HELPER = true;
 

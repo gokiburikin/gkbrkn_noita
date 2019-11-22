@@ -17,7 +17,7 @@
 
 	<LuaComponent
 	    _tags="enabled_in_hand"
-	    execute_every_n_frame="20"
+	    execute_every_n_frame="60"
 		script_source_file="files/gkbrkn/actions/shimmering_treasure/action_update.lua"
 		>
 	</LuaComponent>

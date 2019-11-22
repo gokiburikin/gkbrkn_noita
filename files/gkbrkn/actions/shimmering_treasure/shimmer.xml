@@ -1,28 +1,18 @@
 <Entity>
     <LifetimeComponent
-        lifetime="40"
+        lifetime="60"
     >
     </LifetimeComponent>
-
-    <LightComponent 
-        _tags="enabled_in_world,enabled_in_hand"
-        _enabled="1" 
-        r="255"
-        g="255"
-        b="0"
-        radius="16"
-        fade_out_time="0.5" >
-    </LightComponent>
-
     <SpriteComponent 
-        _tags="enabled_in_hand"
+        _tags="enabled_in_world"
         alpha="0.5"
         image_file="data/particles/torch_fog_of_war_hole.xml"
         smooth_filtering="1"
         fog_of_war_hole="1"
         has_special_scale="1"
-        special_scale_x="0.5"
-        special_scale_y="0.5" >
+        special_scale_x="2.0"
+        special_scale_y="2.0" >
     </SpriteComponent>
-
+    <InheritTransformComponent>
+    </InheritTransformComponent>
 </Entity>
