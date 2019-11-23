@@ -46,7 +46,6 @@ local reset_per_casts = function()
     gkbrkn.projectiles_fired = 0;
     gkbrkn.stack_next_actions = 0;
     gkbrkn.stack_projectiles = "";
-    gkbrkn.extra_projectiles = 0;
 end
 
 function move_hand_to_discarded()
@@ -141,6 +140,7 @@ function add_projectile( filepath )
             gkbrkn._add_projectile( filepath );
         end
     end
+    gkbrkn.extra_projectiles = 0;
 end
 
 function set_trigger_timer( delay_frames, action_draw_count )

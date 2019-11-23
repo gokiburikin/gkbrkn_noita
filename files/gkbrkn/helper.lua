@@ -4,6 +4,24 @@ end
 
 _GKBRKN_HELPER = true;
 
+function ShootProjectile( who_shot, entity_file, x, y, vel_x, vel_y, send_message )
+    local entity = EntityLoad( entity_file, x, y );
+    local genome = EntityGetFirstComponent( entity, "GenomeDataComponent" );
+    local herd_id = ComponentGetMetaCustom( genome, "herd_id" );
+    if send_message == nil then send_message = true end
+
+	GameShootProjectile( who_shot, x, y, x+vel_x, y+vel_y, entity_id, send_message );
+
+    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    ComponentSetValue( projectile, "mWhoShot", who_shot );
+    ComponentSetValue( projectile, "mShooterHerdId", herd_id );
+
+    local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+	ComponentSetValueVector2( velocity, "mVelocity", vel_x, vel_y )
+
+	return entity;
+end
+
 function benchmark( callback, iterations )
     if iterations == nil then
         iterations = 1;

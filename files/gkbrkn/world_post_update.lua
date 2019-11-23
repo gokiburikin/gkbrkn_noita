@@ -4,6 +4,13 @@ local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
 
+    --[[
+    if game_frame % 30 == 0 then
+        local new_entity = EntityLoad( "data/entities/animals/longleg.xml", x + Random( -100, 100 ), y - 200 );
+        local new_entity = EntityLoad( "data/entities/animals/zombie.xml", x + Random( -100, 100 ), y - 200 );
+        --local new_entity = EntityLoad( "data/entities/animals/acidshooter.xml", x + Random( -100, 100 ), y - 200 );
+    end
+    ]]
         --[[
     if game_frame % 60 == 0 then
         local inventory = EntityGetFirstComponent( player, "InventoryComponent" );

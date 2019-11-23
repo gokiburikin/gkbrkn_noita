@@ -24,7 +24,7 @@ if parent ~= 0 and EntityGetIsAlive(parent) then
     local distance_full = 128;
     local velocity_components = EntityGetComponent( entity, "VelocityComponent" ) or {};
     
-    local gravity_percent = ( distance - distance_full  ) / distance_full;
+    local gravity_percent = ( distance - distance_full  ) / distance_full / (math.random() * 0.5 + 0.3);
     local lifetime = tonumber( ComponentGetValue( parent_projectile, "lifetime" ) );
     local gravity_coeff = math.min( maximum_strength, lifetime * 4 );
     

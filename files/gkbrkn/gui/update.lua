@@ -128,10 +128,10 @@ function do_gui()
             local text = "";
             local flag = get_content_flag( content.id );
             if flag ~= nil then
-                if HasFlagPersistent( flag ) == true then
-                    text = text .. "[ ]";
+                if content.enabled() == true then
+                    text = text .. "[X]";
                 else
-                    text = text .. "[x]";
+                    text = text .. "[  ]";
                 end
                 text = text .. " "..content.name;
             end
@@ -171,9 +171,9 @@ function do_option( option, index )
         end
         local option_enabled = HasFlagPersistent( option.flag );
         if option_enabled then
-            text = text .. "[x]";
+            text = text .. "[X]";
         else
-            text = text .. "[ ]";
+            text = text .. "[  ]";
         end
         text = text .. " ".. option.name;
         if GuiButton( gui, 0, 0, text, next_id() ) then

@@ -13,7 +13,15 @@ api issues
     too much blackboxing of otherwise important game information (the biome levels in generate_shop_item for example)
     
 
-changelog -m "Fix Tweak Spells" -m "Improve Gold Tracker display rate" -m "Add additional gold from champions again" -m "Fix Lesser Particles removing some gameplay affected particles" -m "Add Sprite Particle Emitters to Lesser Particles" -m "Add more treasures to Shimmer Treasures" -m "Slightly buff Mana Recovery (37.5 -> 50 Mana Charge speed)"
+changelog
+    -m "Nerf Extra Projectile, Projectile Burst (only apply to the next projectile fired, not all projectiles in the cast)"
+    -m "Rework Projectile Gravity Well to be more unique (the leader is unaffected by gravity and air friction and the followers have their lifetimes extended by the leaders)
+    -m "Fix Chainsaws not creating any projectiles"
+    -m "Add 8 champion types"
+    -m "Increase Gold Tracker In World lifetime (2 seconds -> 3 seconds)"
+    -m "Split Tweak Spells into their own content options"
+    -m "Add Tweak - Freeze Charge (removes the laggy particle effects)"
+    -m "Fix Spell Merge not properly averaging projectile velocity"
 
 kill streaks events
 grze events
@@ -36,16 +44,8 @@ TODO
     modifier that applies the next modifier to all projectiles in the wand
     make enemies imperfect / take time to aim towards you
     try a pathfinding algorithm
-    champions should have different types
-        melee - more melee damage
-        projectile - more projectiles and attack speed
-        dash - super dash attacls
-        chaotic blood - replace their blood with a random material
-        fasty - much greater mobility
-        teleport - constantly affected by teleport
-        burning - immune to fire, spreads fires
-        freezing - immune to ice, freezes stuff
-        shooter - add a random ranged attack
+    chaotic velocity
+
 
 UTILITY
     TODO
@@ -175,9 +175,7 @@ if HasFlagPersistent( MISC.CharmNerf.Enabled ) then
     ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
 end
 
-if HasFlagPersistent( MISC.TweakSpells.Enabled ) then
-    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
-end
+ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
 
 if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );

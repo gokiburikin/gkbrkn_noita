@@ -119,7 +119,7 @@ if #projectile_entities > 0 then
 
     end
     local average_angle = mean_angle( angles );
-    average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
+    average_velocity_magnitude = math.sqrt( average_velocity_magnitude ) / #projectile_entities;
     for i,entity in pairs( projectile_entities ) do
         if entity == leader then
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
@@ -181,8 +181,20 @@ if #projectile_entities > 0 then
         EntityRemoveTag( projectile, "gkbrkn_projectile_gravity_well" );
         if previous_projectile ~= nil then
             EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
+            local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
+            local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
+            if projectile ~= nil and leader_projectile ~= nil then
+                local leader_lifetime = tonumber( ComponentGetValue( leader_projectile, "lifetime" ) );
+                local projectile_lifetime = tonumber( ComponentGetValue( projectile, "lifetime" ) );
+                ComponentSetValue( projectile, "lifetime", tostring( leader_lifetime + projectile_lifetime ) );
+            end
         else
             leader = projectile;
+            local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
+            if velocity ~= nil then
+                ComponentSetValue( velocity, "gravity_y", "0" )
+                ComponentSetValue( velocity, "air_friction", "0" )
+            end
         end
         previous_projectile = projectile;
     end

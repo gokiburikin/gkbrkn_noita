@@ -14,26 +14,6 @@ if HasFlagPersistent( MISC.GoldPickupTracker.ShowTrackerEnabled ) or HasFlagPers
     end
 end
 
-
---[[
-local jetpack_component = EntityGetFirstComponent( player_entity, "ParticleEmitterComponent" );
-while jetpack_component ~= nil do
-    EntitySetComponentIsEnabled( player_entity, jetpack_component, false );
-    GamePrint( "disabled "..jetpack_component );
-    jetpack_component = EntityGetFirstComponent( player_entity, "jetpack" );
-end
-]]
-
---[[
-local platforming = EntityGetComponent( player_entity, "CharacterPlatformingComponent" )
-if platforming ~= nil then
-    for i,component in ipairs(platforming) do
-        ComponentSetValue( component, "fly_speed_max_up", "10000" );
-        ComponentSetValue( component, "fly_speed_max_down", "10000" );
-    end
-end
-]]
-
 if HasFlagPersistent( MISC.InvincibilityFrames.Enabled ) then
     EntitySetVariableNumber( player_entity, "gkbrkn_invincibility_frames", MISC.InvincibilityFrames.Duration or 0 )
 end
@@ -105,7 +85,7 @@ if SETTINGS.Debug then
         --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
         --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
         --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-        --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
+        --TryGivePerk( player_entity, "PROTECTION_MELEE" );
         --perk_spawn( x + 20, y - 20, "GKBRKN_ALWAYS_CAST" );
 
         local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
@@ -125,7 +105,7 @@ if SETTINGS.Debug then
             end
             ]]
             EntityAddChild( inventory, CreateWand( x, y, 
-                "GKBRKN_ACTION_WIP"
+                "GKBRKN_COLLISION_DETECTION","SLIMEBALL"
             ));
             EntityAddChild( inventory, CreateWand( x, y, 
                 "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","LIGHT_BULLET","LIGHT_BULLET","LIGHT_BULLET"

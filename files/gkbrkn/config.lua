@@ -3,29 +3,32 @@ _GKBRKN_CONFIG = true;
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = DebugGetIsDevBuild(),
-    Version = "c47"
+    Version = "c48"
 }
 
 CONTENT_TYPE = {
     Action = 1,
     Perk = 2,
     Misc = 3,
+    Tweak = 4,
 }
 
 CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.Action] = "action_",
     [CONTENT_TYPE.Perk] = "perk_",
     [CONTENT_TYPE.Misc] = "misc_",
+    [CONTENT_TYPE.Tweak] = "tweak_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
     [CONTENT_TYPE.Action] = "Action: ",
     [CONTENT_TYPE.Perk] = "Perk: ",
     [CONTENT_TYPE.Misc] = "Misc: ",
+    [CONTENT_TYPE.Tweak] = "Tweak: ",
 }
 
 CONTENT = {}
-function register_content( type, key, display_name, options, disabled_by_default, deprecated )
+function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted )
     local content_id = #CONTENT + 1;
     local content = {
         id = content_id,
@@ -36,7 +39,11 @@ function register_content( type, key, display_name, options, disabled_by_default
         deprecated = deprecated,
         enabled = function()
             if SETTINGS.ShowDeprecatedContent == true or deprecated ~= true then
-                return HasFlagPersistent( get_content_flag( content_id ) ) == false
+                if inverted ~= true then
+                    return HasFlagPersistent( get_content_flag( content_id ) ) == false;
+                else
+                    return HasFlagPersistent( get_content_flag( content_id ) ) == true;
+                end
             end
         end,
         visible = function()
@@ -149,6 +156,14 @@ ACTIONS = {
     TimeSplit = register_content( CONTENT_TYPE.Action, "time_split","Time Split" ),
     FormationStack = register_content( CONTENT_TYPE.Action, "formation_stack","Formation Stack" ),
     WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true, not SETTINGS.Debug )
+}
+
+TWEAKS = {
+    Chainsaw = register_content( CONTENT_TYPE.Tweak, "chainsaw","Chainsaw", { action_id="CHAINSAW" }, true, nil, true ),
+    HeavyShot = register_content( CONTENT_TYPE.Tweak, "heavy_shot","Heavy Shot", { action_id="HEAVY_SHOT" }, true, nil, true ),
+    Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage", { action_id="DAMAGE" }, true, nil, true ),
+    Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze", { action_id="FREEZE" }, true, nil, true ),
+    IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
 }
 
 OPTIONS = {
@@ -270,11 +285,6 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
-        Name = "Tweak Spells",
-        PersistentFlag = "gkbrkn_tweak_spells",
-        RequiresRestart = true,
-    },
-    {
         Name = "Wand Shops Only",
         PersistentFlag = "gkbrkn_wand_shops_only",
         RequiresRestart = true,
@@ -296,7 +306,7 @@ OPTIONS = {
 
 MISC = {
     GoldPickupTracker = {
-        TrackDuration = 120, -- in game frames
+        TrackDuration = 180, -- in game frames
         ShowMessageEnabled = "gkbrkn_gold_tracking_message",
         ShowTrackerEnabled = "gkbrkn_gold_tracking_in_world",
     },
@@ -330,9 +340,6 @@ MISC = {
     LessParticles = {
         Enabled = "gkbrkn_less_particles",
         DisableCosmeticParticles = "gkbrkn_less_particles_disable"
-    },
-    TweakSpells = {
-        Enabled = "gkbrkn_tweak_spells",
     },
     RandomStart = {
         Enabled = "gkbrkn_random_start",

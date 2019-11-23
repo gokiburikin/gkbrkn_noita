@@ -1,3 +1,8 @@
+if _GKBRKN_TWEAK_SPELLS == nil then
+    _GKBRKN_TWEAK_SPELLS = true;
+    dofile( "files/gkbrkn/config.lua");
+end
+
 local edit_callbacks = {
     MANA_REDUCE = function( action, index )
         table.remove( actions, index );
@@ -31,13 +36,30 @@ local edit_callbacks = {
     CHAINSAW = function( action, index )
         action.mana = 3;
         action.action = function()
-            c.fire_rate_wait = math.min( c.fire_rate_wait, 1 );
+            add_projectile("data/entities/projectiles/deck/chainsaw.xml");
+			c.fire_rate_wait = math.min( c.fire_rate_wait, 1 );
+			c.spread_degrees = c.spread_degrees + 3.0;
+			current_reload_time = current_reload_time - ACTION_DRAW_RELOAD_TIME_INCREASE - 10;
         end
     end,
+    FREEZE = function( action, index)
+        action.action = function()
+            c.damage_projectile_add = c.damage_projectile_add + 0.2;
+            c.game_effect_entities = c.game_effect_entities .. "data/entities/misc/effect_frozen.xml,";
+            draw_actions( 1, true );
+        end
+    end
 }
+local apply_tweaks = {};
+for _,content_id in pairs(TWEAKS) do
+    local tweak = CONTENT[content_id];
+    if tweak.enabled() then
+        apply_tweaks[ tweak.options.action_id ] = true
+    end
+end
 for i=#actions,1,-1 do
     local action = actions[i];
-    if action ~= nil and edit_callbacks[ action.id ] ~= nil then
+    if action ~= nil and edit_callbacks[ action.id ] ~= nil and apply_tweaks[action.id] == true then
         edit_callbacks[action.id]( action, i );
     end
 end

@@ -1,0 +1,30 @@
+<Entity>
+  <ParticleEmitterComponent
+    _tags="gkbrkn_important"
+    emitted_material_name="spark_white"
+    x_pos_offset_min="-8"
+    x_pos_offset_max="8"
+    y_pos_offset_min="-8"
+    y_pos_offset_max="8"
+    x_vel_min="-0"
+    x_vel_max="0"
+    y_vel_min="-100"
+    y_vel_max="0"
+    count_min="1"
+    count_max="2"
+    fade_based_on_lifetime="1"
+    lifetime_min="0.4"
+    lifetime_max="1.2"
+    airflow_force="0"
+    create_real_particles="0"
+    emit_cosmetic_particles="1"
+    render_on_grid="1"
+    emission_interval_min_frames="1"
+    emission_interval_max_frames="4"
+    draw_as_long="1"
+    is_emitting="1"
+    >
+  </ParticleEmitterComponent>
+  <InheritTransformComponent>
+  </InheritTransformComponent>
+</Entity>

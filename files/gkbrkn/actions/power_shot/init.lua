@@ -9,7 +9,7 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 250,
-    mana = 15,
+    mana = 9,
     action 		= function()
         c.damage_projectile_add = c.damage_projectile_add + 2 / 25;
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/power_shot/projectile_extra_entity.xml,";
