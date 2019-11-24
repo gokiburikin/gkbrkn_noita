@@ -14,25 +14,8 @@ api issues
     
 
 changelog
-    -m "Add support for multiple champion types on a single entity"
-    -m "Add new champion types (Freezing, Burning, Electric, Projectile Repulsion Field, Healthy)"
-    -m "Champions can now spawn with multiply champion types"
-    -m "All champions are now faster (100% -> 200%) and slightly less resistant to critical hits (50% -> 67%)"
-    -m "Add Champions Only option"
-    -m "Buff Power Shot (more penetration)"
-    -m "Buff Magic Light (clears fog of war)"
-    -m "Fix Heal on Max Health showing a message when 0 health was gained"
-    -m "Split Random Start into all of its components"
-    -m "Code refactoring that fixes many duplicate script issues, more options no longer require restarting"
-    -m "Actually fix Spell Merge not applying average velocity"
-    -m "Actually, actually fix Rapid Fire"
-    -m "Less Particles now only affects player spell particles (this may change again in the future)"
-    -m "Nerf Tweak Spells - Chainsaw (Cast Delay Minimum 0.016 -> 0.083)"
-    -m "Fix an oversight where Random Start - Wands would require unlimited use spells, which Limited Ammo prevents"
-    -m "Fix Disable Spells always disabling the same spells"
-    -m "Slightly buff Extra Projectile (mana cost 15 -> 12)"
-    -m "Slightly buff Collision Detection (projectile speed 75% -> 85%)"
-    -m "Rework Enraged -> Short Temper (become Berserk for a short duration after taking damage)"
+    -m "Made the Projectile Repulsion Champions field light blue"
+    -m "Fix Short Temper stacking Berserk on each damage taken"
 
 kill streaks events
 grze events

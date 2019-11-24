@@ -13,7 +13,7 @@
 		lifetime_max="0.5"
 		count_min="2"
 		count_max="4"
-        color="FF0000FF"
+        color="FF2288FF"
 		fade_based_on_lifetime="1"
 		emission_interval_min_frames="1"
 		emission_interval_max_frames="1"
@@ -27,7 +27,7 @@
 		>
 	</ParticleEmitterComponent>
   	<ParticleEmitterComponent 
-        color="FF0000FF"
+        color="FF2288FF"
 		gravity.y="0.0"
 		lifetime_min="0.1"
 		lifetime_max="0.2"
