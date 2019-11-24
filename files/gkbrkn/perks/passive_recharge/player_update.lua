@@ -12,7 +12,7 @@ for key, child in pairs( children ) do
     end
 end
 
-for _,wand in pairs(valid_wands) do
+for _,wand in pairs( valid_wands ) do
     if wand ~= active_item then
         local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
         if ability ~= nil then

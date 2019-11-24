@@ -1,13 +1,32 @@
 local game_frame = GameGetFrameNum();
+local t = GameGetRealWorldTimeSinceStarted();
 
 local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
 
+    local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
+    if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
+        DoFileEnvironment( "files/gkbrkn/misc/champion_enemies/world_update.lua", { nearby_entities = nearby_entities } );
+    end
+
     --[[
-    if game_frame % 30 == 0 then
-        local new_entity = EntityLoad( "data/entities/animals/longleg.xml", x + Random( -100, 100 ), y - 200 );
-        local new_entity = EntityLoad( "data/entities/animals/zombie.xml", x + Random( -100, 100 ), y - 200 );
+    nearby_entities = EntityGetInRadius( x, y, 256 );
+    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+        DoFileEnvironment( "files/gkbrkn/misc/less_particles.lua", { nearby_entities = nearby_entities } );
+    end
+    ]]
+    --[[
+    if CONTENT[PERKS.MaterialCompression].enabled() then
+        DoFileEnvironment( "files/gkbrkn/perks/material_compression/player_update.lua", { player = player } );
+    end
+    ]]
+
+    --[[
+    if game_frame % 60 == 0 then
+        local nx, ny = FindFreePositionForBody( x  + Random( -100, 100 ), y - 50, 0, 0, 64 );
+        local new_entity = EntityLoad( "data/entities/animals/longleg.xml", nx, ny  );
+        --local new_entity = EntityLoad( "data/entities/animals/zombie.xml", x + Random( -100, 100 ), y - 200 );
         --local new_entity = EntityLoad( "data/entities/animals/acidshooter.xml", x + Random( -100, 100 ), y - 200 );
     end
     ]]
@@ -124,27 +143,6 @@ for _,player in pairs( players ) do
     end
         ]]
 
-    local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "mortal" );
-    if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/champion_enemies/world_update.lua", { nearby_entities = nearby_entities } );
-    end
-
-    nearby_entities = EntityGetInRadius( x, y, 256 );
-    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/less_particles.lua", { nearby_entities = nearby_entities } );
-    end
-    if HasFlagPersistent( MISC.GoldDecay.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/gold_decay/update.lua", { nearby_entities = nearby_entities } );
-    end
-
-    if CONTENT[PERKS.MaterialCompression].enabled() then
-        DoFileEnvironment( "files/gkbrkn/perks/material_compression/player_update.lua", { player = player } );
-    end
-
-    if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/quick_swap.lua", { player = player } );
-    end
-
     --[[ Healing 
     local damage_models = EntityGetComponent( player, "DamageModelComponent" );
     if damage_models ~= nil then
@@ -236,3 +234,5 @@ end
         end
     end
     ]]
+
+    --GamePrint( "gkbrkn world post time "..(GameGetRealWorldTimeSinceStarted() - t ) );

@@ -3,7 +3,7 @@ _GKBRKN_CONFIG = true;
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = DebugGetIsDevBuild(),
-    Version = "c48"
+    Version = "c49"
 }
 
 CONTENT_TYPE = {
@@ -81,7 +81,7 @@ function get_content_flag( content_id )
 end
 
 PERKS = {
-    Enraged = register_content( CONTENT_TYPE.Perk, "enraged","Enraged" ),
+    ShortTemper = register_content( CONTENT_TYPE.Perk, "short_temper","Short Temper" ),
     LivingWand = register_content( CONTENT_TYPE.Perk, "living_wand","Living Wand", {
         TeleportDistance = 128
     }, true, true ),
@@ -95,9 +95,9 @@ PERKS = {
         Discount = 0.33
     }, true, true ),
     RapidFire = register_content( CONTENT_TYPE.Perk, "rapid_fire","Rapid Fire", {
-        RechargeTimeAdjustment = function( rechargeTime ) return rechargeTime - rechargeTime * 0.50 / #hand end,
-        CastDelayAdjustment = function( castDelay ) return castDelay - castDelay * 0.50 / #hand end,
-        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 / #hand end,
+        RechargeTimeAdjustment = function( rechargeTime ) GamePrint( gkbrkn.projectiles_fired ); return rechargeTime - rechargeTime * 0.50 / gkbrkn.projectiles_fired; end,
+        CastDelayAdjustment = function( castDelay ) return castDelay - castDelay * 0.50 / gkbrkn.projectiles_fired; end,
+        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 / gkbrkn.projectiles_fired; end,
     } ),
     KnockbackImmunity = register_content( CONTENT_TYPE.Perk, "knockback_immunity","Knockback Immunity" ),
     Resilience = register_content( CONTENT_TYPE.Perk, "resilience","Resilience", { Resistances = {
@@ -174,13 +174,11 @@ OPTIONS = {
         Name = "Show Log Message",
         PersistentFlag = "gkbrkn_gold_tracking_message",
         SubOption = true,
-        RequiresRestart = true,
     },
     {
         Name = "Show In World",
         PersistentFlag = "gkbrkn_gold_tracking_in_world",
         SubOption = true,
-        RequiresRestart = true,
         EnabledByDefault = true,
     },
     {
@@ -190,13 +188,11 @@ OPTIONS = {
         Name = "Enabled",
         PersistentFlag = "gkbrkn_invincibility_frames",
         SubOption = true,
-        RequiresRestart = true,
     },
     {
         Name = "Show Flashing",
         PersistentFlag = "gkbrkn_invincibility_frames_flashing",
         SubOption = true,
-        RequiresRestart = true,
     },
     {
         Name = "Heal New Health",
@@ -238,8 +234,8 @@ OPTIONS = {
         Name = "Random Start",
     },
     {
-        Name = "Enabled",
-        PersistentFlag = "gkbrkn_random_start",
+        Name = "Random Wands",
+        PersistentFlag = "gkbrkn_random_start_random_wand",
         SubOption = true,
         RequiresRestart = true,
     },
@@ -256,6 +252,37 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
+        Name = "Random Health",
+        PersistentFlag = "gkbrkn_random_start_random_health",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Random Flask",
+        PersistentFlag = "gkbrkn_random_start_random_flask",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Random Perk",
+        PersistentFlag = "gkbrkn_random_start_random_perk",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Champion Enemies",
+    },
+    {
+        Name = "Enabled",
+        SubOption = true,
+        PersistentFlag = "gkbrkn_champion_enemies",
+    },
+    {
+        Name = "Champions Only",
+        SubOption = true,
+        PersistentFlag = "gkbrkn_champion_enemies_always",
+    },
+    {
         Name = "Disable Random Spells",
         PersistentFlag = "gkbrkn_disable_spells",
         RequiresRestart = true,
@@ -263,12 +290,6 @@ OPTIONS = {
     {
         Name = "Charm Nerf",
         PersistentFlag = "gkbrkn_charm_nerf",
-        RequiresRestart = true,
-    },
-    {
-        Name = "Any Spell On Any Wand",
-        PersistentFlag = "gkbrkn_loose_spell_generation",
-        RequiresRestart = true,
     },
     {
         Name = "Limited Ammo",
@@ -276,23 +297,30 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
-        Name = "Champion Enemies",
-        PersistentFlag = "gkbrkn_champion_enemies",
+        Name = "Unlimited Ammo",
+        PersistentFlag = "gkbrkn_unlimited_ammo",
+        RequiresRestart = true,
     },
     {
         Name = "Quick Swap",
         PersistentFlag = "gkbrkn_quick_swap",
-        RequiresRestart = true,
+    },
+    {
+        Name = "Wands Recharge While Holstered",
+        PersistentFlag = "gkbrkn_passive_recharge",
     },
     {
         Name = "Wand Shops Only",
         PersistentFlag = "gkbrkn_wand_shops_only",
+    },
+    {
+        Name = "Any Spell On Any Wand",
+        PersistentFlag = "gkbrkn_loose_spell_generation",
         RequiresRestart = true,
     },
     {
         Name = "Extended Wand Generation",
         PersistentFlag = "gkbrkn_extended_wand_generation",
-        RequiresRestart = true,
     },
     {
         Name = "Gold Nuggets -> Gold Powder",
@@ -311,7 +339,7 @@ MISC = {
         ShowTrackerEnabled = "gkbrkn_gold_tracking_in_world",
     },
     CharmNerf = {
-        Enabled = "gkbrkn_gold_tracking_in_world",
+        Enabled = "gkbrkn_charm_nerf",
     },
     InvincibilityFrames = {
         Duration = 40,
@@ -328,26 +356,33 @@ MISC = {
     LimitedAmmo = {
         Enabled = "gkbrkn_limited_ammo",
     },
+    UnlimitedAmmo = {
+        Enabled = "gkbrkn_unlimited_ammo",
+    },
     DisableSpells = {
         Enabled = "gkbrkn_disable_spells",
     },
     ChampionEnemies = {
         Enabled = "gkbrkn_champion_enemies",
+        AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always"
     },
     QuickSwap = {
         Enabled = "gkbrkn_quick_swap",
     },
     LessParticles = {
         Enabled = "gkbrkn_less_particles",
-        DisableCosmeticParticles = "gkbrkn_less_particles_disable"
+        DisableEnabled = "gkbrkn_less_particles_disable"
     },
     RandomStart = {
-        Enabled = "gkbrkn_random_start",
-        RandomFlasks = 1,
+        RandomWandEnabled = "gkbrkn_random_start_random_wand",
+        RandomHealthEnabled = "gkbrkn_random_start_random_health",
         MinimumHP = 50,
         MaximumHP = 150,
         DefaultWandGenerationEnabled = "gkbrkn_random_start_default_wands",
         RandomCapeColorEnabled = "gkbrkn_random_start_random_cape",
+        RandomFlaskEnabled = "gkbrkn_random_start_random_flask",
+        RandomPerkEnabled = "gkbrkn_random_start_random_perk",
+        RandomPerks = 1,
     },
     WandShopsOnly = {
         Enabled = "gkbrkn_wand_shops_only",
@@ -360,6 +395,9 @@ MISC = {
     },
     GoldDecay = {
         Enabled = "gkbrkn_gold_decay",
+    },
+    PassiveRecharge = {
+        Enabled = "gkbrkn_passive_recharge",
     }
 }
 

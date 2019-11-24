@@ -7,7 +7,7 @@ table.insert( perk_list, {
     func = function( entity_perk_item, entity_who_picked, item_name )
         EntityAddComponent( entity_who_picked, "LuaComponent", { 
             execute_every_n_frame="1",
-            script_source_file="files/gkbrkn/perks/passive_recharge/recharge.lua"
+            script_source_file="files/gkbrkn/perks/passive_recharge/player_update.lua"
         } );
 	end,
 });

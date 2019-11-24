@@ -1,5 +1,6 @@
-if _ONCE == nil then
-    _ONCE = true;
+if GKBRKN_APPEND_GUN_INIT == nil then
+    GKBRKN_APPEND_GUN_INIT = true;
+    dofile( "files/gkbrkn/config.lua");
     dofile( "files/gkbrkn/helper.lua");
     dofile( "files/gkbrkn/lib/variables.lua");
 end
@@ -82,6 +83,11 @@ function draw_action( instant_reload_if_empty )
         --    handle_extra_modifier( extra_modifier, index, gkbrkn.draw_action_stack_size );
         --end
         result = gkbrkn._draw_action( instant_reload_if_empty );
+        --[[
+        if current_action ~= nil and current_action.uses_remaining ~= nil and current_action.uses_remaining >= 0 then
+            current_action.uses_remaining = current_action.uses_remaining + 1;
+        end
+        ]]
     else
         gkbrkn.skip_cards = gkbrkn.skip_cards - 1;
         gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
@@ -90,6 +96,21 @@ function draw_action( instant_reload_if_empty )
     end
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size - 1;
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
+    local player = GetUpdatedEntityID();
+    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+    if gkbrkn.draw_action_stack_size == 0 then
+        if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+            if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
+                c.extra_entities = c.extra_entities.."files/gkbrkn/misc/less_particles/disable_particles.xml,";
+            else
+                c.extra_entities = c.extra_entities.."files/gkbrkn/misc/less_particles/less_particles.xml,";
+            end
+        end
+        if #deck == 0 then
+            current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
+        end
+        c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
+    end
     return result;
 end
 
@@ -108,6 +129,7 @@ function add_projectile( filepath )
     if #deck == 0 then
         gkbrkn.stack_next_actions = 0;
     end
+    local before = c.extra_entities;
     if #gkbrkn.stack_projectiles > 0 and gkbrkn.stack_next_actions == 0 then
         c.extra_entities = c.extra_entities..gkbrkn.stack_projectiles;
         gkbrkn.stack_projectiles = "";
@@ -119,6 +141,7 @@ function add_projectile( filepath )
     else
         projectiles_to_add = projectiles_to_add + gkbrkn.extra_projectiles + 1;
     end
+    
     for i=1,projectiles_to_add do
         gkbrkn.projectiles_fired = gkbrkn.projectiles_fired + 1;
         if trigger_type == gkbrkn.TRIGGER_TYPE.Timer then

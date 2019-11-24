@@ -23,7 +23,9 @@ for _,damage_model in pairs( damage_models ) do
         if gained_hp > 0 then
             gained_hp = math.min( gained_hp, hp_difference );
             ComponentSetValue( damage_model, "hp", tostring( current_hp + gained_hp ) );
-            GamePrint("Regained "..math.ceil(gained_hp * 25).." health");
+            if math.ceil(gained_hp) ~= 0 then
+                GamePrint("Regained "..math.ceil(gained_hp * 25).." health");
+            end
         end
         last_max_hp[tostring(damage_model)] = max_hp;
     end

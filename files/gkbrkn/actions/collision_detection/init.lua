@@ -12,7 +12,7 @@ table.insert( actions,
     mana = 4,
     action 		= function()
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/collision_detection/projectile_extra_entity.xml,";
-        c.speed_multiplier = c.speed_multiplier * 0.75;
+        c.speed_multiplier = c.speed_multiplier * 0.85;
         c.bounces = math.max( 1, c.bounces );
         draw_actions( 1, true );
     end,

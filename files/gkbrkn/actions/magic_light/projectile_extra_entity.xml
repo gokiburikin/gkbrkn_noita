@@ -10,6 +10,11 @@
         special_scale_y="2.5" >
     </SpriteComponent>
 
+    <FogOfWarRadiusComponent
+        radius="32"
+    >
+    </FogOfWarRadiusComponent>
+
     <InheritTransformComponent
 		_tags="enabled_in_world,enabled_in_hand" >
 	</InheritTransformComponent>

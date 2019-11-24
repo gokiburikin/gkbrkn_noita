@@ -14,14 +14,25 @@ api issues
     
 
 changelog
-    -m "Nerf Extra Projectile, Projectile Burst (only apply to the next projectile fired, not all projectiles in the cast)"
-    -m "Rework Projectile Gravity Well to be more unique (the leader is unaffected by gravity and air friction and the followers have their lifetimes extended by the leaders)
-    -m "Fix Chainsaws not creating any projectiles"
-    -m "Add 8 champion types"
-    -m "Increase Gold Tracker In World lifetime (2 seconds -> 3 seconds)"
-    -m "Split Tweak Spells into their own content options"
-    -m "Add Tweak - Freeze Charge (removes the laggy particle effects)"
-    -m "Fix Spell Merge not properly averaging projectile velocity"
+    -m "Add support for multiple champion types on a single entity"
+    -m "Add new champion types (Freezing, Burning, Electric, Projectile Repulsion Field, Healthy)"
+    -m "Champions can now spawn with multiply champion types"
+    -m "All champions are now faster (100% -> 200%) and slightly less resistant to critical hits (50% -> 67%)"
+    -m "Add Champions Only option"
+    -m "Buff Power Shot (more penetration)"
+    -m "Buff Magic Light (clears fog of war)"
+    -m "Fix Heal on Max Health showing a message when 0 health was gained"
+    -m "Split Random Start into all of its components"
+    -m "Code refactoring that fixes many duplicate script issues, more options no longer require restarting"
+    -m "Actually fix Spell Merge not applying average velocity"
+    -m "Actually, actually fix Rapid Fire"
+    -m "Less Particles now only affects player spell particles (this may change again in the future)"
+    -m "Nerf Tweak Spells - Chainsaw (Cast Delay Minimum 0.016 -> 0.083)"
+    -m "Fix an oversight where Random Start - Wands would require unlimited use spells, which Limited Ammo prevents"
+    -m "Fix Disable Spells always disabling the same spells"
+    -m "Slightly buff Extra Projectile (mana cost 15 -> 12)"
+    -m "Slightly buff Collision Detection (projectile speed 75% -> 85%)"
+    -m "Rework Enraged -> Short Temper (become Berserk for a short duration after taking damage)"
 
 kill streaks events
 grze events
@@ -64,7 +75,6 @@ PERKS
         Lucky Dodge (small chance to evade damage) (can't be implemented how i want it yet)
         Crit Crits (crits can crit) (probably can't do this yet)
         Wand Merge (merge two wands into a new wand with the best aspects of either wand)
-        True Spell Merge (combine the properties of all projectiles fired in the cast)
         Lucky Draw (reset the perk reroll cost)
         Gold Rush (enemies explode into more and more gold as your kill streak continues)
         Chaos (randomize projectile stuff)
@@ -106,11 +116,11 @@ if HasFlagPersistent("gkbrkn_first_launch") == false then
     end
 end
 
-ModLuaFileAppend( "data/scripts/gun/gun.lua", "files/gkbrkn/append_gun.lua" );
-ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/append_gun_extra_modifiers.lua" );
+ModLuaFileAppend( "data/scripts/gun/gun.lua", "files/gkbrkn/append/gun.lua" );
+ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/append/gun_extra_modifiers.lua" );
     
 if CONTENT[PERKS.DuplicateWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/duplicate_wand/init.lua" ); end
-if CONTENT[PERKS.Enraged].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/enraged/init.lua" ); end
+if CONTENT[PERKS.ShortTemper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/short_temper/init.lua" ); end
 if CONTENT[PERKS.GoldenBlood].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/golden_blood/init.lua" ); end
 if CONTENT[PERKS.LivingWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/living_wand/init.lua" ); end
 if CONTENT[PERKS.LostTreasure].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/lost_treasure/init.lua" ); end
@@ -171,9 +181,6 @@ end
 
 --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/action_info.lua" );
 
-if HasFlagPersistent( MISC.CharmNerf.Enabled ) then
-    ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
-end
 
 ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
 
@@ -185,19 +192,18 @@ if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
 end
 
-if HasFlagPersistent( MISC.ExtendedWandGeneration.Enabled ) then
-    ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "files/gkbrkn/misc/extended_wand_generation.lua" );
+if HasFlagPersistent( MISC.UnlimitedAmmo.Enabled ) then
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/unlimited_ammo.lua" );
 end
 
-if HasFlagPersistent( MISC.WandShopsOnly.Enabled ) then
-    ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "files/gkbrkn/misc/wand_shops_only.lua" );
-end
-
-if HasFlagPersistent( MISC.DisableSpells.Enabled ) then
-    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/disable_spells.lua" );
-end
+ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
+ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "files/gkbrkn/misc/extended_wand_generation.lua" );
+ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "files/gkbrkn/misc/wand_shops_only.lua" );
 
 function OnPlayerSpawned( player_entity )
+    if HasFlagPersistent( MISC.DisableSpells.Enabled ) then
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/disable_spells.lua" );
+    end
     if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then
         EntityLoad('files/gkbrkn/gui/container.xml');
     end

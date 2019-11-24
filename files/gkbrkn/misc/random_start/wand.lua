@@ -43,12 +43,14 @@ gun.speed_multiplier = 1;
 gun.mana_charge_speed = {10,50};
 gun.mana_max = {100,350};
 gun.projectile_actions = {};
+gun.limited_projectile_actions = {};
 gun.cost_actions = {};
 gun.modifier_actions = {};
 gun.utility_actions = {};
 
 local blacklist = {
-    projectile_actions = { TELEPORT_PROJECTILE=false, BLACK_HOLE=false, PIPE_BOMB_DETONATOR },
+    projectile_actions = { TELEPORT_PROJECTILE=false, PIPE_BOMB_DETONATOR },
+    limited_projectile_actions = { TELEPORT_PROJECTILE=false, PIPE_BOMB_DETONATOR },
     cost_actions = { },
     modifier_actions = { },
     utility_actions = { },
@@ -68,6 +70,10 @@ for index,action in pairs(actions) do
                 if action.max_uses == nil or action.max_uses == -1 then
                     if blacklist.projectile_actions[action.id] == nil then
                         table.insert( gun.projectile_actions, action.id );
+                    end
+                else
+                    if blacklist.limited_projectile_actions[action.id] == nil then
+                        table.insert( gun.limited_projectile_actions, action.id );
                     end
                 end
             end
@@ -109,7 +115,11 @@ if math.random() > 1 / action_count then
     action_count = action_count - 1;
 end
 while action_count > 0 do
-    local random_action = random_from_array( gun[EntityComponentGetValue( entity_id, "VariableStorageComponent", "value_string", "random_start_actions_pool" )] );
+    local pool = EntityComponentGetValue( entity_id, "VariableStorageComponent", "value_string", "random_start_actions_pool" );
+    if pool == "projectile_actions" and #gun[pool] == 0 then
+        pool ="limited_projectile_actions";
+    end
+    local random_action = random_from_array( gun[pool] );
     -- TODO don't add spells we can't cast
     --local mana_use = random_action.mana;
     --if mana_use <= mana_max then

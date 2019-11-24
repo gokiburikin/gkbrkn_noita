@@ -111,7 +111,7 @@ if #projectile_entities > 0 then
         local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
-        local magnitude = vx * vx + vy * vy;
+        local magnitude = math.sqrt(vx * vx + vy * vy);
         average_velocity_magnitude = average_velocity_magnitude + magnitude;
 
         -- ignore projectiles that don't move
@@ -119,7 +119,7 @@ if #projectile_entities > 0 then
 
     end
     local average_angle = mean_angle( angles );
-    average_velocity_magnitude = math.sqrt( average_velocity_magnitude ) / #projectile_entities;
+    average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
     for i,entity in pairs( projectile_entities ) do
         if entity == leader then
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );

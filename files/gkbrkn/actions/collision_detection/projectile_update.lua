@@ -1,6 +1,6 @@
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
-local ray_length = 8;
+local ray_length = 6;
 local rays = 12;
 local deviation_angle = 100 / 180 * math.pi;
 

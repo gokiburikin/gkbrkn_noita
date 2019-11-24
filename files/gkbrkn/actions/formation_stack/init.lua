@@ -2,7 +2,7 @@ table.insert( actions,
 {
     id          = "GKBRKN_FORMATION_STACK",
     name 		= "Formation - Stack",
-    description = "Cast 3 spells that stack vertically",
+    description = "Cast 3 spells stacked vertically",
     sprite 		= "files/gkbrkn/actions/formation_stack/icon.png",
     sprite_unidentified = "files/gkbrkn/actions/formation_stack/icon.png",
     type 		= ACTION_TYPE_DRAW_MANY,

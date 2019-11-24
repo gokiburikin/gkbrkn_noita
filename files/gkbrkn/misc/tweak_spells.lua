@@ -37,7 +37,7 @@ local edit_callbacks = {
         action.mana = 3;
         action.action = function()
             add_projectile("data/entities/projectiles/deck/chainsaw.xml");
-			c.fire_rate_wait = math.min( c.fire_rate_wait, 1 );
+			c.fire_rate_wait = math.min( c.fire_rate_wait, 5 );
 			c.spread_degrees = c.spread_degrees + 3.0;
 			current_reload_time = current_reload_time - ACTION_DRAW_RELOAD_TIME_INCREASE - 10;
         end

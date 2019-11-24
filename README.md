@@ -18,27 +18,27 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Extended Wand Generation**: Include unused spell types in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
 
 ### Tweaks (5)
-- [x] **Heavy Shot**: Costs more mana, reduce damage bonus, but instead critical chance. Lower average DPS, more useful across all spells.
+- [x] **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across all spells.
 - [x] **Damage Plus**: Costs more mana, doubled recharge time.
-- [x] **Increase Mana**: Removed.
-- [x] **Chainsaw**: Now costs mana, reduces cast delay to 1 instead of 0 (unless it is lower than 1.)
+- [x] **Chainsaw**: Now costs mana, reduces cast delay to 0.08 instead of 0 (unless it is already lower.)
 - [x] **Freeze Charge**: Removed the particle effects (affects gameplay.)
+- [x] **Increase Mana**: Removed.
 
 ### Perks (14)
 - [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
 - [x] **Duplicate**: Duplicate a random wand in your inventory.
-- [x] **Enraged**: Gain Berserk permanently.
 - [x] **Extra Projectile**: Spells you cast gain an additional projectile.
 - [x] **Golden Blood**: You bleed gold.
 - [x] **Healthier Heart**: You heal for the amount gained when gaining maximum health.
 - [x] **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
 - [x] **Knockback Immunity**: Immunity to knockback and recoil.
-- [x] **Lost Treasure**: Spawn Gold Nuggets that were left behind.
+- [x] **Lost Treasure**: Recover the Gold Nuggets that were left behind.
 - [x] **Mana Recovery**: Your wands charge more quickly.
 - [x] **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
 - [x] **Passive Recharge**: Your wands recharge even when holstered.
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.
+- [x] **Short Temper**: Become Berserk for a short time after taking damage.
 
 ### Projectile Modifier Spells (18)
 - [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
@@ -77,7 +77,7 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Double Cast**: Cast the next spell twice.
 - [x] **Draw Deck**: Simultaneously cast all remaining spells.
 - [x] **Formation - N-gon**: Simultaneously cast all remaining spells in a circular pattern.
-- [x] **Formation - Stack**: Cast 3 spells that stack vertically.
+- [x] **Formation - Stack**: Cast 3 spells stacked vertically.
 - [x] **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
 - [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.

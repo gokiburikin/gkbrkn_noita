@@ -7,6 +7,6 @@ table.insert( perk_list, {
 	ui_icon = "files/gkbrkn/perks/healthier_heart/icon_ui.png",
     perk_icon = "files/gkbrkn/perks/healthier_heart/icon_ig.png",
     func = function( entity_perk_item, entity_who_picked, item_name )
-        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_max_health_recovery", 0.0, function( value ) return value + 1.0 end );
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_max_health_recovery", 0.0, function( value ) return value + 1.0; end );
 	end,
 });

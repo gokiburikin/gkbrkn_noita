@@ -15,7 +15,7 @@ local options = {}
 local gui = gui or GuiCreate();
 local gui_id = 1707;
 local gui_require_restart = false;
-local wrap_threshold = 15;
+local wrap_threshold = 18;
 local wrap_size = 25;
 local last_time = 0;
 local fps_easing = 20;
@@ -33,7 +33,7 @@ table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 
 local pagination_list = nil;
 
-function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback )
+function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback, require_new_game )
     table.insert( options, {
         name = name,
         flag = flag,
@@ -41,11 +41,12 @@ function RegisterFlagOption( name, flag, require_restart, sub_option, required_f
         sub_option = sub_option,
         required_flags = required_flags,
         toggle_callback = toggle_callback,
+        require_new_game = require_new_game,
     } );
 end
 
 for _,option in pairs( OPTIONS ) do
-    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.ToggleCallback );
+    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.ToggleCallback, option.RequiresNewGame );
 end
 
 function next_id()
@@ -69,6 +70,12 @@ function do_gui()
         end
     end
     GuiLayoutEnd( gui );
+    if SETTINGS ~= nil and SETTINGS.Debug then
+        GuiLayoutBeginVertical( gui, 92, 96 );
+        local update_time = tonumber( GlobalsGetValue("gkbrkn_update_time") ) or 0;
+        GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/u" );
+        GuiLayoutEnd( gui );
+    end
     GuiLayoutBeginVertical( gui, 1, 12 );
     if screen == SCREEN.Options then
         local wrap_index = 0;

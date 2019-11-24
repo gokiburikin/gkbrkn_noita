@@ -6,7 +6,7 @@ local blacklist = {
 local spells_to_disable = math.floor(#actions / 10);
 local disabled_spells = {};
 while spells_to_disable > 0 do
-    local spell_to_disable = actions[math.ceil(math.random() * #actions)];
+    local spell_to_disable = actions[math.ceil(Random() * #actions)];
 
     if blacklist[spell_to_disable.id] ~= true and disabled_spells[spell_to_disable.id] ~= true then
         spell_to_disable.name = GameTextGetTranslatedOrNot(spell_to_disable.name) .. " (Disabled)";
