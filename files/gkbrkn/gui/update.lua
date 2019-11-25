@@ -77,28 +77,33 @@ function do_gui()
         GuiLayoutEnd( gui );
     end
     GuiLayoutBeginVertical( gui, 1, 12 );
+    
     if screen == SCREEN.Options then
+        GuiText( gui, 0, 0, " ");
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
+            change_screen( 0 );
+        end
+        GuiText( gui, 0, 0, "       ");
+        if GuiButton( gui, 0, 0, "[Content Selection]", next_id() ) then
+            change_screen( SCREEN.ContentSelection );
+        end
+        GuiLayoutEnd( gui );
+        GuiLayoutBeginVertical( gui, 0, 4 );
         local wrap_index = 0;
         for index,option in pairs( options ) do
             if option.sub_option == nil and index > ( wrap_index + 1 ) * wrap_threshold then
                 wrap_index = wrap_index + 1;
                 GuiLayoutEnd( gui );
-                GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 12 );
+                GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 4 );
             end
             do_option( option, index );
-        end
-        GuiText( gui, 0, 0, " ");
-        if GuiButton( gui, 0, 0, "[Content Selection]", next_id() ) then
-            change_screen( SCREEN.ContentSelection );
-        end
-        GuiText( gui, 0, 0, " ");
-        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
-            change_screen( 0 );
         end
         if gui_require_restart == true then
             GuiText( gui, 0, 0, " ");
             GuiText( gui, 0, 0, "restart required *");
         end
+        GuiLayoutEnd( gui );
     elseif screen == SCREEN.ContentSelection then
         --for index,action_id in pairs( sorted_actions ) do
         do_pagination( sorted_content, wrap_threshold );
@@ -107,6 +112,7 @@ function do_gui()
         if GuiButton( gui, 0, 0, "[Back]", next_id() ) then
             change_screen( SCREEN.Options );
         end
+        GuiText( gui, 0, 0, "        " );
         if GuiButton( gui, 0, 0, "[Enable All]", next_id() ) then
             for index,content_mapping in pairs( sorted_content ) do
                 CONTENT[ content_mapping.id ].toggle( true );

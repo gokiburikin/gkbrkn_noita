@@ -106,6 +106,10 @@ function draw_action( instant_reload_if_empty )
                 c.extra_entities = c.extra_entities.."files/gkbrkn/misc/less_particles/less_particles.xml,";
             end
         end
+        local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
+        if current_protagonist_bonus ~= 0 then
+            c.extra_entities = c.extra_entities.."files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
+        end
         if #deck == 0 then
             current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
         end

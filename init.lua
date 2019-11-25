@@ -14,8 +14,7 @@ api issues
     
 
 changelog
-    -m "Made the Projectile Repulsion Champions field light blue"
-    -m "Fix Short Temper stacking Berserk on each damage taken"
+
 
 kill streaks events
 grze events
@@ -28,6 +27,11 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
+    change path correction to entity in radius to filter out dumb things
+    nerf champion regeneration
+    look into why spell merge always cast doesn't work
+        test other always casts
+    bag of holding (while holding succ spells, while spraying spit spells)
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
@@ -119,6 +123,8 @@ if CONTENT[PERKS.AlwaysCast].enabled() then ModLuaFileAppend( "data/scripts/perk
 if CONTENT[PERKS.HealthierHeart].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/healthier_heart/init.lua" ); end
 if CONTENT[PERKS.InvincibilityFrames].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/invincibility_frames/init.lua" ); end
 if CONTENT[PERKS.ExtraProjectile].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/extra_projectile/init.lua" ); end
+if CONTENT[PERKS.Protagonist].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/protagonist/init.lua" ); end
+if CONTENT[PERKS.FragileEgo].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/fragile_ego/init.lua" ); end
 
 if CONTENT[ACTIONS.BounceDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/bounce_damage/init.lua" ); end
 if CONTENT[ACTIONS.BreakCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/break_cast/init.lua" ); end
@@ -157,6 +163,7 @@ if CONTENT[ACTIONS.TriggerTimer].enabled() then ModLuaFileAppend( "data/scripts/
 if CONTENT[ACTIONS.TriggerDeath].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/trigger_death/init.lua" ); end
 if CONTENT[ACTIONS.TimeSplit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/time_split/init.lua" ); end
 if CONTENT[ACTIONS.FormationStack].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/formation_stack/init.lua" ); end
+if CONTENT[ACTIONS.PiercingShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/piercing_shot/init.lua" ); end
 if SETTINGS.Debug == true then
     if CONTENT[ACTIONS.WIP].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/wip/init.lua" ); end
     if CONTENT[PERKS.WIP].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/wip/init.lua" ); end

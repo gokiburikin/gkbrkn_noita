@@ -4,7 +4,7 @@
       height="48" 
       radius="24"
       destroy_this_entity_when_triggered="0"
-      required_tag="mortal" >
+      required_tag="enemy" >
   	</CollisionTriggerComponent>
 	<LuaComponent
         remove_after_executed="0"

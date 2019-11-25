@@ -11,7 +11,7 @@ table.insert( actions,
     price = 250,
     mana = 9,
     action 		= function()
-        c.damage_projectile_add = c.damage_projectile_add + 3 / 25;
+        c.damage_projectile_add = c.damage_projectile_add + 0.24;
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/power_shot/projectile_extra_entity.xml,";
         draw_actions( 1, true );
     end,

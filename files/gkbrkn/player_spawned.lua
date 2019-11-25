@@ -47,7 +47,8 @@ if SETTINGS.Debug then
         --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
         --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
         --TryGivePerk( player_entity, "PROTECTION_MELEE" );
-        perk_spawn( x + 20, y - 20, "GKBRKN_SHORT_TEMPER" );
+        perk_spawn( x + 20, y - 20, "GKBRKN_FRAGILE_EGO" );
+        perk_spawn( x - 20, y - 20, "GKBRKN_PROTAGONIST" );
 
         local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
         if inventory2 ~= nil then
@@ -66,7 +67,7 @@ if SETTINGS.Debug then
             end
             ]]
             EntityAddChild( inventory, CreateWand( x, y, 
-                "GKBRKN_ACTION_WIP","SCATTER_3","LIGHT_BULLET","RUBBER_BALL","SLOW_BULLET"
+                "GKBRKN_PIERCING_SHOT","LIGHT_BULLET"
             ));
             EntityAddChild( inventory, CreateWand( x, y, 
                 "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","HEAVY_SHOT","DAMAGE","FREEZE","GKBRKN_BOUNCE_DAMAGE","GKBRKN_LIFETIME_DAMAGE","LIGHT_BULLET","LIGHT_BULLET","LIGHT_BULLET"

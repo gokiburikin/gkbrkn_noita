@@ -3,7 +3,7 @@ _GKBRKN_CONFIG = true;
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = DebugGetIsDevBuild(),
-    Version = "c50"
+    Version = "c51"
 }
 
 CONTENT_TYPE = {
@@ -11,6 +11,7 @@ CONTENT_TYPE = {
     Perk = 2,
     Misc = 3,
     Tweak = 4,
+    ChampionType = 5,
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -18,6 +19,7 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.Perk] = "perk_",
     [CONTENT_TYPE.Misc] = "misc_",
     [CONTENT_TYPE.Tweak] = "tweak_",
+    [CONTENT_TYPE.ChampionType] = "champion_type_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
@@ -25,6 +27,7 @@ CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
     [CONTENT_TYPE.Perk] = "Perk: ",
     [CONTENT_TYPE.Misc] = "Misc: ",
     [CONTENT_TYPE.Tweak] = "Tweak: ",
+    [CONTENT_TYPE.ChampionType] = "Champion: ",
 }
 
 CONTENT = {}
@@ -114,6 +117,8 @@ PERKS = {
     InvincibilityFrames = register_content( CONTENT_TYPE.Perk, "invincibility_frames","Invincibility Frames" ),
     ExtraProjectile = register_content( CONTENT_TYPE.Perk, "extra_projectile","Extra Projectile" ),
     ManaRecovery = register_content( CONTENT_TYPE.Perk, "mana_recovery","Mana Recovery" ),
+    Protagonist = register_content( CONTENT_TYPE.Perk, "protagonist","Protagonist" ),
+    FragileEgo = register_content( CONTENT_TYPE.Perk, "fragile_ego","Fragile Ego" ),
     WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true, not SETTINGS.Debug ),
 }
 
@@ -155,6 +160,7 @@ ACTIONS = {
     CopySpell = register_content( CONTENT_TYPE.Action, "copy_spell","Copy Spell" ),
     TimeSplit = register_content( CONTENT_TYPE.Action, "time_split","Time Split" ),
     FormationStack = register_content( CONTENT_TYPE.Action, "formation_stack","Formation Stack" ),
+    PiercingShot = register_content( CONTENT_TYPE.Action, "piercing_shot","Piercing Shot" ),
     WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true, not SETTINGS.Debug )
 }
 
@@ -164,6 +170,246 @@ TWEAKS = {
     Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage", { action_id="DAMAGE" }, true, nil, true ),
     Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze", { action_id="FREEZE" }, true, nil, true ),
     IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
+}
+
+CHAMPION_TYPES = {
+    Melee = register_content( CONTENT_TYPE.ChampionType, "melee", "Melee Buff", {
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/melee.xml",
+        particle_material = "spark_red",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_melee_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_melee_enabled" ) == "1" then
+                        has_melee_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_melee_attack;
+        end,
+        apply = function( entity )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue( ai, "attack_melee_damage_min", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_min" ) ) * 1.5 ) );
+                    ComponentSetValue( ai, "attack_melee_damage_max", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_max" ) ) * 2 ) );
+                    ComponentSetValue( ai, "attack_melee_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_melee_frames_between" ) ) / 2 ) ) );
+                    ComponentSetValue( ai, "attack_dash_damage", tostring( tonumber( ComponentGetValue( ai, "attack_dash_damage" ) ) * 1.5 ) );
+                    ComponentSetValue( ai, "attack_dash_frames_between", tostring( tonumber( ComponentGetValue( ai, "attack_dash_frames_between" ) ) / 2 ) );
+                end
+            end
+        end
+    }),
+    Projectile = register_content( CONTENT_TYPE.ChampionType, "projectile", "Projectile Buff", {
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/projectile.xml",
+        particle_material = "spark_purple",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue( ai, "attack_ranged_predict", "1" );
+                    ComponentSetValue( ai, "attack_ranged_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_ranged_frames_between" ) ) / 2 ) ) );
+                    ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
+                    ComponentSetValue( ai, "attack_ranged_entity_count_max", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_max" ) + 2 ) ) );
+                end
+            end
+        end
+    }),
+    Fast = register_content( CONTENT_TYPE.ChampionType, "fast", "Fast", {
+        particle_material = "spark_green",
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/movement_faster.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local character_platforming = EntityGetFirstComponent( entity, "CharacterPlatformingComponent" );
+            if character_platforming ~= nil then
+                ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 3 ) );
+                ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
+                ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * 2 ) );
+                ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_up" ) ) * 2 ) );
+                ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_down" ) ) * 2 ) );
+                ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_change_spd" ) ) * 2 ) );
+            end
+        end
+    }),
+    Teleport = register_content( CONTENT_TYPE.ChampionType, "teleport", "Teleport", {
+        particle_material = "spark_white",
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/teleporting.xml",
+        game_effects = {"TELEPORTATION","TELEPORTITIS"},
+        validator = function( entity ) return true end,
+    }),
+    Burning = register_content( CONTENT_TYPE.ChampionType, "burning", "Burning", {
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/burning.xml",
+        game_effects = {"PROTECTION_FIRE"},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local x,y = EntityGetTransform( entity );
+            local burn = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/fire.xml", x, y );
+            if burn ~= nil then
+                EntityAddChild( entity, burn );
+            end
+        end
+    }),
+    Freezing = register_content( CONTENT_TYPE.ChampionType, "freezing", "Freezing", {
+        particle_material = "blood_cold_vapour",
+        sprite_particle_sprite_file = "data/particles/snowflake_$[1-2].xml",
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/freezing.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local x,y = EntityGetTransform( entity );
+            local freeze_field = EntityLoad( "data/entities/misc/perks/freeze_field.xml", x, y );
+            if freeze_field ~= nil then
+                EntityAddChild( entity, freeze_field );
+            end
+        end
+    }),
+    Shoot = register_content( CONTENT_TYPE.ChampionType, "shoot", "Shoot (NYI)", {
+        particle_material = "spark_purple",
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+    }, true, true),
+    -- TODO Update this when Invisible game effect doesn't crash
+    Invisible = register_content( CONTENT_TYPE.ChampionType, "invisible", "Invisible", {
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/invisible.xml",
+        game_effects = {"STAINS_DROP_FASTER"},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/invisible.lua",
+                execute_on_added="1",
+                execute_every_n_frame="10",
+            });
+        end
+    } ),
+    Loot = register_content( CONTENT_TYPE.ChampionType, "loot", "Loot (NYI)", {
+        particle_material = "spark_white",
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+    }, true, true),
+    Regeneration = register_content( CONTENT_TYPE.ChampionType, "regeneration", "Regeneration", {
+        particle_material = "spark_green",
+        sprite_particle_sprite_file = "data/particles/heal.xml",
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/regeneration.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_source_file = "files/gkbrkn/misc/champion_enemies/scripts/regeneration.lua",
+                execute_every_n_frame = "5",
+            } );
+        end
+    }),
+    WormBait = register_content( CONTENT_TYPE.ChampionType, "worm_bait", "Worm Bait", {
+        particle_material = "meat",
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        game_effects = {"WORM_ATTRACTOR"},
+        validator = function( entity ) return true end,
+    }, true, true ),
+    RevengeExplosion = register_content( CONTENT_TYPE.ChampionType, "revenge_explosion", "Revenge Explosion", {
+        particle_material = "spark_yellow",
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/revenge_explosion.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "files/gkbrkn/misc/champion_enemies/scripts/revenge_explosion.lua",
+                execute_every_n_frame = "-1",
+            } );
+        end
+    }),
+    EnergyShield = register_content( CONTENT_TYPE.ChampionType, "energy_shield", "Energy Shield", {
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/energy_shield.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local shield = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml" );
+            if shield ~= nil then EntityAddChild( entity, shield ); end
+        end
+    }),
+    Electricity = register_content( CONTENT_TYPE.ChampionType, "electricity", "Electricity", {
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/electricity.xml",
+        game_effects = {"PROTECTION_ELECTRICITY"},
+        validator = function( entity ) return true end,
+        apply = function( entity ) 
+            local electric = EntityAddComponent( entity, "ElectricChargeComponent", { 
+                _tags="enabled_in_world",
+                radius="128",
+                charge_time_frames="15",
+                electricity_emission_interval_frames="15",
+                fx_velocity_max="10",
+            });
+            local x,y = EntityGetTransform( entity );
+            local electrocution = EntityLoad( "data/entities/particles/water_electrocution.xml", x, y );
+            if electrocution ~= nil then
+                EntityAddChild( entity, electrocution );
+            end
+        end
+    }),
+    ProjectileRepulsionField = register_content( CONTENT_TYPE.ChampionType, "projectile_repulsion_field", "Projectile Repulsion Field", {
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/projectile_repulsion_field.xml",
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local shield = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/projectile_repulsion_field.xml" );
+            if shield ~= nil then EntityAddChild( entity, shield ); end
+        end
+    }),
+    Healthy = register_content( CONTENT_TYPE.ChampionType, "healthy", "Healthy", {
+        particle_material = "plasma_fading_pink",
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/healthy.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+            for index,damage_model in pairs( damage_models ) do
+                local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
+                local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+                local new_max = max_hp * 2;
+                local regained = new_max - current_hp;
+                ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
+                ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
+            end
+        end
+    }),
 }
 
 OPTIONS = {
@@ -278,6 +524,11 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_champion_enemies",
     },
     {
+        Name = "Super Champions",
+        SubOption = true,
+        PersistentFlag = "gkbrkn_champion_enemies_super",
+    },
+    {
         Name = "Champions Only",
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies_always",
@@ -364,7 +615,10 @@ MISC = {
     },
     ChampionEnemies = {
         Enabled = "gkbrkn_champion_enemies",
-        AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always"
+        SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
+        AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
+        ChampionChance = 0.125,
+        ExtraTypeChance = 0.125,
     },
     QuickSwap = {
         Enabled = "gkbrkn_quick_swap",

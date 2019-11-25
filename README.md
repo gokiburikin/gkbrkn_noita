@@ -24,10 +24,11 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Freeze Charge**: Removed the particle effects (affects gameplay.)
 - [x] **Increase Mana**: Removed.
 
-### Perks (14)
+### Perks (16)
 - [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
 - [x] **Duplicate**: Duplicate a random wand in your inventory.
 - [x] **Extra Projectile**: Spells you cast gain an additional projectile.
+- [x] **Fragile Ego**: Receive 50% less damage, but damage is permanent.
 - [x] **Golden Blood**: You bleed gold.
 - [x] **Healthier Heart**: You heal for the amount gained when gaining maximum health.
 - [x] **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
@@ -36,6 +37,7 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Mana Recovery**: Your wands charge more quickly.
 - [x] **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
 - [x] **Passive Recharge**: Your wands recharge even when holstered.
+- [x] **Protagonist**: Your damage increases the more damaged you are.
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.
 - [x] **Short Temper**: Become Berserk for a short time after taking damage.
