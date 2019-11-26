@@ -1,5 +1,5 @@
-dofile("files/gkbrkn/helper.lua");
-dofile( "files/gkbrkn/lib/variables.lua" );
+dofile_once("files/gkbrkn/helper.lua");
+dofile_once( "files/gkbrkn/lib/variables.lua" );
 table.insert( perk_list, {
 	id = "GKBRKN_INVINCIBILITY_FRAMES",
 	ui_name = "Invincibility Frames",

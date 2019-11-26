@@ -19,6 +19,9 @@ local init_check_flag = "gkbrkn_player_new_game";
 if GameHasFlagRun( init_check_flag ) == false then
     GameAddFlagRun( init_check_flag );
     DoFileEnvironment( "files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
+    EntityAddComponent( player_entity, "LuaComponent", {
+        script_shot="files/gkbrkn/misc/projectile_shot.lua"
+    });
 end
 
 --[[
@@ -37,8 +40,8 @@ if SETTINGS.Debug then
     --if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
     if GameHasFlagRun("gkbrkn_debug_player_spawned") == false then
         GameAddFlagRun("gkbrkn_debug_player_spawned");
-        dofile( "data/scripts/perks/perk.lua");
-        dofile( "data/scripts/gun/procedural/gun_action_utils.lua" );
+        dofile_once( "data/scripts/perks/perk.lua");
+        dofile_once( "data/scripts/gun/procedural/gun_action_utils.lua" );
         --dofile( "data/scripts/items/generate_shop_item.lua" );
 
         --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
@@ -46,14 +49,15 @@ if SETTINGS.Debug then
         --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
         --TryGivePerk( player_entity, "MOVEMENT_FASTER" );
         --TryGivePerk( player_entity, "GKBRKN_RAPID_FIRE" );
-        --TryGivePerk( player_entity, "PROTECTION_MELEE" );
-        perk_spawn( x + 20, y - 20, "GKBRKN_FRAGILE_EGO" );
-        perk_spawn( x - 20, y - 20, "GKBRKN_PROTAGONIST" );
+        --perk_spawn( x + 20, y - 20, "GKBRKN_FRAGILE_EGO" );
+        --perk_spawn( x - 20, y - 20, "GKBRKN_PROTAGONIST" );
+        --perk_spawn( x, y - 20, "GKBRKN_ALWAYS_CAST" );
 
         local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
         if inventory2 ~= nil then
             ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
         end
+        
         local x, y = EntityGetTransform( player_entity );
         local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
         if inventory ~= nil then
@@ -67,10 +71,10 @@ if SETTINGS.Debug then
             end
             ]]
             EntityAddChild( inventory, CreateWand( x, y, 
-                "GKBRKN_PIERCING_SHOT","LIGHT_BULLET"
+                "SPEED","SPEED","LIFETIME","BLACK_HOLE","BLACK_HOLE","BLACK_HOLE","BLACK_HOLE"
             ));
             EntityAddChild( inventory, CreateWand( x, y, 
-                "GKBRKN_PROJECTILE_GRAVITY_WELL","GKBRKN_DRAW_DECK","HEAVY_SHOT","DAMAGE","FREEZE","GKBRKN_BOUNCE_DAMAGE","GKBRKN_LIFETIME_DAMAGE","LIGHT_BULLET","LIGHT_BULLET","LIGHT_BULLET"
+                "GKBRKN_PATH_CORRECTION","GKBRKN_PIERCING_SHOT","GKBRKN_SPECTRAL_SHOT","SPEED","BOUNCY_ORB"
             ));
             --[[
             EntityAddChild( inventory, CreateWand( x, y, 

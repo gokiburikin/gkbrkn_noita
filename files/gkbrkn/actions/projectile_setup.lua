@@ -1,10 +1,6 @@
 GlobalsSetValue( "gkbrkn_fired_projectiles", "" );
 EntityKill( GetUpdatedEntityID() );
-
-if _ONCE == nil then
-    _ONCE = true;
-    dofile( "files/gkbrkn/lib/variables.lua");
-end
+dofile_once( "files/gkbrkn/lib/variables.lua");
 
 function EntitiesAverageMemberList( entities, component_type, member_list, rounded, overrides )
     local averages = {};

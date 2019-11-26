@@ -1,8 +1,5 @@
-if _ONCE == nil then
-    _ONCE = true;
-    dofile( "files/gkbrkn/config.lua");
-    dofile( "files/gkbrkn/lib/variables.lua" );
-end
+dofile_once( "files/gkbrkn/config.lua");
+dofile_once( "files/gkbrkn/lib/variables.lua" );
 
 if last_max_hp == nil then
     last_max_hp = {}

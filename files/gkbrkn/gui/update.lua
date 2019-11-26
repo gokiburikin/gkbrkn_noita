@@ -1,10 +1,10 @@
-if _GKBRKN_CONFIG == nil then dofile( "files/gkbrkn/config.lua"); end
-if _GKBRKN_HELPER == nil then dofile( "files/gkbrkn/helper.lua"); end
+dofile_once( "files/gkbrkn/config.lua");
+dofile_once( "files/gkbrkn/helper.lua");
 
 if not async then
     -- guard against multiple inclusion to prevent
     -- loss of async coroutines
-    dofile( "data/scripts/lib/coroutines.lua" )
+    dofile_once( "data/scripts/lib/coroutines.lua" )
 end
 
 local SCREEN = {
@@ -57,8 +57,8 @@ end
 function do_gui()
     id_offset = 0;
     GuiStartFrame(gui);
-    GuiLayoutBeginVertical( gui, 87, 0 );
-    local main_text = "[GKBRKN "..SETTINGS.Version.."]";
+    GuiLayoutBeginVertical( gui, 86, 0 );
+    local main_text = "[Goki's Things "..SETTINGS.Version.."]";
     if gui_require_restart == true then
         main_text = main_text.."*"
     end
@@ -71,9 +71,11 @@ function do_gui()
     end
     GuiLayoutEnd( gui );
     if SETTINGS ~= nil and SETTINGS.Debug then
-        GuiLayoutBeginVertical( gui, 92, 96 );
+        GuiLayoutBeginVertical( gui, 92, 93 );
         local update_time = tonumber( GlobalsGetValue("gkbrkn_update_time") ) or 0;
-        GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/u" );
+        GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
+        local world_time = tonumber( GlobalsGetValue("gkbrkn_world_update_time") ) or 0;
+        GuiText( gui, 0, 0, tostring( math.floor( world_time * 100000 ) / 100 ).."ms/wu" );
         GuiLayoutEnd( gui );
     end
     GuiLayoutBeginVertical( gui, 1, 12 );

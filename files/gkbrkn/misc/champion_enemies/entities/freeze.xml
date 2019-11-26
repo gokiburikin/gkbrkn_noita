@@ -1,0 +1,21 @@
+<Entity 
+  name="$projectile_default" 
+   >
+  <GameAreaEffectComponent
+      radius="24"
+      frame_length="1"
+    >
+  </GameAreaEffectComponent>
+
+  <LifetimeComponent
+    lifetime="1"
+    >
+  </LifetimeComponent>
+
+  <ProjectileComponent 
+    damage="0"
+    damage_game_effect_entities="files/gkbrkn/misc/champion_enemies/entities/effect_freeze.xml,"
+    >
+    </ProjectileComponent>
+</Entity>
+

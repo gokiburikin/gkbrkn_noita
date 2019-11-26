@@ -1,9 +1,6 @@
-if _GKBRKN_RANDOM_START_INIT == nil then
-    dofile( "data/scripts/utilities.lua" );
-    dofile( "data/scripts/perks/perk.lua" );
-    dofile( "data/scripts/perks/perk_list.lua" );
-    dofile( "files/gkbrkn/config.lua");
-end
+dofile_once( "data/scripts/perks/perk.lua" );
+dofile_once( "data/scripts/perks/perk_list.lua" );
+dofile_once( "files/gkbrkn/config.lua");
 
 local init_check_flag = "gkbrkn_random_start_init";
 if GameHasFlagRun( init_check_flag ) == false then
@@ -30,10 +27,9 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     -- random cape colour
     if HasFlagPersistent( MISC.RandomStart.RandomCapeColorEnabled ) and cape ~= nil then
-        edit_component( cape, "VerletPhysicsComponent", function( comp, vars ) 
-            vars.cloth_color = Random( 0xFF000000, 0xFFFFFFFF );
-            vars.cloth_color_edge = Random( 0xFF000000, 0xFFFFFFFF );
-        end);
+        local verlet_physics = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
+        ComponentSetValue( verlet_physics, "cloth_color",  Random( 0xFF000000, 0xFFFFFFFF ) );
+        ComponentSetValue( verlet_physics, "cloth_color_edge",  Random( 0xFF000000, 0xFFFFFFFF ) );
     end
 
     -- randomize starting hp
@@ -52,7 +48,6 @@ if GameHasFlagRun( init_check_flag ) == false then
     if inventory ~= nil then
         if HasFlagPersistent( MISC.RandomStart.RandomWandEnabled ) then
             local inventory_items = EntityGetAllChildren( inventory );
-            
             if inventory_items ~= nil then
                 for i,item_entity in ipairs( inventory_items ) do
                     if EntityHasTag( item_entity, "wand" ) then

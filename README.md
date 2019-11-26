@@ -1,33 +1,34 @@
-# gkbrkn_noita
+# Goki's Things
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
 
 ### Misc Features (14)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
-- [x] **Champion enemies (WIP)**: A small amount of enemies will be champions.
+- [x] **Champions**: Some enemies will be Champions with dangerous attributes.
 - [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
 - [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
-- [x] **Loose Spell Generation**: Allows any spell to spawn on any generated wand.
+- [x] **Any Spell On Any Wand**: Allows any standard spell (projectile, modifier, multicast) to spawn on any generated wand, ignoring spawn level.
+- [x] **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
+- [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
 - [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.
 - [x] **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
 - [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
-- [x] **Less Particles**: Enable to reduce cosmetic particle emission.
-- [x] **Random Start**: Start runs with two wands with random spells and stats, random max hp, a random flask, and a perk.
-- [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
-- [x] **Extended Wand Generation**: Include unused spell types in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
+- [x] **Less Particles**: Reduce or disable cosmetic particle emission for extra performance.
+- [x] **Random Start**: Options to start runs with random wands, perks, flasks, cape colours, and health.
 
 ### Tweaks (5)
 - [x] **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across all spells.
 - [x] **Damage Plus**: Costs more mana, doubled recharge time.
 - [x] **Chainsaw**: Now costs mana, reduces cast delay to 0.08 instead of 0 (unless it is already lower.)
 - [x] **Freeze Charge**: Removed the particle effects (affects gameplay.)
-- [x] **Increase Mana**: Removed.
+- [x] **Increase Mana**: Disabled.
+- [x] **Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds.
 
 ### Perks (16)
-- [x] **Always Cast**: Upgrade a random spell on a random wand in your inventory to always cast.
-- [x] **Duplicate**: Duplicate a random wand in your inventory.
-- [x] **Extra Projectile**: Spells you cast gain an additional projectile.
+- [x] **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
+- [x] **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
+- [x] **Extra Projectile**: Spells you cast gain an additional projectile (their other effects aren't applied.)
 - [x] **Fragile Ego**: Receive 50% less damage, but damage is permanent.
 - [x] **Golden Blood**: You bleed gold.
 - [x] **Healthier Heart**: You heal for the amount gained when gaining maximum health.

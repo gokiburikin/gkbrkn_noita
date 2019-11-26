@@ -6,9 +6,9 @@ for _,emitter in pairs( particle_emitters ) do
         ComponentSetValue( emitter, "count_max", "1" );
         ComponentSetValue( emitter, "collide_with_grid", "0" );
         ComponentSetValue( emitter, "is_trail", "0" );
-        local lifetime_min = tonumber( ComponentGetValue( emitter, "emission_interval_min_frames" ) );
+        local lifetime_min = tonumber( ComponentGetValue( emitter, "lifetime_min" ) );
         ComponentSetValue( emitter, "lifetime_min", tostring( math.min( lifetime_min * 0.5, 0.1 ) ) );
-        local lifetime_max = tonumber( ComponentGetValue( emitter, "emission_interval_min_frames" ) );
+        local lifetime_max = tonumber( ComponentGetValue( emitter, "lifetime_max" ) );
         ComponentSetValue( emitter, "lifetime_max", tostring( math.min( lifetime_max * 0.5, 0.5 ) ) );
     end
 end

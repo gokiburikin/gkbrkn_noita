@@ -1,4 +1,4 @@
-dofile( "files/gkbrkn/config.lua");
+dofile_once( "files/gkbrkn/config.lua");
 
 local entity = GetUpdatedEntityID();
 local x,y = EntityGetTransform( entity );

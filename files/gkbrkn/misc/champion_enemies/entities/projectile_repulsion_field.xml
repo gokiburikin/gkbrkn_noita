@@ -2,7 +2,7 @@
 
 	<InheritTransformComponent/>
 	<LuaComponent
-		script_source_file="files/gkbrkn/misc/champion_enemies/entities/projectile_repulsion_field.lua"
+		script_source_file="files/gkbrkn/misc/champion_enemies/scripts/projectile_repulsion_field.lua"
 		execute_every_n_frame="1"
 		>
 	</LuaComponent>

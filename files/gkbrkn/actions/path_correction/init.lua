@@ -9,7 +9,7 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 200,
-    mana = 12,
+    mana = 30,
     action 		= function()
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/path_correction/projectile_extra_entity.xml,";
         draw_actions( 1, true );

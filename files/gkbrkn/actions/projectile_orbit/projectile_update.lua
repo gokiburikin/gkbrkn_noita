@@ -1,10 +1,7 @@
-if _ONCE == nil then
-    _ONCE = true;
-    dofile( "files/gkbrkn/lib/variables.lua");
-    TWO_PI = math.pi * 2;
-    ORBIT_RADIUS = 8;
-    ORBIT_SPEED = 8;
-end
+dofile_once( "files/gkbrkn/lib/variables.lua");
+TWO_PI = math.pi * 2;
+ORBIT_RADIUS = 8;
+ORBIT_SPEED = 8;
 local entity = GetUpdatedEntityID();
 local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
 

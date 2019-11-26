@@ -1,25 +1,49 @@
-if _ONCE == nil then
-    dofile("data/scripts/gun/procedural/gun_action_utils.lua");
-end
+dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
 
-_GKBRKN_HELPER = true;
-
-function ShootProjectile( who_shot, entity_file, x, y, vel_x, vel_y, send_message )
+function ShootProjectile( who_shot, entity_file, x, y, vx, vy, send_message )
     local entity = EntityLoad( entity_file, x, y );
-    local genome = EntityGetFirstComponent( entity, "GenomeDataComponent" );
-    local herd_id = ComponentGetMetaCustom( genome, "herd_id" );
+    local genome = EntityGetFirstComponent( who_shot, "GenomeDataComponent" );
+    local herd_id = ComponentGetValue( genome, "herd_id" );
     if send_message == nil then send_message = true end
 
-	GameShootProjectile( who_shot, x, y, x+vel_x, y+vel_y, entity_id, send_message );
+	GameShootProjectile( who_shot, x, y, x+vx, y+vy, entity, send_message );
 
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     ComponentSetValue( projectile, "mWhoShot", who_shot );
     ComponentSetValue( projectile, "mShooterHerdId", herd_id );
 
     local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
-	ComponentSetValueVector2( velocity, "mVelocity", vel_x, vel_y )
+    if velocity ~= nil then
+	    ComponentSetValueVector2( velocity, "mVelocity", vx, vy )
+    end
 
 	return entity;
+end
+
+function WandGetActiveOrRandom( entity )
+    local chosen_wand = nil;
+    local wands = {};
+    local children = EntityGetAllChildren( entity );
+    for key, child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            wands = EntityGetChildrenWithTag( child, "wand" );
+            break;
+        end
+    end
+    if #wands > 0 then
+        local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+        local active_item = tonumber( ComponentGetValue( inventory2, "mActiveItem" ) );
+        for _,wand in pairs( wands ) do
+            if wand == active_item then
+                chosen_wand = wand;
+                break;
+            end
+        end
+        if chosen_wand == nil then
+            chosen_wand =  random_from_array( wands );
+        end
+        return chosen_wand;
+    end
 end
 
 function benchmark( callback, iterations )
@@ -43,8 +67,10 @@ function map(func, array)
 
 function DoFileEnvironment( filepath, environment )
     if environment == nil then environment = {} end
-    local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = _G } ) ) );
-    if status == false then print_error( result ); end
+    local f = loadfile( filepath );
+    local set_f = setfenv( f, setmetatable( environment, { __index = _G } ) );
+    local status,result = pcall( set_f );
+    if status == false then print_error( "do file environment for "..filepath..": "..result ); end
     return environment;
 end
 

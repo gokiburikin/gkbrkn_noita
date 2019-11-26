@@ -1,4 +1,4 @@
-dofile("files/gkbrkn/lib/variables.lua");
+dofile_once("files/gkbrkn/lib/variables.lua");
 
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );

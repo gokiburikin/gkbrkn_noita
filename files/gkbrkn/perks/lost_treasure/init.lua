@@ -1,4 +1,4 @@
-dofile( "data/scripts/lib/utilities.lua" );
+dofile_once( "data/scripts/lib/utilities.lua" );
 
 local tracker_variable = "gkbrkn_lost_treasure_tracker";
 table.insert( perk_list, {

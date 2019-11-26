@@ -1,9 +1,7 @@
-if _EXTENDED_WAND_GENERATION_INIT == nil then
-    _EXTENDED_WAND_GENERATION_INIT = true;
-    dofile( "data/scripts/gun/gun_enums.lua" );
-    dofile( "files/gkbrkn/config.lua" );
-    _generate_gun = generate_gun;
-end
+dofile_once( "data/scripts/gun/gun_enums.lua" );
+dofile_once( "files/gkbrkn/config.lua" );
+_generate_gun = _generate_gun or generate_gun;
+
 local extended_types = {
     ACTION_TYPE_STATIC_PROJECTILE,
     ACTION_TYPE_MATERIAL,

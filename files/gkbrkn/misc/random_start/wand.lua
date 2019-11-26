@@ -1,8 +1,9 @@
-dofile("data/scripts/lib/utilities.lua");
-dofile("data/scripts/gun/procedural/gun_enums.lua");
-dofile("data/scripts/gun/procedural/gun_action_utils.lua");
-dofile("data/scripts/gun/procedural/gun_procedural.lua" );
-dofile("data/scripts/gun/gun_actions.lua");
+dofile_once("data/scripts/lib/utilities.lua");
+dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
+dofile_once("data/scripts/gun/procedural/gun_procedural.lua" );
+dofile_once("data/scripts/gun/gun_actions.lua");
+dofile_once("data/scripts/gun/procedural/wands.lua" );
+dofile_once("data/scripts/gun/gun_enums.lua");
 
 function EntityComponentGetValue( entity_id, component_type_name, component_key, default_value )
     local component = EntityGetFirstComponent( entity_id, component_type_name );
@@ -128,6 +129,5 @@ while action_count > 0 do
     --end
 end
 
-dofile( "data/scripts/gun/procedural/wands.lua" );
 local wand = random_from_array(wands);
 SetWandSprite( entity_id, ability_component, wand.file, wand.grip_x, wand.grip_y, (wand.tip_x - wand.grip_x), (wand.tip_y - wand.grip_y) );

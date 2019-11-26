@@ -1,4 +1,4 @@
-dofile("files/gkbrkn/helper.lua");
+dofile_once("files/gkbrkn/helper.lua");
 table.insert( perk_list, {
 	id = "GKBRKN_FRAGILE_EGO",
 	ui_name = "Fragile Ego",

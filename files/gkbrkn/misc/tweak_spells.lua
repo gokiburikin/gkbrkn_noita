@@ -1,7 +1,4 @@
-if _GKBRKN_TWEAK_SPELLS == nil then
-    _GKBRKN_TWEAK_SPELLS = true;
-    dofile( "files/gkbrkn/config.lua");
-end
+dofile_once( "files/gkbrkn/config.lua");
 
 local edit_callbacks = {
     MANA_REDUCE = function( action, index )
@@ -50,16 +47,18 @@ local edit_callbacks = {
         end
     end
 }
+
 local apply_tweaks = {};
 for _,content_id in pairs(TWEAKS) do
     local tweak = CONTENT[content_id];
-    if tweak.enabled() then
+    if tweak.enabled() and tweak.options ~= nil and tweak.options.action_id ~= nil then
         apply_tweaks[ tweak.options.action_id ] = true
     end
 end
+
 for i=#actions,1,-1 do
     local action = actions[i];
-    if action ~= nil and edit_callbacks[ action.id ] ~= nil and apply_tweaks[action.id] == true then
+    if action ~= nil and edit_callbacks[ action.id ] ~= nil and apply_tweaks[ action.id ] == true then
         edit_callbacks[action.id]( action, i );
     end
 end

@@ -1,23 +1,21 @@
+dofile_once( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "files/gkbrkn/config.lua" );
+dofile_once( "files/gkbrkn/helper.lua" );
+
 local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
 
-if _ONCE == nil then
-    _ONCE = true;
-    dofile( "files/gkbrkn/helper.lua" );
-    dofile( "files/gkbrkn/config.lua" );
-    dofile( "files/gkbrkn/lib/variables.lua" );
-    function DoFileEnvironment( filepath, environment )
-        if environment == nil then environment = {} end
-        local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = getfenv() } ) ) );
-        if status == false then print_error( result ); end
-        return environment;
-    end
-    function IsGoldNuggetLostTreasure( entity )
-        return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_lost_treasure" ) ~= nil
-    end
-    function IsGoldNuggetDecayTracked( entity )
-        return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_gold_decay" ) ~= nil;
-    end
+function DoFileEnvironment( filepath, environment )
+    if environment == nil then environment = {} end
+    local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = getfenv() } ) ) );
+    if status == false then print_error( result ); end
+    return environment;
+end
+function IsGoldNuggetLostTreasure( entity )
+    return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_lost_treasure" ) ~= nil
+end
+function IsGoldNuggetDecayTracked( entity )
+    return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_gold_decay" ) ~= nil;
 end
 
 local entity = GetUpdatedEntityID();
@@ -332,6 +330,212 @@ if succ_bonus ~= nil then
                 end
             end
             break;
+        end
+    end
+end
+
+--[[ Champions ]]
+local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
+
+if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
+    for _,entity in pairs( nearby_enemies ) do
+        if EntityHasTag( entity, "gkbrkn_champions" ) == false then
+            EntityAddTag( entity, "gkbrkn_champions" );
+            if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+                local valid_champion_types = {};
+                for index,champion_type in pairs( CHAMPION_TYPES ) do
+                    local champion_type_data = CONTENT[champion_type].options;
+                    if CONTENT[champion_type].enabled() and (champion_type_data.validator == nil or champion_type_data.validator( entity ) ~= false) then
+                        table.insert( valid_champion_types, champion_type );
+                    end
+                end
+
+                local champion_types_to_apply = 1;
+                if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsEnabled ) then
+                    while Random() <= MISC.ChampionEnemies.ExtraTypeChance and champion_types_to_apply < #valid_champion_types do
+                        champion_types_to_apply = champion_types_to_apply + 1;
+                    end
+                end
+                
+                --[[ Things to apply to all champions ]]
+                local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+                if #animal_ais > 0 then
+                    for _,ai in pairs( animal_ais ) do
+                        ComponentSetValue( ai, "aggressiveness_min", "100" );
+                        ComponentSetValue( ai, "aggressiveness_max", "100" );
+                        ComponentSetValue( ai, "escape_if_damaged_probability", "0" );
+                        ComponentSetValue( ai, "hide_from_prey", "0" );
+                        ComponentSetValue( ai, "needs_food", "0" );
+                        ComponentSetValue( ai, "sense_creatures", "1" );
+                        ComponentSetValue( ai, "attack_only_if_attacked", "0" );
+                        ComponentSetValue( ai, "creature_detection_check_every_x_frames", "60" );
+                        ComponentSetValue( ai, "max_distance_to_cam_to_start_hunting", tostring( tonumber( ComponentGetValue( ai, "max_distance_to_cam_to_start_hunting") ) * 2 ) );
+                        ComponentSetValue( ai, "creature_detection_range_x", tostring( tonumber( ComponentGetValue( ai, "creature_detection_range_x") ) * 2 ) );
+                        ComponentSetValue( ai, "creature_detection_range_y", tostring( tonumber( ComponentGetValue( ai, "creature_detection_range_y") ) * 2 ) );
+                    end
+                end
+                local character_platforming = EntityGetFirstComponent( entity, "CharacterPlatformingComponent" );
+                if character_platforming ~= nil then
+                    ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 2 ) );
+                    ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
+                    ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_up" ) ) * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_down" ) ) * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_change_spd" ) ) * 2 ) );
+                end
+                local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+                if damage_models ~= nil then
+                    local resistances = {
+                        ice = 0.67,
+                        electricity = 0.67,
+                        radioactive = 0.67,
+                        slice = 0.67,
+                        projectile = 0.67,
+                        healing = 0.67,
+                        physics_hit = 0.67,
+                        explosion = 0.67,
+                        poison = 0.67,
+                        melee = 0.67,
+                        drill = 0.67,
+                        fire = 0.67,
+                    };
+                    for index,damage_model in pairs( damage_models ) do
+                        for damage_type,multiplier in pairs( resistances ) do
+                            local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                            resistance = resistance * multiplier;
+                            ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                        end
+
+                        local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
+                        local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+                        local new_max = max_hp * 1.5;
+                        local regained = new_max - current_hp;
+                        ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
+                        ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
+
+                        local critical_damage_resistance = tonumber( ComponentGetValue( damage_model, "critical_damage_resistance" ) );
+                        ComponentSetValue( damage_model, "critical_damage_resistance", tostring( math.max( critical_damage_resistance, 0.67 ) ) );
+                    end
+                end
+                local badges = EntityLoad( "files/gkbrkn/misc/champion_enemies/badges.xml");
+                EntityAddChild( entity, badges );
+
+                --[[ Per champion type ]]
+                for i=1,champion_types_to_apply do
+                    local champion_type_index = math.ceil( math.random() * #valid_champion_types );
+                    if champion_type_index == 0 then
+                        break;
+                    end
+                    local champion_type = valid_champion_types[ champion_type_index ];
+                    table.remove( valid_champion_types, champion_type_index );
+                    local champion_data = CONTENT[champion_type].options;
+
+                    if champion_data.badge ~= nil then
+                        local badge = EntityCreateNew();
+                        
+                        local sprite = EntityAddComponent( badge, "SpriteComponent",{
+                            image_file=champion_data.badge
+                        });
+                        ComponentSetValue( sprite, "has_special_scale", "1");
+                        ComponentSetValue( sprite, "z_index", "128");
+                        EntityAddComponent( badge, "InheritTransformComponent",{
+                            only_position="1"
+                        });
+                        EntityAddChild( badges, badge );
+                    end
+
+                    --[[ Game Effects ]]
+                    for _,game_effect in pairs( champion_data.game_effects or {} ) do
+                        local effect = GetGameEffectLoadTo( entity, game_effect, true );
+                        if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
+                    end
+
+                    --[[ General Application ]]
+                    if champion_data.apply ~= nil then
+                        champion_data.apply( entity );
+                    end
+
+                    --[[ Particle Emitter ]]
+                    local particle_material = champion_data.particle_material;
+                    if particle_material ~= nil then
+                        local emitter_entity = EntityLoad( "files/gkbrkn/misc/champion_enemies/particles.xml" );
+                        local emitter = EntityGetFirstComponent( emitter_entity, "ParticleEmitterComponent" );
+                        if emitter ~= nil then
+                            ComponentSetValue( emitter, "emitted_material_name", particle_material );
+                            EntityAddChild( entity, emitter_entity );
+                        end
+                        ComponentSetValueVector2( emitter, "gravity", 0, -200 );
+                    end
+
+                    --[[ Sprite Particle Emitter ]]
+                    local sprite_particle_sprite_file = champion_data.sprite_particle_sprite_file;
+                    if sprite_particle_sprite_file ~= nil then
+                        local emitter_entity = EntityLoad( "files/gkbrkn/misc/champion_enemies/sprite_particles.xml" );
+                        local emitter = EntityGetFirstComponent( emitter_entity, "SpriteParticleEmitterComponent" );
+                        if emitter ~= nil then
+                            ComponentSetValue( emitter, "sprite_file", sprite_particle_sprite_file );
+                            EntityAddChild( entity, emitter_entity );
+                        end
+                    end
+
+                    --[[ Rewards Drop ]]
+                    EntityAddComponent( entity, "LuaComponent", {
+                        script_damage_received="files/gkbrkn/misc/champion_enemies/champion_damage_received.lua"
+                    });
+                end
+            end
+        end
+    end
+end
+
+--[[ Less Particles ]]
+nearby_entities = EntityGetInRadius( x, y, 256 );
+if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+    local disable = HasFlagPersistent( MISC.LessParticles.DisableEnabled );
+    _less_particle_entity_cache = _less_particle_entity_cache or {};
+    for _,nearby in pairs( nearby_entities ) do
+        if _less_particle_entity_cache[nearby] ~= true then
+            _less_particle_entity_cache[nearby] = true;
+            local particle_emitters = EntityGetComponent( nearby, "ParticleEmitterComponent" ) or {};
+            for _,emitter in pairs( particle_emitters ) do
+                if ComponentGetValue( emitter, "emit_cosmetic_particles" ) == "1" and ComponentGetValue( emitter, "create_real_particles" ) == "0" and ComponentGetValue( emitter, "emit_real_particles" ) == "0" then
+                    if disable then
+                        EntitySetComponentIsEnabled( nearby, emitter, false );
+                    else
+                        ComponentSetValue( emitter, "count_max", "1" );
+                        ComponentSetValue( emitter, "collide_with_grid", "0" );
+                        ComponentSetValue( emitter, "is_trail", "0" );
+                        local lifetime_min = tonumber( ComponentGetValue( emitter, "lifetime_min" ) );
+                        ComponentSetValue( emitter, "lifetime_min", tostring( math.min( lifetime_min * 0.5, 0.1 ) ) );
+                        local lifetime_max = tonumber( ComponentGetValue( emitter, "lifetime_max" ) );
+                        ComponentSetValue( emitter, "lifetime_max", tostring( math.min( lifetime_max * 0.5, 0.5 ) ) );
+                    end
+                end
+            end
+            local sprite_particle_emitters = EntityGetComponent( nearby, "SpriteParticleEmitterComponent" ) or {};
+            for _,emitter in pairs( sprite_particle_emitters ) do
+                if disable then
+                    EntitySetComponentIsEnabled( nearby, emitter, false );
+                else
+                    if ComponentGetValue( emitter, "entity_file" ) == "" then
+                        ComponentSetValue( emitter, "count_max", "1" );
+                        ComponentSetValue( emitter, "emission_interval_min_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_min_frames" ) ) * 2 ) ) );
+                        ComponentSetValue( emitter, "emission_interval_max_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_max_frames" ) ) * 2 ) ) );
+                    end
+                end
+            end
+        end
+    end
+end
+
+--[[ Tweak - Shorten Blindness ]]
+if CONTENT[TWEAKS.Blindness].enabled() then
+    local blindness = GameGetGameEffectCount( entity, "BLINDNESS" );
+    if blindness > 0 then
+        local effect = GameGetGameEffect( entity, "BLINDNESS" );
+        local frames = tonumber( ComponentGetValue( effect, "frames" ) );
+        if frames > 600 then
+            ComponentSetValue( effect, "frames", 600 );
         end
     end
 end

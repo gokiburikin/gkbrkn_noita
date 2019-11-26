@@ -1,6 +1,6 @@
 if GKBRKN_CHARM_NERF_INIT == nil then
     GKBRKN_CHARM_NERF_INIT = true;
-    dofile( "files/gkbrkn/config.lua" );
+    dofile_once( "files/gkbrkn/config.lua" );
     _do_money_drop = do_money_drop
 end
 

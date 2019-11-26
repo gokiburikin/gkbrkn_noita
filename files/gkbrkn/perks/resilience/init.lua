@@ -1,5 +1,5 @@
-dofile("files/gkbrkn/helper.lua");
-dofile("files/gkbrkn/config.lua");
+dofile_once("files/gkbrkn/helper.lua");
+dofile_once("files/gkbrkn/config.lua");
 table.insert( perk_list, {
 	id = "GKBRKN_RESILIENCE",
 	ui_name = "Resilience",

@@ -5,15 +5,6 @@ local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
 
-    local nearby_entities = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
-    if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/champion_enemies/world_update.lua", { nearby_entities = nearby_entities } );
-    end
-
-    nearby_entities = EntityGetInRadius( x, y, 256 );
-    if HasFlagPersistent( MISC.LessParticles.Enabled ) then
-        DoFileEnvironment( "files/gkbrkn/misc/less_particles.lua", { nearby_entities = nearby_entities } );
-    end
     --[[
     ]]
     --[[
@@ -235,4 +226,5 @@ end
     end
     ]]
 
-    --GamePrint( "gkbrkn world post time "..(GameGetRealWorldTimeSinceStarted() - t ) );
+local update_time = GameGetRealWorldTimeSinceStarted() - t;
+GlobalsSetValue("gkbrkn_world_update_time",update_time);

@@ -1,9 +1,7 @@
-_GKBRKN_CONFIG = true;
-
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = DebugGetIsDevBuild(),
-    Version = "c51"
+    Version = "c52"
 }
 
 CONTENT_TYPE = {
@@ -54,16 +52,25 @@ function register_content( type, key, display_name, options, disabled_by_default
         end,
         toggle = function( force )
             local flag = get_content_flag( content_id );
+            local enable = true;
             if force == true then
-                RemoveFlagPersistent( flag );
+                enable = true;
             elseif force == false then
-                AddFlagPersistent( flag );
+                enable = false;
             else
                 if HasFlagPersistent( flag ) then
-                    RemoveFlagPersistent( flag );
+                    enable = true;
                 else
-                    AddFlagPersistent( flag );
+                    enable = false;
                 end
+            end
+            if force ~= nil and inverted then
+                enable = not enable;
+            end
+            if enable then
+                RemoveFlagPersistent( flag );
+            else
+                AddFlagPersistent( flag );
             end
         end,
         options = options,
@@ -170,6 +177,8 @@ TWEAKS = {
     Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage", { action_id="DAMAGE" }, true, nil, true ),
     Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze", { action_id="FREEZE" }, true, nil, true ),
     IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
+    Blindness = register_content( CONTENT_TYPE.Tweak, "blindness","Shorten Blindness", nil, true, nil, true ),
+    RevengeExplosion = register_content( CONTENT_TYPE.Tweak, "revenge_explosion","Revenge Explosion",  { perk_id="REVENGE_EXPLOSION" }, true, nil, true ),
 }
 
 CHAMPION_TYPES = {
@@ -281,10 +290,15 @@ CHAMPION_TYPES = {
         validator = function( entity ) return true end,
         apply = function( entity )
             local x,y = EntityGetTransform( entity );
-            local freeze_field = EntityLoad( "data/entities/misc/perks/freeze_field.xml", x, y );
-            if freeze_field ~= nil then
-                EntityAddChild( entity, freeze_field );
+            local field = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/freeze_field.xml", x, y );
+            if field ~= nil then
+                EntityAddChild( entity, field );
             end
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="60",
+                execute_on_added="1",
+                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/freeze.lua",
+            });
         end
     }),
     Shoot = register_content( CONTENT_TYPE.ChampionType, "shoot", "Shoot (NYI)", {
@@ -362,7 +376,7 @@ CHAMPION_TYPES = {
     }),
     Electricity = register_content( CONTENT_TYPE.ChampionType, "electricity", "Electricity", {
         particle_material = nil,
-        sprite_particle_sprite_file = nil,
+        sprite_particle_sprite_file = "data/particles/spark_electric.xml",
         badge = "files/gkbrkn/misc/champion_enemies/sprites/electricity.xml",
         game_effects = {"PROTECTION_ELECTRICITY"},
         validator = function( entity ) return true end,
@@ -379,6 +393,15 @@ CHAMPION_TYPES = {
             if electrocution ~= nil then
                 EntityAddChild( entity, electrocution );
             end
+            local field = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/electricity_field.xml", x, y );
+            if field ~= nil then
+                EntityAddChild( entity, field );
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="60",
+                execute_on_added="1",
+                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/electricity.lua",
+            });
         end
     }),
     ProjectileRepulsionField = register_content( CONTENT_TYPE.ChampionType, "projectile_repulsion_field", "Projectile Repulsion Field", {
@@ -403,7 +426,7 @@ CHAMPION_TYPES = {
             for index,damage_model in pairs( damage_models ) do
                 local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
                 local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
-                local new_max = max_hp * 2;
+                local new_max = max_hp * 1.5;
                 local regained = new_max - current_hp;
                 ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
                 ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );

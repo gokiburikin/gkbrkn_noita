@@ -1,9 +1,6 @@
-if GKBRKN_APPEND_GUN_INIT == nil then
-    GKBRKN_APPEND_GUN_INIT = true;
-    dofile( "files/gkbrkn/config.lua");
-    dofile( "files/gkbrkn/helper.lua");
-    dofile( "files/gkbrkn/lib/variables.lua");
-end
+dofile_once( "files/gkbrkn/config.lua");
+dofile_once( "files/gkbrkn/helper.lua");
+dofile_once( "files/gkbrkn/lib/variables.lua");
 
 gkbrkn = {
     TRIGGER_TYPE = {

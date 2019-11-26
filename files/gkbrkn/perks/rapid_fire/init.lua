@@ -1,4 +1,4 @@
-dofile( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "files/gkbrkn/lib/variables.lua" );
 table.insert( perk_list, {
 	id = "GKBRKN_RAPID_FIRE",
 	ui_name = "Rapid Fire",

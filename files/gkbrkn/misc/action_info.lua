@@ -1,6 +1,6 @@
 if _ACTION_INFO_INIT == nil then
     _ACTION_INFO_INIT = true;
-    dofile("data/scripts/gun/gunaction_generated.lua"); -- ConfigGunActionInfo_Init lives here
+    dofile_once("data/scripts/gun/gunaction_generated.lua"); -- ConfigGunActionInfo_Init lives here
 
     function get_action_info( gun_action )
         local c = {};

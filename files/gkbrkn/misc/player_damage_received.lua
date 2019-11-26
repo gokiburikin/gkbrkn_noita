@@ -1,14 +1,11 @@
-if _ONCE == nil then
-    _ONCE = true;
-    dofile( "files/gkbrkn/helper.lua" );
-    dofile( "files/gkbrkn/config.lua" );
-    dofile( "files/gkbrkn/lib/variables.lua" );
-    function DoFileEnvironment( filepath, environment )
-        if environment == nil then environment = {} end
-        local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = getfenv() } ) ) );
-        if status == false then print_error( result ); end
-        return environment;
-    end
+dofile_once( "files/gkbrkn/helper.lua" );
+dofile_once( "files/gkbrkn/config.lua" );
+dofile_once( "files/gkbrkn/lib/variables.lua" );
+function DoFileEnvironment( filepath, environment )
+    if environment == nil then environment = {} end
+    local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = getfenv() } ) ) );
+    if status == false then print_error( result ); end
+    return environment;
 end
 
 function damage_received( damage, message, entity_thats_responsible, is_fatal )

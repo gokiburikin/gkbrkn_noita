@@ -1,7 +1,4 @@
-if _ONCE == nil then
-    _ONCE = true;
-    dofile( "files/gkbrkn/lib/variables.lua");
-end
+dofile_once( "files/gkbrkn/lib/variables.lua");
 
 local random_offset = 8;
 local maximum_strength = 96;

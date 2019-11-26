@@ -1,5 +1,5 @@
 -- Include functionality from the base games perks file
-dofile( "data/scripts/perks/perk.lua" );
+dofile_once( "data/scripts/perks/perk.lua" );
 -- This runs when player entity has been created, even from a loaded game
 function OnPlayerSpawned( player_entity )
     -- Use a unique identifier for this mod

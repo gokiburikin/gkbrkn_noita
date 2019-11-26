@@ -3,7 +3,7 @@ api issues
     no event callback hook registration whatver for certain important actions
         the biggest nice to haves:
             entity created / loaded
-            projectile fired from wand
+            projectiles fired in a spell cast
             
     no overriding of base game events in a modular interoperable way (currently have to overwrite or keep custom code up to date
         with every change)
@@ -14,7 +14,6 @@ api issues
     
 
 changelog
-
 
 kill streaks events
 grze events
@@ -27,10 +26,9 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
-    change path correction to entity in radius to filter out dumb things
-    nerf champion regeneration
     look into why spell merge always cast doesn't work
         test other always casts
+    
     bag of holding (while holding succ spells, while spraying spit spells)
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
@@ -84,10 +82,10 @@ ABANDONED
 
 ]]
 
-dofile( "files/gkbrkn/helper.lua");
-dofile( "files/gkbrkn/config.lua");
-dofile( "files/gkbrkn/lib/variables.lua");
-dofile( "data/scripts/lib/utilities.lua");
+dofile_once( "files/gkbrkn/helper.lua");
+dofile_once( "files/gkbrkn/config.lua");
+dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "data/scripts/lib/utilities.lua");
 
 if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
@@ -109,7 +107,7 @@ ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "files/gkbrkn/appe
 if CONTENT[PERKS.DuplicateWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/duplicate_wand/init.lua" ); end
 if CONTENT[PERKS.ShortTemper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/short_temper/init.lua" ); end
 if CONTENT[PERKS.GoldenBlood].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/golden_blood/init.lua" ); end
-if CONTENT[PERKS.LivingWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/living_wand/init.lua" ); end
+--if CONTENT[PERKS.LivingWand].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/living_wand/init.lua" ); end
 if CONTENT[PERKS.LostTreasure].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/lost_treasure/init.lua" ); end
 if CONTENT[PERKS.ManaEfficiency].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_efficiency/init.lua" ); end
 if CONTENT[PERKS.ManaRecovery].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/mana_recovery/init.lua" ); end
@@ -171,8 +169,8 @@ end
 
 --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/action_info.lua" );
 
-
 ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
+ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/misc/tweak_perks.lua" );
 
 if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );

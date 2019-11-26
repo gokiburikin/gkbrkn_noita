@@ -18,7 +18,7 @@
 		emission_interval_min_frames="1"
 		emission_interval_max_frames="1"
 		emit_cosmetic_particles="1"
-		image_animation_file="files/gkbrkn/teleport_effect.png"
+		image_animation_file="files/gkbrkn/perks/living_wand/teleport_effect.png"
 		image_animation_speed="100"
 		image_animation_raytrace_from_center="0"
 		image_animation_loop="0"

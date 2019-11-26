@@ -1,4 +1,4 @@
-if _GKBRKN_HELPER == nil then dofile("files/gkbrkn/helper.lua") end
+dofile_once("files/gkbrkn/helper.lua")
 
 local entity = GetUpdatedEntityID();
 local children = EntityGetAllChildren( entity );
