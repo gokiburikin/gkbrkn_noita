@@ -5,7 +5,6 @@ function does_entity_drop_gold( entity )
     for _,component in pairs( EntityGetComponent( entity, "LuaComponent" ) ) do
         if ComponentGetValue( component, "script_death" ) == "data/scripts/items/drop_money.lua" then
             drops_gold = true;
-            GamePrint( tostring(entity).." drops gold" );
             break;
         end
     end

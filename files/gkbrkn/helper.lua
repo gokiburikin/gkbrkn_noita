@@ -3,14 +3,14 @@ dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
 function ShootProjectile( who_shot, entity_file, x, y, vx, vy, send_message )
     local entity = EntityLoad( entity_file, x, y );
     local genome = EntityGetFirstComponent( who_shot, "GenomeDataComponent" );
-    local herd_id = ComponentGetValue( genome, "herd_id" );
+    local herd_id = ComponentGetMetaCustom( genome, "herd_id" );
     if send_message == nil then send_message = true end
 
 	GameShootProjectile( who_shot, x, y, x+vx, y+vy, entity, send_message );
 
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     ComponentSetValue( projectile, "mWhoShot", who_shot );
-    ComponentSetValue( projectile, "mShooterHerdId", herd_id );
+    ComponentSetMetacustom( projectile, "mShooterHerdId", herd_id );
 
     local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
     if velocity ~= nil then
@@ -498,4 +498,32 @@ function CreateWand( x, y, ... )
         AddGunAction( wand, action );
     end
     return wand;
+end
+
+function adjust_material_damage( damage_model, callback )
+    local materials_that_damage = ComponentGetValue( damage_model, "materials_that_damage" );
+    local materials = {};
+    for word in string.gmatch( materials_that_damage, '([^,]+)' ) do
+        table.insert( materials, word );
+    end
+
+    local materials_how_much_damage = ComponentGetValue( damage_model, "materials_how_much_damage" );
+    local materials_damage = {};
+    for word in string.gmatch( materials_how_much_damage, '([^,]+)' ) do
+        table.insert( materials_damage, tonumber(word) );
+    end
+
+    local new_materials, new_materials_damage = callback( materials, materials_damage );
+
+    local new_materials_that_damage = "";
+    for _,word in pairs( new_materials ) do
+        new_materials_that_damage = new_materials_that_damage..word..",";
+    end
+    ComponentSetValue( damage_model, "materials_that_damage", new_materials_that_damage );
+
+    local new_materials_how_much_damage = "";
+    for _,word in pairs( new_materials_damage ) do
+        new_materials_how_much_damage = new_materials_how_much_damage..tostring(word)..",";
+    end
+    ComponentSetValue( damage_model, "materials_how_much_damage", new_materials_how_much_damage );
 end

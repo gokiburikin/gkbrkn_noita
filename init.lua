@@ -11,9 +11,20 @@ api issues
     not enough returning of important values in widely use functions
 
     too much blackboxing of otherwise important game information (the biome levels in generate_shop_item for example)
+
+    no component copy methods
     
 
 changelog
+    -m "Remove a debug message"
+    -m "Re-fix herd id issues with friendly champion types reintroduced in 26/11 update"
+    -m "Deprecate Tweak - Shorten Blindness and Tweak - Revenge Explosion (superceded by the 27/11 update)"
+    -m "Add Item: Spell Bag (currently added to starting inventory if enabled)" TODO
+    -m "Nerf Champion: Energy Shield (recharge rate 0.20 -> 0.14)"
+    -m "Fix Perk: Passive Recharge recharging wands that weren't holstered"
+    -m "Rename mod to Goki's Things in the mod menu"
+    -m "Add Misc: target Dummy"
+
 
 kill streaks events
 grze events
@@ -28,8 +39,7 @@ HitEffect considerations
 TODO
     look into why spell merge always cast doesn't work
         test other always casts
-    
-    bag of holding (while holding succ spells, while spraying spit spells)
+    fix passive regenrations 
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
@@ -168,6 +178,9 @@ if SETTINGS.Debug == true then
 end
 
 --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/action_info.lua" );
+
+ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
+ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "files/gkbrkn/append/temple_altar.lua" );
 
 ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
 ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/misc/tweak_perks.lua" );

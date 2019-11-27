@@ -18,10 +18,15 @@ end
 local init_check_flag = "gkbrkn_player_new_game";
 if GameHasFlagRun( init_check_flag ) == false then
     GameAddFlagRun( init_check_flag );
+
     DoFileEnvironment( "files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
-    EntityAddComponent( player_entity, "LuaComponent", {
-        script_shot="files/gkbrkn/misc/projectile_shot.lua"
-    });
+
+    local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
+    if inventory ~= nil then
+        if CONTENT[ITEMS.SpellBag].enabled() then
+            EntityAddChild( inventory, EntityLoad( "files/gkbrkn/misc/spell_bag/spell_bag.xml", x, y ) );
+        end
+    end
 end
 
 --[[

@@ -1,7 +1,7 @@
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
-    ShowDeprecatedContent = DebugGetIsDevBuild(),
-    Version = "c52"
+    ShowDeprecatedContent = false,
+    Version = "c53"
 }
 
 CONTENT_TYPE = {
@@ -10,6 +10,7 @@ CONTENT_TYPE = {
     Misc = 3,
     Tweak = 4,
     ChampionType = 5,
+    Item = 6,
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -18,6 +19,7 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.Misc] = "misc_",
     [CONTENT_TYPE.Tweak] = "tweak_",
     [CONTENT_TYPE.ChampionType] = "champion_type_",
+    [CONTENT_TYPE.Item] = "item_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
@@ -26,6 +28,7 @@ CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
     [CONTENT_TYPE.Misc] = "Misc: ",
     [CONTENT_TYPE.Tweak] = "Tweak: ",
     [CONTENT_TYPE.ChampionType] = "Champion: ",
+    [CONTENT_TYPE.Item] = "Item: ",
 }
 
 CONTENT = {}
@@ -104,11 +107,7 @@ PERKS = {
     ManaEfficiency = register_content( CONTENT_TYPE.Perk, "mana_efficiency","Mana Efficiency", {
         Discount = 0.33
     }, true, true ),
-    RapidFire = register_content( CONTENT_TYPE.Perk, "rapid_fire","Rapid Fire", {
-        RechargeTimeAdjustment = function( rechargeTime ) GamePrint( gkbrkn.projectiles_fired ); return rechargeTime - rechargeTime * 0.50 / gkbrkn.projectiles_fired; end,
-        CastDelayAdjustment = function( castDelay ) return castDelay - castDelay * 0.50 / gkbrkn.projectiles_fired; end,
-        SpreadDegreesAdjustment = function( spreadDegrees ) return spreadDegrees + 12 / gkbrkn.projectiles_fired; end,
-    } ),
+    RapidFire = register_content( CONTENT_TYPE.Perk, "rapid_fire","Rapid Fire" ),
     KnockbackImmunity = register_content( CONTENT_TYPE.Perk, "knockback_immunity","Knockback Immunity" ),
     Resilience = register_content( CONTENT_TYPE.Perk, "resilience","Resilience", { Resistances = {
         fire=0.35,
@@ -177,8 +176,8 @@ TWEAKS = {
     Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage", { action_id="DAMAGE" }, true, nil, true ),
     Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze", { action_id="FREEZE" }, true, nil, true ),
     IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
-    Blindness = register_content( CONTENT_TYPE.Tweak, "blindness","Shorten Blindness", nil, true, nil, true ),
-    RevengeExplosion = register_content( CONTENT_TYPE.Tweak, "revenge_explosion","Revenge Explosion",  { perk_id="REVENGE_EXPLOSION" }, true, nil, true ),
+    Blindness = register_content( CONTENT_TYPE.Tweak, "blindness","Shorten Blindness", nil, true, true, true ),
+    RevengeExplosion = register_content( CONTENT_TYPE.Tweak, "revenge_explosion","Revenge Explosion",  { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
 }
 
 CHAMPION_TYPES = {
@@ -601,9 +600,17 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_gold_decay",
     },
     {
+        Name = "Target Dummy",
+        PersistentFlag = "gkbrkn_target_dummy",
+    },
+    {
         Name = "Show FPS",
         PersistentFlag = "gkbrkn_show_fps",
     }
+}
+
+ITEMS = {
+    SpellBag = register_content( CONTENT_TYPE.Item, "spell_bag","Spell Bag", nil, true, nil, true ),
 }
 
 MISC = {
@@ -675,6 +682,11 @@ MISC = {
     },
     PassiveRecharge = {
         Enabled = "gkbrkn_passive_recharge",
+        Speed = 1
+    }
+    ,
+    TargetDummy = {
+        Enabled = "gkbrkn_target_dummy",
     }
 }
 

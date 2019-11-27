@@ -41,8 +41,16 @@ local target = nearby_entities[ math.ceil( math.random() * #nearby_entities ) ];
 if target ~= nil then
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     local shooter = ComponentGetValue( projectile, "mWhoShot" );
-    local shooter_herd = ComponentGetMetaCustom( EntityGetFirstComponent( shooter, "GenomeDataComponent" ), "herd_id" );
-    local target_herd = ComponentGetMetaCustom( EntityGetFirstComponent( target, "GenomeDataComponent" ), "herd_id" );
+    local shooter_genome = EntityGetFirstComponent( shooter, "GenomeDataComponent" );
+    local shooter_herd = -1;
+    if shooter_genome ~= nil then
+        shooter_herd = ComponentGetMetaCustom( shooter_genome, "herd_id" );
+    end
+    local target_genome = EntityGetFirstComponent( target, "GenomeDataComponent" );
+    local target_herd = -1;
+    if target_genome ~= nil then
+        traget_herd = ComponentGetMetaCustom( target_genome, "herd_id" );
+    end
     if tonumber(target) ~= tonumber(shooter) and target_herd ~= shooter_herd then
         local damaged_entities = {};
         local damaged_entities_string = EntityGetVariableString( entity, "gkbrkn_damaged_entities","" );

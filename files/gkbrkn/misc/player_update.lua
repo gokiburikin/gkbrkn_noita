@@ -2,15 +2,11 @@ dofile_once( "files/gkbrkn/lib/variables.lua" );
 dofile_once( "files/gkbrkn/config.lua" );
 dofile_once( "files/gkbrkn/helper.lua" );
 
+--GamePrint( GetUpdatedEntityID() );
+
 local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
 
-function DoFileEnvironment( filepath, environment )
-    if environment == nil then environment = {} end
-    local status,result = pcall( setfenv( loadfile( filepath ), setmetatable( environment, { __index = getfenv() } ) ) );
-    if status == false then print_error( result ); end
-    return environment;
-end
 function IsGoldNuggetLostTreasure( entity )
     return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_lost_treasure" ) ~= nil
 end
@@ -19,7 +15,25 @@ function IsGoldNuggetDecayTracked( entity )
 end
 
 local entity = GetUpdatedEntityID();
+local x, y = EntityGetTransform( entity );
 local children = EntityGetAllChildren( entity ) or {};
+
+--[[ material immunities
+if _apply_material ~= true and now % 180 == 0 then
+    _apply_material = true;
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+    for _,damage_model in pairs( damage_models ) do
+        adjust_material_damage( damage_model, function( materials, damage )
+            table.insert( materials, "water");
+            table.insert( damage, "0.1");
+            return materials, damage;
+        end);
+        --EntitySetComponentIsEnabled( entity, damage_model, true );
+        local polymorph = GetGameEffectLoadTo( entity, "POLYMORPH", true )
+        ComponentSetValue( polymorph, "frames", 1 );
+    end
+end
+]]
 
 --[[ Invincibility Frames ]]
 if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
@@ -89,7 +103,11 @@ if mana_recovery ~= 0 then
 end
 
 --[[ Passive Recharge ]]
-if HasFlagPersistent( MISC.PassiveRecharge.Enabled ) then
+local recharge_speed = EntityGetVariableNumber( entity, "gkbrkn_passive_recharge", 0.0 );
+if HasFlagPersistent( MISC.PassiveRecharge.Enabled ) and recharge_speed < MISC.PassiveRecharge.Speed then
+    recharge_speed = MISC.PassiveRecharge.Speed;
+end
+if recharge_speed ~= 0 then
     local valid_wands = {};
     local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
     local active_item = ComponentGetValue( inventory2, "mActiveItem" );
@@ -103,23 +121,21 @@ if HasFlagPersistent( MISC.PassiveRecharge.Enabled ) then
             break;
         end
     end
-
+    
     for _,wand in pairs( valid_wands ) do
         local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
         if ability ~= nil then
             local reload_frames_left = tonumber( ComponentGetValue( ability, "mReloadFramesLeft" ) );
             if reload_frames_left > 0 then
-                ComponentSetValue( ability, "mReloadFramesLeft", tostring( reload_frames_left - 1  ) );
+                ComponentSetValue( ability, "mReloadFramesLeft", tostring( reload_frames_left - recharge_speed ) );
             end
         end
     end
 end
 
 --[[ Heal New Health ]]
-if last_max_hp == nil then
-    last_max_hp = {};
-end
-local entity = GetUpdatedEntityID();
+-- TODO this might eventually need to be changed to variable storage
+last_max_hp = last_max_hp or {};
 local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
 for _,damage_model in pairs( damage_models ) do
     local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
@@ -149,6 +165,7 @@ for _,damage_model in pairs( damage_models ) do
 end
 
 --[[ Quick Swap ]]
+-- TODO definitely needs more work
 if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     local controls = EntityGetFirstComponent( entity, "ControlsComponent" );
     local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
@@ -246,7 +263,6 @@ local check_radius = 192;
 -- iterate through all components of all entities around all players to find
 -- nuggets we haven't tracked
 local natural_nuggets = {};
-local x, y = EntityGetTransform( entity );
 local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "item_physics" );
 for _,entity in pairs( nearby_entities ) do
     -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
@@ -335,9 +351,8 @@ if succ_bonus ~= nil then
 end
 
 --[[ Champions ]]
-local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
-
 if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
+    local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
     for _,entity in pairs( nearby_enemies ) do
         if EntityHasTag( entity, "gkbrkn_champions" ) == false then
             EntityAddTag( entity, "gkbrkn_champions" );

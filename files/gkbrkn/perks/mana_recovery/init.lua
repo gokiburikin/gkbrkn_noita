@@ -1,4 +1,3 @@
-dofile_once("files/gkbrkn/helper.lua");
 dofile_once( "files/gkbrkn/lib/variables.lua" );
 table.insert( perk_list, {
 	id = "GKBRKN_MANA_RECOVERY",

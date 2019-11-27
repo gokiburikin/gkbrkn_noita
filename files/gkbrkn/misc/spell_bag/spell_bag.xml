@@ -1,66 +1,76 @@
 <Entity tags="hittable,teleportable_NOT,item_physics" >
 
-  <!-- physical presence -->
+    <PhysicsBodyComponent 
+        _tags="enabled_in_world"
+        uid="1" 
+        allow_sleep="1" 
+        angular_damping="0" 
+        fixed_rotation="0" 
+        is_bullet="1" 
+        linear_damping="0"
+        auto_clean="0"
+        on_death_leave_physics_body="1"
+        hax_fix_going_through_ground="1"
+    ></PhysicsBodyComponent>
   
-  <PhysicsBodyComponent 
-    _tags="enabled_in_world"
-    uid="1" 
-    allow_sleep="1" 
-    angular_damping="0" 
-    fixed_rotation="0" 
-    is_bullet="1" 
-    linear_damping="0"
-    auto_clean="0"
-    on_death_leave_physics_body="1"
-    hax_fix_going_through_ground="1"
-  ></PhysicsBodyComponent>
+    <PhysicsImageShapeComponent 
+        body_id="1"
+        centered="1"
+        image_file="files/gkbrkn/misc/spell_bag/sprite.png"
+        material="item_box2d"
+    ></PhysicsImageShapeComponent>
   
-  <PhysicsImageShapeComponent 
-    body_id="1"
-    centered="1"
-    image_file="data/items_gfx/smallgem_03.png"
-    material="gem_box2d"
-  ></PhysicsImageShapeComponent>
+    <PhysicsThrowableComponent
+        max_throw_speed="180"
+        throw_force_coeff="1.5"
+    ></PhysicsThrowableComponent>
+
+    <VelocityComponent
+        _tags="enabled_in_world"
+    ></VelocityComponent>
+
+    <SpriteComponent
+        _tags="enabled_in_hand"
+        _enabled="false"
+        offset_x="4"
+        offset_y="4"
+        image_file="files/gkbrkn/misc/spell_bag/sprite.png"
+    ></SpriteComponent>
+
+    <ItemComponent
+        _tags="enabled_in_world"
+        item_name="Spell Bag"
+        is_pickable="1"
+        is_equipable_forced="1"
+        uses_remaining="0"
+        ui_sprite="files/gkbrkn/misc/spell_bag/icon.png"
+        ui_description="A bag in which to hold your spells"
+        preferred_inventory="QUICK"
+    ></ItemComponent>
+
+    <UIInfoComponent
+        _tags="enabled_in_world"
+        name="Spell Bag">
+    </UIInfoComponent>
   
-  <PhysicsThrowableComponent
-    max_throw_speed="180"
-    throw_force_coeff="1.5"
-  ></PhysicsThrowableComponent>
+    <AbilityComponent
+        _enabled="1"
+        ui_name="Spell Bag"
+        throw_as_item="1"
+        ><gun_config
+            deck_capacity="0"
+            action_max_uses="-1" 
+        ></gun_config>
+    </AbilityComponent>
 
-  <VelocityComponent
-    _tags="enabled_in_world"
-  ></VelocityComponent>
+    <LuaComponent
+        _tags="enabled_in_hand"
+        execute_every_n_frame="1"
+        script_source_file="files/gkbrkn/misc/spell_bag/spell_bag_update.lua"
+    >
+    </LuaComponent>
 
-  <SpriteComponent
-    _tags="enabled_in_hand"
-    _enabled="false"
-    offset_x="4"
-    offset_y="4"
-    image_file="data/items_gfx/thunderstone.png"
-  ></SpriteComponent>
-
-  <ItemComponent
-    _tags="enabled_in_world"
-    item_name="Spell Bag"
-    max_child_items="0"
-    is_pickable="1"
-    is_equipable_forced="1"
-    ui_sprite="data/ui_gfx/items/ingredient_1.png"
-    ui_description="A bag in which to hold your spells"
-    preferred_inventory="QUICK"
-  ></ItemComponent>
-
-  <UIInfoComponent
-    _tags="enabled_in_world"
-    name="Spell Bag">
-  </UIInfoComponent>
-  
-	<AbilityComponent
-		ui_name="Spell Bag"
-		throw_as_item="1"
-		><gun_config
-			deck_capacity="0"
-		></gun_config>
-	</AbilityComponent>
+    <Entity name="gkbrkn_spell_bad_storage">
+    </Entity>
 
 </Entity>

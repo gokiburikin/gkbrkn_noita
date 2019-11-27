@@ -1,3 +1,5 @@
+# This mod is currently beta branch only until stable branch gets the dofile_once update.
+
 # Goki's Things
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
 

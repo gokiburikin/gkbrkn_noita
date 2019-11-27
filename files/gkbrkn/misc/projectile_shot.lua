@@ -1,2 +1,0 @@
-function shot( projectile )
-end
