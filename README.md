@@ -1,9 +1,9 @@
-# This mod is currently beta branch only until stable branch gets the dofile_once update.
+# This mod is currently beta branch ONLY until stable branch gets the dofile_once update.
 
 # Goki's Things
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
 
-### Misc Features (14)
+### Misc Features (16)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
@@ -18,6 +18,7 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
 - [x] **Less Particles**: Reduce or disable cosmetic particle emission for extra performance.
 - [x] **Random Start**: Options to start runs with random wands, perks, flasks, cape colours, and health.
+- [x] **Target Dummy**: Add a target dummy to each Holy Mountain.
 
 ### Tweaks (5)
 - [x] **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across all spells.
@@ -25,7 +26,6 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Chainsaw**: Now costs mana, reduces cast delay to 0.08 instead of 0 (unless it is already lower.)
 - [x] **Freeze Charge**: Removed the particle effects (affects gameplay.)
 - [x] **Increase Mana**: Disabled.
-- [x] **Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds.
 
 ### Perks (16)
 - [x] **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
@@ -87,10 +87,12 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 
-### Deprecated (6)
-- [x] **Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
-- [x] **Arcane Shot**: A fast bolt of arcane energy. *(Official spell exists)*
-- [x] **Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*
-- [ ] **Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*
-- [ ] **Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
-- [ ] **Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
+### Deprecated (8)
+- [x] **Action: Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
+- [x] **Action: Arcane Shot**: A fast bolt of arcane energy. *(Official spell exists)*
+- [x] **Action: Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*
+- [ ] **Perk/Action: Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*
+- [ ] **Perk/Action: Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
+- [ ] **Perk: Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
+- [x] **Tweak: Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds. *(Official patched this)*
+- [x] **Tweak: Revenge Explosion**: Revenge Explosion no longer activates on environmental / self damage. *(Official patched this)*
