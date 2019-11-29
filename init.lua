@@ -16,14 +16,6 @@ api issues
     
 
 changelog
-    -m "Remove a debug message"
-    -m "Re-fix herd id issues with friendly champion types reintroduced in 26/11 update"
-    -m "Deprecate Tweak - Shorten Blindness and Tweak - Revenge Explosion (superceded by the 27/11 update)"
-    -m "Add Item: Spell Bag (currently added to starting inventory if enabled)" TODO
-    -m "Nerf Champion: Energy Shield (recharge rate 0.20 -> 0.14)"
-    -m "Fix Perk: Passive Recharge recharging wands that weren't holstered"
-    -m "Rename mod to Goki's Things in the mod menu"
-    -m "Add Misc: target Dummy"
 
 
 kill streaks events
@@ -37,16 +29,20 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
+    look into using spread to determine formation stack distance
+    gold pickup radius
+    champions that move the player around
+
+    7 cast odd firebolt gravity well
+
     look into why spell merge always cast doesn't work
         test other always casts
-    fix passive regenrations 
+
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
     add a disable cosmetic particles blacklist for certain entities (might not be possible)
     golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
     spell drop chance (drop money override, a chance to drop a spell of equal value)
-    shot that targets another enemy in line of sight when killing 
-        this could be emulated just as well by using trigger on death and an alt path correction that searches for a target upon spawning
     modifier that applies the next modifier to all projectiles in the wand
     make enemies imperfect / take time to aim towards you
     try a pathfinding algorithm
@@ -133,6 +129,8 @@ if CONTENT[PERKS.InvincibilityFrames].enabled() then ModLuaFileAppend( "data/scr
 if CONTENT[PERKS.ExtraProjectile].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/extra_projectile/init.lua" ); end
 if CONTENT[PERKS.Protagonist].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/protagonist/init.lua" ); end
 if CONTENT[PERKS.FragileEgo].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/fragile_ego/init.lua" ); end
+if CONTENT[PERKS.ThriftyShopper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/thrifty_shopper/init.lua" ); end
+if CONTENT[PERKS.Swapper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/swapper/init.lua" ); end
 
 if CONTENT[ACTIONS.BounceDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/bounce_damage/init.lua" ); end
 if CONTENT[ACTIONS.BreakCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/break_cast/init.lua" ); end
@@ -213,4 +211,27 @@ end
 
 function OnWorldPostUpdate()
     DoFileEnvironment( "files/gkbrkn/world_post_update.lua" );
+end
+
+-- this file is mostly for backwards compatibility of the base game and more loadouts mods. this method should not be relied upon as it 
+-- needs to know the layout and functionality of the underlying mods
+-- prefer utilizing the register_loadout function like the examples
+
+-- override starting loadouts if it exists
+local _, err = loadfile("mods/starting_loadouts/init.lua");
+if err == nil then
+    ModLuaFileAppend( "mods/starting_loadouts/init.lua", "files/gkbrkn_loadouts/starting_loadouts_support.lua" );
+end
+
+-- override more loadouts if it exists
+_, err = loadfile("mods/more_loadouts/init.lua");
+if err == nil then
+    ModLuaFileAppend( "mods/more_loadouts/init.lua", "files/gkbrkn_loadouts/more_loadouts_support.lua" );
+end
+
+function OnModPreInit()
+    -- append the logic to parse the old loadouts as new loadouts 
+    ModLuaFileAppend( "files/gkbrkn_loadouts/loadouts.lua", "files/gkbrkn_loadouts/parse_old_loadouts.lua" );
+    -- slap the fully combined set of loadout files onto the end of config so it can be caught by the config menu and performed
+    ModLuaFileAppend( "files/gkbrkn/config.lua", "files/gkbrkn_loadouts/loadouts.lua" );
 end

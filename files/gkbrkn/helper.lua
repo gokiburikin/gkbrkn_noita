@@ -98,7 +98,7 @@ function PackString( separator, ... )
 end
 
 function Log( ... )
-    print_error( PackString(" ", ... ) );
+    print( PackString(" ", ... ) );
 end
 
 function LogCompact( ... )

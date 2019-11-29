@@ -1,7 +1,7 @@
 table.insert( perk_list, {
 	id = "GKBRKN_MATERIAL_COMPRESSION",
 	ui_name = "Material Compression",
-	ui_description = "Your flasks can now hold twice as much",
+	ui_description = "Your flasks can now hold twice as much.",
 	ui_icon = "files/gkbrkn/perks/material_compression/icon_ui.png",
     perk_icon = "files/gkbrkn/perks/material_compression/icon_ig.png",
     func = function( entity_perk_item, entity_who_picked, item_name )

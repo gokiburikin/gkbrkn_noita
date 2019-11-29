@@ -2,7 +2,7 @@ dofile_once("files/gkbrkn/helper.lua");
 table.insert( perk_list, {
 	id = "GKBRKN_FRAGILE_EGO",
 	ui_name = "Fragile Ego",
-	ui_description = "Receive 50% less damage, but damage is permanent",
+	ui_description = "Receive 50% less damage, but damage is permanent.",
 	ui_icon = "files/gkbrkn/perks/fragile_ego/icon_ui.png",
     perk_icon = "files/gkbrkn/perks/fragile_ego/icon_ig.png",
     func = function( entity_perk_item, entity_who_picked, item_name )

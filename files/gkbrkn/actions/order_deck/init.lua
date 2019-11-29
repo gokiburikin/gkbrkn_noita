@@ -9,6 +9,7 @@ table.insert( actions,
     spawn_level                       = "0,1,2,3,4,5,6",
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 100,
+    mana = 1,
     action 		= function()
         local before = gun.shuffle_deck_when_empty;
         gun.shuffle_deck_when_empty = false;

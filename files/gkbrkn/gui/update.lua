@@ -9,13 +9,15 @@ end
 
 local SCREEN = {
     Options = 1,
-    ContentSelection = 2
+    ContentSelection = 2,
+    ContentTypeSelection = 3,
 }
 local options = {}
 local gui = gui or GuiCreate();
 local gui_id = 1707;
 local gui_require_restart = false;
 local wrap_threshold = 18;
+local wrap_limit = 2;
 local wrap_size = 25;
 local last_time = 0;
 local fps_easing = 20;
@@ -24,12 +26,32 @@ local screen = 0;
 local page = 0;
 local id_offset = 0;
 local sorted_content = {};
+local content_counts = {};
+local content_type_selection = {};
+local content_type = nil;
 for index,content in pairs( CONTENT ) do
     if content.visible() then
         table.insert( sorted_content, { id=index, name=content.name } );
+        content_counts[content.type] = ( content_counts[content.type] or 0 ) + 1;
     end
 end
 table.sort( sorted_content, function( a, b ) return a.name < b.name end );
+
+for k,v in pairs( CONTENT_TYPE ) do
+    local name = CONTENT_TYPE_DISPLAY_NAME[v].."s ["..content_counts[v].."]";
+    table.insert( content_type_selection, { name = name, type = v } );
+end
+table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
+
+function filter_content( content_list, content_type )
+    local filtered = {};
+    for _,content in pairs( content_list ) do
+        if CONTENT[content.id].type == content_type then
+            table.insert( filtered, content );
+        end
+    end
+    return filtered;
+end
 
 local pagination_list = nil;
 
@@ -88,7 +110,7 @@ function do_gui()
         end
         GuiText( gui, 0, 0, "       ");
         if GuiButton( gui, 0, 0, "[Content Selection]", next_id() ) then
-            change_screen( SCREEN.ContentSelection );
+            change_screen( SCREEN.ContentTypeSelection );
         end
         GuiLayoutEnd( gui );
         GuiLayoutBeginVertical( gui, 0, 4 );
@@ -106,29 +128,44 @@ function do_gui()
             GuiText( gui, 0, 0, "restart required *");
         end
         GuiLayoutEnd( gui );
-    elseif screen == SCREEN.ContentSelection then
-        --for index,action_id in pairs( sorted_actions ) do
-        do_pagination( sorted_content, wrap_threshold );
-
+    elseif screen == SCREEN.ContentTypeSelection then
+        GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
         if GuiButton( gui, 0, 0, "[Back]", next_id() ) then
             change_screen( SCREEN.Options );
         end
+        GuiLayoutEnd( gui );
+        GuiText( gui, 0, 0, " ");
+        for k,content_type_data in pairs(content_type_selection) do
+            if GuiButton( gui, 0, 0, content_type_data.name, next_id() ) then
+                content_type = content_type_data.type;
+                change_screen( SCREEN.ContentSelection );
+            end 
+        end
+    elseif screen == SCREEN.ContentSelection then
+        local filtered_content = filter_content( sorted_content, content_type );
+        --for index,action_id in pairs( sorted_actions ) do
+        do_pagination( filtered_content, wrap_threshold * wrap_limit );
+
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+        if GuiButton( gui, 0, 0, "[Back]", next_id() ) then
+            change_screen( SCREEN.ContentTypeSelection );
+        end
         GuiText( gui, 0, 0, "        " );
         if GuiButton( gui, 0, 0, "[Enable All]", next_id() ) then
-            for index,content_mapping in pairs( sorted_content ) do
+            for index,content_mapping in pairs( filtered_content ) do
                 CONTENT[ content_mapping.id ].toggle( true );
             end
             gui_require_restart = true;
         end
         if GuiButton( gui, 0, 0, "[Disable All]", next_id() ) then
-            for index,content_mapping in pairs( sorted_content ) do
+            for index,content_mapping in pairs( filtered_content ) do
                 CONTENT[ content_mapping.id ].toggle( false );
             end
             gui_require_restart = true;
         end
         if GuiButton( gui, 0, 0, "[Toggle All]", next_id() ) then
-            for index,content_mapping in pairs( sorted_content ) do
+            for index,content_mapping in pairs( filtered_content ) do
                 CONTENT[ content_mapping.id ].toggle();
             end
             gui_require_restart = true;
@@ -137,9 +174,10 @@ function do_gui()
 
         GuiText( gui, 0, 0, " " );
 
+        GuiLayoutBeginVertical( gui, 0, 0 );
         local start_index = 1+page * wrap_threshold;
-        for i=start_index,math.min(start_index + wrap_threshold - 1, #sorted_content ),1 do
-            local content = CONTENT[ sorted_content[i].id ];
+        for i=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
+            local content = CONTENT[ filtered_content[i].id ];
             local text = "";
             local flag = get_content_flag( content.id );
             if flag ~= nil then
@@ -154,11 +192,16 @@ function do_gui()
                 gui_require_restart = true;
                 content.toggle();
             end
+            if i % wrap_threshold == 0 then
+                GuiLayoutEnd( gui );
+                GuiLayoutBeginVertical( gui, wrap_size * math.floor( i / wrap_threshold ), 0 );
+            end
         end
         if gui_require_restart == true then
             GuiText( gui, 0, 0, " ");
             GuiText( gui, 0, 0, "restart required *");
         end
+        GuiLayoutEnd( gui );
     end
     GuiLayoutEnd( gui );
     if HasFlagPersistent( MISC.ShowFPS.Enabled ) then
@@ -213,7 +256,7 @@ end
 function do_pagination( list, per_page )
     GuiLayoutBeginHorizontal( gui, 0, 0 );
     GuiText( gui, 0, 0, "Page " );
-    for i=1,math.ceil(#list/per_page) do
+    for i=1,math.ceil( #list / per_page ) do
         local text = "";
         if page == i-1 then
             text = "("..i..")";

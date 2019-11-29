@@ -1,5 +1,5 @@
 <Sprite
-filename="files/gkbrkn/misc/champion_enemies/sprites/melee.png"
+filename="files/gkbrkn/misc/champion_enemies/sprites/damage.png"
 offset_x="4.5"
 offset_y="4.5"
 default_animation="explosion"

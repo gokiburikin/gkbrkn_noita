@@ -1,44 +1,47 @@
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c53"
+    Version = "c55"
 }
 
 CONTENT_TYPE = {
     Action = 1,
     Perk = 2,
-    Misc = 3,
+    --Misc = 3,
     Tweak = 4,
     ChampionType = 5,
     Item = 6,
+    Loadout = 7,
 }
 
 CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.Action] = "action_",
     [CONTENT_TYPE.Perk] = "perk_",
-    [CONTENT_TYPE.Misc] = "misc_",
+    --[CONTENT_TYPE.Misc] = "misc_",
     [CONTENT_TYPE.Tweak] = "tweak_",
     [CONTENT_TYPE.ChampionType] = "champion_type_",
     [CONTENT_TYPE.Item] = "item_",
+    [CONTENT_TYPE.Loadout] = "loadout_",
 }
 
-CONTENT_TYPE_DISPLAY_NAME_PREFIX = {
-    [CONTENT_TYPE.Action] = "Action: ",
-    [CONTENT_TYPE.Perk] = "Perk: ",
-    [CONTENT_TYPE.Misc] = "Misc: ",
-    [CONTENT_TYPE.Tweak] = "Tweak: ",
-    [CONTENT_TYPE.ChampionType] = "Champion: ",
-    [CONTENT_TYPE.Item] = "Item: ",
+CONTENT_TYPE_DISPLAY_NAME = {
+    [CONTENT_TYPE.Action] = "Action",
+    [CONTENT_TYPE.Perk] = "Perk",
+    --[CONTENT_TYPE.Misc] = "Misc",
+    [CONTENT_TYPE.Tweak] = "Tweak",
+    [CONTENT_TYPE.ChampionType] = "Champion",
+    [CONTENT_TYPE.Item] = "Item",
+    [CONTENT_TYPE.Loadout] = "Loadout",
 }
 
-CONTENT = {}
+CONTENT = {};
 function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted )
     local content_id = #CONTENT + 1;
     local content = {
         id = content_id,
         type = type,
         key = key,
-        name = CONTENT_TYPE_DISPLAY_NAME_PREFIX[type]..display_name,
+        name = CONTENT_TYPE_DISPLAY_NAME[type]..": "..display_name,
         disabled_by_default = disabled_by_default,
         deprecated = deprecated,
         enabled = function()
@@ -99,7 +102,7 @@ PERKS = {
         TeleportDistance = 128
     }, true, true ),
     DuplicateWand = register_content( CONTENT_TYPE.Perk, "duplicate_wand","Duplicate Wand" ),
-    GoldenBlood = register_content( CONTENT_TYPE.Perk, "golden_blood","Golden Blood" ),
+    GoldenBlood = register_content( CONTENT_TYPE.Perk, "golden_blood","Golden Blood", nil, true, true ),
     SpellEfficiency = register_content( CONTENT_TYPE.Perk, "spell_efficiency","Spell Efficiency", {
         RetainChance = 0.33
     }, true, true ),
@@ -125,13 +128,15 @@ PERKS = {
     ManaRecovery = register_content( CONTENT_TYPE.Perk, "mana_recovery","Mana Recovery" ),
     Protagonist = register_content( CONTENT_TYPE.Perk, "protagonist","Protagonist" ),
     FragileEgo = register_content( CONTENT_TYPE.Perk, "fragile_ego","Fragile Ego" ),
+    ThriftyShopper = register_content( CONTENT_TYPE.Perk, "thrifty_shopper","Thrifty Shopper" ),
+    Swapper = register_content( CONTENT_TYPE.Perk, "swapper","Swapper" ),
     WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true, not SETTINGS.Debug ),
 }
 
 ACTIONS = {
     ManaEfficiency = register_content( CONTENT_TYPE.Action, "mana_efficiency","Mana Efficiency", nil, true, true ),
     SpellEfficiency =  register_content( CONTENT_TYPE.Action, "spell_efficiency","Spell Efficiency", nil, true, true ),
-    GoldenBlessing = register_content( CONTENT_TYPE.Action, "golden_blessing","Golden Blessing" ),
+    GoldenBlessing = register_content( CONTENT_TYPE.Action, "golden_blessing","Golden Blessing", nil, true, true ),
     MagicLight = register_content( CONTENT_TYPE.Action, "magic_light","Magic Light" ),
     Revelation = register_content( CONTENT_TYPE.Action, "revelation","Revelation" ),
     MicroShield = register_content( CONTENT_TYPE.Action, "micro_shield","Micro Shield", nil, true, true ),
@@ -148,7 +153,7 @@ ACTIONS = {
     TriggerHit = register_content( CONTENT_TYPE.Action, "trigger_hit","Trigger - Hit" ),
     TriggerTimer = register_content( CONTENT_TYPE.Action, "trigger_timer","Trigger - Timer" ),
     TriggerDeath = register_content( CONTENT_TYPE.Action, "trigger_death","Trigger - Death" ),
-    DrawDeck = register_content( CONTENT_TYPE.Action, "draw_deck","Draw Deck" ),
+    DrawDeck = register_content( CONTENT_TYPE.Action, "draw_deck","Draw Deck", nil, true, true ),
     ProjectileGravityWell = register_content( CONTENT_TYPE.Action, "projectile_gravity_well","Projectile Gravity Well" ),
     LifetimeDamage = register_content( CONTENT_TYPE.Action, "damage_lifetime","Damage Plus - Lifetime" ),
     BounceDamage = register_content( CONTENT_TYPE.Action, "damage_bounce","Damage Plus - Bounce" ),
@@ -156,8 +161,8 @@ ACTIONS = {
     CollisionDetection = register_content( CONTENT_TYPE.Action, "collision_detection","Collision Detection" ),
     PowerShot = register_content( CONTENT_TYPE.Action, "power_shot","Power Shot" ),
     ShimmeringTreasure = register_content( CONTENT_TYPE.Action, "shimmering_treasure","Shimmering Treasure" ),
-    NgonShape = register_content( CONTENT_TYPE.Action, "ngon_shape","N-gon Shape" ),
-    ShuffleDeck = register_content( CONTENT_TYPE.Action, "shuffle_deck","Shuffle Deck" ),
+    NgonShape = register_content( CONTENT_TYPE.Action, "ngon_shape","N-gon Shape", nil, true, true ),
+    ShuffleDeck = register_content( CONTENT_TYPE.Action, "shuffle_deck","Shuffle Deck", nil, true, true ),
     BreakCast = register_content( CONTENT_TYPE.Action, "break_cast","Break Cast" ),
     ProjectileOrbit = register_content( CONTENT_TYPE.Action, "projectile_orbit","Projectile Orbit" ),
     PassiveRecharge = register_content( CONTENT_TYPE.Action, "passive_recharge","Passive Recharge" ),
@@ -173,43 +178,36 @@ ACTIONS = {
 TWEAKS = {
     Chainsaw = register_content( CONTENT_TYPE.Tweak, "chainsaw","Chainsaw", { action_id="CHAINSAW" }, true, nil, true ),
     HeavyShot = register_content( CONTENT_TYPE.Tweak, "heavy_shot","Heavy Shot", { action_id="HEAVY_SHOT" }, true, nil, true ),
-    Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage", { action_id="DAMAGE" }, true, nil, true ),
-    Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze", { action_id="FREEZE" }, true, nil, true ),
+    Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage Plus", { action_id="DAMAGE" }, true, nil, true ),
+    Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze Charge", { action_id="FREEZE" }, true, nil, true ),
     IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
     Blindness = register_content( CONTENT_TYPE.Tweak, "blindness","Shorten Blindness", nil, true, true, true ),
     RevengeExplosion = register_content( CONTENT_TYPE.Tweak, "revenge_explosion","Revenge Explosion",  { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
 }
 
+LOADOUTS = {}
+
 CHAMPION_TYPES = {
-    Melee = register_content( CONTENT_TYPE.ChampionType, "melee", "Melee Buff", {
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/melee.xml",
+    Damage = register_content( CONTENT_TYPE.ChampionType, "damage", "Damage Buff", {
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/damage.xml",
         particle_material = "spark_red",
         sprite_particle_sprite_file = nil,
         game_effects = {},
-        validator = function( entity )
-            local has_melee_attack = false;
-            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ais > 0 then
-                for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_melee_enabled" ) == "1" then
-                        has_melee_attack = true;
-                        break;
-                    end
-                end
-            end
-            return has_melee_attack;
-        end,
+        validator = function( entity ) return true; end,
         apply = function( entity )
             local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue( ai, "attack_melee_damage_min", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_min" ) ) * 1.5 ) );
+                    ComponentSetValue( ai, "attack_melee_damage_min", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_min" ) ) * 2 ) );
                     ComponentSetValue( ai, "attack_melee_damage_max", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_max" ) ) * 2 ) );
                     ComponentSetValue( ai, "attack_melee_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_melee_frames_between" ) ) / 2 ) ) );
-                    ComponentSetValue( ai, "attack_dash_damage", tostring( tonumber( ComponentGetValue( ai, "attack_dash_damage" ) ) * 1.5 ) );
+                    ComponentSetValue( ai, "attack_dash_damage", tostring( tonumber( ComponentGetValue( ai, "attack_dash_damage" ) ) * 2 ) );
                     ComponentSetValue( ai, "attack_dash_frames_between", tostring( tonumber( ComponentGetValue( ai, "attack_dash_frames_between" ) ) / 2 ) );
                 end
             end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_damage_buff.lua"
+            });
         end
     }),
     Projectile = register_content( CONTENT_TYPE.ChampionType, "projectile", "Projectile Buff", {
@@ -236,8 +234,12 @@ CHAMPION_TYPES = {
                 for _,ai in pairs( animal_ai ) do
                     ComponentSetValue( ai, "attack_ranged_predict", "1" );
                     ComponentSetValue( ai, "attack_ranged_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_ranged_frames_between" ) ) / 2 ) ) );
+                    ComponentSetValue( ai, "attack_ranged_min_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_min_distance" ) * 1.33 ) ) );
+                    ComponentSetValue( ai, "attack_ranged_max_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_max_distance" ) * 1.33 ) ) );
                     ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
                     ComponentSetValue( ai, "attack_ranged_entity_count_max", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_max" ) + 2 ) ) );
+                    ComponentSetValue( ai, "attack_ranged_state_duration_frames", "1" );
+                    
                 end
             end
         end
@@ -556,6 +558,27 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_champion_enemies_always",
     },
     {
+        Name = "Loadouts",
+    },
+    {
+        Name = "Enabled",
+        PersistentFlag = "gkbrkn_loadouts",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Use Custom Cape Color",
+        PersistentFlag = "gkbrkn_loadouts_cape_color",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Use Custom Player Sprites",
+        PersistentFlag = "gkbrkn_loadouts_player_sprites",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
         Name = "Disable Random Spells",
         PersistentFlag = "gkbrkn_disable_spells",
         RequiresRestart = true,
@@ -602,6 +625,10 @@ OPTIONS = {
     {
         Name = "Target Dummy",
         PersistentFlag = "gkbrkn_target_dummy",
+    },
+    {
+        Name = "Health Bars",
+        PersistentFlag = "gkbrkn_health_bars",
     },
     {
         Name = "Show FPS",
@@ -677,18 +704,119 @@ MISC = {
     ShowFPS = {
         Enabled = "gkbrkn_show_fps",
     },
+    HealthBars = {
+        Enabled = "gkbrkn_health_bars",
+    },
     GoldDecay = {
         Enabled = "gkbrkn_gold_decay",
     },
     PassiveRecharge = {
         Enabled = "gkbrkn_passive_recharge",
         Speed = 1
-    }
-    ,
+    },
     TargetDummy = {
         Enabled = "gkbrkn_target_dummy",
+    },
+    Loadouts = {
+        Enabled = "gkbrkn_loadouts",
+        CapeColorEnabled = "gkbrkn_loadouts_cape_color",
+        PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
     }
 }
 
---LogTableCompact( map( function( o ) return o.name end, CONTENT ) );
---LogTableCompact( map( function( o ) return o.name end, CONTENT ) );
+function register_loadout( id, name, cape_color, cape_color_edge, wands, potions, items, perks, sprites, custom_message, callback )
+    local content_id = register_content( CONTENT_TYPE.Loadout, id, string.gsub( name, "TYPE", "" ), {
+        name = name,
+        cape_color = cape_color,
+        cape_color_edge = cape_color_edge,
+        wands = wands,
+        potions = potions,
+        items = items,
+        perks = perks,
+        sprites = sprites,
+        custom_message = custom_message,
+        callback = callback,
+    } );
+    LOADOUTS[id] = content_id;
+end
+
+if SETTINGS.Debug then
+    -- Debug
+    register_loadout(
+        "gkbrkn_debug", -- unique identifier
+        "Debug TYPE", -- displayed loadout name
+        nil, -- cape color (ABGR)
+        nil, -- cape edge color (ABGR)
+        { -- wands
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {10,10}, -- recharge time in frames
+                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {1000,1000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
+                    { "SPEED" },
+                    { "SPEED" },
+                    { "LIFETIME" },
+                    { "BLACK_HOLE" },
+                    { "BLACK_HOLE" },
+                    { "BLACK_HOLE" },
+                    { "BLACK_HOLE" },
+                }
+            },
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {10,10}, -- recharge time in frames
+                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {1000,1000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
+                    { "GKBRKN_ACTION_WIP" },
+                    { "LASER" },
+                }
+            }
+        },
+        { -- potions
+            { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+        },
+        { -- items
+        },
+        { -- perks
+        },
+        nil, -- sprites
+        "", -- custom message
+        function( player )
+            local x, y = EntityGetTransform( player );
+            local target_dummy = EntityLoad( "files/gkbrkn/misc/dummy_target.xml", x - 80, y - 40 );
+            local effect = GetGameEffectLoadTo( player, "EDIT_WANDS_EVERYWHERE", true );
+            if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
+            local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
+            if inventory2 ~= nil then
+                ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
+            end
+        end
+
+    );
+end

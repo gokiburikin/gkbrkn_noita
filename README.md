@@ -1,9 +1,9 @@
-# This mod is currently beta branch ONLY until stable branch gets the dofile_once update.
-
 # Goki's Things
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
 
-### Misc Features (16)
+This mod supports custom loadout registration and is backwards compatible with starting loadouts and more loadouts. Goki's Things must be loaded before (higher in the list than) loadout mods!
+
+### Misc Features (19)
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
@@ -13,11 +13,15 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Any Spell On Any Wand**: Allows any standard spell (projectile, modifier, multicast) to spawn on any generated wand, ignoring spawn level.
 - [x] **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
 - [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
+- [x] **Passive Recharge**: Wands recharge while holstered.
 - [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.
+- [x] **Unimited Ammo**: Gives all limited spells unlimited uses.
 - [x] **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
 - [ ] **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
 - [x] **Less Particles**: Reduce or disable cosmetic particle emission for extra performance.
 - [x] **Random Start**: Options to start runs with random wands, perks, flasks, cape colours, and health.
+- [x] **Health Bars**: Show enemy health bars.
+- [x] **Show FPS**: Add an FPS counter.
 - [x] **Target Dummy**: Add a target dummy to each Holy Mountain.
 
 ### Tweaks (5)
@@ -32,7 +36,6 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
 - [x] **Extra Projectile**: Spells you cast gain an additional projectile (their other effects aren't applied.)
 - [x] **Fragile Ego**: Receive 50% less damage, but damage is permanent.
-- [x] **Golden Blood**: You bleed gold.
 - [x] **Healthier Heart**: You heal for the amount gained when gaining maximum health.
 - [x] **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
 - [x] **Knockback Immunity**: Immunity to knockback and recoil.
@@ -44,8 +47,9 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - [x] **Resilience**: Take reduced damage from status ailments.
 - [x] **Short Temper**: Become Berserk for a short time after taking damage.
+- [x] **Thrifty Shopper**: Holy Mountain shops carry two additional items.
 
-### Projectile Modifier Spells (18)
+### Projectile Modifier Spells (17)
 - [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
 - [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan)
 - [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
@@ -73,9 +77,8 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [x] **Mana Recharge**: Your wand charges mana slightly faster.
 - [x] **Passive Recharge**: Your wand recharges even when holstered.
 
-### Other Spells (2)
+### Other Spells (1)
 - [x] **Order Deck**: Correct the order of all remaining spells.
-- [x] **Shuffle Deck**: Randomize the order of all remaining spells.
 
 ### Multicast Spells (8)
 - [x] **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
@@ -96,3 +99,5 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 - [ ] **Perk: Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
 - [x] **Tweak: Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds. *(Official patched this)*
 - [x] **Tweak: Revenge Explosion**: Revenge Explosion no longer activates on environmental / self damage. *(Official patched this)*
+- [x] **Perk: Golden Blood**: You bleed gold. *(Not very good or interesting)*
+- [x] **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*

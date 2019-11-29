@@ -1,0 +1,45 @@
+current = current or 0;
+best = best or 0;
+first_hit_frame = first_hit_frame or 0;
+last_hit_frame = last_hit_frame or 0;
+last_damage = last_damage or 0;
+total_damage = total_damage or 0;
+reset_frame = reset_frame or 0;
+function damage_received( damage, message, entity_thats_responsible, is_fatal )
+    local now = GameGetFrameNum();
+    local entity = GetUpdatedEntityID();
+    if now >= reset_frame then
+        total_damage = 0;
+        best = 0;
+        current = 0;
+        first_hit_frame = now;
+    end
+    last_hit_frame = now;
+    last_damage = damage;
+    total_damage = total_damage + damage;
+    reset_frame = now + 60;
+    current = total_damage / math.ceil( math.max( now - first_hit_frame, 1 ) / 60 );
+    if current > best then
+        best = current;
+    end
+
+    local text = EntityGetFirstComponent( entity, "SpriteComponent", "gkbrkn_dps_tracker" );
+    if text ~= nil then
+        EntityRemoveComponent( entity, text );
+    end
+    EntityAddComponent( entity, "SpriteComponent", {
+        _tags="enabled_in_world,gkbrkn_dps_tracker",
+        image_file="files/gkbrkn/font_pixel_white.xml" ,
+        emissive="1",
+        is_text_sprite="1",
+        offset_x="8" ,
+        offset_y="-4" ,
+        update_transform="1" ,
+        update_transform_rotation="0",
+        text=math.floor(current * 25 * 100) / 100,
+        has_special_scale="1",
+        special_scale_x="0.6667",
+        special_scale_y="0.6667",
+        z_index="-9000",
+    });
+end

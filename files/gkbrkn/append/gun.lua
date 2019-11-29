@@ -111,6 +111,7 @@ function draw_action( instant_reload_if_empty )
             current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
         end
         c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
+        c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
     end
     return result;
 end

@@ -244,7 +244,7 @@ if gold_tracker_world or gold_tracker_message then
                     has_special_scale="1",
                     special_scale_x="0.6667",
                     special_scale_y="0.6667",
-                    z_index="1.6",
+                    z_index="-9000",
                 });
             end
         end
@@ -373,6 +373,9 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                 end
                 
                 --[[ Things to apply to all champions ]]
+                EntityAddComponent( entity, "LuaComponent", {
+                    script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_champion.lua"
+                });
                 local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
                 if #animal_ais > 0 then
                     for _,ai in pairs( animal_ais ) do
@@ -394,9 +397,10 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                     ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 2 ) );
                     ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
                     ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_up" ) ) * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_down" ) ) * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_change_spd" ) ) * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_up" ) ) * 3 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_down" ) ) * 3 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_change_spd" ) ) * 3 ) );
+                    ComponentSetMetaCustom( character_platforming, "fly_velocity_x", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) ) * 3 ) );
                 end
                 local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
                 if damage_models ~= nil then
@@ -449,10 +453,11 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                         local badge = EntityCreateNew();
                         
                         local sprite = EntityAddComponent( badge, "SpriteComponent",{
+                            z_index="-9000",
                             image_file=champion_data.badge
                         });
                         ComponentSetValue( sprite, "has_special_scale", "1");
-                        ComponentSetValue( sprite, "z_index", "128");
+                        ComponentSetValue( sprite, "z_index", "-9000");
                         EntityAddComponent( badge, "InheritTransformComponent",{
                             only_position="1"
                         });
@@ -495,10 +500,38 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
 
                     --[[ Rewards Drop ]]
                     EntityAddComponent( entity, "LuaComponent", {
-                        script_damage_received="files/gkbrkn/misc/champion_enemies/champion_damage_received.lua"
+                        script_damage_received="files/gkbrkn/misc/champion_enemies/scripts/damage_received.lua"
                     });
                 end
             end
+        end
+    end
+end
+
+--[[ Health Bars ]]
+if HasFlagPersistent( MISC.HealthBars.Enabled ) then
+    local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
+    for _,entity in pairs( nearby_enemies ) do
+        if EntityGetFirstComponent( entity, "HealthBarComponent" ) == nil then
+            EntityAddComponent( entity, "HealthBarComponent" );
+            EntityAddComponent( entity, "SpriteComponent", { 
+                _tags="health_bar,ui,no_hitbox",
+                _enabled="1",
+                alpha="1",
+                has_special_scale="1",
+                image_file="files/gkbrkn/misc/health_bar.png",
+                is_text_sprite="0",
+                next_rect_animation="",
+                offset_x="11",
+                offset_y="-4",
+                rect_animation="",
+                special_scale_x="0.2",
+                special_scale_y="0.6",
+                ui_is_parent="0",
+                update_transform="1",
+                visible="1",
+                z_index="-9000",
+            });
         end
     end
 end

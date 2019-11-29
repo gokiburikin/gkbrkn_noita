@@ -1,7 +1,6 @@
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 local correction_distance = 36;
-local next_target_delay = 2;
 
 dofile_once( "files/gkbrkn/lib/variables.lua" );
 
@@ -70,14 +69,19 @@ if target ~= nil then
         ]]
         if damaged_entities[tostring(entity)] ~= true then
             local tx, ty = EntityGetTransform( target );
+            local hitbox = EntityGetFirstComponent( target, "HitboxComponent" );
+            if hitbox ~= nil then
+                local height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) )
+                ty = ty - height * 0.5;
+            end
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
             local angle = math.atan2( vy, vx );
             local target_angle = math.atan2( ty - y, tx - x );
             local magnitude = math.sqrt( vx * vx + vy * vy );
             local distance = math.sqrt( math.pow( tx - x, 2 ) + math.pow( ty - y, 2 )  );
-            local new_angle = ease_angle( angle, target_angle, 0.5 * math.random() );
-            if distance <= 8 then
+            local new_angle = ease_angle( angle, target_angle, 1.0 );
+            if distance <= 12 then
                 EntitySetVariableString( entity, "gkbrkn_damaged_entities",damaged_entities_string..entity.."," )
             end
             ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );

@@ -12,6 +12,7 @@ table.insert( actions,
     mana = 30,
     action 		= function()
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/path_correction/projectile_extra_entity.xml,";
+        c.speed_multiplier = c.speed_multiplier * 0.75;
         draw_actions( 1, true );
     end,
 });

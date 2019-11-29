@@ -4,7 +4,7 @@ local tracker_variable = "gkbrkn_lost_treasure_tracker";
 table.insert( perk_list, {
 	id = "GKBRKN_LOST_TREASURE",
 	ui_name = "Lost Treasure",
-	ui_description = "The gift of that which was forgotten",
+	ui_description = "The gift of that which was forgotten.",
 	ui_icon = "files/gkbrkn/perks/lost_treasure/icon_ui.png",
     perk_icon = "files/gkbrkn/perks/lost_treasure/icon_ig.png",
     func = function( entity_perk_item, entity_who_picked, item_name )

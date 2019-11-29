@@ -4,7 +4,6 @@ local t = GameGetRealWorldTimeSinceStarted();
 local players = EntityGetWithTag( "player_unit" );
 for _,player in pairs( players ) do
     local x,y = EntityGetTransform( player );
-
     --[[
     ]]
     --[[
