@@ -10,9 +10,8 @@ if parent ~= nil then
         offset_y = -height + 18;
     end
 end
-for index,child in pairs(children) do
+for index,child in pairs( children ) do
     local sprite = EntityGetFirstComponent( child, "SpriteComponent" );
-    ComponentSetValue( sprite, "offset_x", -offset_x + (index - 1) * 9 );
+    ComponentSetValue( sprite, "offset_x", -offset_x + ( index - 1 ) * 9 );
     ComponentSetValue( sprite, "offset_y", offset_y );
-    --ComponentSetValue( sprite, "alpha", math.cos( GameGetFrameNum() / 10 + index * 5 ) * 0.5 + 0.5 + 0.25 );
 end

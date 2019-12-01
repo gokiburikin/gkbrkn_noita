@@ -38,12 +38,15 @@ if holder ~= nil then
         elseif now - last_use_frame > 30 then
             local holder_x, holder_y = EntityGetTransform( holder );
             local nearby_entities = EntityGetInRadiusWithTag( holder_x, holder_y, 8, "card_action" );
-            for _,card in pairs(nearby_entities) do
+            for _,card in pairs( nearby_entities ) do
                 if EntityGetParent( card ) == 0 then
-                    EntityAddChild( spell_storage, card );
-                    EntitySetComponentsWithTagEnabled( card,  "enabled_in_world", false );
-                    update_amount_stored();
-                    --GamePlaySound( bank_filename, event_path, x, y );
+                    local item_cost = EntityGetFirstComponent( card, "ItemCostComponent" );
+                    if item_cost == nil or tonumber( ComponentGetValue( item_cost, "cost" ) ) <= 0 then
+                        EntityAddChild( spell_storage, card );
+                        EntitySetComponentsWithTagEnabled( card,  "enabled_in_world", false );
+                        update_amount_stored();
+                        --GamePlaySound( bank_filename, event_path, x, y );
+                    end
                 end
             end
         end

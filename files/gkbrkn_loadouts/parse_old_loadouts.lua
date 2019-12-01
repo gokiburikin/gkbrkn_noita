@@ -18,7 +18,7 @@ if loadout_list ~= nil then
         for _,perk_data in pairs( loadout_data.perks or {} ) do
             table.insert( perks, { perk_data } );
         end
-        register_loadout( id, name, cape_color, cape_edge_color, {}, {}, items, perks, loadout_data.sprites );
+        register_loadout( id, name, cape_color, cape_edge_color, {}, {}, items, perks, {}, loadout_data.sprites );
     end
 end
 

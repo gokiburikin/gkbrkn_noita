@@ -1,0 +1,6 @@
+<Entity tags="wand">
+	<Base file="files/gkbrkn_loadouts/wands/wand_1.xml" >
+        <AbilityComponent sprite_file="files/gkbrkn_loadouts/wands/wand_4_sprite.xml" ></AbilityComponent>
+    </Base>
+</Entity>
+

@@ -16,7 +16,24 @@ api issues
     
 
 changelog
-
+    -m "Fix Champion application not setting the random seed for each enemy"
+    -m "Fix certain extended gun features not working with vanilla trigger spells (this may cause unforeseen issues)"
+    -m "Fix spells being overridden improperly when Extended Wand Generation is active"
+    -m "Fix stealing spells with spell bag"
+    -m "Fix Perk: Swapper sending you to the world origin when being swapped with an attacker who had died"
+    -m "Fix Quick Swap not working if you had no items in the active inventory"
+    -m "Move DPS tracker above target dummy"
+    -m "Add status effects to freeze, burn, and electric Champion projectiles"
+    -m "Add Invincibility Frames, Hot Blooded Champion types"
+    -m "Add Tweak: Glass Cannon (3x damage dealt, 3x damage taken)"
+    -m "Add Tweak: Damage Field (damage every n ticks 1 -> 5)"
+    -m "Add custom_file and sprite to wand loadouts options"
+    -m "Add sprite selection for each wand in a loadout if they aren't manually defined (up to 4)"
+    -m "Add loadout support for Kaelos Archetypes"
+    -m "Add starting spells support to loadouts"
+    -m "Add hitbox based sizing to the energy shield Champion type"
+    -m "Rebalance Perk: Extra Projectile (spread 0 -> 3 degrees, cast delay and recharge time 0 -> 8)"
+    -m "Rebalance Action: Extra Projectile (spread 2 -> 3 degrees, cast delay and recharge time 0 -> 8)"
 
 kill streaks events
 grze events
@@ -29,8 +46,10 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
+    chaotic wands
+    king champion: champion enemies nearby
+
     look into using spread to determine formation stack distance
-    gold pickup radius
     champions that move the player around
 
     7 cast odd firebolt gravity well
@@ -46,8 +65,6 @@ TODO
     modifier that applies the next modifier to all projectiles in the wand
     make enemies imperfect / take time to aim towards you
     try a pathfinding algorithm
-    chaotic velocity
-
 
 UTILITY
     TODO
@@ -177,11 +194,10 @@ end
 
 --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/action_info.lua" );
 
-ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
+ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_actions.lua" );
+ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/misc/tweak_perks.lua" );
 ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "files/gkbrkn/append/temple_altar.lua" );
 
-ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/tweak_spells.lua" );
-ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/misc/tweak_perks.lua" );
 
 if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
@@ -217,17 +233,16 @@ end
 -- needs to know the layout and functionality of the underlying mods
 -- prefer utilizing the register_loadout function like the examples
 
--- override starting loadouts if it exists
-local _, err = loadfile("mods/starting_loadouts/init.lua");
-if err == nil then
-    ModLuaFileAppend( "mods/starting_loadouts/init.lua", "files/gkbrkn_loadouts/starting_loadouts_support.lua" );
+function try_consume( init_filepath, support_append_filepath )
+    local _, err = loadfile( init_filepath );
+    if err == nil then
+        ModLuaFileAppend( init_filepath, support_append_filepath );
+    end
 end
 
--- override more loadouts if it exists
-_, err = loadfile("mods/more_loadouts/init.lua");
-if err == nil then
-    ModLuaFileAppend( "mods/more_loadouts/init.lua", "files/gkbrkn_loadouts/more_loadouts_support.lua" );
-end
+try_consume( "mods/starting_loadouts/init.lua", "files/gkbrkn_loadouts/starting_loadouts_support.lua" );
+try_consume( "mods/more_loadouts/init.lua", "files/gkbrkn_loadouts/more_loadouts_support.lua" );
+try_consume( "mods/Kaelos_Archetypes/init.lua", "files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );
 
 function OnModPreInit()
     -- append the logic to parse the old loadouts as new loadouts 

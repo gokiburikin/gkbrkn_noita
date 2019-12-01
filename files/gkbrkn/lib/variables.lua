@@ -29,3 +29,19 @@ end
 function EntityAdjustVariableNumber( entity, variable_tag, default, callback )
     EntitySetVariableNumber( entity, variable_tag, callback( EntityGetVariableNumber( entity, variable_tag, default ) ) );
 end
+
+function ComponentAdjustValue( component, member, callback )
+    ComponentSetValue( component, member, tostring( callback( ComponentGetValue( component, member ) ) ) );
+end
+
+function ComponentSetValues( component, member_value_table )
+    for member,new_value in pairs(member_value_table) do
+        ComponentSetValue( component, member, tostring( new_value ) );
+    end
+end
+
+function ComponentAdjustValues( component, member_callback_table )
+    for member,callback in pairs(member_callback_table) do
+        ComponentSetValue( component, member, tostring( callback( ComponentGetValue( component, member ) ) ) );
+    end
+end

@@ -9,7 +9,7 @@ local extended_types = {
     ACTION_TYPE_UTILITY,
     ACTION_TYPE_PASSIVE
 };
-local chance_to_replace = 0.02;
+local chance_to_replace = 0.03;
 function generate_gun( cost, level, force_unshuffle)
     _generate_gun( cost, level, force_unshuffle );
     if HasFlagPersistent( MISC.ExtendedWandGeneration.Enabled ) then
@@ -19,6 +19,8 @@ function generate_gun( cost, level, force_unshuffle)
         for _,wand in pairs(local_wands) do
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
+                EntityRemoveFromParent( child );
+                local child_to_return = child;
                 local components = EntityGetAllComponents( child );
                 for _, component in ipairs( components ) do
                     local action_id = ComponentGetValue( component, "action_id" );
@@ -26,11 +28,11 @@ function generate_gun( cost, level, force_unshuffle)
                         -- TODO an assert will fail if the action type pool is empty
                         -- not too much that can be done about this right now, doesn't show up outside of dev
                         local action = GetRandomActionWithType( x, y, 6, level or Random(1,#extended_types), Random(0,1000)+_+x+y );
-                        if action ~= nil and action ~= "" then
-                            ComponentSetValue( component, "action_id", action );
-                        end
+                        child_to_return = CreateItemActionEntity( action, x, y );
+                        EntitySetComponentsWithTagEnabled( child_to_return, "enabled_in_world", false );
                     end
                 end
+                EntityAddChild( wand, child_to_return );
             end
         end
     end

@@ -4,7 +4,7 @@
 		_enabled="1" 
 		sprite_file="files/gkbrkn_loadouts/wands/wand_1_sprite.xml"
 		swim_propel_amount="0"
-		ui_name=""
+		ui_name="Base Wand"
 		drop_as_item_on_death="0"
 		cooldown_frames="1"
 		entity_count="1"
@@ -31,7 +31,7 @@
 
 	<Base file="data/entities/base_item.xml" >
 		<ItemComponent
-			item_name="base_wand"
+			item_name="Base Wand"
 			remove_on_death="1"
 			collect_nondefault_actions="1" >
 		</ItemComponent>

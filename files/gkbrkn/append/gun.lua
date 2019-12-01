@@ -30,6 +30,9 @@ gkbrkn = {
     _add_projectile = add_projectile,
     _move_hand_to_discarded = move_hand_to_discarded,
     _draw_action = draw_action,
+    _add_projectile_trigger_timer = add_projectile_trigger_timer,
+    _add_projectile_trigger_death = add_projectile_trigger_death,
+    _add_projectile_trigger_hit_world = add_projectile_trigger_hit_world,
 }
 
 function skip_cards( amount )
@@ -95,6 +98,7 @@ function draw_action( instant_reload_if_empty )
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     local player = GetUpdatedEntityID();
     local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+    local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
     if gkbrkn.draw_action_stack_size == 0 then
         if HasFlagPersistent( MISC.LessParticles.Enabled ) then
             if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
@@ -112,7 +116,10 @@ function draw_action( instant_reload_if_empty )
         end
         c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
+        c.spread_degrees = c.spread_degrees + 3 * extra_projectiles_level;
     end
+    c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
+    current_reload_time = current_reload_time + 8 * extra_projectiles_level;
     return result;
 end
 
@@ -147,11 +154,11 @@ function add_projectile( filepath )
     for i=1,projectiles_to_add do
         gkbrkn.projectiles_fired = gkbrkn.projectiles_fired + 1;
         if trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
-            add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );
+            gkbrkn._add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Death then
-            add_projectile_trigger_death( filepath, trigger_action_draw_count );
+            gkbrkn._add_projectile_trigger_death( filepath, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Hit then
-            add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
+            gkbrkn._add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Instant then
             if reflecting then 
                 Reflection_RegisterProjectile( filepath )
@@ -167,6 +174,22 @@ function add_projectile( filepath )
     end
     gkbrkn.extra_projectiles = 0;
 end
+
+function add_projectile_trigger_timer( entity_filename, delay_frames, action_draw_count )
+    set_trigger_timer( delay_frames, action_draw_count );
+    add_projectile( entity_filename );
+end
+
+function add_projectile_trigger_hit_world( entity_filename, action_draw_count )
+    set_trigger_hit_world( action_draw_count );
+    add_projectile( entity_filename );
+end
+
+function add_projectile_trigger_death( entity_filename, action_draw_count )
+    set_trigger_death( action_draw_count );
+    add_projectile( entity_filename );
+end
+
 
 function set_trigger_timer( delay_frames, action_draw_count )
     table.insert( gkbrkn.trigger_queue, {

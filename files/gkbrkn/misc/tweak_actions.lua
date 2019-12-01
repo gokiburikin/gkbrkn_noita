@@ -45,6 +45,12 @@ local edit_callbacks = {
             c.game_effect_entities = c.game_effect_entities .. "data/entities/misc/effect_frozen.xml,";
             draw_actions( 1, true );
         end
+    end,
+    AREA_DAMAGE = function( action, index )
+        action.action = function()
+			c.extra_entities = c.extra_entities .. "files/gkbrkn/tweaks/actions/area_damage.xml,";
+			draw_actions( 1, true );
+		end
     end
 }
 

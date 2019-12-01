@@ -1,7 +1,9 @@
+dofile_once( "files/gkbrkn/helper.lua");
+
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c55"
+    Version = "c56"
 }
 
 CONTENT_TYPE = {
@@ -183,6 +185,8 @@ TWEAKS = {
     IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
     Blindness = register_content( CONTENT_TYPE.Tweak, "blindness","Shorten Blindness", nil, true, true, true ),
     RevengeExplosion = register_content( CONTENT_TYPE.Tweak, "revenge_explosion","Revenge Explosion",  { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
+    GlassCannon = register_content( CONTENT_TYPE.Tweak, "glass_cannon", "Glass Cannon",  { perk_id="GLASS_CANNON" }, true ),
+    AreaDamage = register_content( CONTENT_TYPE.Tweak, "area_damage", "Damage Field",  { action_id="AREA_DAMAGE" }, true ),
 }
 
 LOADOUTS = {}
@@ -281,6 +285,9 @@ CHAMPION_TYPES = {
             if burn ~= nil then
                 EntityAddChild( entity, burn );
             end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_burning.lua",
+            });
         end
     }),
     Freezing = register_content( CONTENT_TYPE.ChampionType, "freezing", "Freezing", {
@@ -299,6 +306,9 @@ CHAMPION_TYPES = {
                 execute_every_n_frame="60",
                 execute_on_added="1",
                 script_source_file="files/gkbrkn/misc/champion_enemies/scripts/freeze.lua",
+            });
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_freeze.lua",
             });
         end
     }),
@@ -371,7 +381,29 @@ CHAMPION_TYPES = {
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
-            local shield = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml" );
+            local x, y = EntityGetTransform( entity );
+            local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
+            local radius = nil;
+            local height = 18;
+            local width = 18;
+            if hitbox ~= nil then
+                height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
+                width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
+            end
+            radius = math.max( height, width ) + 6;
+            local shield = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml", x, y );
+            local emitters = EntityGetComponent( shield, "ParticleEmitterComponent" ) or {};
+            for _,emitter in pairs( emitters ) do
+                ComponentSetValueValueRange( emitter, "area_circle_radius", radius, radius );
+            end
+            local energy_shield = EntityGetFirstComponent( shield, "EnergyShieldComponent" );
+            ComponentSetValue( energy_shield, "radius", tostring( radius ) );
+
+            local hotspot = EntityAddComponent( entity, "HotspotComponent",{
+                _tags="gkbrkn_center"
+            } );
+            ComponentSetValueVector2( hotspot, "offset", 0, -height * 0.3 );
+
             if shield ~= nil then EntityAddChild( entity, shield ); end
         end
     }),
@@ -402,6 +434,9 @@ CHAMPION_TYPES = {
                 execute_every_n_frame="60",
                 execute_on_added="1",
                 script_source_file="files/gkbrkn/misc/champion_enemies/scripts/electricity.lua",
+            });
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_electricity.lua",
             });
         end
     }),
@@ -434,6 +469,47 @@ CHAMPION_TYPES = {
             end
         end
     }),
+    HotBlooded = register_content( CONTENT_TYPE.ChampionType, "hot_blooded", "Hot Blooded", {
+        particle_material = "fire",
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/hot_blooded.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue( damage_model, "blood_material", "lava" );
+                ComponentSetValue( damage_model, "blood_spray_material", "lava" );
+            end
+        end
+    }),
+    InvincibilityFrames = register_content( CONTENT_TYPE.ChampionType, "invincibility_frames", "Invincibility Frames", {
+        particle_material = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/invincibility_frames.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_damage_received="files/gkbrkn/misc/champion_enemies/scripts/invincibility_frames.lua",
+            });
+        end
+    }),
+    --[[
+    Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
+        particle_material = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/leader.lua",
+                execute_every_n_frame="30",
+            });
+        end
+    }),
+    ]]
 }
 
 OPTIONS = {
@@ -724,7 +800,7 @@ MISC = {
     }
 }
 
-function register_loadout( id, name, cape_color, cape_color_edge, wands, potions, items, perks, sprites, custom_message, callback )
+function register_loadout( id, name, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
     local content_id = register_content( CONTENT_TYPE.Loadout, id, string.gsub( name, "TYPE", "" ), {
         name = name,
         cape_color = cape_color,
@@ -733,6 +809,7 @@ function register_loadout( id, name, cape_color, cape_color_edge, wands, potions
         potions = potions,
         items = items,
         perks = perks,
+        actions = actions,
         sprites = sprites,
         custom_message = custom_message,
         callback = callback,
@@ -748,6 +825,56 @@ if SETTINGS.Debug then
         nil, -- cape color (ABGR)
         nil, -- cape edge color (ABGR)
         { -- wands
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {10,10}, -- recharge time in frames
+                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {1000,1000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
+                    { "GKBRKN_COPY_SPELL" },
+                    { "SCATTER_2" },
+                    { "SLOW_BULLET" },
+                    { "SLOW_BULLET" },
+                    { "SLOW_BULLET" },
+                    { "SLOW_BULLET" },
+                }
+            },
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {10,10}, -- recharge time in frames
+                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {1000,1000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
+                    { "GKBRKN_EXTRA_PROJECTILE" },
+                    { "GKBRKN_EXTRA_PROJECTILE" },
+                    { "GKBRKN_EXTRA_PROJECTILE" },
+                    { "SLOW_BULLET" },
+                }
+            },
             {
                 name = "Debug Wand",
                 stats = {
@@ -783,18 +910,18 @@ if SETTINGS.Debug then
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    deck_capacity = {3,3}, -- capacity
+                    reload_time = {30,30}, -- recharge time in frames
+                    fire_rate_wait = {8,8}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
-                    mana_max = {5000,5000}, -- mana max
+                    mana_charge_speed = {30,40}, -- mana charge speed
+                    mana_max = {100,150}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "GKBRKN_ACTION_WIP" },
-                    { "LASER" },
+                    { "LIGHT_BULLET" },
+                    { "HEAVY_BULLET" },
                 }
             }
         },
@@ -804,6 +931,11 @@ if SETTINGS.Debug then
         { -- items
         },
         { -- perks
+        },
+        { -- actions
+            {"LIGHT_BULLET"},
+            {"LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET"},
+            {"GKBRKN_ACTION_WIP"},
         },
         nil, -- sprites
         "", -- custom message
@@ -816,6 +948,9 @@ if SETTINGS.Debug then
             if inventory2 ~= nil then
                 ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
             end
+            EntityAddComponent( player, "LuaComponent", {
+                script_source_file="files/gkbrkn/misc/regen.lua"
+            });
         end
 
     );

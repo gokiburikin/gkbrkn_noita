@@ -71,6 +71,7 @@ if HasFlagPersistent( MISC.Loadouts.Enabled) then
 
         -- find the quick inventory, player cape and arm
         local inventory = nil;
+        local full_inventory = nil;
         local cape = nil;
         local player_arm = nil;
         local player_child_entities = EntityGetAllChildren( player_entity );
@@ -80,13 +81,11 @@ if HasFlagPersistent( MISC.Loadouts.Enabled) then
                 
                 if child_entity_name == "inventory_quick" then
                     inventory = child_entity;
-                end
-                
-                if child_entity_name == "cape" then
+                elseif child_entity_name == "inventory_full" then
+                    full_inventory = child_entity;
+                elseif child_entity_name == "cape" then
                     cape = child_entity;
-                end
-
-                if child_entity_name == "arm_r" then
+                elseif child_entity_name == "arm_r" then
                     player_arm = child_entity;
                 end
             end
@@ -126,12 +125,33 @@ if HasFlagPersistent( MISC.Loadouts.Enabled) then
                     GameKillInventoryItem( player_entity, wand );
                 end
                 default_wands = {};
-                for _,wand_data in pairs( loadout_data.wands ) do
-                    local wand = EntityLoad( "files/gkbrkn_loadouts/wands/wand_base.xml" );
+                for wand_index,wand_data in pairs( loadout_data.wands ) do
+                    local wand = EntityLoad( wand_data.custom_file or "files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml" );
                     SetRandomSeed( x, y );
 
                     local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
                     ComponentSetValue( ability, "ui_name", wand_data.name );
+                    if wand_data.sprite ~= nil then
+                        if wand_data.sprite.file ~= nil then
+                            ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
+                            -- TODO this takes a second to apply, probably work fixing, but for now just prefer using custom file
+                            local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
+                            if sprite ~= nil then
+                                ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
+                            end
+                        end
+                        if wand_data.sprite.hotspot ~= nil then
+                            local hotspot = EntityGetFirstComponent( wand, "HotspotComponent", "shoot_pos" );
+                            if hotspot ~= nil then
+                                ComponentSetValueVector2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
+                            end
+                        end
+                    end
+
+                    local item = EntityGetFirstComponent( wand, "ItemComponent" );
+                    if item ~= nil then
+                        ComponentSetValue( item, "item_name", wand_data.name );
+                    end
 
                     for stat,value in pairs( wand_data.stats or {} ) do
                         ability_component_set_stat( ability, stat, value );
@@ -199,6 +219,18 @@ if HasFlagPersistent( MISC.Loadouts.Enabled) then
                     local random_item = item_choice[ Random( 1, #item_choice ) ];
                     local item = EntityLoad( random_item );
                     EntityAddChild( inventory, item );
+                end
+            end
+        end
+
+        -- set inventory contents
+        if full_inventory ~= nil then
+            if loadout_data.actions ~= nil then
+                for _,actions in pairs( loadout_data.actions ) do
+                    local action = actions[ Random( 1, #actions ) ];
+                    local action_card = CreateItemActionEntity( action, x, y );
+                    EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
+                    EntityAddChild( full_inventory, action_card );
                 end
             end
         end

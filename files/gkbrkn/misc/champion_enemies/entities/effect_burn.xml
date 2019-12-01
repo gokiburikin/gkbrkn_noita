@@ -1,0 +1,11 @@
+<Entity>
+    <InheritTransformComponent 
+		_enabled="1" >
+    </InheritTransformComponent>	
+    
+    <GameEffectComponent 
+        effect="ON_FIRE"
+        frames="180"
+    >
+	</GameEffectComponent >
+</Entity>

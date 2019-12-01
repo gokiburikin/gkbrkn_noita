@@ -11,8 +11,9 @@ table.insert( actions,
     price = 320,
     mana = 12,
     action 		= function()
-        c.spread_degrees = c.spread_degrees + 2;
-        c.speed_multiplier = c.speed_multiplier * 0.9;
+        c.spread_degrees = c.spread_degrees + 3;
+        c.fire_rate_wait = c.fire_rate_wait + 8;
+        current_reload_time = current_reload_time + 8;
         extra_projectiles( 1 );
         draw_actions( 1, true );
     end,

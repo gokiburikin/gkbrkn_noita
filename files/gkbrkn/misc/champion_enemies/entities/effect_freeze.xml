@@ -15,5 +15,4 @@
         file="data/audio/Desktop/misc.snd"
         event_root="game_effect/frozen" >
     </AudioComponent>
-
 </Entity>

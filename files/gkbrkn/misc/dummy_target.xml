@@ -17,7 +17,7 @@
         fire_damage_amount="0" 
         fire_probability_of_ignition="0"
         critical_damage_resistance="0"
-        hp="9999" 
+        hp="99999" 
         blood_multiplier="0"
         is_on_fire="0" 
         materials_create_messages="0" 
@@ -28,9 +28,9 @@
 
     <HitboxComponent
 		aabb_min_x="-8.5"
-		aabb_max_x="8.5" 
+		aabb_max_x="8.5"
 		aabb_min_y="-22"
-		aabb_max_y="0"  
+		aabb_max_y="0"
 	>
 	</HitboxComponent>
     <LuaComponent

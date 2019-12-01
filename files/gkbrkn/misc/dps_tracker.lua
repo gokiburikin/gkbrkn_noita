@@ -23,6 +23,12 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         best = current;
     end
 
+    local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
+    local offset_y = 0;
+    if hitbox ~= nil then
+        offset_y = -tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) );
+    end
+
     local text = EntityGetFirstComponent( entity, "SpriteComponent", "gkbrkn_dps_tracker" );
     if text ~= nil then
         EntityRemoveComponent( entity, text );
@@ -32,8 +38,8 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         image_file="files/gkbrkn/font_pixel_white.xml" ,
         emissive="1",
         is_text_sprite="1",
-        offset_x="8" ,
-        offset_y="-4" ,
+        offset_x="12" ,
+        offset_y=tostring(offset_y * 2),
         update_transform="1" ,
         update_transform_rotation="0",
         text=math.floor(current * 25 * 100) / 100,

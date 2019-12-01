@@ -1,18 +1,16 @@
 <Entity _tags="energy_shield">
 
-	<InheritTransformComponent>
-		<Transform 
-			only_position="1"
-			position.x="0" 
-			position.y="-6" >
-		</Transform>
+	<InheritTransformComponent
+        only_position="1"
+        parent_hotspot_tag="gkbrkn_center"
+    >
 	</InheritTransformComponent>
 
     <EnergyShieldComponent 
         _tags="enabled_in_hand,item_identified__LEGACY"
         recharge_speed="0.14"
         max_energy="0.30"
-		radius="16.0" >
+		radius="18.0" >
     </EnergyShieldComponent>
 
     <ParticleEmitterComponent
@@ -25,7 +23,7 @@
 		count_max="4"
 		render_on_grid="1"
 		fade_based_on_lifetime="1"
-		area_circle_radius.max="16"
+		area_circle_radius.max="18"
 		cosmetic_force_create="0"
 		airflow_force="0.5"
 		airflow_time="0.1"
@@ -46,8 +44,8 @@
 		count_max="100"
 		render_on_grid="1"
 		fade_based_on_lifetime="1"
-		area_circle_radius.min="16"
-		area_circle_radius.max="16"
+		area_circle_radius.min="18"
+		area_circle_radius.max="18"
 		cosmetic_force_create="0"
 		airflow_force="0.3"
 		airflow_time="0.01"
@@ -68,8 +66,8 @@
 		count_max="360"
 		render_on_grid="1"
 		fade_based_on_lifetime="1"
-		area_circle_radius.min="16"
-		area_circle_radius.max="16"
+		area_circle_radius.min="18"
+		area_circle_radius.max="18"
 		cosmetic_force_create="0"
 		airflow_force="2.8"
 		airflow_time="0.03"

@@ -1,6 +1,6 @@
 function damage_received( damage, message, entity_thats_responsible, is_fatal  )
     local entity = GetUpdatedEntityID();
-    if entity_thats_responsible ~= entity and entity_thats_responsible ~= 0 then
+    if entity_thats_responsible ~= entity and entity_thats_responsible ~= 0 and EntityGetIsAlive( entity_thats_responsible ) then
         local x,y = EntityGetTransform( entity );
         local ax,ay = EntityGetTransform( entity_thats_responsible );
         EntitySetTransform( entity, ax, ay );

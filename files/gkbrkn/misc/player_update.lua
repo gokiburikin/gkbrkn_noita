@@ -170,8 +170,8 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     local controls = EntityGetFirstComponent( entity, "ControlsComponent" );
     local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
     if controls ~= nil and inventory2 ~= nil then
-        local active_item = ComponentGetValue( inventory2, "mActiveItem" );
-        if active_item == nil or EntityHasTag( active_item, "wand" ) == true then
+        local active_item = tonumber(ComponentGetValue( inventory2, "mActiveItem" ));
+        if active_item == nil or active_item == 0 or EntityHasTag( active_item, "wand" ) == true then
             local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
             local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
             if alt_fire == "1" and now == tonumber(alt_fire_frame) then
@@ -354,9 +354,11 @@ end
 if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
     local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
     for _,entity in pairs( nearby_enemies ) do
-        if EntityHasTag( entity, "gkbrkn_champions" ) == false then
+        SetRandomSeed( x, y );
+        if EntityHasTag( entity, "gkbrkn_force_champion" ) == true or EntityHasTag( entity, "gkbrkn_champions" ) == false then
             EntityAddTag( entity, "gkbrkn_champions" );
-            if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+            if EntityHasTag( entity, "gkbrkn_force_champion" ) or HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+                EntityRemoveTag( entity, "gkbrkn_force_champion" );
                 local valid_champion_types = {};
                 for index,champion_type in pairs( CHAMPION_TYPES ) do
                     local champion_type_data = CONTENT[champion_type].options;
@@ -379,17 +381,25 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                 local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
                 if #animal_ais > 0 then
                     for _,ai in pairs( animal_ais ) do
-                        ComponentSetValue( ai, "aggressiveness_min", "100" );
-                        ComponentSetValue( ai, "aggressiveness_max", "100" );
-                        ComponentSetValue( ai, "escape_if_damaged_probability", "0" );
-                        ComponentSetValue( ai, "hide_from_prey", "0" );
-                        ComponentSetValue( ai, "needs_food", "0" );
-                        ComponentSetValue( ai, "sense_creatures", "1" );
-                        ComponentSetValue( ai, "attack_only_if_attacked", "0" );
-                        ComponentSetValue( ai, "creature_detection_check_every_x_frames", "60" );
-                        ComponentSetValue( ai, "max_distance_to_cam_to_start_hunting", tostring( tonumber( ComponentGetValue( ai, "max_distance_to_cam_to_start_hunting") ) * 2 ) );
-                        ComponentSetValue( ai, "creature_detection_range_x", tostring( tonumber( ComponentGetValue( ai, "creature_detection_range_x") ) * 2 ) );
-                        ComponentSetValue( ai, "creature_detection_range_y", tostring( tonumber( ComponentGetValue( ai, "creature_detection_range_y") ) * 2 ) );
+                        ComponentSetValues( ai, {
+                            aggressiveness_min="100",
+                            aggressiveness_max="100",
+                            escape_if_damaged_probability="0",
+                            hide_from_prey="0",
+                            needs_food="0",
+                            sense_creatures="1",
+                            attack_only_if_attacked="0",
+                            creature_detection_check_every_x_frames="60",
+                            creature_detection_angular_range_deg="180",
+                            dont_counter_attack_own_herd="1",
+                            mGreatestPrey=entity,
+                        });
+                        ComponentAdjustValues( ai, {
+                            max_distance_to_cam_to_start_hunting=function( value ) return  tonumber( value ) * 2; end,
+                            creature_detection_range_x=function( value ) return  tonumber( value ) * 2; end,
+                            creature_detection_range_y=function( value ) return  tonumber( value ) * 2; end,
+                            attack_dash_frames_between=function( value ) return tonumber( value ) / 3; end,
+                        });
                     end
                 end
                 local character_platforming = EntityGetFirstComponent( entity, "CharacterPlatformingComponent" );
