@@ -3,7 +3,7 @@ dofile_once( "files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c56"
+    Version = "c57"
 }
 
 CONTENT_TYPE = {
@@ -132,6 +132,7 @@ PERKS = {
     FragileEgo = register_content( CONTENT_TYPE.Perk, "fragile_ego","Fragile Ego" ),
     ThriftyShopper = register_content( CONTENT_TYPE.Perk, "thrifty_shopper","Thrifty Shopper" ),
     Swapper = register_content( CONTENT_TYPE.Perk, "swapper","Swapper" ),
+    Demolitionist = register_content( CONTENT_TYPE.Perk, "demolitionist","Demolitionist" ),
     WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true, not SETTINGS.Debug ),
 }
 
@@ -634,6 +635,24 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_champion_enemies_always",
     },
     {
+        Name = "Hero Mode",
+    },
+    {
+        Name = "Enabled",
+        SubOption = true,
+        PersistentFlag = "gkbrkn_hero_mode",
+    },
+    {
+        Name = "Orbs Increase Difficulty",
+        SubOption = true,
+        PersistentFlag = "gkbrkn_hero_mode_orb_scale",
+    },
+    {
+        Name = "Distance Increases Difficulty",
+        SubOption = true,
+        PersistentFlag = "gkbrkn_hero_mode_distance_scale",
+    },
+    {
         Name = "Loadouts",
     },
     {
@@ -693,6 +712,10 @@ OPTIONS = {
     {
         Name = "Extended Wand Generation",
         PersistentFlag = "gkbrkn_extended_wand_generation",
+    },
+    {
+        Name = "Chaotic Wand Generation",
+        PersistentFlag = "gkbrkn_chaotic_wand_generation",
     },
     {
         Name = "Gold Nuggets -> Gold Powder",
@@ -777,6 +800,9 @@ MISC = {
     ExtendedWandGeneration = {
         Enabled = "gkbrkn_extended_wand_generation",
     },
+    ChaoticWandGeneration = {
+        Enabled = "gkbrkn_chaotic_wand_generation",
+    },
     ShowFPS = {
         Enabled = "gkbrkn_show_fps",
     },
@@ -797,6 +823,11 @@ MISC = {
         Enabled = "gkbrkn_loadouts",
         CapeColorEnabled = "gkbrkn_loadouts_cape_color",
         PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
+    },
+    HeroMode = {
+        Enabled = "gkbrkn_hero_mode",
+        OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
+        DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
     }
 }
 
@@ -850,7 +881,7 @@ if SETTINGS.Debug then
                     { "SLOW_BULLET" },
                     { "SLOW_BULLET" },
                 }
-            },
+            },--[[
             {
                 name = "Debug Wand",
                 stats = {
@@ -869,10 +900,7 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "GKBRKN_EXTRA_PROJECTILE" },
-                    { "GKBRKN_EXTRA_PROJECTILE" },
-                    { "GKBRKN_EXTRA_PROJECTILE" },
-                    { "SLOW_BULLET" },
+                    { "TELEPORT_PROJECTILE" },
                 }
             },
             {
@@ -901,27 +929,83 @@ if SETTINGS.Debug then
                     { "BLACK_HOLE" },
                     { "BLACK_HOLE" },
                 }
+            },]]
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 17, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {8,8}, -- capacity
+                    reload_time = {30,30}, -- recharge time in frames
+                    fire_rate_wait = {8,8}, -- cast delay in frames
+                    spread_degrees = {10,10}, -- spread
+                    mana_charge_speed = {500,500}, -- mana charge speed
+                    mana_max = {500,500}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                    {"GKBRKN_PROJECTILE_GRAVITY_WELL"}
+                },
+                actions = {
+                    { "LIGHT_BULLET" },
+                    { "HEAVY_BULLET" },
+                    { "SLOW_BULLET" },
+                    { "RUBBER_BALL" },
+                }
             },
             {
                 name = "Debug Wand",
                 stats = {
                     shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 1, -- spells per cast
+                    actions_per_round = 17, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {3,3}, -- capacity
+                    deck_capacity = {8,8}, -- capacity
                     reload_time = {30,30}, -- recharge time in frames
                     fire_rate_wait = {8,8}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {30,40}, -- mana charge speed
-                    mana_max = {100,150}, -- mana max
+                    spread_degrees = {10,10}, -- spread
+                    mana_charge_speed = {500,500}, -- mana charge speed
+                    mana_max = {500,500}, -- mana max
                 },
                 stat_randoms = {},
-                permanent_actions = {},
+                permanent_actions = {
+                    {"GKBRKN_SPELL_MERGE"}
+                },
                 actions = {
                     { "LIGHT_BULLET" },
                     { "HEAVY_BULLET" },
+                    { "SLOW_BULLET" },
+                    { "RUBBER_BALL" },
+                }
+            },
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 17, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {8,8}, -- capacity
+                    reload_time = {30,30}, -- recharge time in frames
+                    fire_rate_wait = {8,8}, -- cast delay in frames
+                    spread_degrees = {10,10}, -- spread
+                    mana_charge_speed = {500,500}, -- mana charge speed
+                    mana_max = {500,500}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                    {"GKBRKN_PROJECTILE_ORBIT"}
+                },
+                actions = {
+                    { "LIGHT_BULLET" },
+                    { "HEAVY_BULLET" },
+                    { "SLOW_BULLET" },
+                    { "RUBBER_BALL" },
                 }
             }
         },
@@ -948,9 +1032,9 @@ if SETTINGS.Debug then
             if inventory2 ~= nil then
                 ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
             end
-            EntityAddComponent( player, "LuaComponent", {
-                script_source_file="files/gkbrkn/misc/regen.lua"
-            });
+            --EntityAddComponent( player, "LuaComponent", {
+            --    script_source_file="files/gkbrkn/misc/regen.lua"
+            --});
         end
 
     );

@@ -16,24 +16,6 @@ api issues
     
 
 changelog
-    -m "Fix Champion application not setting the random seed for each enemy"
-    -m "Fix certain extended gun features not working with vanilla trigger spells (this may cause unforeseen issues)"
-    -m "Fix spells being overridden improperly when Extended Wand Generation is active"
-    -m "Fix stealing spells with spell bag"
-    -m "Fix Perk: Swapper sending you to the world origin when being swapped with an attacker who had died"
-    -m "Fix Quick Swap not working if you had no items in the active inventory"
-    -m "Move DPS tracker above target dummy"
-    -m "Add status effects to freeze, burn, and electric Champion projectiles"
-    -m "Add Invincibility Frames, Hot Blooded Champion types"
-    -m "Add Tweak: Glass Cannon (3x damage dealt, 3x damage taken)"
-    -m "Add Tweak: Damage Field (damage every n ticks 1 -> 5)"
-    -m "Add custom_file and sprite to wand loadouts options"
-    -m "Add sprite selection for each wand in a loadout if they aren't manually defined (up to 4)"
-    -m "Add loadout support for Kaelos Archetypes"
-    -m "Add starting spells support to loadouts"
-    -m "Add hitbox based sizing to the energy shield Champion type"
-    -m "Rebalance Perk: Extra Projectile (spread 0 -> 3 degrees, cast delay and recharge time 0 -> 8)"
-    -m "Rebalance Action: Extra Projectile (spread 2 -> 3 degrees, cast delay and recharge time 0 -> 8)"
 
 kill streaks events
 grze events
@@ -46,16 +28,14 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
-    chaotic wands
+    modifier that reduces the projectile resistance of target it hits
+    wand passive enemy drops one additional gold nugget
     king champion: champion enemies nearby
 
     look into using spread to determine formation stack distance
     champions that move the player around
 
     7 cast odd firebolt gravity well
-
-    look into why spell merge always cast doesn't work
-        test other always casts
 
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent
@@ -148,6 +128,7 @@ if CONTENT[PERKS.Protagonist].enabled() then ModLuaFileAppend( "data/scripts/per
 if CONTENT[PERKS.FragileEgo].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/fragile_ego/init.lua" ); end
 if CONTENT[PERKS.ThriftyShopper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/thrifty_shopper/init.lua" ); end
 if CONTENT[PERKS.Swapper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/swapper/init.lua" ); end
+if CONTENT[PERKS.Demolitionist].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "files/gkbrkn/perks/demolitionist/init.lua" ); end
 
 if CONTENT[ACTIONS.BounceDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/bounce_damage/init.lua" ); end
 if CONTENT[ACTIONS.BreakCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/actions/break_cast/init.lua" ); end
@@ -212,7 +193,7 @@ if HasFlagPersistent( MISC.UnlimitedAmmo.Enabled ) then
 end
 
 ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
-ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "files/gkbrkn/misc/extended_wand_generation.lua" );
+ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "files/gkbrkn/append/gun_procedural.lua" );
 ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "files/gkbrkn/misc/wand_shops_only.lua" );
 
 function OnPlayerSpawned( player_entity )
@@ -223,10 +204,6 @@ function OnPlayerSpawned( player_entity )
         EntityLoad('files/gkbrkn/gui/container.xml');
     end
     DoFileEnvironment( "files/gkbrkn/player_spawned.lua", { player_entity = player_entity } );
-end
-
-function OnWorldPostUpdate()
-    DoFileEnvironment( "files/gkbrkn/world_post_update.lua" );
 end
 
 -- this file is mostly for backwards compatibility of the base game and more loadouts mods. this method should not be relied upon as it 

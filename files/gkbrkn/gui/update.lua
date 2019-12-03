@@ -1,11 +1,6 @@
 dofile_once( "files/gkbrkn/config.lua");
 dofile_once( "files/gkbrkn/helper.lua");
-
-if not async then
-    -- guard against multiple inclusion to prevent
-    -- loss of async coroutines
-    dofile_once( "data/scripts/lib/coroutines.lua" )
-end
+dofile_once( "data/scripts/lib/coroutines.lua" );
 
 local SCREEN = {
     Options = 1,
@@ -29,6 +24,13 @@ local sorted_content = {};
 local content_counts = {};
 local content_type_selection = {};
 local content_type = nil;
+local tab_index = 1;
+local tabs = {
+    {
+        name = "Options",
+        screen = SCREEN.Options,
+    }
+}
 for index,content in pairs( CONTENT ) do
     if content.visible() then
         table.insert( sorted_content, { id=index, name=content.name } );
@@ -38,8 +40,12 @@ end
 table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 
 for k,v in pairs( CONTENT_TYPE ) do
-    local name = CONTENT_TYPE_DISPLAY_NAME[v].."s ["..content_counts[v].."]";
+    local name = CONTENT_TYPE_DISPLAY_NAME[v].."s";
+    if SETTINGS.Debug then
+        name = content_counts[v].." "..name;
+    end
     table.insert( content_type_selection, { name = name, type = v } );
+    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );
 end
 table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
 
@@ -96,24 +102,42 @@ function do_gui()
         GuiLayoutBeginVertical( gui, 92, 93 );
         local update_time = tonumber( GlobalsGetValue("gkbrkn_update_time") ) or 0;
         GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
-        local world_time = tonumber( GlobalsGetValue("gkbrkn_world_update_time") ) or 0;
-        GuiText( gui, 0, 0, tostring( math.floor( world_time * 100000 ) / 100 ).."ms/wu" );
         GuiLayoutEnd( gui );
     end
     GuiLayoutBeginVertical( gui, 1, 12 );
     
+    if screen ~= 0 then
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+        for index,tab_data in pairs( tabs ) do
+            local tab_title = tab_data.name;
+            local is_current_tab = false;
+            if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
+                is_current_tab = true;
+            end
+            if is_current_tab then
+                tab_title = "> "..tab_title.." <";
+            else
+                tab_title = "[ "..tab_title.." ]";
+            end
+            if GuiButton( gui, 0, 0, tab_title.."    ", next_id() ) then
+                change_screen( tab_data.screen );
+                if tab_data.content_type ~= nil then
+                    content_type = tab_data.content_type;
+                end
+            end
+        end
+        GuiLayoutEnd( gui );
+    end
+
     if screen == SCREEN.Options then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
         if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
             change_screen( 0 );
         end
-        GuiText( gui, 0, 0, "       ");
-        if GuiButton( gui, 0, 0, "[Content Selection]", next_id() ) then
-            change_screen( SCREEN.ContentTypeSelection );
-        end
         GuiLayoutEnd( gui );
-        GuiLayoutBeginVertical( gui, 0, 4 );
+        GuiLayoutBeginVertical( gui, 0, 0 );
+        GuiText( gui, 0, 0, " ");
         local wrap_index = 0;
         for index,option in pairs( options ) do
             if option.sub_option == nil and index > ( wrap_index + 1 ) * wrap_threshold then
@@ -131,8 +155,8 @@ function do_gui()
     elseif screen == SCREEN.ContentTypeSelection then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-        if GuiButton( gui, 0, 0, "[Back]", next_id() ) then
-            change_screen( SCREEN.Options );
+        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
+            change_screen( 0 );
         end
         GuiLayoutEnd( gui );
         GuiText( gui, 0, 0, " ");
@@ -145,11 +169,10 @@ function do_gui()
     elseif screen == SCREEN.ContentSelection then
         local filtered_content = filter_content( sorted_content, content_type );
         --for index,action_id in pairs( sorted_actions ) do
-        do_pagination( filtered_content, wrap_threshold * wrap_limit );
-
+        GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-        if GuiButton( gui, 0, 0, "[Back]", next_id() ) then
-            change_screen( SCREEN.ContentTypeSelection );
+        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
+            change_screen( 0 );
         end
         GuiText( gui, 0, 0, "        " );
         if GuiButton( gui, 0, 0, "[Enable All]", next_id() ) then
@@ -171,6 +194,8 @@ function do_gui()
             gui_require_restart = true;
         end
         GuiLayoutEnd( gui );
+        
+        do_pagination( filtered_content, wrap_threshold * wrap_limit );
 
         GuiText( gui, 0, 0, " " );
 

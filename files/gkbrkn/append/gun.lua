@@ -190,7 +190,6 @@ function add_projectile_trigger_death( entity_filename, action_draw_count )
     add_projectile( entity_filename );
 end
 
-
 function set_trigger_timer( delay_frames, action_draw_count )
     table.insert( gkbrkn.trigger_queue, {
         type=gkbrkn.TRIGGER_TYPE.Timer,

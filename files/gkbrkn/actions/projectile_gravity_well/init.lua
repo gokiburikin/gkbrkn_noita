@@ -14,6 +14,5 @@ table.insert( actions,
         c.extra_entities = c.extra_entities .. "files/gkbrkn/actions/projectile_gravity_well/projectile_extra_entity.xml,";
         c.speed_multiplier = c.speed_multiplier * 0.75;
         draw_actions( 2, true );
-        add_projectile( "files/gkbrkn/actions/projectile_capture.xml" );
     end,
 });

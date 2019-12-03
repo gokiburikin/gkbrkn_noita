@@ -19,6 +19,7 @@ local x, y = EntityGetTransform( entity );
 local children = EntityGetAllChildren( entity ) or {};
 
 --[[ material immunities
+TODO still can't really make use of this without polymorphing
 if _apply_material ~= true and now % 180 == 0 then
     _apply_material = true;
     local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
@@ -257,52 +258,50 @@ if gold_tracker_world or gold_tracker_message then
     end
 end
 
---[[ Lost Treasure ]]
+--[[ Lost Treasure and Gold Decay ]]
 local check_radius = 192;
 
 -- iterate through all components of all entities around all players to find
 -- nuggets we haven't tracked
 local natural_nuggets = {};
 local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "item_physics" );
-for _,entity in pairs( nearby_entities ) do
+for _,nearby in pairs( nearby_entities ) do
     -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
     -- we probably don't want to consider this nugget anyway
-    if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( entity ) == false then
-        local components = EntityGetComponent( entity, "LuaComponent" );
-        if components ~= nil then
-            for _,component in pairs(components) do
-                -- TODO there needs to be a better more future proofed way to get gold nuggets
-                if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                    EntityAddComponent( entity, "LuaComponent", {
-                        execute_every_n_frame = "-1",
-                        remove_after_executed = "1",
-                        script_item_picked_up = "files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
-                    });
-                    EntityAddComponent( entity, "LuaComponent", {
-                        _tags="gkbrkn_lost_treasure",
-                        execute_on_removed="1",
-                        execute_every_n_frame="-1",
-                        script_source_file = "files/gkbrkn/perks/lost_treasure/gold_removed.lua",
-                    });
-                    --local ex, ey = EntityGetTransform( entity );
-                    --GamePrint( "New nuggy found at "..ex..", "..ey );
-                    break;
-                end
+    if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( nearby ) == false then
+        local components = EntityGetComponent( nearby, "LuaComponent" ) or {};
+        for _,component in pairs(components) do
+            -- TODO there needs to be a better more future proofed way to get gold nuggets
+            if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
+                EntityAddComponent( nearby, "LuaComponent", {
+                    execute_every_n_frame = "-1",
+                    remove_after_executed = "1",
+                    script_item_picked_up = "files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
+                });
+                EntityAddComponent( nearby, "LuaComponent", {
+                    _tags="gkbrkn_lost_treasure",
+                    execute_on_removed="1",
+                    execute_every_n_frame="-1",
+                    script_source_file = "files/gkbrkn/perks/lost_treasure/gold_removed.lua",
+                });
+                --local ex, ey = EntityGetTransform( entity );
+                --GamePrint( "New nuggy found at "..ex..", "..ey );
+                break;
             end
         end
     end
-    if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( entity ) == false then
-        local components = EntityGetComponent( entity, "LuaComponent" );
+    if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( nearby ) == false then
+        local components = EntityGetComponent( nearby, "LuaComponent" );
         if components ~= nil then
             for _,component in pairs(components) do
                 -- TODO there needs to be a better more future proofed way to get gold nuggets
                 if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                    EntityAddComponent( entity, "LuaComponent", {
+                    EntityAddComponent( nearby, "LuaComponent", {
                         execute_every_n_frame = "-1",
                         remove_after_executed = "1",
                         script_item_picked_up = "files/gkbrkn/misc/gold_decay/gold_pickup.lua",
                     });
-                    EntityAddComponent( entity, "LuaComponent", {
+                    EntityAddComponent( nearby, "LuaComponent", {
                         _tags="gkbrkn_gold_decay",
                         execute_on_removed="1",
                         execute_every_n_frame="-1",
@@ -314,6 +313,28 @@ for _,entity in pairs( nearby_entities ) do
             end
         end
     end
+
+--[[ This was an attempt to increase the radius of gold nuggets but it seems it uses the physics body rendering these hitboxes useless
+    TODO not that important anyway, but noita enhanced has an auto pickup method, look at that
+    local lua_components = EntityGetComponent( nearby, "LuaComponent" ) or {};
+    for _,component in pairs( lua_components ) do
+        if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
+            local hitbox = EntityGetFirstComponent( nearby, "HitboxComponent" );
+            if hitbox ~= nil then
+                GamePrint("hitbox");
+                ComponentSetValues( hitbox, {
+                    aabb_min_x=tostring(-20),
+                    aabb_max_x=tostring(20),
+                    aabb_min_y=tostring(-20),
+                    aabb_max_y=tostring(20),
+                });
+                GamePrint(ComponentGetValue(hitbox,"aabb_min_x"));
+                GamePrint("updated component");
+            end
+            break;
+        end
+    end
+    ]]
 end
 
 --[[ Material Compression ]]
@@ -350,9 +371,27 @@ if succ_bonus ~= nil then
     end
 end
 
+--[[ Free Inventory
+
+    TODO nothing seemed to work, put it off for now
+
+    local children = EntityGetAllChildren( entity );
+    for key, child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            for _,item_entity in pairs( EntityGetAllChildren( child ) ) do
+                local item = FindFirstComponentThroughTags( item_entity, "is_equipable_forced" );
+                if item ~= nil then
+                    ComponentSetValue( item, "preferred_inventory", "FULL" );
+                end
+            end
+        end
+    end
+]]
+
+
+local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
 --[[ Champions ]]
 if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
-    local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
     for _,entity in pairs( nearby_enemies ) do
         SetRandomSeed( x, y );
         if EntityHasTag( entity, "gkbrkn_force_champion" ) == true or EntityHasTag( entity, "gkbrkn_champions" ) == false then
@@ -407,10 +446,13 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                     ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 2 ) );
                     ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
                     ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_up" ) ) * 3 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_down" ) ) * 3 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_change_spd" ) ) * 3 ) );
-                    ComponentSetMetaCustom( character_platforming, "fly_velocity_x", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) ) * 3 ) );
+                    local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
+                    ComponentSetMetaCustom( character_platforming, "fly_velocity_x", tostring( fly_velocity_x * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_smooth_y", "0" );
+                    ComponentSetValue( character_platforming, "fly_speed_mult", tostring( fly_velocity_x * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( fly_velocity_x * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( fly_velocity_x * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( fly_velocity_x * 2 ) );
                 end
                 local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
                 if damage_models ~= nil then
@@ -444,6 +486,10 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
 
                         local critical_damage_resistance = tonumber( ComponentGetValue( damage_model, "critical_damage_resistance" ) );
                         ComponentSetValue( damage_model, "critical_damage_resistance", tostring( math.max( critical_damage_resistance, 0.67 ) ) );
+                    
+                        local minimum_knockback_force = tonumber( ComponentGetValue( damage_model, "minimum_knockback_force" ) );
+                        ComponentSetValue( damage_model, "minimum_knockback_force", tostring( math.max( minimum_knockback_force * 2, 10 ) ) );
+                        
                     end
                 end
                 local badges = EntityLoad( "files/gkbrkn/misc/champion_enemies/badges.xml");
@@ -520,7 +566,6 @@ end
 
 --[[ Health Bars ]]
 if HasFlagPersistent( MISC.HealthBars.Enabled ) then
-    local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
     for _,entity in pairs( nearby_enemies ) do
         if EntityGetFirstComponent( entity, "HealthBarComponent" ) == nil then
             EntityAddComponent( entity, "HealthBarComponent" );
@@ -542,6 +587,60 @@ if HasFlagPersistent( MISC.HealthBars.Enabled ) then
                 visible="1",
                 z_index="-9000",
             });
+        end
+    end
+end
+
+--[[ Hard Mode Scaling ]]
+-- TODO find a better weay to target enemies and bosses (dragon, pyramid, centipede)
+if HasFlagPersistent( MISC.HeroMode.Enabled ) then
+    for _,nearby in pairs( nearby_enemies ) do
+        if EntityGetVariableNumber( nearby, "gkbrkn_hard_mode", 0.0 ) == 0 then
+            EntitySetVariableNumber( nearby, "gkbrkn_hard_mode", 1.0 );
+            local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
+            if damage_models ~= nil then
+                local resistances = {
+                    ice = 0.50,
+                    electricity = 0.50,
+                    radioactive = 0.50,
+                    slice = 0.50,
+                    projectile = 0.50,
+                    healing = 0.50,
+                    physics_hit = 0.50,
+                    explosion = 0.50,
+                    poison = 0.50,
+                    melee = 0.50,
+                    drill = 0.50,
+                    fire = 0.50,
+                };
+                local orb_multiplier =  1;
+                if HasFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
+                    orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
+                end
+                local distance_multiplier = 1;
+                if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
+                    local x, y = EntityGetTransform( nearby, x, y )
+                    local distance = math.sqrt( x * x + y * y );
+                    if distance ~= 0 then
+                        distance_multiplier =  math.pow( 0.9, math.floor(distance / 3000) );
+                    end
+                end
+                local resistance_multiplier = orb_multiplier * distance_multiplier;
+                for index,damage_model in pairs( damage_models ) do
+                    for damage_type,multiplier in pairs( resistances ) do
+                        local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                        resistance = resistance * multiplier * orb_multiplier * distance_multiplier;
+                        ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                    end
+                end
+            end
+        end
+        -- only do it twice a second to reduce performance hit
+        if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hard_mode", 0.0 ) == 1 then
+            local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
+            for _,ai in pairs( animal_ais ) do
+                ComponentSetValue( ai, "mGreatestPrey", tostring( entity ) );
+            end
         end
     end
 end
@@ -597,6 +696,204 @@ if CONTENT[TWEAKS.Blindness].enabled() then
         end
     end
 end
+
+--[[ Projectile Capture ]]
+GlobalsSetValue( "gkbrkn_fired_projectiles", "" );
+
+function EntitiesAverageMemberList( entities, component_type, member_list, rounded, overrides )
+    local averages = {};
+    local overridden = {};
+    for _,member in pairs(member_list) do
+        averages[member] = 0;
+    end
+    local components = {};
+    for _,entity in pairs(entities) do
+        for _,component in pairs( EntityGetComponent( entity, component_type ) or {} ) do
+            table.insert( components, component );
+        end
+    end
+    for _,component in pairs( components ) do
+        local members = ComponentGetMembers( component );
+        for _,member in pairs(member_list) do
+            averages[member] = averages[member] + members[member];
+        end
+        for member,value in pairs(overrides or {}) do
+            if overridden[member] == nil and members[member] == value then
+                overridden[member] = members[member];
+            end
+        end
+    end
+    for _,member in pairs(member_list) do
+        averages[member] = averages[member] / #entities;
+        if (rounded or {})[member] ~= nil then
+            averages[member] = math.floor( averages[member] + 0.5 );
+        end
+    end
+    for _,component in pairs( components ) do
+        for _,member in pairs(member_list) do
+            ComponentSetValue( component, member, averages[member] );
+        end
+        for member,value in pairs(overridden) do
+            ComponentSetValue( component, member, value );
+        end
+    end
+end
+
+function mean_angle ( angles )
+    local sumSin, sumCos = 0, 0;
+    for i, angle in pairs( angles ) do
+        sumSin = sumSin + math.sin( angle );
+        sumCos = sumCos + math.cos( angle );
+    end
+    return math.atan2( sumSin, sumCos );
+end
+
+local projectile_entities = EntityGetWithTag("gkbrkn_formation_stack") or {};
+if #projectile_entities > 0 then
+    local stack_distance = 5;
+    local captured_projectiles = "";
+    for i,projectile in pairs(projectile_entities) do
+    end
+        local angles = {};
+    local magnitudes = {};
+    local velocities = {};
+    for i,projectile in pairs(projectile_entities) do
+        EntityRemoveTag( projectile, "gkbrkn_formation_stack" );
+
+        local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
+        if velocity ~= nil then
+            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local angle = math.atan2( vy, vx );
+            local magnitude = vx * vx + vy * vy;
+            if magnitude ~= 0 then table.insert( angles, angle ); end
+            table.insert( velocities, velocity );
+            table.insert( magnitudes, magnitude );
+        end
+    end
+    local average_angle = mean_angle( angles );
+    for i,projectile in pairs( projectile_entities ) do
+        local velocity = velocities[i];
+        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+        local angle = math.atan2( vy, vx );
+        local magnitude = magnitudes[i];
+        local x, y = EntityGetTransform( projectile );
+        --x = x - math.cos( angle ) * math.sqrt(magnitude) / 60;
+        --y = y - math.sin( angle ) * math.sqrt(magnitude) / 60;
+        local offset = (stack_distance * #projectile_entities) - stack_distance * i - stack_distance * (#projectile_entities-1) / 2;
+        EntitySetTransform( projectile, x + math.cos( average_angle - math.pi / 2 ) * offset, y + math.sin( average_angle - math.pi / 2 ) * offset );
+        --ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * magnitude, math.sin( average_angle ) * magnitude );
+    end
+end
+
+projectile_entities = EntityGetWithTag("gkbrkn_spell_merge");
+if #projectile_entities > 0 then
+    local leader = projectile_entities[1];
+    EntitiesAverageMemberList( projectile_entities, "ProjectileComponent", {
+         "lifetime", "bounces_left", "bounce_energy",
+        "ground_penetration_coeff", "knockback_force", "ragdoll_force_multiplier", "camera_shake_when_shot",
+        "angular_velocity", "friction"
+    },
+    { bounces_left = true },
+    { bounce_at_any_angle="1", bounce_always="1" } );
+    EntitiesAverageMemberList( projectile_entities, "VelocityComponent", { 
+        "gravity_x", "gravity_y", "mass", "air_friction", "terminal_velocity"
+    } );
+    local average_velocity_magnitude = 0;
+    local angles = {};
+    for i,entity in pairs( projectile_entities ) do
+        EntityRemoveTag( entity, "gkbrkn_spell_merge" );
+        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+        local angle = math.atan2( vy, vx );
+        local magnitude = math.sqrt(vx * vx + vy * vy);
+        average_velocity_magnitude = average_velocity_magnitude + magnitude;
+
+        -- ignore projectiles that don't move
+        if magnitude ~= 0 then table.insert( angles, angle ); end
+
+    end
+    local average_angle = mean_angle( angles );
+    average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
+    for i,entity in pairs( projectile_entities ) do
+        if entity == leader then
+            local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local angle = math.atan2( vy, vx );
+            ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
+        else
+            EntitySetVariableString( entity, "gkbrkn_soft_parent", tostring( leader ) );
+        end
+        EntityAddComponent( entity, "LuaComponent", {
+            execute_on_added="1",
+            execute_every_n_frame="1",
+            script_source_file="files/gkbrkn/actions/spell_merge/projectile_update.lua",
+        });
+    end
+end
+
+projectile_entities = EntityGetWithTag("gkbrkn_projectile_orbit");
+if #projectile_entities > 0 then
+    local leader = projectile_entities[1];
+    local velocity = EntityGetFirstComponent( leader, "VelocityComponent" );
+    if velocity ~= nil then
+        local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
+        local previous_projectile = nil;
+        local leader = nil;
+        for i,projectile in pairs(projectile_entities) do
+            EntityRemoveTag( projectile, "gkbrkn_projectile_orbit" );
+            if previous_projectile ~= nil then
+                EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
+                EntityAddComponent( projectile, "VariableStorageComponent", {
+                    _tags="gkbrkn_orbit",
+                    name="gkbrkn_orbit",
+                    value_string=tostring(#projectile_entities);
+                    value_int=tostring(i-1);
+                } );
+                EntityAddComponent( projectile, "LuaComponent", {
+                    execute_on_added="1",
+                    execute_every_n_frame="1",
+                    script_source_file="files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
+                });
+                if projectile ~= leader then
+                    local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
+                    local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
+                    ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+                end
+            else
+                leader = projectile;
+            end
+            previous_projectile = projectile;
+        end
+    end
+end
+
+local projectile_entities = EntityGetWithTag("gkbrkn_projectile_gravity_well");
+if #projectile_entities > 0 then
+    local previous_projectile = nil;
+    local leader = nil;
+    for i,projectile in pairs(projectile_entities) do
+        EntityRemoveTag( projectile, "gkbrkn_projectile_gravity_well" );
+        if previous_projectile ~= nil then
+            EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
+            local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
+            local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
+            if projectile ~= nil and leader_projectile ~= nil then
+                local leader_lifetime = tonumber( ComponentGetValue( leader_projectile, "lifetime" ) );
+                local projectile_lifetime = tonumber( ComponentGetValue( projectile, "lifetime" ) );
+                ComponentSetValue( projectile, "lifetime", tostring( leader_lifetime + projectile_lifetime ) );
+            end
+        else
+            leader = projectile;
+            local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
+            if velocity ~= nil then
+                ComponentSetValue( velocity, "gravity_y", "0" )
+                ComponentSetValue( velocity, "air_friction", "0" )
+            end
+        end
+        previous_projectile = projectile;
+    end
+end
+
 
 local update_time = GameGetRealWorldTimeSinceStarted() - t;
 GlobalsSetValue("gkbrkn_update_time",update_time);

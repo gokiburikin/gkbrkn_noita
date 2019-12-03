@@ -45,3 +45,15 @@ function ComponentAdjustValues( component, member_callback_table )
         ComponentSetValue( component, member, tostring( callback( ComponentGetValue( component, member ) ) ) );
     end
 end
+
+function ComponentObjectSetValues( component, object, member_value_table )
+    for member,new_value in pairs(member_value_table) do
+        ComponentObjectSetValue( component, object, member, tostring( new_value ) );
+    end
+end
+
+function ComponentObjectAdjustValues( component, object, member_callback_table )
+    for member,callback in pairs(member_callback_table) do
+        ComponentObjectSetValue( component, object, member, tostring( callback( ComponentObjectGetValue( component, object, member ) ) ) );
+    end
+end
