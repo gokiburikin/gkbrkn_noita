@@ -1,5 +1,5 @@
-if loadout_list ~= nil then
-    for _,loadout_data in pairs( loadout_list ) do
+if loadouts_to_parse ~= nil then
+    for _,loadout_data in pairs( loadouts_to_parse ) do
         local id = "parse_"..loadout_data.folder;
         local name = loadout_data.name;
         local cape_color = loadout_data.cape_color;
@@ -18,7 +18,7 @@ if loadout_list ~= nil then
         for _,perk_data in pairs( loadout_data.perks or {} ) do
             table.insert( perks, { perk_data } );
         end
-        register_loadout( id, name, cape_color, cape_edge_color, {}, {}, items, perks, {}, loadout_data.sprites );
+        register_loadout( id, name, loadout_data.author, cape_color, cape_edge_color, {}, {}, items, perks, {}, loadout_data.sprites );
     end
 end
 

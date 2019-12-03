@@ -3,7 +3,7 @@ dofile_once( "files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c57"
+    Version = "c58"
 }
 
 CONTENT_TYPE = {
@@ -831,9 +831,19 @@ MISC = {
     }
 }
 
-function register_loadout( id, name, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
-    local content_id = register_content( CONTENT_TYPE.Loadout, id, string.gsub( name, "TYPE", "" ), {
+function trim(s)
+   local from = s:match"^%s*()"
+   return from > #s and "" or s:match(".*%S", from)
+end
+
+function register_loadout( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
+    local display_name = trim(string.gsub( name, "TYPE", "" ));
+    if author ~= nil then
+        display_name = display_name .. " ("..author..")";
+    end
+    local content_id = register_content( CONTENT_TYPE.Loadout, id, display_name, {
         name = name,
+        author = author,
         cape_color = cape_color,
         cape_color_edge = cape_color_edge,
         wands = wands,
@@ -853,6 +863,7 @@ if SETTINGS.Debug then
     register_loadout(
         "gkbrkn_debug", -- unique identifier
         "Debug TYPE", -- displayed loadout name
+        "goki",
         nil, -- cape color (ABGR)
         nil, -- cape edge color (ABGR)
         { -- wands

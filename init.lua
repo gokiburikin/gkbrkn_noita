@@ -184,14 +184,6 @@ if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/loose_spell_generation.lua" );
 end
 
-if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
-    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
-end
-
-if HasFlagPersistent( MISC.UnlimitedAmmo.Enabled ) then
-    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/unlimited_ammo.lua" );
-end
-
 ModLuaFileAppend( "data/scripts/items/drop_money.lua", "files/gkbrkn/misc/charm_nerf.lua" );
 ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "files/gkbrkn/append/gun_procedural.lua" );
 ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "files/gkbrkn/misc/wand_shops_only.lua" );
@@ -217,13 +209,25 @@ function try_consume( init_filepath, support_append_filepath )
     end
 end
 
-try_consume( "mods/starting_loadouts/init.lua", "files/gkbrkn_loadouts/starting_loadouts_support.lua" );
-try_consume( "mods/more_loadouts/init.lua", "files/gkbrkn_loadouts/more_loadouts_support.lua" );
-try_consume( "mods/Kaelos_Archetypes/init.lua", "files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );
+if HasFlagPersistent( MISC.Loadouts.Enabled ) then
+    try_consume( "mods/starting_loadouts/init.lua", "files/gkbrkn_loadouts/starting_loadouts_support.lua" );
+    try_consume( "mods/more_loadouts/init.lua", "files/gkbrkn_loadouts/more_loadouts_support.lua" );
+    try_consume( "mods/Kaelos_Archetypes/init.lua", "files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );
+end 
 
 function OnModPreInit()
     -- append the logic to parse the old loadouts as new loadouts 
     ModLuaFileAppend( "files/gkbrkn_loadouts/loadouts.lua", "files/gkbrkn_loadouts/parse_old_loadouts.lua" );
     -- slap the fully combined set of loadout files onto the end of config so it can be caught by the config menu and performed
     ModLuaFileAppend( "files/gkbrkn/config.lua", "files/gkbrkn_loadouts/loadouts.lua" );
+end
+
+function OnModPostInit()
+    if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/limited_ammo.lua" );
+    end
+
+    if HasFlagPersistent( MISC.UnlimitedAmmo.Enabled ) then
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "files/gkbrkn/misc/unlimited_ammo.lua" );
+    end
 end

@@ -269,7 +269,11 @@ if HasFlagPersistent( MISC.Loadouts.Enabled) then
         end
 
         if loadout_data.custom_message == nil then
-            GamePrintImportant( "You're a " .. loadout_name .. "!", "" );
+            local note = "";
+            if loadout_data.author ~= nil then
+                note = "By "..loadout_data.author;
+            end
+            GamePrintImportant( "You're a " .. loadout_name .. "!", note );
         elseif loadout_data.custom_message ~= "" then
             GamePrintImportant( loadout_data.custom_message, "" );
         end

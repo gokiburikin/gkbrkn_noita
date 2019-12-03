@@ -13,7 +13,7 @@ local gui_id = 1707;
 local gui_require_restart = false;
 local wrap_threshold = 18;
 local wrap_limit = 2;
-local wrap_size = 25;
+local wrap_size = 28;
 local last_time = 0;
 local fps_easing = 20;
 local current_fps = 0;
@@ -85,7 +85,7 @@ end
 function do_gui()
     id_offset = 0;
     GuiStartFrame(gui);
-    GuiLayoutBeginVertical( gui, 86, 0 );
+    GuiLayoutBeginVertical( gui, 86, 0 ); -- fold vertical
     local main_text = "[Goki's Things "..SETTINGS.Version.."]";
     if gui_require_restart == true then
         main_text = main_text.."*"
@@ -97,17 +97,17 @@ function do_gui()
             change_screen( SCREEN.Options );
         end
     end
-    GuiLayoutEnd( gui );
+    GuiLayoutEnd( gui ); -- fold vertical
     if SETTINGS ~= nil and SETTINGS.Debug then
         GuiLayoutBeginVertical( gui, 92, 93 );
         local update_time = tonumber( GlobalsGetValue("gkbrkn_update_time") ) or 0;
         GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
         GuiLayoutEnd( gui );
     end
-    GuiLayoutBeginVertical( gui, 1, 12 );
-    
+
+    GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
     if screen ~= 0 then
-        GuiLayoutBeginHorizontal( gui, 0, 0 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
         for index,tab_data in pairs( tabs ) do
             local tab_title = tab_data.name;
             local is_current_tab = false;
@@ -126,7 +126,7 @@ function do_gui()
                 end
             end
         end
-        GuiLayoutEnd( gui );
+        GuiLayoutEnd( gui ); -- tabs horizontal
     end
 
     if screen == SCREEN.Options then
@@ -143,7 +143,7 @@ function do_gui()
             if option.sub_option == nil and index > ( wrap_index + 1 ) * wrap_threshold then
                 wrap_index = wrap_index + 1;
                 GuiLayoutEnd( gui );
-                GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 4 );
+                GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 0 );
             end
             do_option( option, index );
         end
@@ -170,7 +170,7 @@ function do_gui()
         local filtered_content = filter_content( sorted_content, content_type );
         --for index,action_id in pairs( sorted_actions ) do
         GuiText( gui, 0, 0, " ");
-        GuiLayoutBeginHorizontal( gui, 0, 0 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
         if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
             change_screen( 0 );
         end
@@ -193,15 +193,19 @@ function do_gui()
             end
             gui_require_restart = true;
         end
-        GuiLayoutEnd( gui );
+        GuiLayoutEnd( gui ); -- quick bar horizontal
         
         do_pagination( filtered_content, wrap_threshold * wrap_limit );
 
+        GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
         GuiText( gui, 0, 0, " " );
-
-        GuiLayoutBeginVertical( gui, 0, 0 );
-        local start_index = 1+page * wrap_threshold;
+        local start_index = 1+page * wrap_threshold * wrap_limit;
+        local option_index = 0;
         for i=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
+            if option_index >= wrap_threshold then
+                GuiLayoutEnd( gui ); -- content wrapping vertical
+                GuiLayoutBeginVertical( gui, wrap_size * math.floor( option_index / wrap_threshold ), 0 ); -- content wrapping vertical
+            end
             local content = CONTENT[ filtered_content[i].id ];
             local text = "";
             local flag = get_content_flag( content.id );
@@ -213,22 +217,20 @@ function do_gui()
                 end
                 text = text .. " "..content.name;
             end
+            
             if GuiButton( gui, 0, 0, text, next_id() ) then
                 gui_require_restart = true;
                 content.toggle();
             end
-            if i % wrap_threshold == 0 then
-                GuiLayoutEnd( gui );
-                GuiLayoutBeginVertical( gui, wrap_size * math.floor( i / wrap_threshold ), 0 );
-            end
+            option_index = option_index + 1;
         end
         if gui_require_restart == true then
             GuiText( gui, 0, 0, " ");
             GuiText( gui, 0, 0, "restart required *");
         end
-        GuiLayoutEnd( gui );
+        GuiLayoutEnd( gui ); -- content wrapping vertical
     end
-    GuiLayoutEnd( gui );
+    GuiLayoutEnd( gui ); -- main vertical
     if HasFlagPersistent( MISC.ShowFPS.Enabled ) then
         local now = GameGetRealWorldTimeSinceStarted();
         local fps = 1 / (now - last_time);

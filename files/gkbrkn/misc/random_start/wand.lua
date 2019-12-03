@@ -48,6 +48,7 @@ gun.limited_projectile_actions = {};
 gun.cost_actions = {};
 gun.modifier_actions = {};
 gun.utility_actions = {};
+gun.all_actions = {};
 
 local blacklist = {
     projectile_actions = { TELEPORT_PROJECTILE=false, PIPE_BOMB_DETONATOR },
@@ -55,6 +56,7 @@ local blacklist = {
     cost_actions = { },
     modifier_actions = { },
     utility_actions = { },
+    all_actions = { },
 };
 
 for index,action in pairs(actions) do
@@ -89,6 +91,9 @@ for index,action in pairs(actions) do
                 end
             end
         end
+        if blacklist.all_actions[action.id] == nil then
+            table.insert( gun.all_actions, action.id );
+        end
     end
 end
 
@@ -120,13 +125,20 @@ while action_count > 0 do
     if pool == "projectile_actions" and #gun[pool] == 0 then
         pool ="limited_projectile_actions";
     end
+    if pool == "cost_actions" and #gun[pool] == 0 then
+        pool ="all_actions";
+    end
     local random_action = random_from_array( gun[pool] );
-    -- TODO don't add spells we can't cast
-    --local mana_use = random_action.mana;
-    --if mana_use <= mana_max then
-        AddGunAction( entity_id, random_action );
+    if random_action ~= nil  and random_action ~= "" then
+        -- TODO don't add spells we can't cast
+        --local mana_use = random_action.mana;
+        --if mana_use <= mana_max then
+            AddGunAction( entity_id, random_action );
+            action_count = action_count - 1;
+        --end
+    else
         action_count = action_count - 1;
-    --end
+    end
 end
 
 local wand = random_from_array(wands);

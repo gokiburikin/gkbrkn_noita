@@ -19,7 +19,7 @@ This mod supports custom loadout registration and is backwards compatible with s
 - [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
 - [x] **Champions**: Some enemies will be Champions with dangerous attributes.
-- [x] **Hard Mode**: Enemies gain resistances and treat you as the most important target.
+- [x] **Hero Mode**: Enemies gain resistances and treat you as the most important target.
 - [x] **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
 - [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
 - [x] **Any Spell On Any Wand**: Allows any standard spell (projectile, modifier, multicast) to spawn on any generated wand, ignoring spawn level.
