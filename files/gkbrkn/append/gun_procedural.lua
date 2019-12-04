@@ -9,7 +9,7 @@ local extended_types = {
     ACTION_TYPE_UTILITY,
     ACTION_TYPE_PASSIVE
 };
-local chance_to_replace = 1;
+local chance_to_replace = 0.03;
 function generate_gun( cost, level, force_unshuffle)
     _generate_gun( cost, level, force_unshuffle );
     if HasFlagPersistent( MISC.ChaoticWandGeneration.Enabled ) then

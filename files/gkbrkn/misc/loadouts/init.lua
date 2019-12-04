@@ -1,5 +1,5 @@
 dofile( "files/gkbrkn/config.lua" );
-if HasFlagPersistent( MISC.Loadouts.Enabled) then
+if HasFlagPersistent( MISC.Loadouts.Enabled ) then
     dofile_once( "data/scripts/perks/perk.lua" );
     dofile_once("data/scripts/lib/utilities.lua");
     dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");

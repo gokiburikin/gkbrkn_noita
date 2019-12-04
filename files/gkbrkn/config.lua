@@ -3,7 +3,7 @@ dofile_once( "files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c58"
+    Version = "c59"
 }
 
 CONTENT_TYPE = {
@@ -244,7 +244,6 @@ CHAMPION_TYPES = {
                     ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
                     ComponentSetValue( ai, "attack_ranged_entity_count_max", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_max" ) + 2 ) ) );
                     ComponentSetValue( ai, "attack_ranged_state_duration_frames", "1" );
-                    
                 end
             end
         end
@@ -484,6 +483,65 @@ CHAMPION_TYPES = {
             end
         end
     }),
+    ProjectileBounce = register_content( CONTENT_TYPE.ChampionType, "projectile_bounce", "Projectile Bounce", {
+        particle_material = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/projectile_bounce.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_projectile_bounce.lua",
+            });
+        end
+    }),
+    Eldritch = register_content( CONTENT_TYPE.ChampionType, "eldritch", "Eldritch", {
+        particle_material = nil,
+        badge = "files/gkbrkn/misc/champion_enemies/sprites/eldritch.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack == false;
+        end,
+        apply = function( entity )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValues( ai, {
+                        attack_ranged_action_frame="4",
+                        attack_ranged_min_distance="0",
+                        attack_ranged_max_distance="150",
+                        attack_ranged_entity_file="data/entities/projectiles/tongue.xml",
+                        attack_ranged_offset_x="0",
+                        attack_ranged_offset_y="0",
+                        attack_ranged_enabled="1",
+                    });
+                end
+            end
+        end
+    }),
     InvincibilityFrames = register_content( CONTENT_TYPE.ChampionType, "invincibility_frames", "Invincibility Frames", {
         particle_material = nil,
         badge = "files/gkbrkn/misc/champion_enemies/sprites/invincibility_frames.xml",
@@ -656,8 +714,14 @@ OPTIONS = {
         Name = "Loadouts",
     },
     {
-        Name = "Enabled",
-        PersistentFlag = "gkbrkn_loadouts",
+        Name = "Manage",
+        PersistentFlag = "gkbrkn_loadouts_manage",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = "Enable Loadouts",
+        PersistentFlag = "gkbrkn_loadouts_enabled",
         SubOption = true,
         RequiresRestart = true,
     },
@@ -820,7 +884,8 @@ MISC = {
         Enabled = "gkbrkn_target_dummy",
     },
     Loadouts = {
-        Enabled = "gkbrkn_loadouts",
+        Manage = "gkbrkn_loadouts_manage",
+        Enabled = "gkbrkn_loadouts_enabled",
         CapeColorEnabled = "gkbrkn_loadouts_cape_color",
         PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
     },

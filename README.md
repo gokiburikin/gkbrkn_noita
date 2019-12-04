@@ -24,6 +24,7 @@ This mod supports custom loadout registration and is backwards compatible with s
 - [x] **Heal On Max Health Up**: Heals the health gained from max health pickups.
 - [x] **Any Spell On Any Wand**: Allows any standard spell (projectile, modifier, multicast) to spawn on any generated wand, ignoring spawn level.
 - [x] **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
+- [x] **Chaotic Wand Generation**: Replace all spells on a wand with random spells.
 - [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
 - [x] **Passive Recharge**: Wands recharge while holstered.
 - [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.

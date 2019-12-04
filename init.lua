@@ -17,6 +17,7 @@ api issues
 
 changelog
 
+
 kill streaks events
 grze events
 passives as mini perks
@@ -209,7 +210,7 @@ function try_consume( init_filepath, support_append_filepath )
     end
 end
 
-if HasFlagPersistent( MISC.Loadouts.Enabled ) then
+if HasFlagPersistent( MISC.Loadouts.Manage ) then
     try_consume( "mods/starting_loadouts/init.lua", "files/gkbrkn_loadouts/starting_loadouts_support.lua" );
     try_consume( "mods/more_loadouts/init.lua", "files/gkbrkn_loadouts/more_loadouts_support.lua" );
     try_consume( "mods/Kaelos_Archetypes/init.lua", "files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );

@@ -9,8 +9,10 @@ function ShootProjectile( who_shot, entity_file, x, y, vx, vy, send_message )
 	GameShootProjectile( who_shot, x, y, x+vx, y+vy, entity, send_message );
 
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
-    ComponentSetValue( projectile, "mWhoShot", who_shot );
-    ComponentSetMetacustom( projectile, "mShooterHerdId", herd_id );
+    if projectile ~= nil then
+        ComponentSetValue( projectile, "mWhoShot", who_shot );
+        ComponentSetMetaCustom( projectile, "mShooterHerdId", herd_id );
+    end
 
     local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
     if velocity ~= nil then
@@ -235,9 +237,9 @@ function CopyEntityComponentObject( component_type_name, component_object_name, 
 end
 
 function WandGetAbilityComponent( wand )
-    local components = EntityGetAllComponents( wand );
-    for i, component in ipairs( components ) do
-        for key, value in pairs( ComponentGetMembers( component ) ) do
+    local components = EntityGetAllComponents( wand ) or {};
+    for _, component in pairs( components ) do
+        for key, value in pairs( ComponentGetMembers( component ) or {} ) do
             if key == "mItemRecoil" then
                 return component;
             end
