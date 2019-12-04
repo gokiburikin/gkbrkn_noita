@@ -1,6 +1,6 @@
 if GKBRKN_WAND_SHOPS_ONLY_INIT == nil then
     GKBRKN_WAND_SHOPS_ONLY_INIT = true;
-    dofile_once( "files/gkbrkn/config.lua" );
+    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 end
 
 _generate_shop_item = generate_shop_item;

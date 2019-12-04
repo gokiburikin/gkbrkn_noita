@@ -47,7 +47,7 @@
 	<LuaComponent 
 		_enabled="1" 
 		remove_after_executed="0"
-		script_source_file="files/gkbrkn/actions/wip/projectile_update.lua" 
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/wip/projectile_update.lua" 
 		execute_every_n_frame="1">
 	</LuaComponent>
 	

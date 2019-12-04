@@ -58,6 +58,7 @@ This mod supports custom loadout registration and is backwards compatible with s
 - [x] **Lost Treasure**: Recover the Gold Nuggets that were left behind.
 - [x] **Mana Recovery**: Your wands charge more quickly.
 - [x] **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
+- [x] **Multicast**: You cast 2 additional spells per cast.
 - [x] **Passive Recharge**: Your wands recharge even when holstered.
 - [x] **Protagonist**: Your damage increases the more damaged you are.
 - [x] **Rapid Fire**: Cast spells more rapidly, but less accurately.

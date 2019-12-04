@@ -1,5 +1,5 @@
-dofile_once( "files/gkbrkn/config.lua");
-dofile_once( "files/gkbrkn/helper.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "data/scripts/lib/coroutines.lua" );
 
 local SCREEN = {

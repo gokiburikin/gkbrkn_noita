@@ -1,4 +1,4 @@
-dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 TWO_PI = math.pi * 2;
 ORBIT_RADIUS = 8;
 ORBIT_SPEED = 8;

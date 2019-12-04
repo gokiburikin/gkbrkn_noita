@@ -2,7 +2,7 @@
     <SpriteComponent
         _enabled="1"
         _tags="enabled_in_world"
-        image_file="files/gkbrkn/misc/screen_fill.png",
+        image_file="mods/gkbrkn_noita/files/gkbrkn/misc/screen_fill.png",
         z_index="-100",
         ui_is_parent="1"
     ></SpriteComponent>

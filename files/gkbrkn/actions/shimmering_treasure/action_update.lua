@@ -29,7 +29,7 @@ for _,nearby in pairs( nearby_entities ) do
     if shimmer == true then
         local nearby_x, nearby_y = EntityGetTransform( nearby );
         local offset_distance = 2;
-        local shimmer = EntityLoad( "files/gkbrkn/actions/shimmering_treasure/shimmer.xml", nearby_x + Random(-offset_distance, offset_distance), nearby_y + Random(-offset_distance, offset_distance) );
+        local shimmer = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/actions/shimmering_treasure/shimmer.xml", nearby_x + Random(-offset_distance, offset_distance), nearby_y + Random(-offset_distance, offset_distance) );
         EntityAddChild( nearby, shimmer );
     end
 end

@@ -2,7 +2,7 @@
 
 	<AbilityComponent
 		_enabled="1" 
-		sprite_file="files/gkbrkn_loadouts/wands/wand_1_sprite.xml"
+		sprite_file="mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_1_sprite.xml"
 		swim_propel_amount="0"
 		ui_name="Base Wand"
 		drop_as_item_on_death="0"

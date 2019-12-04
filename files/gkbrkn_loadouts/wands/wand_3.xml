@@ -1,6 +1,6 @@
 <Entity tags="wand">
-	<Base file="files/gkbrkn_loadouts/wands/wand_1.xml" >
-        <AbilityComponent sprite_file="files/gkbrkn_loadouts/wands/wand_3_sprite.xml" ></AbilityComponent>
+	<Base file="mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_1.xml" >
+        <AbilityComponent sprite_file="mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_3_sprite.xml" ></AbilityComponent>
     </Base>
 </Entity>
 

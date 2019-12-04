@@ -2,7 +2,7 @@
 <InheritTransformComponent>
 </InheritTransformComponent>
 <LuaComponent
-script_source_file="files/gkbrkn/misc/champion_enemies/badges_update.lua"
+script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/badges_update.lua"
 >
 </LuaComponent>
 </Entity>

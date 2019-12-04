@@ -34,7 +34,7 @@
 	>
 	</HitboxComponent>
     <LuaComponent
-        script_damage_received="files/gkbrkn/misc/dps_tracker.lua"
+        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
     >
     </LuaComponent>
 </Entity>

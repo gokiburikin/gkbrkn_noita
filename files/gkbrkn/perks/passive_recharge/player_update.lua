@@ -1,4 +1,4 @@
-dofile_once("files/gkbrkn/helper.lua")
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua")
 
 local entity = GetUpdatedEntityID();
 local children = EntityGetAllChildren( entity );

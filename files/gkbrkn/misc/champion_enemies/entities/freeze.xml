@@ -15,7 +15,7 @@
   <ProjectileComponent 
     damage="0"
     friendly_fire="0"
-    damage_game_effect_entities="files/gkbrkn/misc/champion_enemies/entities/effect_freeze.xml,"
+    damage_game_effect_entities="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/effect_freeze.xml,"
     >
     </ProjectileComponent>
 </Entity>

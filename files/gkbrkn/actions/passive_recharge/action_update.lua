@@ -1,4 +1,4 @@
-then dofile_once( "files/gkbrkn/helper.lua");
+then dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local parent_wand = EntityGetParent( GetUpdatedEntityID() );
 local ability = WandGetAbilityComponent( parent_wand, "AbilityComponent" );
 if ability ~= nil then

@@ -1,4 +1,4 @@
-dofile_once( "files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 
 local edit_callbacks = {
     MANA_REDUCE = function( action, index )
@@ -48,7 +48,7 @@ local edit_callbacks = {
     end,
     AREA_DAMAGE = function( action, index )
         action.action = function()
-			c.extra_entities = c.extra_entities .. "files/gkbrkn/tweaks/actions/area_damage.xml,";
+			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/area_damage.xml,";
 			draw_actions( 1, true );
 		end
     end

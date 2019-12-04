@@ -1,6 +1,6 @@
-dofile_once( "files/gkbrkn/lib/variables.lua" );
-dofile_once( "files/gkbrkn/config.lua" );
-dofile_once( "files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 
 --GamePrint( GetUpdatedEntityID() );
 
@@ -14,9 +14,9 @@ function IsGoldNuggetDecayTracked( entity )
     return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_gold_decay" ) ~= nil;
 end
 
-local entity = GetUpdatedEntityID();
-local x, y = EntityGetTransform( entity );
-local children = EntityGetAllChildren( entity ) or {};
+local player_entity = GetUpdatedEntityID();
+local x, y = EntityGetTransform( player_entity );
+local children = EntityGetAllChildren( player_entity ) or {};
 
 --[[ material immunities
 TODO still can't really make use of this without polymorphing
@@ -38,7 +38,7 @@ end
 
 --[[ Invincibility Frames ]]
 if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
-    local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+    local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
     local max_invincibility_frames = 0;
     for _,damage_model in pairs( damage_models ) do
         local invincibility_frames = tonumber(ComponentGetValue( damage_model, "invincibility_frames" ));
@@ -49,7 +49,7 @@ if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
 
     if max_invincibility_frames > 0 then
         local sprites = {};
-        local children = { entity };
+        local children = { player_entity };
         for _,child in pairs( children ) do
             local child_sprites = EntityGetComponent( child, "SpriteComponent" );
             if child_sprites ~= nil and #child_sprites > 0 then
@@ -78,10 +78,10 @@ if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
 end
 
 --[[ Mana Recovery ]]
-local mana_recovery = EntityGetVariableNumber( entity, "gkbrkn_mana_recovery", 0 );
+local mana_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_mana_recovery", 0 );
 if mana_recovery ~= 0 then
     local valid_wands = {};
-    local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if inventory2 ~= nil then
         for key, child in pairs( children ) do
             if EntityGetName( child ) == "inventory_quick" then
@@ -104,13 +104,13 @@ if mana_recovery ~= 0 then
 end
 
 --[[ Passive Recharge ]]
-local recharge_speed = EntityGetVariableNumber( entity, "gkbrkn_passive_recharge", 0.0 );
+local recharge_speed = EntityGetVariableNumber( player_entity, "gkbrkn_passive_recharge", 0.0 );
 if HasFlagPersistent( MISC.PassiveRecharge.Enabled ) and recharge_speed < MISC.PassiveRecharge.Speed then
     recharge_speed = MISC.PassiveRecharge.Speed;
 end
 if recharge_speed ~= 0 then
     local valid_wands = {};
-    local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     local active_item = ComponentGetValue( inventory2, "mActiveItem" );
     for key, child in pairs( children ) do
         if EntityGetName( child ) == "inventory_quick" then
@@ -137,7 +137,7 @@ end
 --[[ Heal New Health ]]
 -- TODO this might eventually need to be changed to variable storage
 last_max_hp = last_max_hp or {};
-local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
 for _,damage_model in pairs( damage_models ) do
     local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
     if last_max_hp[tostring(damage_model)] == nil then
@@ -146,7 +146,7 @@ for _,damage_model in pairs( damage_models ) do
     if max_hp > last_max_hp[tostring(damage_model)] then
         local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
         local hp_difference = max_hp - current_hp;
-        local target_recovery = EntityGetVariableNumber( entity, "gkbrkn_max_health_recovery", 0.0 );
+        local target_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_max_health_recovery", 0.0 );
         if HasFlagPersistent( MISC.HealOnMaxHealthUp.Enabled ) and target_recovery < 1.0 then
             target_recovery = 1.0;
         end
@@ -168,8 +168,8 @@ end
 --[[ Quick Swap ]]
 -- TODO definitely needs more work
 if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
-    local controls = EntityGetFirstComponent( entity, "ControlsComponent" );
-    local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+    local controls = EntityGetFirstComponent( player_entity, "ControlsComponent" );
+    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if controls ~= nil and inventory2 ~= nil then
         local active_item = tonumber(ComponentGetValue( inventory2, "mActiveItem" ));
         if active_item == nil or active_item == 0 or EntityHasTag( active_item, "wand" ) == true then
@@ -178,7 +178,7 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
             if alt_fire == "1" and now == tonumber(alt_fire_frame) then
                 local inventory = nil;
                 local swap_inventory = nil;
-                for _,child in pairs(EntityGetAllChildren( entity )) do
+                for _,child in pairs(EntityGetAllChildren( player_entity )) do
                     if EntityGetName(child) == "inventory_quick" then
                         inventory = child;
                     elseif EntityGetName(child) == "gkbrkn_quick_swap_inventory" then
@@ -186,8 +186,8 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
                     end
                 end
                 if swap_inventory == nil then
-                    swap_inventory = EntityLoad("files/gkbrkn/misc/quick_swap_entity.xml");
-                    EntityAddChild( entity, swap_inventory );
+                    swap_inventory = EntityLoad("mods/gkbrkn_noita/files/gkbrkn/misc/quick_swap_entity.xml");
+                    EntityAddChild( player_entity, swap_inventory );
                 end
                 if inventory ~= nil and swap_inventory ~= nil then
                     local inventory_entities = EntityGetAllChildren( inventory ) or {};
@@ -211,7 +211,7 @@ if gold_tracker_world or gold_tracker_message then
     money_picked_time_last = money_picked_time_last or 0;
     local update_tracker = false;
 
-    local wallet = EntityGetFirstComponent( entity, "WalletComponent" );
+    local wallet = EntityGetFirstComponent( player_entity, "WalletComponent" );
     if wallet ~= nil then
         local money = ComponentGetValue( wallet, "money" );
         if money - last_money > 0 then
@@ -229,12 +229,12 @@ if gold_tracker_world or gold_tracker_message then
                 for _,gold_tracker in pairs( gold_trackers ) do
                     EntityKill( gold_tracker );
                 end
-                local x,y = EntityGetTransform( entity );
-                local text = EntityLoad( "files/gkbrkn/misc/gold_tracking/gold_tracker.xml", x, y );
-                EntityAddChild( entity, text );
+                local x,y = EntityGetTransform( player_entity );
+                local text = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/gold_tracking/gold_tracker.xml", x, y );
+                EntityAddChild( player_entity, text );
                 EntityAddComponent( text, "SpriteComponent", {
                     _tags="enabled_in_world",
-                    image_file="files/gkbrkn/font_pixel_white.xml" ,
+                    image_file="mods/gkbrkn_noita/files/gkbrkn/font_pixel_white.xml" ,
                     emissive="1",
                     is_text_sprite="1",
                     offset_x="8" ,
@@ -276,13 +276,13 @@ for _,nearby in pairs( nearby_entities ) do
                 EntityAddComponent( nearby, "LuaComponent", {
                     execute_every_n_frame = "-1",
                     remove_after_executed = "1",
-                    script_item_picked_up = "files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
+                    script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
                 });
                 EntityAddComponent( nearby, "LuaComponent", {
                     _tags="gkbrkn_lost_treasure",
                     execute_on_removed="1",
                     execute_every_n_frame="-1",
-                    script_source_file = "files/gkbrkn/perks/lost_treasure/gold_removed.lua",
+                    script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
                 });
                 --local ex, ey = EntityGetTransform( entity );
                 --GamePrint( "New nuggy found at "..ex..", "..ey );
@@ -299,13 +299,13 @@ for _,nearby in pairs( nearby_entities ) do
                     EntityAddComponent( nearby, "LuaComponent", {
                         execute_every_n_frame = "-1",
                         remove_after_executed = "1",
-                        script_item_picked_up = "files/gkbrkn/misc/gold_decay/gold_pickup.lua",
+                        script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
                     });
                     EntityAddComponent( nearby, "LuaComponent", {
                         _tags="gkbrkn_gold_decay",
                         execute_on_removed="1",
                         execute_every_n_frame="-1",
-                        script_source_file = "files/gkbrkn/misc/gold_decay/gold_removed.lua",
+                        script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
                     });
                     --local ex, ey = EntityGetTransform( entity );
                     --GamePrint( "New nuggy found at "..ex..", "..ey );
@@ -339,10 +339,10 @@ end
 
 --[[ Material Compression ]]
 -- TODO not sure how heavy this is to run every frame. item pickup & perk pickup event callback instead? look into it
-local succ_bonus = EntityGetFirstComponent( entity, "VariableStorageComponent", "gkbrkn_material_compression" );
+local succ_bonus = EntityGetFirstComponent( player_entity, "VariableStorageComponent", "gkbrkn_material_compression" );
 if succ_bonus ~= nil then
     local current_succ_bonus = tonumber( ComponentGetValue( succ_bonus, "value_string" ) );
-    local children = EntityGetAllChildren( entity );
+    local children = EntityGetAllChildren( player_entity );
     for key, child in pairs( children ) do
         if EntityGetName( child ) == "inventory_quick" then
             for _,item in pairs( EntityGetAllChildren( child ) ) do
@@ -392,16 +392,16 @@ end
 local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
 --[[ Champions ]]
 if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
-    for _,entity in pairs( nearby_enemies ) do
+    for _,nearby in pairs( nearby_enemies ) do
         SetRandomSeed( x, y );
-        if EntityHasTag( entity, "gkbrkn_force_champion" ) == true or EntityHasTag( entity, "gkbrkn_champions" ) == false then
-            EntityAddTag( entity, "gkbrkn_champions" );
-            if EntityHasTag( entity, "gkbrkn_force_champion" ) or HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
-                EntityRemoveTag( entity, "gkbrkn_force_champion" );
+        if EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false then
+            EntityAddTag( nearby, "gkbrkn_champions" );
+            if EntityHasTag( nearby, "gkbrkn_force_champion" ) or HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+                EntityRemoveTag( nearby, "gkbrkn_force_champion" );
                 local valid_champion_types = {};
                 for index,champion_type in pairs( CHAMPION_TYPES ) do
                     local champion_type_data = CONTENT[champion_type].options;
-                    if CONTENT[champion_type].enabled() and (champion_type_data.validator == nil or champion_type_data.validator( entity ) ~= false) then
+                    if CONTENT[champion_type].enabled() and (champion_type_data.validator == nil or champion_type_data.validator( nearby ) ~= false) then
                         table.insert( valid_champion_types, champion_type );
                     end
                 end
@@ -414,10 +414,10 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                 end
                 
                 --[[ Things to apply to all champions ]]
-                EntityAddComponent( entity, "LuaComponent", {
-                    script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_champion.lua"
+                EntityAddComponent( nearby, "LuaComponent", {
+                    script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_champion.lua"
                 });
-                local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+                local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
                 if #animal_ais > 0 then
                     for _,ai in pairs( animal_ais ) do
                         ComponentSetValues( ai, {
@@ -431,17 +431,15 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                             creature_detection_check_every_x_frames="60",
                             creature_detection_angular_range_deg="180",
                             dont_counter_attack_own_herd="1",
-                            mGreatestPrey=entity,
                         });
                         ComponentAdjustValues( ai, {
                             max_distance_to_cam_to_start_hunting=function( value ) return  tonumber( value ) * 2; end,
                             creature_detection_range_x=function( value ) return  tonumber( value ) * 2; end,
                             creature_detection_range_y=function( value ) return  tonumber( value ) * 2; end,
-                            attack_dash_frames_between=function( value ) return tonumber( value ) / 3; end,
                         });
                     end
                 end
-                local character_platforming = EntityGetFirstComponent( entity, "CharacterPlatformingComponent" );
+                local character_platforming = EntityGetFirstComponent( nearby, "CharacterPlatformingComponent" );
                 if character_platforming ~= nil then
                     ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 2 ) );
                     ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
@@ -454,7 +452,7 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                     ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( fly_velocity_x * 2 ) );
                     ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( fly_velocity_x * 2 ) );
                 end
-                local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+                local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
                 if damage_models ~= nil then
                     local resistances = {
                         ice = 0.67,
@@ -492,8 +490,8 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                         
                     end
                 end
-                local badges = EntityLoad( "files/gkbrkn/misc/champion_enemies/badges.xml");
-                EntityAddChild( entity, badges );
+                local badges = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/badges.xml");
+                EntityAddChild( nearby, badges );
 
                 --[[ Per champion type ]]
                 for i=1,champion_types_to_apply do
@@ -522,23 +520,23 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
 
                     --[[ Game Effects ]]
                     for _,game_effect in pairs( champion_data.game_effects or {} ) do
-                        local effect = GetGameEffectLoadTo( entity, game_effect, true );
+                        local effect = GetGameEffectLoadTo( nearby, game_effect, true );
                         if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
                     end
 
                     --[[ General Application ]]
                     if champion_data.apply ~= nil then
-                        champion_data.apply( entity );
+                        champion_data.apply( nearby );
                     end
 
                     --[[ Particle Emitter ]]
                     local particle_material = champion_data.particle_material;
                     if particle_material ~= nil then
-                        local emitter_entity = EntityLoad( "files/gkbrkn/misc/champion_enemies/particles.xml" );
+                        local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/particles.xml" );
                         local emitter = EntityGetFirstComponent( emitter_entity, "ParticleEmitterComponent" );
                         if emitter ~= nil then
                             ComponentSetValue( emitter, "emitted_material_name", particle_material );
-                            EntityAddChild( entity, emitter_entity );
+                            EntityAddChild( nearby, emitter_entity );
                         end
                         ComponentSetValueVector2( emitter, "gravity", 0, -200 );
                     end
@@ -546,17 +544,17 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                     --[[ Sprite Particle Emitter ]]
                     local sprite_particle_sprite_file = champion_data.sprite_particle_sprite_file;
                     if sprite_particle_sprite_file ~= nil then
-                        local emitter_entity = EntityLoad( "files/gkbrkn/misc/champion_enemies/sprite_particles.xml" );
+                        local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprite_particles.xml" );
                         local emitter = EntityGetFirstComponent( emitter_entity, "SpriteParticleEmitterComponent" );
                         if emitter ~= nil then
                             ComponentSetValue( emitter, "sprite_file", sprite_particle_sprite_file );
-                            EntityAddChild( entity, emitter_entity );
+                            EntityAddChild( nearby, emitter_entity );
                         end
                     end
 
                     --[[ Rewards Drop ]]
-                    EntityAddComponent( entity, "LuaComponent", {
-                        script_damage_received="files/gkbrkn/misc/champion_enemies/scripts/damage_received.lua"
+                    EntityAddComponent( nearby, "LuaComponent", {
+                        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/damage_received.lua"
                     });
                 end
             end
@@ -566,15 +564,15 @@ end
 
 --[[ Health Bars ]]
 if HasFlagPersistent( MISC.HealthBars.Enabled ) then
-    for _,entity in pairs( nearby_enemies ) do
-        if EntityGetFirstComponent( entity, "HealthBarComponent" ) == nil then
-            EntityAddComponent( entity, "HealthBarComponent" );
-            EntityAddComponent( entity, "SpriteComponent", { 
+    for _,nearby in pairs( nearby_enemies ) do
+        if EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+            EntityAddComponent( nearby, "HealthBarComponent" );
+            EntityAddComponent( nearby, "SpriteComponent", { 
                 _tags="health_bar,ui,no_hitbox",
                 _enabled="1",
                 alpha="1",
                 has_special_scale="1",
-                image_file="files/gkbrkn/misc/health_bar.png",
+                image_file="mods/gkbrkn_noita/files/gkbrkn/misc/health_bar.png",
                 is_text_sprite="0",
                 next_rect_animation="",
                 offset_x="11",
@@ -591,12 +589,12 @@ if HasFlagPersistent( MISC.HealthBars.Enabled ) then
     end
 end
 
---[[ Hard Mode Scaling ]]
+--[[ Hero Mode Scaling ]]
 -- TODO find a better weay to target enemies and bosses (dragon, pyramid, centipede)
 if HasFlagPersistent( MISC.HeroMode.Enabled ) then
     for _,nearby in pairs( nearby_enemies ) do
-        if EntityGetVariableNumber( nearby, "gkbrkn_hard_mode", 0.0 ) == 0 then
-            EntitySetVariableNumber( nearby, "gkbrkn_hard_mode", 1.0 );
+        if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 then
+            EntitySetVariableNumber( nearby, "gkbrkn_hero_mode", 1.0 );
             local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
             if damage_models ~= nil then
                 local resistances = {
@@ -625,6 +623,21 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
                         distance_multiplier =  math.pow( 0.9, math.floor(distance / 3000) );
                     end
                 end
+                local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
+                if #animal_ais > 0 then
+                    for _,ai in pairs( animal_ais ) do
+                        ComponentSetValues( ai, {
+                            aggressiveness_min="100",
+                            aggressiveness_max="100",
+                            escape_if_damaged_probability="0",
+                            hide_from_prey="0",
+                            needs_food="0",
+                            sense_creatures="1",
+                            attack_only_if_attacked="0",
+                            dont_counter_attack_own_herd="1",
+                        });
+                    end
+                end
                 local resistance_multiplier = orb_multiplier * distance_multiplier;
                 for index,damage_model in pairs( damage_models ) do
                     for damage_type,multiplier in pairs( resistances ) do
@@ -636,10 +649,20 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
             end
         end
         -- only do it twice a second to reduce performance hit
-        if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hard_mode", 0.0 ) == 1 then
-            local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
-            for _,ai in pairs( animal_ais ) do
-                ComponentSetValue( ai, "mGreatestPrey", tostring( entity ) );
+        if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
+            local player_genome = EntityGetFirstComponent( player_entity, "GenomeDataComponent" );
+            local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );
+            local player_herd = -1;
+            local nearby_herd = -1;
+            if nearby_genome ~= nil and player_genome ~= nil then
+                player_herd = ComponentGetMetaCustom( player_genome, "herd_id" );
+                nearby_herd = ComponentGetMetaCustom( nearby_genome, "herd_id" );
+                if player_herd ~= nearby_herd then
+                    local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
+                    for _,ai in pairs( animal_ais ) do
+                        ComponentSetValue( ai, "mGreatestPrey", tostring( player_entity ) );
+                    end
+                end
             end
         end
     end
@@ -687,9 +710,9 @@ end
 
 --[[ Tweak - Shorten Blindness ]]
 if CONTENT[TWEAKS.Blindness].enabled() then
-    local blindness = GameGetGameEffectCount( entity, "BLINDNESS" );
+    local blindness = GameGetGameEffectCount( player_entity, "BLINDNESS" );
     if blindness > 0 then
-        local effect = GameGetGameEffect( entity, "BLINDNESS" );
+        local effect = GameGetGameEffect( player_entity, "BLINDNESS" );
         local frames = tonumber( ComponentGetValue( effect, "frames" ) );
         if frames > 600 then
             ComponentSetValue( effect, "frames", 600 );
@@ -800,9 +823,9 @@ if #projectile_entities > 0 then
     } );
     local average_velocity_magnitude = 0;
     local angles = {};
-    for i,entity in pairs( projectile_entities ) do
-        EntityRemoveTag( entity, "gkbrkn_spell_merge" );
-        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    for i,projectile_entity in pairs( projectile_entities ) do
+        EntityRemoveTag( projectile_entity, "gkbrkn_spell_merge" );
+        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
         local magnitude = math.sqrt(vx * vx + vy * vy);
@@ -814,19 +837,19 @@ if #projectile_entities > 0 then
     end
     local average_angle = mean_angle( angles );
     average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
-    for i,entity in pairs( projectile_entities ) do
-        if entity == leader then
-            local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    for i,projectile_entity in pairs( projectile_entities ) do
+        if projectile_entity == leader then
+            local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
             local angle = math.atan2( vy, vx );
             ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
         else
-            EntitySetVariableString( entity, "gkbrkn_soft_parent", tostring( leader ) );
+            EntitySetVariableString( projectile_entity, "gkbrkn_soft_parent", tostring( leader ) );
         end
-        EntityAddComponent( entity, "LuaComponent", {
+        EntityAddComponent( projectile_entity, "LuaComponent", {
             execute_on_added="1",
             execute_every_n_frame="1",
-            script_source_file="files/gkbrkn/actions/spell_merge/projectile_update.lua",
+            script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile_update.lua",
         });
     end
 end
@@ -852,7 +875,7 @@ if #projectile_entities > 0 then
                 EntityAddComponent( projectile, "LuaComponent", {
                     execute_on_added="1",
                     execute_every_n_frame="1",
-                    script_source_file="files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
+                    script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
                 });
                 if projectile ~= leader then
                     local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
@@ -893,7 +916,6 @@ if #projectile_entities > 0 then
         previous_projectile = projectile;
     end
 end
-
 
 local update_time = GameGetRealWorldTimeSinceStarted() - t;
 GlobalsSetValue("gkbrkn_update_time",update_time);

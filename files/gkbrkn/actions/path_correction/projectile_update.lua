@@ -2,7 +2,7 @@ local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 local correction_distance = 36;
 
-dofile_once( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 --[[
 for word in string.gmatch(str, '([^,]+)') do
@@ -48,7 +48,7 @@ if target ~= nil then
     local target_genome = EntityGetFirstComponent( target, "GenomeDataComponent" );
     local target_herd = -1;
     if target_genome ~= nil then
-        traget_herd = ComponentGetMetaCustom( target_genome, "herd_id" );
+        target_herd = ComponentGetMetaCustom( target_genome, "herd_id" );
     end
     if tonumber(target) ~= tonumber(shooter) and target_herd ~= shooter_herd then
         local damaged_entities = {};

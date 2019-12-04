@@ -1,4 +1,4 @@
-dofile_once("files/gkbrkn/config.lua");
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/config.lua");
 
 extra_modifiers["gkbrkn_spell_efficiency"] = function()
     if current_action.uses_remaining > 0 and Random() <= CONTENT[PERKS.SpellEfficiency].options.RetainChance then

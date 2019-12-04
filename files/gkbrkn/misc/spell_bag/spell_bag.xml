@@ -16,7 +16,7 @@
     <PhysicsImageShapeComponent 
         body_id="1"
         centered="1"
-        image_file="files/gkbrkn/misc/spell_bag/sprite.png"
+        image_file="mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/sprite.png"
         material="item_box2d"
     ></PhysicsImageShapeComponent>
   
@@ -34,7 +34,7 @@
         _enabled="false"
         offset_x="4"
         offset_y="4"
-        image_file="files/gkbrkn/misc/spell_bag/sprite.png"
+        image_file="mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/sprite.png"
     ></SpriteComponent>
 
     <ItemComponent
@@ -43,7 +43,7 @@
         is_pickable="1"
         is_equipable_forced="1"
         uses_remaining="0"
-        ui_sprite="files/gkbrkn/misc/spell_bag/icon.png"
+        ui_sprite="mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/icon.png"
         ui_description="A bag in which to hold your spells"
         preferred_inventory="QUICK"
     ></ItemComponent>
@@ -66,7 +66,7 @@
     <LuaComponent
         _tags="enabled_in_hand"
         execute_every_n_frame="1"
-        script_source_file="files/gkbrkn/misc/spell_bag/spell_bag_update.lua"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/spell_bag_update.lua"
     >
     </LuaComponent>
 

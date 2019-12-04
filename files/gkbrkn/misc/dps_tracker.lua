@@ -35,7 +35,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     end
     EntityAddComponent( entity, "SpriteComponent", {
         _tags="enabled_in_world,gkbrkn_dps_tracker",
-        image_file="files/gkbrkn/font_pixel_white.xml" ,
+        image_file="mods/gkbrkn_noita/files/gkbrkn/font_pixel_white.xml" ,
         emissive="1",
         is_text_sprite="1",
         offset_x="12" ,

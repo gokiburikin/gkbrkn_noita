@@ -126,7 +126,7 @@ if #projectile_entities > 0 then
         EntityAddComponent( entity, "LuaComponent", {
             execute_on_added="1",
             execute_every_n_frame="1",
-            script_source_file="files/gkbrkn/actions/spell_merge/projectile_update.lua",
+            script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile_update.lua",
         });
     end
 end
@@ -152,7 +152,7 @@ if #projectile_entities > 0 then
                 EntityAddComponent( projectile, "LuaComponent", {
                     execute_on_added="1",
                     execute_every_n_frame="1",
-                    script_source_file="files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
+                    script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
                 });
                 if projectile ~= leader then
                     local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );

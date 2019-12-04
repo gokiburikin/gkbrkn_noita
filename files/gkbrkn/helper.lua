@@ -3,7 +3,9 @@ dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
 function ShootProjectile( who_shot, entity_file, x, y, vx, vy, send_message )
     local entity = EntityLoad( entity_file, x, y );
     local genome = EntityGetFirstComponent( who_shot, "GenomeDataComponent" );
-    local herd_id = ComponentGetMetaCustom( genome, "herd_id" );
+    -- this is the herd id string
+    --local herd_id = ComponentGetMetaCustom( genome, "herd_id" );
+    local herd_id = ComponentGetValueInt( genome, "herd_id" );
     if send_message == nil then send_message = true end
 
 	GameShootProjectile( who_shot, x, y, x+vx, y+vy, entity, send_message );
@@ -11,7 +13,8 @@ function ShootProjectile( who_shot, entity_file, x, y, vx, vy, send_message )
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     if projectile ~= nil then
         ComponentSetValue( projectile, "mWhoShot", who_shot );
-        ComponentSetMetaCustom( projectile, "mShooterHerdId", herd_id );
+        -- NOTE the returned herd id actually breaks the herd logic, so don't bother
+        --ComponentSetValue( projectile, "mShooterHerdId", herd_id );
     end
 
     local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
@@ -495,7 +498,7 @@ function GetInventoryQuickActiveItem( entity )
 end
 
 function CreateWand( x, y, ... )
-    local wand = EntityLoad("files/gkbrkn/placeholder_wand.xml", x, y);
+    local wand = EntityLoad("mods/gkbrkn_noita/files/gkbrkn/placeholder_wand.xml", x, y);
     for _,action in pairs( {...} ) do
         AddGunAction( wand, action );
     end

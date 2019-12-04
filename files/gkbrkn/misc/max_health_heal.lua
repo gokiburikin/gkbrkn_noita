@@ -1,5 +1,5 @@
-dofile_once( "files/gkbrkn/config.lua");
-dofile_once( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 if last_max_hp == nil then
     last_max_hp = {}

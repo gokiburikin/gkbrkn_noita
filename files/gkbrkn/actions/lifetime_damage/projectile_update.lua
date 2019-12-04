@@ -1,4 +1,4 @@
-dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 local projectile_component = EntityGetFirstComponent( entity, "ProjectileComponent" );

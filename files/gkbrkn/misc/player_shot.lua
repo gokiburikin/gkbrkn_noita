@@ -1,4 +1,4 @@
-dofile_once( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 function shot( projectile_entity )
     local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
     local player = GetUpdatedEntityID();

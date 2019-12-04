@@ -12,7 +12,7 @@
         max_amount_in_inventory="1" 
         reload_time_frames="0" 
         shooting_reduces_amount_in_inventory="0" 
-        sprite_file="files/gkbrkn/placeholder_wand_gfx.xml" 
+        sprite_file="mods/gkbrkn_noita/files/gkbrkn/placeholder_wand_gfx.xml" 
         swim_propel_amount="0" 
         throw_as_item="0" 
         ui_name="Placeholder Wand" 
