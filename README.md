@@ -1,7 +1,7 @@
 # Goki's Things
-A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
+A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the latest release from the releases tab above and extract the gkbrkn_noita folder to your Noita mods folder.
 
-This mod supports custom loadout registration and is backwards compatible with starting loadouts and more loadouts. Goki's Things must be loaded before (higher in the list than) loadout mods!
+This mod has a loadout manager. Enable it to control loadouts, loadout skins (for player skin support) and the toggling of individual loadouts. Goki's Things must be loaded before (higher in the list than) other loadout mods!
 
 ### Loadouts
 - [x] **Default**: No changes. Just in case you want a normal run in rotation.
@@ -74,13 +74,11 @@ This mod supports custom loadout registration and is backwards compatible with s
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
-- [x] **Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold.
 - [x] **Magic Light**: Cast a spell that cuts through the darkness.
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - [x] **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
 - [x] **Revelation**: Cast a spell that reveals the area around the enemy it hits.
-- [x] **Spectral Shot**: Cast a spell that passes through terrain.
 - [x] **Super Bounce**: Cast a spell that bounces more energetically.
 - [x] **Time Split**: Equalize current cast delay and recharge time.
 - [x] **Trigger: Hit**: Cast another spell upon collision.
@@ -108,7 +106,7 @@ This mod supports custom loadout registration and is backwards compatible with s
 
 ### Deprecated
 - [x] **Action: Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
-- [x] **Action: Arcane Shot**: A fast bolt of arcane energy. *(Official spell exists)*
+- [x] **Action: Arcane Shot**: A fast bolt of arcane energy. *(Superceded by Triplicate Bolt)*
 - [x] **Action: Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*
 - [ ] **Perk/Action: Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*
 - [ ] **Perk/Action: Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
@@ -116,6 +114,9 @@ This mod supports custom loadout registration and is backwards compatible with s
 - [x] **Tweak: Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds. *(Official patched this)*
 - [x] **Tweak: Revenge Explosion**: Revenge Explosion no longer activates on environmental / self damage. *(Official patched this)*
 - [x] **Perk: Golden Blood**: You bleed gold. *(Not very good or interesting)*
+- [x] **Action: Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold. *(Lots of issues I don't care to fix)*
 - [x] **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*
 - [x] **Formation - N-gon**: Simultaneously cast all remaining spells in a circular pattern. *(Formation - Behind your back can achieve this)*
 - [x] **Draw Deck**: Simultaneously cast all remaining spells. *(Multiple multicasts can achieve this)*
+- [x] **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded by Piercing Shot)*
+- [x] **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded by Drilling Shot)*

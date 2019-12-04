@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c60"
+    Version = "c61"
 }
 
 CONTENT_TYPE = {
@@ -145,7 +145,7 @@ ACTIONS = {
     Revelation = register_content( CONTENT_TYPE.Action, "revelation","Revelation" ),
     MicroShield = register_content( CONTENT_TYPE.Action, "micro_shield","Micro Shield", nil, true, true ),
     ModificationField = register_content( CONTENT_TYPE.Action, "modification_field","Modification Field" ),
-    SpectralShot = register_content( CONTENT_TYPE.Action, "spectral_shot","Spectral Shot" ),
+    SpectralShot = register_content( CONTENT_TYPE.Action, "spectral_shot","Spectral Shot", nil, true, true ),
     ArcaneBuckshot = register_content( CONTENT_TYPE.Action, "arcane_buckshot","Arcane Buckshot", nil, true, true ),
     ArcaneShot = register_content( CONTENT_TYPE.Action, "arcane_shot","Arcane Shot", nil, true, true ),
     DoubleCast = register_content( CONTENT_TYPE.Action, "double_cast","Double Cast" ),
@@ -175,7 +175,7 @@ ACTIONS = {
     CopySpell = register_content( CONTENT_TYPE.Action, "copy_spell","Copy Spell" ),
     TimeSplit = register_content( CONTENT_TYPE.Action, "time_split","Time Split" ),
     FormationStack = register_content( CONTENT_TYPE.Action, "formation_stack","Formation Stack" ),
-    PiercingShot = register_content( CONTENT_TYPE.Action, "piercing_shot","Piercing Shot" ),
+    PiercingShot = register_content( CONTENT_TYPE.Action, "piercing_shot","Piercing Shot", nil, true, true ),
     WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true, not SETTINGS.Debug )
 }
 

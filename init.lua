@@ -16,15 +16,6 @@ api issues
     
 
 changelog
-    -m "Nerf Projectile Buff Champion type (ranged attack rate 200% -> 100%)"
-    -m "Nerf Damage Buff Champion type (dash attack rate 200% -> 100%, melee attack rate 200% -> 100%)"
-    -m "Add Haste Champion type (melee, projectile, dash attack rate 100% -> 150%)"
-    -m "Increase Hero Mode difficulty (enemies get distracted by less and target the player more)"
-    -m "Fix Hero Mode friendly enemies considering the player the greatest threat"
-    -m "Fix typo in Action: Path Correction"
-    -m "Fix more herd issues"
-    -m "Fix friendly Champion enemies considering the player a valid target for one frame upon spawning"
-    -m "Fix file pathing to reflect the new requirements as of the 4/12 update"
 
 kill streaks events
 grze events
