@@ -180,6 +180,16 @@ ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/g
 ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
 ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_altar.lua" );
 
+if HasFlagPersistent( MISC.NoPregenWands.Enabled ) then
+    local pregen_wand_biomes = {
+        "data/scripts/biomes/coalmine.lua",
+        "data/scripts/biomes/coalmine_alt.lua",
+    };
+    for _,entry in pairs( pregen_wand_biomes ) do
+        ModLuaFileAppend( entry, "mods/gkbrkn_noita/files/gkbrkn/append/no_preset_wands.lua" );
+    end
+end
+
 
 if HasFlagPersistent( MISC.LooseSpellGeneration.Enabled ) then
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/loose_spell_generation.lua" );
@@ -231,4 +241,6 @@ function OnModPostInit()
     if HasFlagPersistent( MISC.UnlimitedAmmo.Enabled ) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/unlimited_ammo.lua" );
     end
+
+    ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn/starting_perks_config_append.lua" );
 end

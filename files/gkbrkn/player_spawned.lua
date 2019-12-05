@@ -48,4 +48,16 @@ if GameHasFlagRun( init_check_flag ) == false then
             EntityAddChild( inventory, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/spell_bag.xml", x, y ) );
         end
     end
+
+    for _,content_id in pairs( STARTING_PERKS or {} ) do
+        local starting_perk = CONTENT[content_id];
+        if starting_perk ~= nil then
+            if starting_perk.enabled() then
+                local perk_entity = perk_spawn( x, y, starting_perk.key );
+                if perk_entity ~= nil then
+                    perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+                end
+            end
+        end
+    end
 end

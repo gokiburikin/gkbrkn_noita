@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c61"
+    Version = "c62"
 }
 
 CONTENT_TYPE = {
@@ -14,6 +14,7 @@ CONTENT_TYPE = {
     ChampionType = 5,
     Item = 6,
     Loadout = 7,
+    StartingPerk = 8,
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -24,6 +25,7 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.ChampionType] = "champion_type_",
     [CONTENT_TYPE.Item] = "item_",
     [CONTENT_TYPE.Loadout] = "loadout_",
+    [CONTENT_TYPE.StartingPerk] = "starting_perk_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME = {
@@ -34,6 +36,7 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.ChampionType] = "Champion",
     [CONTENT_TYPE.Item] = "Item",
     [CONTENT_TYPE.Loadout] = "Loadout",
+    [CONTENT_TYPE.StartingPerk] = "Starting Perk",
 }
 
 CONTENT = {};
@@ -574,6 +577,30 @@ CHAMPION_TYPES = {
             });
         end
     }),
+    ToxicTrail = register_content( CONTENT_TYPE.ChampionType, "toxic_trail", "Toxil Trail", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/toxic_trail.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_toxic_trail.lua",
+            });
+        end
+    }),
     --[[
     Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
         particle_material = nil,
@@ -802,6 +829,11 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_chaotic_wand_generation",
     },
     {
+        Name = "No Preset Wands",
+        PersistentFlag = "gkbrkn_no_pregen_wands",
+        RequiresRestart = true,
+    },
+    {
         Name = "Gold Nuggets -> Gold Powder",
         PersistentFlag = "gkbrkn_gold_decay",
     },
@@ -913,6 +945,9 @@ MISC = {
         Enabled = "gkbrkn_hero_mode",
         OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
         DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
+    },
+    NoPregenWands = {
+        Enabled = "gkbrkn_no_pregen_wands",
     }
 }
 
@@ -1033,7 +1068,6 @@ if SETTINGS.Debug then
         { -- items
         },
         { -- perks
-            {"PLAGUE_RATS"}
         },
         { -- actions
             {"LIGHT_BULLET"},

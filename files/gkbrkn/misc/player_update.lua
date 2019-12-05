@@ -18,6 +18,14 @@ local player_entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( player_entity );
 local children = EntityGetAllChildren( player_entity ) or {};
 
+--[[
+if now % 180 == 0 then
+    --LogTableCompact( bit );
+    local q = 0;
+    q = bit.bxor( q, 0xFF * 0.5 );
+    Log( q );
+end
+]]
 --[[ material immunities
 TODO still can't really make use of this without polymorphing
 if _apply_material ~= true and now % 180 == 0 then

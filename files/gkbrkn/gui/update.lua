@@ -42,7 +42,7 @@ table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 for k,v in pairs( CONTENT_TYPE ) do
     local name = CONTENT_TYPE_DISPLAY_NAME[v].."s";
     if SETTINGS.Debug then
-        name = content_counts[v].." "..name;
+        name = (content_counts[v] or 0).." "..name;
     end
     table.insert( content_type_selection, { name = name, type = v } );
     table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );

@@ -28,7 +28,7 @@ end
 function WandGetActiveOrRandom( entity )
     local chosen_wand = nil;
     local wands = {};
-    local children = EntityGetAllChildren( entity );
+    local children = EntityGetAllChildren( entity )  or {};
     for key, child in pairs( children ) do
         if EntityGetName( child ) == "inventory_quick" then
             wands = EntityGetChildrenWithTag( child, "wand" );
@@ -103,7 +103,7 @@ function PackString( separator, ... )
 end
 
 function Log( ... )
-    print_error( PackString(" ", ... ) );
+    print( PackString(" ", ... ) );
 end
 
 function LogCompact( ... )
@@ -271,7 +271,7 @@ function EntityComponentGetValue( entity_id, component_type_name, component_key,
 end
 
 function EntityGetNamedChild( entity_id, name )
-    local children = EntityGetAllChildren( entity_id );
+    local children = EntityGetAllChildren( entity_id ) or {};
 	if children ~= nil then
 		for index,child_entity in pairs( children ) do
 			local child_entity_name = EntityGetName( child_entity );
@@ -285,7 +285,7 @@ end
 
 function EntityGetChildrenWithTag( entity_id, tag )
     local valid_children = {};
-    local children = EntityGetAllChildren( entity_id );
+    local children = EntityGetAllChildren( entity_id ) or {};
     for index, child in pairs( children ) do
         if EntityHasTag( child, tag ) then
             table.insert( valid_children, child );
@@ -375,7 +375,7 @@ function WandExplodeRandomAction( wand )
 end
 
 function IterateWandActions( wand, callback )
-    local children = EntityGetAllChildren( wand );
+    local children = EntityGetAllChildren( wand ) or {};
     for i,v in ipairs( children ) do
         local all_comps = EntityGetAllComponents( v );
         local action_id = nil;
@@ -393,7 +393,7 @@ end
 
 function GetWandActions( wand )
     local actions = {};
-    local children = EntityGetAllChildren( wand );
+    local children = EntityGetAllChildren( wand ) or {};
     for i,v in ipairs( children ) do
         local all_comps = EntityGetAllComponents( v );
         local action_id = nil;
@@ -440,7 +440,7 @@ function CopyWand( base_wand, copy_wand, copy_sprite, copy_actions )
 end
 
 function FindEntityInInventory( inventory, entity )
-    local inventory_items = EntityGetAllChildren( inventory );
+    local inventory_items = EntityGetAllChildren( inventory )  or {};
 		
     -- remove default items
     if inventory_items ~= nil then

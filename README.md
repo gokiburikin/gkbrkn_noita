@@ -25,6 +25,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Any Spell On Any Wand**: Allows any standard spell (projectile, modifier, multicast) to spawn on any generated wand, ignoring spawn level.
 - [x] **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. *Required for some spells to show up if using Wand Shops Only.*
 - [x] **Chaotic Wand Generation**: Replace all spells on a wand with random spells.
+- [x] **No Preset Wands**: Replace the preset wands in the first biome with procedural wands.
 - [x] **Wand Shops Only**: All spell shops will be replaced with wand shops.
 - [x] **Passive Recharge**: Wands recharge while holstered.
 - [x] **Limited Ammo**: Gives all unlimited projectile spells limited uses.
@@ -37,6 +38,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Show FPS**: Add an FPS counter.
 - [x] **Target Dummy**: Add a target dummy to each Holy Mountain.
 - [x] **Loadouts**: Adds support for custom loadouts. Backwards compatible with starting loadouts and more loadouts and can disable loadout skins for custom skin support.
+- [x] **Starting Perks**: Adds the ability to start with a selection of perks from all loaded mods.
 
 ### Tweaks
 - [x] **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across all spells.
