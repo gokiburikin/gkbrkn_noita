@@ -1,0 +1,63 @@
+<Entity tags="card_action">
+    <Base file="data/entities/base_custom_card.xml" > 
+		<SpriteComponent 
+			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/icon.png" 
+			>
+		</SpriteComponent>
+		
+		<ItemActionComponent 
+			_tags="enabled_in_world"
+			action_id="GKBRKN_MAGIC_LIGHT" >
+		</ItemActionComponent>
+	</Base>
+
+    <InheritTransformComponent
+		_tags="enabled_in_world,enabled_in_hand" >
+	</InheritTransformComponent>
+
+    <SpriteComponent 
+        _tags="enabled_in_hand"
+        alpha="1.0"
+        image_file="data/particles/torch_fog_of_war_hole.xml"
+        smooth_filtering="1"
+        fog_of_war_hole="1"
+        has_special_scale="1"
+        special_scale_x="3.0"
+        special_scale_y="3.0" >
+    </SpriteComponent>
+
+    <ParticleEmitterComponent 
+		_tags="enabled_in_hand,item_identified"
+		emitted_material_name="spark_blue"
+		offset.x="0"
+		offset.y="0"
+		x_pos_offset_min="-4"
+		x_pos_offset_max="4"
+		y_pos_offset_min="-4"
+		y_pos_offset_max="4"
+		gravity.y="0.0"
+		x_vel_min="-2"
+		x_vel_max="2"
+		y_vel_min="-2"
+		y_vel_max="2"
+		count_min="1"
+		count_max="1"
+        attractor_force="0.0"
+        airflow_force="0.0"
+        collide_with_grid="1"
+		lifetime_min="1.0"
+		lifetime_max="1.0"
+		create_real_particles="0"
+		emit_cosmetic_particles="1"
+		emission_interval_min_frames="1"
+		emission_interval_max_frames="4"
+        fade_based_on_lifetime="1"
+		is_emitting="1" >
+	</ParticleEmitterComponent>
+
+    <LuaComponent
+	    _tags="enabled_in_hand"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/action_update.lua"
+    >
+    </LuaComponent>
+</Entity>

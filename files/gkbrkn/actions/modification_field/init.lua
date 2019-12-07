@@ -10,6 +10,7 @@ table.insert( actions,
     spawn_probability                 = "1,1,1,1,1,1,1",
     price = 200,
     max_uses = 3,
+    mana = 50,
     action 		= function()
         add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/modification_field/projectile.xml" );
     end,

@@ -1,6 +1,8 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "data/scripts/lib/utilities.lua" );
 
 --GamePrint( GetUpdatedEntityID() );
 
@@ -20,10 +22,9 @@ local children = EntityGetAllChildren( player_entity ) or {};
 
 --[[
 if now % 180 == 0 then
-    --LogTableCompact( bit );
-    local q = 0;
-    q = bit.bxor( q, 0xFF * 0.5 );
-    Log( q );
+    GamePrint( y / 10 );
+    local dx, dy = StatsGetValue( "death_pos" );
+    GamePrint( tostring( dy ));
 end
 ]]
 --[[ material immunities
@@ -503,7 +504,7 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
 
                 --[[ Per champion type ]]
                 for i=1,champion_types_to_apply do
-                    local champion_type_index = math.ceil( math.random() * #valid_champion_types );
+                    local champion_type_index = math.ceil( Random() * #valid_champion_types );
                     if champion_type_index == 0 then
                         break;
                     end
@@ -600,11 +601,47 @@ end
 --[[ Hero Mode Scaling ]]
 -- TODO find a better weay to target enemies and bosses (dragon, pyramid, centipede)
 if HasFlagPersistent( MISC.HeroMode.Enabled ) then
+    local speed_multiplier = 1.25;
+    if EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode", 0 ) == 0 then
+        EntitySetVariableNumber( player_entity, "gkbrkn_hero_mode", 1 );
+        local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
+        local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
+        ComponentAdjustValues( character_platforming, {
+            jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
+            jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
+            fly_smooth_y = function(value) return "0"; end,
+            fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+            fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+            fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+            fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+        });
+        ComponentAdjustMetaCustoms( character_platforming, {
+            fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
+            run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
+            --velocity_min_x = function(value) return tonumber( value ) * speed_multiplier; end,
+            velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
+        });
+    end
+
     for _,nearby in pairs( nearby_enemies ) do
         if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 then
             EntitySetVariableNumber( nearby, "gkbrkn_hero_mode", 1.0 );
             local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
             if damage_models ~= nil then
+
+                local orb_multiplier =  1;
+                if HasFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
+                    orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
+                end
+                local distance_multiplier = 1;
+                if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
+                    local x, y = EntityGetTransform( nearby, x, y )
+                    local distance = math.sqrt( x * x + y * y );
+                    if distance ~= 0 then
+                        distance_multiplier =  math.pow( 0.9, math.floor(distance / 3000) );
+                    end
+                end
+
                 local resistances = {
                     ice = 0.50,
                     electricity = 0.50,
@@ -619,18 +656,16 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
                     drill = 0.50,
                     fire = 0.50,
                 };
-                local orb_multiplier =  1;
-                if HasFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
-                    orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
-                end
-                local distance_multiplier = 1;
-                if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
-                    local x, y = EntityGetTransform( nearby, x, y )
-                    local distance = math.sqrt( x * x + y * y );
-                    if distance ~= 0 then
-                        distance_multiplier =  math.pow( 0.9, math.floor(distance / 3000) );
+                local resistance_multiplier = orb_multiplier * distance_multiplier;
+                for index,damage_model in pairs( damage_models ) do
+                    for damage_type,multiplier in pairs( resistances ) do
+                        local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                        resistance = resistance * multiplier * orb_multiplier * distance_multiplier;
+                        ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
                     end
+                    ComponentSetValue( damage_model, "minimum_knockback_force", "100000" );
                 end
+
                 local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
                 if #animal_ais > 0 then
                     for _,ai in pairs( animal_ais ) do
@@ -644,17 +679,39 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
                             attack_only_if_attacked="0",
                             dont_counter_attack_own_herd="1",
                         });
-                    end
-                end
-                local resistance_multiplier = orb_multiplier * distance_multiplier;
-                for index,damage_model in pairs( damage_models ) do
-                    for damage_type,multiplier in pairs( resistances ) do
-                        local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
-                        resistance = resistance * multiplier * orb_multiplier * distance_multiplier;
-                        ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                        ComponentAdjustValues( ai, {
+                            creature_detection_range_x=function(value) return tonumber( value ) * 4; end,
+                            creature_detection_range_y=function(value) return tonumber( value ) * 4; end,
+                            max_distance_to_cam_to_start_hunting=function(value) return tonumber( value ) * 5; end,
+                            attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
+                            attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
+                            attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
+                        });
                     end
                 end
             end
+            local character_platforming = EntityGetFirstComponent( nearby, "CharacterPlatformingComponent" );
+            if character_platforming ~= nil then
+                local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
+                ComponentAdjustValues( character_platforming, {
+                    jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                    jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
+                    fly_smooth_y = function(value) return "0" end,
+                    fly_speed_mult = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
+                    fly_speed_max_up = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
+                    fly_speed_max_down = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
+                    fly_speed_change_spd = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
+                });
+                ComponentAdjustMetaCustoms( character_platforming, {
+                    run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
+                    fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
+                    velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                });
+            end
+            --[[ Rewards Drop ]]
+            EntityAddComponent( nearby, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
+            });
         end
         -- only do it twice a second to reduce performance hit
         if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
@@ -674,6 +731,31 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
             end
         end
     end
+
+    local nearby_wands = EntityGetInRadiusWithTag( x, y, 256, "wand" );
+    for _,wand in pairs( nearby_wands ) do
+        if EntityGetVariableNumber( wand, "gkbrkn_hero_wand", 0 ) == 0 then
+            --local ability = EntityGetFirstComponent( wand, "AbilityComponent", false );
+            local ability = FindFirstComponentThroughTags( wand, "mana_max" );
+            if ability ~= nil then
+                EntitySetVariableNumber( wand, "gkbrkn_hero_wand", 1 );
+                local mana_multiplier = rand( 1.2, 1.4 );
+                ability_component_adjust_stats( ability, {
+                    --shuffle_deck_when_empty = function(value) end,
+                    --actions_per_round = function(value) end,
+                    --speed_multiplier = function(value) end,
+                    mana_max = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
+                    mana = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
+                    deck_capacity = function(value) return math.min( 26, tonumber( value ) + Random( 1,2 ) ); end,
+                    reload_time = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.7, 0.9 ) ) ); end,
+                    fire_rate_wait = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.7, 0.9 ) ) ); end,
+                    spread_degrees = function(value) return tonumber( value ) - Random( 1, 4 ); end,
+                    mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 20, 40 ) ) * rand( 1.1, 1.2 ) ); end,
+                } );
+            end
+        end
+    end
+
 end
 
 --[[ Less Particles ]]
@@ -770,13 +852,18 @@ function EntitiesAverageMemberList( entities, component_type, member_list, round
     end
 end
 
-function mean_angle ( angles )
-    local sumSin, sumCos = 0, 0;
-    for i, angle in pairs( angles ) do
-        sumSin = sumSin + math.sin( angle );
-        sumCos = sumCos + math.cos( angle );
+function mean_angle ( angles, magnitudes )
+    local sum_sin, sum_cos, sum_magnitude = 0, 0, 0;
+    for i, magnitude in pairs( magnitudes ) do
+        sum_magnitude = sum_magnitude + magnitude;
     end
-    return math.atan2( sumSin, sumCos );
+    for i, angle in pairs( angles ) do
+        local magnitude = magnitudes[i];
+        local proportion = magnitude / sum_magnitude;
+        sum_sin = sum_sin + math.sin( angle ) * proportion;
+        sum_cos = sum_cos + math.cos( angle ) * proportion;
+    end
+    return math.atan2( sum_sin, sum_cos );
 end
 
 local projectile_entities = EntityGetWithTag("gkbrkn_formation_stack") or {};
@@ -831,6 +918,7 @@ if #projectile_entities > 0 then
     } );
     local average_velocity_magnitude = 0;
     local angles = {};
+    local magnitudes = {};
     for i,projectile_entity in pairs( projectile_entities ) do
         EntityRemoveTag( projectile_entity, "gkbrkn_spell_merge" );
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
@@ -840,10 +928,11 @@ if #projectile_entities > 0 then
         average_velocity_magnitude = average_velocity_magnitude + magnitude;
 
         -- ignore projectiles that don't move
-        if magnitude ~= 0 then table.insert( angles, angle ); end
+        table.insert( angles, angle );
+        table.insert( magnitudes, magnitude );
 
     end
-    local average_angle = mean_angle( angles );
+    local average_angle = mean_angle( angles, magnitudes );
     average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
     for i,projectile_entity in pairs( projectile_entities ) do
         if projectile_entity == leader then

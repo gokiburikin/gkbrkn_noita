@@ -13,6 +13,5 @@ table.insert( actions,
     action 		= function()
         c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/formation_stack/projectile_extra_entity.xml,"
         draw_actions( 3, true );
-        add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_capture.xml" );
     end,
 });

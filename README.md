@@ -76,7 +76,6 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
-- [x] **Magic Light**: Cast a spell that cuts through the darkness.
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - [x] **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
@@ -94,6 +93,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Shimmering Treasure**: Treasure catches your eye.
 - [x] **Mana Recharge**: Your wand charges mana slightly faster.
 - [x] **Passive Recharge**: Your wand recharges even when holstered.
+- [x] **Magic Light**: Control a magic light that cuts through darkness.
 
 ### Other Spells
 - [x] **Order Deck**: Correct the order of all remaining spells.
@@ -108,7 +108,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 
 ### Deprecated
 - [x] **Action: Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
-- [x] **Action: Arcane Shot**: A fast bolt of arcane energy. *(Superceded by Triplicate Bolt)*
+- [x] **Action: Arcane Shot**: A fast bolt of arcane energy. *(Superceded officially by Triplicate Bolt)*
 - [x] **Action: Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*
 - [ ] **Perk/Action: Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*
 - [ ] **Perk/Action: Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
@@ -120,5 +120,5 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*
 - [x] **Formation - N-gon**: Simultaneously cast all remaining spells in a circular pattern. *(Formation - Behind your back can achieve this)*
 - [x] **Draw Deck**: Simultaneously cast all remaining spells. *(Multiple multicasts can achieve this)*
-- [x] **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded by Piercing Shot)*
-- [x] **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded by Drilling Shot)*
+- [x] **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
+- [x] **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*

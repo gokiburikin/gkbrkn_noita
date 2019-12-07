@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c62"
+    Version = "c63"
 }
 
 CONTENT_TYPE = {
@@ -137,6 +137,7 @@ PERKS = {
     Swapper = register_content( CONTENT_TYPE.Perk, "swapper","Swapper" ),
     Demolitionist = register_content( CONTENT_TYPE.Perk, "demolitionist","Demolitionist" ),
     Multicast = register_content( CONTENT_TYPE.Perk, "multicast","Multicast" ),
+    MagicLight = register_content( CONTENT_TYPE.Perk, "magic_light","Magic Light", nil, true, true ),
     WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true, not SETTINGS.Debug ),
 }
 
@@ -1060,6 +1061,30 @@ if SETTINGS.Debug then
                     { "BLACK_HOLE" },
                     { "BLACK_HOLE" },
                 }
+            },
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = 0, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {12,12}, -- capacity
+                    reload_time = {34,34}, -- recharge time in frames
+                    fire_rate_wait = {20,20}, -- cast delay in frames
+                    spread_degrees = {-4,-4}, -- spread
+                    mana_charge_speed = {163,163}, -- mana charge speed
+                    mana_max = {530,530}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
+                    { "MANA_REDUCE" },
+                    { "LUMINOUS_DRILL" },
+                    { "LASER_LUMINOUS_DRILL" },
+                    { "RECHARGE" },
+                }
             }
         },
         { -- potions
@@ -1071,7 +1096,13 @@ if SETTINGS.Debug then
         },
         { -- actions
             {"LIGHT_BULLET"},
+            {"GKBRKN_MAGIC_LIGHT"},
             {"LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET"},
+            {"CHAINSAW"},
+            {"DIGGER"},
+            {"POWERDIGGER"},
+            {"GKBRKN_SPELL_MERGE"},
+            {"BURST_2"},
             {"GKBRKN_ACTION_WIP"},
         },
         nil, -- sprites

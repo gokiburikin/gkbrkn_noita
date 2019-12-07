@@ -28,6 +28,7 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
+    slowing attack champion
     modifier that reduces the projectile resistance of target it hits
     wand passive enemy drops one additional gold nugget
     king champion: champion enemies nearby
@@ -130,6 +131,7 @@ if CONTENT[PERKS.ThriftyShopper].enabled() then ModLuaFileAppend( "data/scripts/
 if CONTENT[PERKS.Swapper].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/swapper/init.lua" ); end
 if CONTENT[PERKS.Demolitionist].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/demolitionist/init.lua" ); end
 if CONTENT[PERKS.Multicast].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/multicast/init.lua" ); end
+if CONTENT[PERKS.MagicLight].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/magic_light/init.lua" ); end
 
 if CONTENT[ACTIONS.BounceDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/bounce_damage/init.lua" ); end
 if CONTENT[ACTIONS.BreakCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/break_cast/init.lua" ); end
