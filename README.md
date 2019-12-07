@@ -1,5 +1,5 @@
 # Goki's Things
-A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the ZIP from the clone or download button above and extract the gkbrkn_noita-master folder to your Noita mods folder.
+A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. To install just download the latest release from the releases tab above and extract the gkbrkn_noita folder to your Noita mods folder.
 
 This mod supports custom loadout registration and is backwards compatible with starting loadouts and more loadouts. Goki's Things must be loaded before (higher in the list than) loadout mods!
 
