@@ -39,6 +39,8 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Target Dummy**: Add a target dummy to each Holy Mountain.
 - [x] **Loadouts**: Adds support for custom loadouts. Backwards compatible with starting loadouts and more loadouts and can disable loadout skins for custom skin support.
 - [x] **Starting Perks**: Adds the ability to start with a selection of perks from all loaded mods.
+- [x] **Show Badges**: Show selected game mode options as UI icons.
+- [x] **Auto-hide Config Menu**: Hide the config menu 5 seconds after the start of the run or closing the menu.
 
 ### Tweaks
 - [x] **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across all spells.

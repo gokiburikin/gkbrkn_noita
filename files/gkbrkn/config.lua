@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 SETTINGS = {
     Debug = DebugGetIsDevBuild(),
     ShowDeprecatedContent = false,
-    Version = "c63"
+    Version = "c65"
 }
 
 CONTENT_TYPE = {
