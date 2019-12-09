@@ -25,6 +25,7 @@ local content_counts = {};
 local content_type_selection = {};
 local content_type = nil;
 local tab_index = 1;
+local hide_menu_frame = GameGetFrameNum() + 300;
 local tabs = {
     {
         name = "Options",
@@ -107,6 +108,7 @@ function do_gui()
 
     GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
     if screen ~= 0 then
+        hide_menu_frame = GameGetFrameNum() + 300;
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
         for index,tab_data in pairs( tabs ) do
             local tab_title = tab_data.name;
@@ -231,6 +233,9 @@ function do_gui()
         GuiLayoutEnd( gui ); -- content wrapping vertical
     end
     GuiLayoutEnd( gui ); -- main vertical
+end
+
+function do_fps()
     if HasFlagPersistent( MISC.ShowFPS.Enabled ) then
         local now = GameGetRealWorldTimeSinceStarted();
         local fps = 1 / (now - last_time);
@@ -297,4 +302,14 @@ function do_pagination( list, per_page )
     GuiLayoutEnd( gui );
 end
 
-if gui then async_loop(function() if gui then do_gui() end wait(0); end); end
+if gui then
+    async_loop(function()
+        if gui then
+            if HasFlagPersistent( MISC.AutoHide.Enabled ) == false or GameGetFrameNum() - hide_menu_frame < 0 then
+                do_gui();
+            end
+            do_fps();
+        end
+        wait( 0 );
+    end);
+end

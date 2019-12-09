@@ -29,18 +29,18 @@ end
 ]]
 --[[ material immunities
 TODO still can't really make use of this without polymorphing
-if _apply_material ~= true and now % 180 == 0 then
-    _apply_material = true;
-    local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+if true then
+    local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
     for _,damage_model in pairs( damage_models ) do
-        adjust_material_damage( damage_model, function( materials, damage )
-            table.insert( materials, "water");
-            table.insert( damage, "0.1");
-            return materials, damage;
-        end);
+        GamePrint( ComponentGetValue( damage_model, "mCollisionMessageMaterialCountsThisFrame" ) );
+        --adjust_material_damage( damage_model, function( materials, damage )
+        --    table.insert( materials, "water");
+        --    table.insert( damage, "0.1");
+        --    return materials, damage;
+        --end);
         --EntitySetComponentIsEnabled( entity, damage_model, true );
-        local polymorph = GetGameEffectLoadTo( entity, "POLYMORPH", true )
-        ComponentSetValue( polymorph, "frames", 1 );
+        --local polymorph = GetGameEffectLoadTo( entity, "POLYMORPH", true )
+        --ComponentSetValue( polymorph, "frames", 1 );
     end
 end
 ]]
@@ -400,12 +400,13 @@ end
 
 local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
 --[[ Champions ]]
-if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
+if GameHasFlagRun( MISC.ChampionEnemies.Enabled ) then
     for _,nearby in pairs( nearby_enemies ) do
-        SetRandomSeed( x, y );
+        --SetRandomSeed( x, y );
+        SetRandomSeed( math.random() * 10000, math.random() * 10000 );
         if EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false then
             EntityAddTag( nearby, "gkbrkn_champions" );
-            if EntityHasTag( nearby, "gkbrkn_force_champion" ) or HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+            if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                 EntityRemoveTag( nearby, "gkbrkn_force_champion" );
                 local valid_champion_types = {};
                 for index,champion_type in pairs( CHAMPION_TYPES ) do
@@ -416,7 +417,7 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                 end
 
                 local champion_types_to_apply = 1;
-                if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsEnabled ) then
+                if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled ) then
                     while Random() <= MISC.ChampionEnemies.ExtraTypeChance and champion_types_to_apply < #valid_champion_types do
                         champion_types_to_apply = champion_types_to_apply + 1;
                     end
@@ -449,17 +450,18 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                     end
                 end
                 local character_platforming = EntityGetFirstComponent( nearby, "CharacterPlatformingComponent" );
+                local speed_multiplier = 1.25;
                 if character_platforming ~= nil then
-                    ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 2 ) );
-                    ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
-                    ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * 2 ) );
+                    ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * speed_multiplier ) );
+                    ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * speed_multiplier ) );
+                    ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * speed_multiplier ) );
                     local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
-                    ComponentSetMetaCustom( character_platforming, "fly_velocity_x", tostring( fly_velocity_x * 2 ) );
+                    ComponentSetMetaCustom( character_platforming, "fly_velocity_x", tostring( fly_velocity_x * speed_multiplier ) );
                     ComponentSetValue( character_platforming, "fly_smooth_y", "0" );
-                    ComponentSetValue( character_platforming, "fly_speed_mult", tostring( fly_velocity_x * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( fly_velocity_x * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( fly_velocity_x * 2 ) );
-                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( fly_velocity_x * 2 ) );
+                    ComponentSetValue( character_platforming, "fly_speed_mult", tostring( fly_velocity_x * speed_multiplier ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( fly_velocity_x * speed_multiplier ) );
+                    ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( fly_velocity_x * speed_multiplier ) );
+                    ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( fly_velocity_x * speed_multiplier ) );
                 end
                 local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
                 if damage_models ~= nil then
@@ -511,7 +513,7 @@ if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
                     local champion_type = valid_champion_types[ champion_type_index ];
                     table.remove( valid_champion_types, champion_type_index );
                     local champion_data = CONTENT[champion_type].options;
-
+                    
                     if champion_data.badge ~= nil then
                         local badge = EntityCreateNew();
                         
@@ -600,7 +602,7 @@ end
 
 --[[ Hero Mode Scaling ]]
 -- TODO find a better weay to target enemies and bosses (dragon, pyramid, centipede)
-if HasFlagPersistent( MISC.HeroMode.Enabled ) then
+if GameHasFlagRun( MISC.HeroMode.Enabled ) then
     local speed_multiplier = 1.25;
     if EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode", 0 ) == 0 then
         EntitySetVariableNumber( player_entity, "gkbrkn_hero_mode", 1 );
@@ -611,8 +613,8 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
             jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
             fly_smooth_y = function(value) return "0"; end,
             fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
-            fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
-            fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+            fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
+            fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
             fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
         });
         ComponentAdjustMetaCustoms( character_platforming, {
@@ -620,6 +622,7 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
             run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
             --velocity_min_x = function(value) return tonumber( value ) * speed_multiplier; end,
             velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
+            velocity_max_y = function(value) return tonumber( value ) * speed_multiplier; end,
         });
     end
 
@@ -630,11 +633,11 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
             if damage_models ~= nil then
 
                 local orb_multiplier =  1;
-                if HasFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
+                if GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
                     orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
                 end
                 local distance_multiplier = 1;
-                if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
+                if GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled ) then
                     local x, y = EntityGetTransform( nearby, x, y )
                     local distance = math.sqrt( x * x + y * y );
                     if distance ~= 0 then
@@ -673,16 +676,18 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
                             aggressiveness_min="100",
                             aggressiveness_max="100",
                             escape_if_damaged_probability="0",
+                            attack_if_damaged_probability="100",
                             hide_from_prey="0",
                             needs_food="0",
                             sense_creatures="1",
                             attack_only_if_attacked="0",
                             dont_counter_attack_own_herd="1",
+                            creature_detection_angular_range_deg="360",
                         });
                         ComponentAdjustValues( ai, {
-                            creature_detection_range_x=function(value) return tonumber( value ) * 4; end,
-                            creature_detection_range_y=function(value) return tonumber( value ) * 4; end,
-                            max_distance_to_cam_to_start_hunting=function(value) return tonumber( value ) * 5; end,
+                            creature_detection_range_x=function(value) return tonumber( value ) * 5; end,
+                            creature_detection_range_y=function(value) return tonumber( value ) * 5; end,
+                            max_distance_to_cam_to_start_hunting=function(value) return tonumber( value ) * 10; end,
                             attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
                             attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
                             attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
@@ -708,12 +713,15 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
                     velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
                 });
             end
-            --[[ Rewards Drop ]]
+            --[[ Rewards Drop
             EntityAddComponent( nearby, "LuaComponent", {
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
             });
+            ]]
         end
+        --[[
         -- only do it twice a second to reduce performance hit
+        ]]
         if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
             local player_genome = EntityGetFirstComponent( player_entity, "GenomeDataComponent" );
             local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );
@@ -756,6 +764,22 @@ if HasFlagPersistent( MISC.HeroMode.Enabled ) then
         end
     end
 
+    local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "item_physics" );
+    for _,nearby in pairs( nearby_entities ) do
+        -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
+        -- we probably don't want to consider this nugget anyway
+        local lifetime_component = EntityGetFirstComponent( nearby, "LifetimeComponent" );
+        if lifetime_component ~= nil then
+            local components = EntityGetComponent( nearby, "LuaComponent" ) or {};
+            for _,component in pairs(components) do
+                -- TODO there needs to be a better more future proofed way to get gold nuggets
+                if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
+                    EntityRemoveComponent( nearby, lifetime_component );
+                    break;
+                end
+            end
+        end
+    end
 end
 
 --[[ Less Particles ]]

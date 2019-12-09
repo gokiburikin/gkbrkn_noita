@@ -578,7 +578,7 @@ CHAMPION_TYPES = {
             });
         end
     }),
-    ToxicTrail = register_content( CONTENT_TYPE.ChampionType, "toxic_trail", "Toxil Trail", {
+    ToxicTrail = register_content( CONTENT_TYPE.ChampionType, "toxic_trail", "Toxic Trail", {
         particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/toxic_trail.xml",
         sprite_particle_sprite_file = nil,
@@ -599,6 +599,19 @@ CHAMPION_TYPES = {
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_toxic_trail.lua",
+            });
+        end
+    }),
+    Counter = register_content( CONTENT_TYPE.ChampionType, "counter", "Counter", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/counter.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="99999999",
+		        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/counter_damage_received.lua",
             });
         end
     }),
@@ -729,16 +742,19 @@ OPTIONS = {
         Name = "Enabled",
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies",
+        RequiresRestart = true,
     },
     {
         Name = "Super Champions",
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies_super",
+        RequiresRestart = true,
     },
     {
         Name = "Champions Only",
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies_always",
+        RequiresRestart = true,
     },
     {
         Name = "Hero Mode",
@@ -747,16 +763,19 @@ OPTIONS = {
         Name = "Enabled",
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode",
+        RequiresRestart = true,
     },
     {
         Name = "Orbs Increase Difficulty",
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_orb_scale",
+        RequiresRestart = true,
     },
     {
         Name = "Distance Increases Difficulty",
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_distance_scale",
+        RequiresRestart = true,
     },
     {
         Name = "Loadouts",
@@ -849,6 +868,17 @@ OPTIONS = {
     {
         Name = "Show FPS",
         PersistentFlag = "gkbrkn_show_fps",
+    },
+    {
+        Name = "Show Badges",
+        PersistentFlag = "gkbrkn_show_badges",
+        RequiresRestart = true,
+        EnabledByDefault = true,
+    },
+    {
+        Name = "Auto-hide Config Menu",
+        PersistentFlag = "gkbrkn_auto_hide",
+        RequiresRestart = true,
     }
 }
 
@@ -891,7 +921,7 @@ MISC = {
         SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
         AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
         ChampionChance = 0.125,
-        ExtraTypeChance = 0.125,
+        ExtraTypeChance = 0.25,
     },
     QuickSwap = {
         Enabled = "gkbrkn_quick_swap",
@@ -949,6 +979,12 @@ MISC = {
     },
     NoPregenWands = {
         Enabled = "gkbrkn_no_pregen_wands",
+    },
+    Badges = {
+        Enabled = "gkbrkn_show_badges",
+    },
+    AutoHide = {
+        Enabled = "gkbrkn_auto_hide",
     }
 }
 

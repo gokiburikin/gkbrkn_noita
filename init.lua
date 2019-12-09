@@ -215,7 +215,7 @@ end
 -- needs to know the layout and functionality of the underlying mods
 -- prefer utilizing the register_loadout function like the examples
 
-function try_consume( init_filepath, support_append_filepath )
+function try_append( init_filepath, support_append_filepath )
     local _, err = loadfile( init_filepath );
     if err == nil then
         ModLuaFileAppend( init_filepath, support_append_filepath );
@@ -223,10 +223,13 @@ function try_consume( init_filepath, support_append_filepath )
 end
 
 if HasFlagPersistent( MISC.Loadouts.Manage ) then
-    try_consume( "mods/starting_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/starting_loadouts_support.lua" );
-    try_consume( "mods/more_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/more_loadouts_support.lua" );
-    try_consume( "mods/Kaelos_Archetypes/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );
+    try_append( "mods/starting_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/starting_loadouts_support.lua" );
+    try_append( "mods/more_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/more_loadouts_support.lua" );
+    try_append( "mods/Kaelos_Archetypes/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );
 end 
+if HasFlagPersistent( MISC.Badges.Enabled ) then
+    try_append( "mods/nightmare/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/nightmare_mode_badge.lua" );
+end
 
 function OnModPreInit()
     -- append the logic to parse the old loadouts as new loadouts 
