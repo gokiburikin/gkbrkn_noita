@@ -1,13 +1,9 @@
 dofile_once("data/scripts/lib/utilities.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
-table.insert( perk_list, {
-	id = "GKBRKN_DUPLICATE_WAND",
-	ui_name = "Duplicate Wand",
-	ui_description = "Your wand has been copied.",
-	ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/duplicate_wand/icon_ui.png",
-    perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/duplicate_wand/icon_ig.png",
-    func = function( entity_perk_item, entity_who_picked, item_name )
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_DUPLICATE_WAND", "duplicate_wand", function( entity_perk_item, entity_who_picked, item_name )
         local x, y = EntityGetTransform( entity_who_picked );
         local base_wand = WandGetActiveOrRandom( entity_who_picked );
         if base_wand ~= nil then
@@ -18,5 +14,5 @@ table.insert( perk_list, {
                 ComponentSetValue( item, "play_hover_animation", "1" );
             end
         end
-	end,
-});
+	end
+) );

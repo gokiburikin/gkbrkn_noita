@@ -1,3 +1,5 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 local x, y = EntityGetTransform( player_entity );
 
 --[[
@@ -18,8 +20,11 @@ end
 ]]
 
 --[[
-for i=1,20 do
-    EntityLoad( "data/entities/animals/longleg.xml", x, y - 100 );
+for i=1,50 do
+    EntityLoad( "data/entities/animals/longleg.xml", x - 100, y - 100 );
+end
+for i=1,50 do
+    EntityLoad( "data/entities/animals/zombie.xml", x- 100, y - 100 );
 end
 ]]
 if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_player_update" ) == nil then
@@ -63,27 +68,11 @@ if GameHasFlagRun( init_check_flag ) == false then
             GameAddFlagRun( MISC.HeroMode.DistanceDifficultyEnabled );
         end
         if HasFlagPersistent( MISC.Badges.Enabled ) then
-            local badge_filepath = "mods/gkbrkn_noita/files/gkbrkn/badges/hero_mode";
-            local badge_name = "Hero";
-            local badge = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/badges/hero_mode.xml" );
-            if GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled ) then
-                badge_filepath = badge_filepath .. "_distance";
-                badge_name = "Determined "..badge_name;
-            end
-            if GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
-                badge_filepath = badge_filepath .. "_orbs";
-                badge_name = "Courageous "..badge_name;
-            end
-            badge_filepath = badge_filepath .. ".png";
-            badge_name = badge_name.." Mode";
-            if badge ~= nil then
-                local ui_icon = EntityGetFirstComponent( badge, "UIIconComponent" );
-                if ui_icon ~= nil then
-                    ComponentSetValue( ui_icon, "icon_sprite_file", badge_filepath );
-                    ComponentSetValue( ui_icon, "name", badge_name );
-                end
-                EntityAddChild( player_entity, badge );
-            end
+            local badge = load_dynamic_badge( "hero_mode", {
+                {_distance=GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled )},
+                {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled )},
+            }, gkbrkn_localization );
+            EntityAddChild( player_entity, badge );
         end
     end
 
@@ -96,32 +85,11 @@ if GameHasFlagRun( init_check_flag ) == false then
             GameAddFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled );
         end
         if HasFlagPersistent( MISC.Badges.Enabled ) then
-            local badge_filepath = "mods/gkbrkn_noita/files/gkbrkn/badges/champion_mode";
-            local badge_name = "Champions";
-            local badge_description = "You will face";
-            if GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) then
-                badge_filepath = badge_filepath .. "_always";
-                badge_name = badge_name .. " Only";
-                badge_description = badge_description .. " only";
-            end
-            if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled ) then
-                badge_filepath = badge_filepath .. "_super";
-                badge_name = "Super "..badge_name;
-                badge_description = badge_description .. " very";
-            end
-            badge_filepath = badge_filepath .. ".png";
-            badge_name = badge_name.." Mode";
-            badge_description = badge_description .. " challenging enemies.";
-            local badge = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/badges/champion_mode.xml" );
-            if badge ~= nil then
-                local ui_icon = EntityGetFirstComponent( badge, "UIIconComponent" );
-                if ui_icon ~= nil then
-                    ComponentSetValue( ui_icon, "icon_sprite_file", badge_filepath );
-                    ComponentSetValue( ui_icon, "name", badge_name );
-                    ComponentSetValue( ui_icon, "description", badge_description );
-                end
-                EntityAddChild( player_entity, badge );
-            end
+            local badge = load_dynamic_badge( "champion_mode", {
+                {_always=GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled )},
+                {_super=GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled )},
+            }, gkbrkn_localization );
+            EntityAddChild( player_entity, badge );
         end
     end
 

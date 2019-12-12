@@ -1,7 +1,7 @@
 <Entity tags="card_action">
     <Base file="data/entities/base_custom_card.xml" > 
 		<SpriteComponent 
-			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/undefined.png" 
+			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/wip/icon.png" 
 			>
 		</SpriteComponent>
 		

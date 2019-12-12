@@ -86,6 +86,7 @@ ABANDONED
 
 ]]
 
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
@@ -133,16 +134,17 @@ if CONTENT[PERKS.Demolitionist].enabled() then ModLuaFileAppend( "data/scripts/p
 if CONTENT[PERKS.Multicast].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/multicast/init.lua" ); end
 if CONTENT[PERKS.MagicLight].enabled() then ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/magic_light/init.lua" ); end
 
-if CONTENT[ACTIONS.BounceDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/bounce_damage/init.lua" ); end
+if CONTENT[ACTIONS.DamageBounce].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/damage_bounce/init.lua" ); end
 if CONTENT[ACTIONS.BreakCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/break_cast/init.lua" ); end
 if CONTENT[ACTIONS.ArcaneBuckshot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/arcane_buckshot/init.lua" ); end
+if CONTENT[ACTIONS.ArcaneShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/arcane_shot/init.lua" ); end
 if CONTENT[ACTIONS.CollisionDetection].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/collision_detection/init.lua" ); end
 if CONTENT[ACTIONS.CopySpell].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/copy_spell/init.lua" ); end
 if CONTENT[ACTIONS.DrawDeck].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/draw_deck/init.lua" ); end
 if CONTENT[ACTIONS.DoubleCast].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/double_cast/init.lua" ); end
 if CONTENT[ACTIONS.ExtraProjectile].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/extra_projectile/init.lua" ); end
 if CONTENT[ACTIONS.GoldenBlessing].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/golden_blessing/init.lua" ); end
-if CONTENT[ACTIONS.LifetimeDamage].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/lifetime_damage/init.lua" ); end
+if CONTENT[ACTIONS.DamageLifetime].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/damage_lifetime/init.lua" ); end
 if CONTENT[ACTIONS.MagicLight].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/init.lua" ); end
 if CONTENT[ACTIONS.ManaEfficiency].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/mana_efficiency/init.lua" ); end
 if CONTENT[ACTIONS.ManaRecharge].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/mana_recharge/init.lua" ); end
@@ -163,7 +165,6 @@ if CONTENT[ACTIONS.ShuffleDeck].enabled() then ModLuaFileAppend( "data/scripts/g
 if CONTENT[ACTIONS.SpectralShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/spectral_shot/init.lua" ); end
 if CONTENT[ACTIONS.SpellEfficiency].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/spell_efficiency/init.lua" ); end
 if CONTENT[ACTIONS.SpellMerge].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/init.lua" ); end
-if CONTENT[ACTIONS.ArcaneShot].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/arcane_shot/init.lua" ); end
 if CONTENT[ACTIONS.SuperBounce].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/super_bounce/init.lua" ); end
 if CONTENT[ACTIONS.TriggerHit].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_hit/init.lua" ); end
 if CONTENT[ACTIONS.TriggerTimer].enabled() then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_timer/init.lua" ); end
@@ -232,6 +233,7 @@ if HasFlagPersistent( MISC.Badges.Enabled ) then
 end
 
 function OnModPreInit()
+    print("goki's things pre-init");
     -- append the logic to parse the old loadouts as new loadouts 
     ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn_loadouts/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/parse_old_loadouts.lua" );
     -- slap the fully combined set of loadout files onto the end of config so it can be caught by the config menu and performed
@@ -239,6 +241,7 @@ function OnModPreInit()
 end
 
 function OnModPostInit()
+    print("goki's things post-init");
     if HasFlagPersistent( MISC.LimitedAmmo.Enabled ) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/limited_ammo.lua" );
     end

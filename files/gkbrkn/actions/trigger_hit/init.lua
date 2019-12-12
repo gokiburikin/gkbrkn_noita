@@ -1,17 +1,10 @@
-table.insert( actions,
-{
-    id          = "GKBRKN_TRIGGER_HIT",
-    name 		= "Trigger - Hit",
-    description = "Cast a spell that casts another spell upon collision",
-    sprite 		= "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_hit/icon.png",
-    sprite_unidentified = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_hit/icon.png",
-    type 		= ACTION_TYPE_MODIFIER,
-    spawn_level                       = "0,1,2,3,4,5,6",
-    spawn_probability                 = "1,1,1,1,1,1,1",
-    price = 250,
-    mana = 10,
-    action 		= function()
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
+table.insert( actions, generate_action_entry(
+    "GKBRKN_TRIGGER_HIT", "trigger_hit", ACTION_TYPE_MODIFIER, 
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 250, 10, -1,
+    nil,
+    function()
         set_trigger_hit_world( 1 );
         draw_actions( 1, true );
-    end,
-});
+    end
+) );

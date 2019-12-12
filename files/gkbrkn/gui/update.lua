@@ -1,6 +1,8 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "data/scripts/lib/coroutines.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua");
 
 local SCREEN = {
     Options = 1,
@@ -28,7 +30,7 @@ local tab_index = 1;
 local hide_menu_frame = GameGetFrameNum() + 300;
 local tabs = {
     {
-        name = "Options",
+        name = gkbrkn_localization.ui_tab_name_options,
         screen = SCREEN.Options,
     }
 }
@@ -41,7 +43,7 @@ end
 table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 
 for k,v in pairs( CONTENT_TYPE ) do
-    local name = CONTENT_TYPE_DISPLAY_NAME[v].."s";
+    local name = CONTENT_TYPE_DISPLAY_NAME[v];
     if SETTINGS.Debug then
         name = (content_counts[v] or 0).." "..name;
     end
@@ -87,7 +89,7 @@ function do_gui()
     id_offset = 0;
     GuiStartFrame(gui);
     GuiLayoutBeginVertical( gui, 86, 0 ); -- fold vertical
-    local main_text = "[Goki's Things "..SETTINGS.Version.."]";
+    local main_text = "["..gkbrkn_localization.ui_mod_name.." "..SETTINGS.Version.."]";
     if gui_require_restart == true then
         main_text = main_text.."*"
     end
@@ -101,7 +103,8 @@ function do_gui()
     GuiLayoutEnd( gui ); -- fold vertical
     if SETTINGS ~= nil and SETTINGS.Debug then
         GuiLayoutBeginVertical( gui, 92, 93 );
-        local update_time = tonumber( GlobalsGetValue("gkbrkn_update_time") ) or 0;
+        local update_time = get_update_time();
+        reset_update_time();
         GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
         GuiLayoutEnd( gui );
     end
@@ -134,7 +137,7 @@ function do_gui()
     if screen == SCREEN.Options then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
+        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
             change_screen( 0 );
         end
         GuiLayoutEnd( gui );
@@ -151,13 +154,13 @@ function do_gui()
         end
         if gui_require_restart == true then
             GuiText( gui, 0, 0, " ");
-            GuiText( gui, 0, 0, "restart required *");
+            GuiText( gui, 0, 0, gkbrkn_localization.ui_restart_required.." *");
         end
         GuiLayoutEnd( gui );
     elseif screen == SCREEN.ContentTypeSelection then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
+        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
             change_screen( 0 );
         end
         GuiLayoutEnd( gui );
@@ -173,23 +176,23 @@ function do_gui()
         --for index,action_id in pairs( sorted_actions ) do
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
-        if GuiButton( gui, 0, 0, "[Close]", next_id() ) then
+        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
             change_screen( 0 );
         end
         GuiText( gui, 0, 0, "        " );
-        if GuiButton( gui, 0, 0, "[Enable All]", next_id() ) then
+        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_enable_all.."]", next_id() ) then
             for index,content_mapping in pairs( filtered_content ) do
                 CONTENT[ content_mapping.id ].toggle( true );
             end
             gui_require_restart = true;
         end
-        if GuiButton( gui, 0, 0, "[Disable All]", next_id() ) then
+        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_disable_all.."]", next_id() ) then
             for index,content_mapping in pairs( filtered_content ) do
                 CONTENT[ content_mapping.id ].toggle( false );
             end
             gui_require_restart = true;
         end
-        if GuiButton( gui, 0, 0, "[Toggle All]", next_id() ) then
+        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_toggle_all.."]", next_id() ) then
             for index,content_mapping in pairs( filtered_content ) do
                 CONTENT[ content_mapping.id ].toggle();
             end
@@ -213,9 +216,9 @@ function do_gui()
             local flag = get_content_flag( content.id );
             if flag ~= nil then
                 if content.enabled() == true then
-                    text = text .. "[X]";
+                    text = text .. gkbrkn_localization.ui_check_mark;
                 else
-                    text = text .. "[  ]";
+                    text = text .. gkbrkn_localization.ui_uncheck_mark;
                 end
                 text = text .. " "..content.name;
             end
@@ -228,7 +231,7 @@ function do_gui()
         end
         if gui_require_restart == true then
             GuiText( gui, 0, 0, " ");
-            GuiText( gui, 0, 0, "restart required *");
+            GuiText( gui, 0, 0, gkbrkn_localization.ui_restart_required.." *");
         end
         GuiLayoutEnd( gui ); -- content wrapping vertical
     end
@@ -261,9 +264,9 @@ function do_option( option, index )
         end
         local option_enabled = HasFlagPersistent( option.flag );
         if option_enabled then
-            text = text .. "[X]";
+            text = text .. gkbrkn_localization.ui_check_mark;
         else
-            text = text .. "[  ]";
+            text = text .. gkbrkn_localization.ui_uncheck_mark;
         end
         text = text .. " ".. option.name;
         if GuiButton( gui, 0, 0, text, next_id() ) then
@@ -287,7 +290,7 @@ end
 
 function do_pagination( list, per_page )
     GuiLayoutBeginHorizontal( gui, 0, 0 );
-    GuiText( gui, 0, 0, "Page " );
+    GuiText( gui, 0, 0, gkbrkn_localization.ui_page.." " );
     for i=1,math.ceil( #list / per_page ) do
         local text = "";
         if page == i-1 then

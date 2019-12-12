@@ -1,8 +1,10 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 _OnPlayerSpawned = OnPlayerSpawned;
 function OnPlayerSpawned( player_entity )
     _OnPlayerSpawned();
-    local nightmare_mode_badge = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/badges/nightmare_mode.xml" );
-    if nightmare_mode_badge ~= nil then
-        EntityAddChild( player_entity, nightmare_mode_badge );
+    local badge = load_dynamic_badge( "nightmare_mode", nil, gkbrkn_localization );
+    if badge ~= nil then
+        EntityAddChild( player_entity, badge );
     end
 end

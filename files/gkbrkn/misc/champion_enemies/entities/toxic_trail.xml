@@ -11,7 +11,7 @@
 		y_pos_offset_max="2"
 		count_min="1"
 		count_max="1"
-		is_trail="1"
+		is_trail="0"
 		trail_gap="2.5"
 		lifetime_min="0.1"
 		lifetime_max="1.3"

@@ -1,11 +1,6 @@
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 table.insert( perk_list,
-{
-	id = "GKBRKN_GOLDEN_BLOOD",
-	ui_name = "Golden Blood",
-	ui_description = "You bleed gold.",
-	ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/golden_blood/icon_ui.png",
-    perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/golden_blood/icon_ig.png",
-    func = function( entity_perk_item, entity_who_picked, item_name )
+    generate_perk_entry( "GKBRKN_GOLDEN_BLOOD", "golden_blood", function( entity_perk_item, entity_who_picked, item_name )
         local damagemodels = EntityGetComponent( entity_who_picked, "DamageModelComponent" );
         if damagemodels ~= nil then
             for i,damagemodel in ipairs( damagemodels ) do
@@ -17,4 +12,4 @@ table.insert( perk_list,
             end
         end
 	end
-});
+));

@@ -2,6 +2,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "data/scripts/lib/utilities.lua" );
 
 --GamePrint( GetUpdatedEntityID() );
@@ -22,9 +23,14 @@ local children = EntityGetAllChildren( player_entity ) or {};
 
 --[[
 if now % 180 == 0 then
-    GamePrint( y / 10 );
-    local dx, dy = StatsGetValue( "death_pos" );
-    GamePrint( tostring( dy ));
+    local game_effect = GetGameEffectLoadTo( player_entity, "POLYMORPH_RANDOM", true );
+    if game_effect ~= nil then
+        GamePrint( "polymorpg tagrget "..tostring(ComponentGetValue( game_effect, "polymorph_target" ) ) );
+        ComponentSetValue( game_effect, "polymorph_target", "data/entities/animals/longleg.xml" );
+        ComponentSetValue( game_effect, "frames", "30" );
+        GamePrint("force polymorph");
+    end
+    
 end
 ]]
 --[[ material immunities
@@ -398,7 +404,7 @@ end
 ]]
 
 
-local nearby_enemies = EntityGetInRadiusWithTag( x, y, 256, "enemy" );
+local nearby_enemies = EntityGetInRadiusWithTag( x, y, 1024, "enemy" );
 --[[ Champions ]]
 if GameHasFlagRun( MISC.ChampionEnemies.Enabled ) then
     for _,nearby in pairs( nearby_enemies ) do
@@ -601,7 +607,7 @@ if HasFlagPersistent( MISC.HealthBars.Enabled ) then
 end
 
 --[[ Hero Mode Scaling ]]
--- TODO find a better weay to target enemies and bosses (dragon, pyramid, centipede)
+-- TODO find a better way to target enemies and bosses (dragon, pyramid, centipede)
 if GameHasFlagRun( MISC.HeroMode.Enabled ) then
     local speed_multiplier = 1.25;
     if EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode", 0 ) == 0 then
@@ -626,24 +632,43 @@ if GameHasFlagRun( MISC.HeroMode.Enabled ) then
         });
     end
 
+    local distance = EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode_distance", 0.0 );
+    local distance_multiplier = math.pow( 0.9, math.floor(distance / 7000) );
+    local velocity = EntityGetFirstComponent( player_entity, "VelocityComponent" );
+    local vx,vy = ComponentGetValueVector2( velocity, "mVelocity" );
+    local magnitude = math.sqrt( vx * vx );
+    if magnitude > 0.01 then
+        EntitySetVariableNumber( player_entity, "gkbrkn_hero_mode_distance", distance + magnitude );
+    end
+
+    local orb_multiplier =  1;
+    if GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
+        orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
+    end
+
+    --[[ aI states
+        2 - go home?
+        4 - go home?
+        5 - jump
+        7 - piss
+        9 - wander?
+        11 - makes longlegs jump around
+        13 - melee attack
+        14 - dash attack?
+        15 - ranged attack
+        21 - last valid state
+    ]]
+
+    local player_genome = EntityGetFirstComponent( player_entity, "GenomeDataComponent" );
+    local player_herd = -1;
+    if player_genome ~= nil then
+        player_herd = ComponentGetMetaCustom( player_genome, "herd_id" );
+    end
     for _,nearby in pairs( nearby_enemies ) do
         if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 then
             EntitySetVariableNumber( nearby, "gkbrkn_hero_mode", 1.0 );
             local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
             if damage_models ~= nil then
-
-                local orb_multiplier =  1;
-                if GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
-                    orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
-                end
-                local distance_multiplier = 1;
-                if GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled ) then
-                    local x, y = EntityGetTransform( nearby, x, y )
-                    local distance = math.sqrt( x * x + y * y );
-                    if distance ~= 0 then
-                        distance_multiplier =  math.pow( 0.9, math.floor(distance / 3000) );
-                    end
-                end
 
                 local resistances = {
                     ice = 0.50,
@@ -682,12 +707,9 @@ if GameHasFlagRun( MISC.HeroMode.Enabled ) then
                             sense_creatures="1",
                             attack_only_if_attacked="0",
                             dont_counter_attack_own_herd="1",
-                            creature_detection_angular_range_deg="360",
+                            creature_detection_angular_range_deg="180",
                         });
                         ComponentAdjustValues( ai, {
-                            creature_detection_range_x=function(value) return tonumber( value ) * 5; end,
-                            creature_detection_range_y=function(value) return tonumber( value ) * 5; end,
-                            max_distance_to_cam_to_start_hunting=function(value) return tonumber( value ) * 10; end,
                             attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
                             attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
                             attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
@@ -722,13 +744,10 @@ if GameHasFlagRun( MISC.HeroMode.Enabled ) then
         --[[
         -- only do it twice a second to reduce performance hit
         ]]
-        if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
-            local player_genome = EntityGetFirstComponent( player_entity, "GenomeDataComponent" );
+        if now % 60 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
             local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );
-            local player_herd = -1;
             local nearby_herd = -1;
-            if nearby_genome ~= nil and player_genome ~= nil then
-                player_herd = ComponentGetMetaCustom( player_genome, "herd_id" );
+            if nearby_genome ~= nil then
                 nearby_herd = ComponentGetMetaCustom( nearby_genome, "herd_id" );
                 if player_herd ~= nearby_herd then
                     local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
@@ -912,7 +931,7 @@ if #projectile_entities > 0 then
             table.insert( magnitudes, magnitude );
         end
     end
-    local average_angle = mean_angle( angles );
+    local average_angle = mean_angle( angles, magnitudes );
     for i,projectile in pairs( projectile_entities ) do
         local velocity = velocities[i];
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
@@ -1002,6 +1021,14 @@ if #projectile_entities > 0 then
                     local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
                     local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
                     ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+
+                    local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
+                    local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
+                    if projectile ~= nil and leader_projectile ~= nil then
+                        local leader_lifetime = tonumber( ComponentGetValue( leader_projectile, "lifetime" ) );
+                        local projectile_lifetime = tonumber( ComponentGetValue( projectile, "lifetime" ) );
+                        ComponentSetValue( projectile, "lifetime", tostring( leader_lifetime + projectile_lifetime ) );
+                    end
                 end
             else
                 leader = projectile;
@@ -1038,5 +1065,4 @@ if #projectile_entities > 0 then
     end
 end
 
-local update_time = GameGetRealWorldTimeSinceStarted() - t;
-GlobalsSetValue("gkbrkn_update_time",update_time);
+add_update_time( GameGetRealWorldTimeSinceStarted() - t );

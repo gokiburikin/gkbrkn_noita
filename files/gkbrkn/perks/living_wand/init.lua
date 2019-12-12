@@ -1,13 +1,9 @@
 dofile_once("data/scripts/lib/utilities.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
-table.insert( perk_list, {
-	id = "GKBRKN_LIVING_WAND",
-	ui_name = "Living Wand",
-	ui_description = "Living Wand.",
-	ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perk/living_wand/icon_ui.png",
-    perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perk/living_wand/icon_ig.png",
-    func = function( entity_perk_item, entity_who_picked, item_name )
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_LIVING_WAND", "living_wand", function( entity_perk_item, entity_who_picked, item_name )
         local x, y = EntityGetTransform( entity_who_picked );
         local valid_wands = {};
         local children = EntityGetAllChildren( entity_who_picked );
@@ -28,5 +24,5 @@ table.insert( perk_list, {
             CopyWand( base_wand, living_wand );
 
         end
-	end,
-})
+	end
+) );

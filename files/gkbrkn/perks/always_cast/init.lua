@@ -1,5 +1,6 @@
 dofile_once("data/scripts/lib/utilities.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 function is_wand_always_cast_valid( wand )
     local children = EntityGetAllChildren( wand ) or {};
@@ -19,13 +20,8 @@ function is_wand_always_cast_valid( wand )
     return false;
 end
 
-table.insert( perk_list, {
-	id = "GKBRKN_ALWAYS_CAST",
-	ui_name = "Always Cast",
-	ui_description = "A random spell on your wand has been upgraded to always cast.",
-	ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/always_cast/icon_ui.png",
-    perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/always_cast/icon_ig.png",
-    func = function( entity_perk_item, entity_who_picked, item_name )
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_ALWAYS_CAST", "always_cast", function( entity_perk_item, entity_who_picked, item_name )
         local base_wand = nil;
         local wands = {};
         local children = EntityGetAllChildren( entity_who_picked );
@@ -81,5 +77,5 @@ table.insert( perk_list, {
                 end
             end
         end
-	end,
-});
+	end
+));

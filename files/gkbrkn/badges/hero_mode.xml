@@ -1,7 +1,0 @@
-<Entity>
-    <UIIconComponent
-        icon_sprite_file="mods/gkbrkn_noita/files/gkbrkn/badges/hero_mode.png"
-        name="Hero Mode"
-        description="You are strong, important, and will face many dangerous obstacles.">
-    </UIIconComponent>
-</Entity>

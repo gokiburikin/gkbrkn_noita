@@ -1,16 +1,9 @@
-table.insert( actions,
-{
-    id          = "GKBRKN_COPY_SPELL",
-    name 		= "Copy Spell",
-    description = "Cast the next unlimited use, non-copy spell",
-    sprite 		= "mods/gkbrkn_noita/files/gkbrkn/actions/copy_spell/icon.png",
-    sprite_unidentified = "mods/gkbrkn_noita/files/gkbrkn/actions/copy_spell/icon.png",
-    type 		= ACTION_TYPE_DRAW_MANY,
-    spawn_level                       = "0,1,2,3,4,5,6",
-    spawn_probability                 = "1,1,1,1,1,1,1",
-    price = 350,
-    mana = 30,
-    action 		= function()
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
+table.insert( actions, generate_action_entry(
+    "GKBRKN_COPY_SPELL", "copy_spell", ACTION_TYPE_DRAW_MANY,
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 350, 30, -1,
+    nil,
+    function()
         local drawn = false;
         for index,action in pairs(deck) do
             if action.id ~= "GKBRKN_COPY_SPELL" and ( action.uses_remaining == nil or action.uses_remaining < 0 ) then
@@ -22,5 +15,5 @@ table.insert( actions,
         if drawn == false then
             draw_actions( 1, true );
         end
-    end,
-});
+    end
+) );

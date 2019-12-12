@@ -1,7 +1,0 @@
-<Entity>
-    <UIIconComponent
-        icon_sprite_file="mods/gkbrkn_noita/files/gkbrkn/badges/nightmare_mode.png"
-        name="Nightmare Mode"
-        description="Things are unfamiliar and death feels closer than ever.">
-    </UIIconComponent>
-</Entity>

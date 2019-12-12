@@ -1,7 +1,0 @@
-<Entity>
-    <UIIconComponent
-        icon_sprite_file="mods/gkbrkn_noita/files/gkbrkn/badges/champion_mode.png"
-        name="Champion Mode"
-        description="You will face challenging enemies.">
-    </UIIconComponent>
-</Entity>
