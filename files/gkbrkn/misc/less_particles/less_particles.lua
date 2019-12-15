@@ -1,3 +1,5 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+
 local entity = GetUpdatedEntityID();
 local particle_emitters = EntityGetComponent( entity, "ParticleEmitterComponent" ) or {};
 for _,emitter in pairs( particle_emitters ) do
@@ -12,6 +14,7 @@ for _,emitter in pairs( particle_emitters ) do
         ComponentSetValue( emitter, "lifetime_max", tostring( math.min( lifetime_max * 0.5, 0.5 ) ) );
     end
 end
+
 local sprite_particle_emitters = EntityGetComponent( entity, "SpriteParticleEmitterComponent" ) or {};
 for _,emitter in pairs( sprite_particle_emitters ) do
     if ComponentGetValue( emitter, "entity_file" ) == "" then
@@ -19,4 +22,12 @@ for _,emitter in pairs( sprite_particle_emitters ) do
         ComponentSetValue( emitter, "emission_interval_min_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_min_frames" ) ) * 2 ) ) );
         ComponentSetValue( emitter, "emission_interval_max_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_max_frames" ) ) * 2 ) ) );
     end
+end
+
+local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+if projectile ~= nil then
+    ComponentObjectAdjustValues( projectile, "config_explosion", {
+        sparks_count_min=function( value ) return math.min( tonumber( value ) or 0, 1 ); end,
+        sparks_count_max=function( value ) return math.min( tonumber( value ) or 0, 2 ); end,
+    });
 end

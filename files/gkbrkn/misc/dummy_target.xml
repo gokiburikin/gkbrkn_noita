@@ -16,7 +16,7 @@
         falling_damages="0" 
         fire_damage_amount="0" 
         fire_probability_of_ignition="0"
-        hp="99999" 
+        hp="100000" 
         blood_multiplier="0"
         is_on_fire="0" 
         materials_create_messages="0" 
@@ -46,5 +46,8 @@
 		aabb_max_y="0"
 	>
 	</HitboxComponent>
-
+    <LuaComponent
+        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
+    >
+    </LuaComponent>
 </Entity>

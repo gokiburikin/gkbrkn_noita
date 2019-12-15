@@ -10,7 +10,8 @@ gkbrkn_localization = {
     ui_uncheck_mark = "[ ]",
     ui_restart_required = "restart required",
     ui_page = "Page ",
-    
+    ui_auto_hide_message = "Hid Goki's Things",
+
     ui_tab_name_options = "Options",
 
     config_content_type_name_action = "Actions",
@@ -36,7 +37,7 @@ gkbrkn_localization = {
     sub_option_less_particles_enabled = "Enabled",
     sub_option_less_particles_disable_cosmetic_particles = "Disable Cosmetic Particles",
     option_random_start = "Random Start",
-    sub_option_random_start_random_wands = "Random Wand",
+    sub_option_random_start_random_wands = "Random Wands",
     sub_option_random_start_default_wand_generation = "Default Wand Generation",
     sub_option_random_start_random_cape_colour = "Random Cape Colour",
     sub_option_random_start_random_health = "Random Starting Health",
@@ -71,7 +72,7 @@ gkbrkn_localization = {
     option_health_bars = "Health Bars",
     option_show_fps = "Show FPS",
     option_show_badges = "Show Badges",
-    option_auto_hide = "Auto-hide Config Menu",
+    option_auto_hide = "Auto-hide Config Button",
 
     --[[ Champions ]]
     champion_type_name_damage_buff = "Damage Buff",
@@ -97,6 +98,7 @@ gkbrkn_localization = {
     champion_type_name_invincibility_frames = "Invincibility Frames",
     champion_type_name_toxic_trail = "Toxic Trail",
     champion_type_name_counter = "Counter/Reflect",
+    champion_type_name_infested = "Infested",
 
     --[[ Badges ]]
     ui_icon_name_champion_mode = "Champions Mode",
@@ -135,7 +137,7 @@ gkbrkn_localization = {
     perk_name_duplicate_wand = "Duplicate Wand",
     perk_description_duplicate_wand = "Your wand has been copied.",
     perk_name_extra_projectile = "Extra Projectile",
-    perk_description_extra_projectile = "Your spells gain an additional projectile, but are less accurate and cast less quickly.",
+    perk_description_extra_projectile = "Your spells gain an additional projectile, but are cast less quickly.",
     perk_name_fragile_ego = "Fragile Ego",
     perk_description_fragile_ego = "Receive 50% less damage, but damage is permanent.",
     perk_name_golden_blood = "Golden Blood",
@@ -176,6 +178,10 @@ gkbrkn_localization = {
     perk_description_swapper = "Swap places with your attacker.",
     perk_name_thrifty_shopper = "Thrifty Shopper",
     perk_description_thrifty_shopper = "From now on Holy Mountain shops will carry two additional items.",
+    perk_name_chain_casting = "Chain Casting",
+    perk_description_chain_casting = "Your spells now chain cast.",
+    perk_name_null = "Unnamed Perk",
+    perk_description_null = "This perk is missing it's localization data!",
     perk_name_wip = "WIP Perk",
     perk_description_wip = "A work in progress perk.",
 
@@ -256,6 +262,12 @@ gkbrkn_localization = {
     action_description_trigger_hit = "Cast a spell that casts another spell upon collision",
     action_name_trigger_timer = "Trigger - Timer",
     action_description_trigger_timer = "Cast a spell that casts another spell after a timer runs out",
+    action_name_barrier_trail = "Barrier Trail",
+    action_description_barrier_trail = "Projectiles gain a trail of barriers.",
+    action_name_glittering_trail = "Glittering Trail",
+    action_description_glittering_trail = "Projectiles gain a trail of explosions.",
+    action_name_chaotic_burst = "Chaotic Burst",
+    action_description_chaotic_burst = "Cast an uncontrolled burst of spells.",
     action_name_wip = "WIP Action",
     action_description_wip = "A work in progress action.",
 

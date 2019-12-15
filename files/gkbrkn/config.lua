@@ -2,9 +2,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 
 SETTINGS = {
-    Debug = DebugGetIsDevBuild(),
+    Debug = true,
     ShowDeprecatedContent = false,
-    Version = "c66"
+    Version = "c67"
 }
 
 CONTENT_TYPE = {
@@ -42,14 +42,14 @@ CONTENT_TYPE_DISPLAY_NAME = {
 
 
 CONTENT = {};
-function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted )
+function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
     local content_id = #CONTENT + 1;
     local content = {
         id = content_id,
         type = type,
         key = key,
         --name = CONTENT_TYPE_DISPLAY_NAME[type]..": "..display_name,
-        name = display_name,
+        name = display_name or ("missing display name: "..key),
         disabled_by_default = disabled_by_default,
         deprecated = deprecated,
         enabled = function()
@@ -88,6 +88,7 @@ function register_content( type, key, display_name, options, disabled_by_default
             end
         end,
         options = options,
+        init_function = init_function,
     }
     table.insert( CONTENT, content );
     return content.id;
@@ -105,7 +106,9 @@ function get_content_flag( content_id )
 end
 
 local register_perk = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted );
+    return register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted, function()
+        ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/init.lua" );
+    end );
 end
 
 PERKS = {
@@ -145,11 +148,14 @@ PERKS = {
     Demolitionist = register_perk( "demolitionist" ),
     Multicast = register_perk( "multicast" ),
     MagicLight = register_perk( "magic_light", nil, true, true ),
+    ChainCasting = register_perk( "chain_casting" ),
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
 local register_action = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key], options, disabled_by_default, deprecated, inverted );
+    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key], options, disabled_by_default, deprecated, inverted, function()
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
+    end );
 end
 
 ACTIONS = {
@@ -177,7 +183,7 @@ ACTIONS = {
     DamageLifetime = register_action( "damage_lifetime" ),
     DamageBounce = register_action( "damage_bounce" ),
     PathCorrection = register_action( "path_correction" ),
-    CollisionDetection = register_action( "collision_detection" ),
+    CollisionDetection = register_action( "collision_detection", nil, true, true ),
     PowerShot = register_action( "power_shot" ),
     ShimmeringTreasure = register_action( "shimmering_treasure" ),
     NgonShape = register_action( "ngon_shape", nil, true, true ),
@@ -191,6 +197,9 @@ ACTIONS = {
     TimeSplit = register_action( "time_split" ),
     FormationStack = register_action( "formation_stack" ),
     PiercingShot = register_action( "piercing_shot", nil, true, true ),
+    BarrierTrail = register_action( "barrier_trail" ),
+    GlitteringTrail = register_action( "glittering_trail" ),
+    ChaoticBurst = register_action( "chaotic_burst" ),
     WIP = register_action( "wip", nil, true, not SETTINGS.Debug )
 }
 
@@ -213,7 +222,7 @@ TWEAKS = {
 LOADOUTS = {}
 
 local register_champion_type = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options );
+    return register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options, disabled_by_default, deprecated, inverted );
 end
 
 CHAMPION_TYPES = {
@@ -575,7 +584,7 @@ CHAMPION_TYPES = {
                     ComponentSetValues( ai, {
                         attack_ranged_action_frame="4",
                         attack_ranged_min_distance="0",
-                        attack_ranged_max_distance="150",
+                        attack_ranged_max_distance="120",
                         attack_ranged_entity_file="data/entities/projectiles/tongue.xml",
                         attack_ranged_offset_x="0",
                         attack_ranged_offset_y="0",
@@ -631,6 +640,19 @@ CHAMPION_TYPES = {
             EntityAddComponent( entity, "LuaComponent", {
                 execute_every_n_frame="99999999",
 		        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/counter_damage_received.lua",
+            });
+        end
+    }),
+    Infested =  register_champion_type( "infested", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/infested.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="99999999",
+		        script_death="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/infested_death.lua",
             });
         end
     }),
@@ -1091,7 +1113,11 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "TELEPORT_PROJECTILE" },
+                    { "SCATTER_4" },
+                    { "DEATH_CROSS" },
+                    { "DEATH_CROSS" },
+                    { "DEATH_CROSS" },
+                    { "CHAINSAW" },
                 }
             },
             {
@@ -1129,21 +1155,28 @@ if SETTINGS.Debug then
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {12,12}, -- capacity
-                    reload_time = {34,34}, -- recharge time in frames
+                    deck_capacity = {15,15}, -- capacity
+                    reload_time = {40,40}, -- recharge time in frames
                     fire_rate_wait = {20,20}, -- cast delay in frames
-                    spread_degrees = {-4,-4}, -- spread
-                    mana_charge_speed = {163,163}, -- mana charge speed
-                    mana_max = {530,530}, -- mana max
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {200,200}, -- mana charge speed
+                    mana_max = {1000,1000}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
-                    { "GKBRKN_PERFECT_CRITICAL" },
                 },
                 actions = {
-                    { "GKBRKN_MANA_RECHARGE" },
-                    { "LUMINOUS_DRILL" },
-                    { "RECHARGE" },
+                    { "CHAINSAW" },
+                    { "HEAVY_SHOT" },
+                    { "HEAVY_SHOT" },
+                    { "ACCELERATING_SHOT" },
+                    { "ACCELERATING_SHOT" },
+                    { "HOMING" },
+                    { "SCATTER_4" },
+                    { "RUBBER_BALL" },
+                    { "RUBBER_BALL" },
+                    { "RUBBER_BALL" },
+                    { "RUBBER_BALL" },
                 }
             }
         },
@@ -1163,6 +1196,8 @@ if SETTINGS.Debug then
             {"POWERDIGGER"},
             {"GKBRKN_SPELL_MERGE"},
             {"BURST_2"},
+            {"GKBRKN_GLITTERING_TRAIL"},
+            --[[
             {"GKBRKN_ACTION_WIP"},
             {"GKBRKN_MANA_EFFICIENCY"},
             {"GKBRKN_SPELL_EFFICIENCY"},
@@ -1203,6 +1238,7 @@ if SETTINGS.Debug then
             {"GKBRKN_FORMATION_STACK"},
             {"GKBRKN_PIERCING_SHOT"},
             {"GKBRKN_ACTION_WIP"},
+            ]]
         },
         nil, -- sprites
         "", -- custom message

@@ -7,24 +7,9 @@ for _,nearby in pairs( nearby_entities ) do
     -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
     -- we probably don't want to consider this nugget anyway
     local shimmer = false;
-    if EntityHasTag( nearby, "item_physics" ) then
-        shimmer = true;
-    end
-    if shimmer == false then
-        local item = EntityGetFirstComponent( nearby, "ItemComponent" );
-        if item ~= nil then
-            shimmer = ComponentGetValue( item, "auto_pickup" ) == "1"
-        end
-    end
-    if shimmer == false then
-        local components = EntityGetComponent( nearby, "LuaComponent" ) or {};
-        for _,component in pairs(components) do
-            -- TODO there needs to be a better more future proofed way to get gold nuggets
-            if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                shimmer = true;
-                break;
-            end
-        end
+    local item = EntityGetFirstComponent( nearby, "ItemComponent" );
+    if item ~= nil then
+        shimmer = ComponentGetValue( item, "auto_pickup" ) == "1";
     end
     if shimmer == true then
         local nearby_x, nearby_y = EntityGetTransform( nearby );

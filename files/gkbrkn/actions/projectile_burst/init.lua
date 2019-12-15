@@ -6,7 +6,6 @@ table.insert( actions, generate_action_entry(
     function()
         c.fire_rate_wait = c.fire_rate_wait + 10;
         current_reload_time = current_reload_time + 10;
-        c.spread_degrees = c.spread_degrees + 7;
         c.speed_multiplier = c.speed_multiplier * (1 + ( math.random() - 0.5 ) * 0.2 );
         extra_projectiles( 4 );
         draw_actions( 1, true );

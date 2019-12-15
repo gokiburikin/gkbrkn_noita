@@ -305,11 +305,16 @@ function do_pagination( list, per_page )
     GuiLayoutEnd( gui );
 end
 
+local auto_hide_message_shown = false;
+
 if gui then
     async_loop(function()
         if gui then
             if HasFlagPersistent( MISC.AutoHide.Enabled ) == false or GameGetFrameNum() - hide_menu_frame < 0 then
                 do_gui();
+            elseif auto_hide_message_shown == false then
+                auto_hide_message_shown = true;
+                GamePrint( gkbrkn_localization.ui_auto_hide_message );
             end
             do_fps();
         end

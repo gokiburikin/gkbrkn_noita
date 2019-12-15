@@ -15,6 +15,4 @@ for index,player in pairs( players ) do
     tracker = EntityGetFirstComponent( player, "VariableStorageComponent", tracker_variable );
     local current_lost_treasure_count = tonumber(ComponentGetValue( tracker, "value_string" ));
     ComponentSetValue( tracker, "value_string", tostring(current_lost_treasure_count + 1) );
-    --local ex, ey = EntityGetTransform( entity );
-    --GamePrint( "Nuggy despawned at "..ex..", "..ey.." and Lost Treasure set to " .. current_lost_treasure_count + 1 );
 end

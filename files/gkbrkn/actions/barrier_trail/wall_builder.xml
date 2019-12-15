@@ -1,0 +1,40 @@
+<Entity>
+
+  <LightComponent 
+    _enabled="1" 
+    radius="150" 
+    r="30"
+    g="90"
+    b="30">
+  </LightComponent>
+
+  <ParticleEmitterComponent 
+    emitted_material_name="plasma_fading_green"
+    offset.x="0"
+    offset.y="0"
+	gravity.y="0.0"
+	x_vel_min="0"
+    x_vel_max="0"
+    y_vel_min="-2"
+    y_vel_max="2"
+    count_min="1"
+    count_max="1"
+	is_trail="1"
+	trail_gap="1.0"
+    lifetime_min="0.05"
+    lifetime_max="0.1"
+    emit_real_particles="0"
+	render_on_grid="1"
+    emit_cosmetic_particles="1"
+    emission_interval_min_frames="1"
+    emission_interval_max_frames="2"
+    is_emitting="1" >
+  </ParticleEmitterComponent>
+  
+  <LuaComponent
+	script_source_file="data/scripts/projectiles/wall_builder.lua"
+	execute_every_n_frame="1"
+	>
+	</LuaComponent>
+
+</Entity>

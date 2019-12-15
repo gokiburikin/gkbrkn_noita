@@ -72,11 +72,12 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Swapper**: Switch places with your attacker upon taking damage.
 
 ### Projectile Modifier Spells
+- [x] **Barrier Trail**: Projectiles gain a trail of barriers.
 - [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
-- [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan)
 - [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
+- [x] **Glittering Trail**: Projectiles gain a trail of explosions.
 - [x] **Projectile Burst**: Duplicate a projectile multiple times.
 - [x] **Path Correction**: Projectiles target enemies within a short line of sight.
 - [x] **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
@@ -124,3 +125,4 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Draw Deck**: Simultaneously cast all remaining spells. *(Multiple multicasts can achieve this)*
 - [x] **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
 - [x] **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
+- [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*

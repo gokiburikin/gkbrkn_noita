@@ -47,6 +47,7 @@ local reset_per_casts = function()
     gkbrkn.projectiles_fired = 0;
     gkbrkn.stack_next_actions = 0;
     gkbrkn.stack_projectiles = "";
+    gkbrkn.extra_projectiles = 0;
 end
 
 function move_hand_to_discarded()
@@ -120,7 +121,6 @@ function draw_action( instant_reload_if_empty )
         end
         c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
-        c.spread_degrees = c.spread_degrees + 3 * extra_projectiles_level;
     end
     c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
     current_reload_time = current_reload_time + 8 * extra_projectiles_level;
@@ -165,7 +165,7 @@ function add_projectile( filepath )
             gkbrkn._add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Instant then
             if reflecting then 
-                Reflection_RegisterProjectile( filepath )
+                Reflection_RegisterProjectile( filepath );
                 return;
             end
         
@@ -173,7 +173,12 @@ function add_projectile( filepath )
                 draw_shot( create_shot( trigger_action_draw_count ), true );
             EndProjectile()
         else
-            gkbrkn._add_projectile( filepath );
+            local force_trigger_death = EntityGetVariableNumber( player, "gkbrkn_force_trigger_death", 0 );
+            if force_trigger_death ~= 1 then
+                gkbrkn._add_projectile( filepath );
+            else
+                gkbrkn._add_projectile_trigger_death( filepath, 1 );
+            end
         end
     end
     gkbrkn.extra_projectiles = 0;

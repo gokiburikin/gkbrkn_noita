@@ -56,14 +56,13 @@ if target ~= nil then
         for word in string.gmatch( damaged_entities_string, '([^,]+)' ) do
             damaged_entities[tostring(word)] = true;
         end
-        --[[ TODO when someone figures this out, fix this
+        --[[ TODO fix this when someone figures this out
         if GameGetFrameNum() % 60 == 0 then
             for _,c_type in pairs( {
                 "int","string","float"
                 --"unsigned int","uint","unsigned","unsigned short","unsigned short int"
             })do
                 local damaged_entities = ComponentGetVector( projectile, "mDamagedEntities", c_type );
-                --GamePrint( type.." was there" );
             end
         end
         ]]

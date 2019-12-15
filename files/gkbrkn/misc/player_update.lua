@@ -5,8 +5,6 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "data/scripts/lib/utilities.lua" );
 
---GamePrint( GetUpdatedEntityID() );
-
 local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
 
@@ -25,10 +23,8 @@ local children = EntityGetAllChildren( player_entity ) or {};
 if now % 180 == 0 then
     local game_effect = GetGameEffectLoadTo( player_entity, "POLYMORPH_RANDOM", true );
     if game_effect ~= nil then
-        GamePrint( "polymorpg tagrget "..tostring(ComponentGetValue( game_effect, "polymorph_target" ) ) );
         ComponentSetValue( game_effect, "polymorph_target", "data/entities/animals/longleg.xml" );
         ComponentSetValue( game_effect, "frames", "30" );
-        GamePrint("force polymorph");
     end
     
 end
@@ -38,7 +34,6 @@ TODO still can't really make use of this without polymorphing
 if true then
     local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
     for _,damage_model in pairs( damage_models ) do
-        GamePrint( ComponentGetValue( damage_model, "mCollisionMessageMaterialCountsThisFrame" ) );
         --adjust_material_damage( damage_model, function( materials, damage )
         --    table.insert( materials, "water");
         --    table.insert( damage, "0.1");
@@ -273,60 +268,35 @@ if gold_tracker_world or gold_tracker_message then
     end
 end
 
---[[ Lost Treasure and Gold Decay ]]
-local check_radius = 192;
-
--- iterate through all components of all entities around all players to find
--- nuggets we haven't tracked
-local natural_nuggets = {};
-local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "item_physics" );
-for _,nearby in pairs( nearby_entities ) do
+local gold_nuggets = EntityGetWithTag( "gold_nugget" );
+for _,gold_nugget in pairs( gold_nuggets ) do
     -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
     -- we probably don't want to consider this nugget anyway
-    if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( nearby ) == false then
-        local components = EntityGetComponent( nearby, "LuaComponent" ) or {};
-        for _,component in pairs(components) do
-            -- TODO there needs to be a better more future proofed way to get gold nuggets
-            if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                EntityAddComponent( nearby, "LuaComponent", {
-                    execute_every_n_frame = "-1",
-                    remove_after_executed = "1",
-                    script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
-                });
-                EntityAddComponent( nearby, "LuaComponent", {
-                    _tags="gkbrkn_lost_treasure",
-                    execute_on_removed="1",
-                    execute_every_n_frame="-1",
-                    script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
-                });
-                --local ex, ey = EntityGetTransform( entity );
-                --GamePrint( "New nuggy found at "..ex..", "..ey );
-                break;
-            end
-        end
+    if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( gold_nugget ) == false then
+        EntityAddComponent( gold_nugget, "LuaComponent", {
+            execute_every_n_frame = "-1",
+            remove_after_executed = "1",
+            script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
+        });
+        EntityAddComponent( gold_nugget, "LuaComponent", {
+            _tags="gkbrkn_lost_treasure",
+            execute_on_removed="1",
+            execute_every_n_frame="-1",
+            script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
+        });
     end
-    if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( nearby ) == false then
-        local components = EntityGetComponent( nearby, "LuaComponent" );
-        if components ~= nil then
-            for _,component in pairs(components) do
-                -- TODO there needs to be a better more future proofed way to get gold nuggets
-                if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                    EntityAddComponent( nearby, "LuaComponent", {
-                        execute_every_n_frame = "-1",
-                        remove_after_executed = "1",
-                        script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
-                    });
-                    EntityAddComponent( nearby, "LuaComponent", {
-                        _tags="gkbrkn_gold_decay",
-                        execute_on_removed="1",
-                        execute_every_n_frame="-1",
-                        script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
-                    });
-                    --local ex, ey = EntityGetTransform( entity );
-                    --GamePrint( "New nuggy found at "..ex..", "..ey );
-                end
-            end
-        end
+    if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( gold_nugget ) == false then
+        EntityAddComponent( gold_nugget, "LuaComponent", {
+            execute_every_n_frame = "-1",
+            remove_after_executed = "1",
+            script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
+        });
+        EntityAddComponent( gold_nugget, "LuaComponent", {
+            _tags="gkbrkn_gold_decay",
+            execute_on_removed="1",
+            execute_every_n_frame="-1",
+            script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
+        });
     end
 
 --[[ This was an attempt to increase the radius of gold nuggets but it seems it uses the physics body rendering these hitboxes useless
@@ -336,15 +306,12 @@ for _,nearby in pairs( nearby_entities ) do
         if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
             local hitbox = EntityGetFirstComponent( nearby, "HitboxComponent" );
             if hitbox ~= nil then
-                GamePrint("hitbox");
                 ComponentSetValues( hitbox, {
                     aabb_min_x=tostring(-20),
                     aabb_max_x=tostring(20),
                     aabb_min_y=tostring(-20),
                     aabb_max_y=tostring(20),
                 });
-                GamePrint(ComponentGetValue(hitbox,"aabb_min_x"));
-                GamePrint("updated component");
             end
             break;
         end
@@ -402,7 +369,6 @@ end
         end
     end
 ]]
-
 
 local nearby_enemies = EntityGetInRadiusWithTag( x, y, 1024, "enemy" );
 --[[ Champions ]]
@@ -745,14 +711,17 @@ if GameHasFlagRun( MISC.HeroMode.Enabled ) then
         -- only do it twice a second to reduce performance hit
         ]]
         if now % 60 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
-            local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );
-            local nearby_herd = -1;
-            if nearby_genome ~= nil then
-                nearby_herd = ComponentGetMetaCustom( nearby_genome, "herd_id" );
-                if player_herd ~= nearby_herd then
-                    local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
-                    for _,ai in pairs( animal_ais ) do
-                        ComponentSetValue( ai, "mGreatestPrey", tostring( player_entity ) );
+            local charmed = GameGetGameEffectCount( nearby, "CHARM" );
+            if charmed < 1 then
+                local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );
+                local nearby_herd = -1;
+                if nearby_genome ~= nil then
+                    nearby_herd = ComponentGetMetaCustom( nearby_genome, "herd_id" );
+                    if player_herd ~= nearby_herd then
+                        local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
+                        for _,ai in pairs( animal_ais ) do
+                            ComponentSetValue( ai, "mGreatestPrey", tostring( player_entity ) );
+                        end
                     end
                 end
             end
@@ -783,26 +752,18 @@ if GameHasFlagRun( MISC.HeroMode.Enabled ) then
         end
     end
 
-    local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "item_physics" );
+    local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "gold_nugget" );
     for _,nearby in pairs( nearby_entities ) do
-        -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
-        -- we probably don't want to consider this nugget anyway
         local lifetime_component = EntityGetFirstComponent( nearby, "LifetimeComponent" );
         if lifetime_component ~= nil then
-            local components = EntityGetComponent( nearby, "LuaComponent" ) or {};
-            for _,component in pairs(components) do
-                -- TODO there needs to be a better more future proofed way to get gold nuggets
-                if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                    EntityRemoveComponent( nearby, lifetime_component );
-                    break;
-                end
-            end
+            EntityRemoveComponent( nearby, lifetime_component );
         end
     end
 end
 
 --[[ Less Particles ]]
-nearby_entities = EntityGetInRadius( x, y, 256 );
+-- TODO update this one too
+local nearby_entities = EntityGetInRadius( x, y, 256 );
 if HasFlagPersistent( MISC.LessParticles.Enabled ) then
     local disable = HasFlagPersistent( MISC.LessParticles.DisableEnabled );
     _less_particle_entity_cache = _less_particle_entity_cache or {};
@@ -903,6 +864,10 @@ function mean_angle ( angles, magnitudes )
     for i, angle in pairs( angles ) do
         local magnitude = magnitudes[i];
         local proportion = magnitude / sum_magnitude;
+        -- no velocities
+        if proportion ~= proportion then
+            proportion = 0;
+        end
         sum_sin = sum_sin + math.sin( angle ) * proportion;
         sum_cos = sum_cos + math.cos( angle ) * proportion;
     end
