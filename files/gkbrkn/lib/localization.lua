@@ -267,7 +267,7 @@ gkbrkn_localization = {
     action_name_glittering_trail = "Glittering Trail",
     action_description_glittering_trail = "Projectiles gain a trail of explosions.",
     action_name_chaotic_burst = "Chaotic Burst",
-    action_description_chaotic_burst = "Cast an uncontrolled burst of spells.",
+    action_description_chaotic_burst = "Cast an uncontrolled burst of projectiles.",
     action_name_wip = "WIP Action",
     action_description_wip = "A work in progress action.",
 

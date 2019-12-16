@@ -752,11 +752,11 @@ if GameHasFlagRun( MISC.HeroMode.Enabled ) then
         end
     end
 
-    local nearby_entities = EntityGetInRadiusWithTag( x, y, check_radius, "gold_nugget" );
-    for _,nearby in pairs( nearby_entities ) do
-        local lifetime_component = EntityGetFirstComponent( nearby, "LifetimeComponent" );
+    local gold_nuggets = EntityGetWithTag( "gold_nugget" );
+    for _,gold_nugget in pairs( gold_nuggets ) do
+        local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
         if lifetime_component ~= nil then
-            EntityRemoveComponent( nearby, lifetime_component );
+            EntityRemoveComponent( gold_nugget, lifetime_component );
         end
     end
 end

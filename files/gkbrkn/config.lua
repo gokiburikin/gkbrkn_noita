@@ -4,7 +4,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 SETTINGS = {
     Debug = true,
     ShowDeprecatedContent = false,
-    Version = "c67"
+    Version = "c68"
 }
 
 CONTENT_TYPE = {
