@@ -73,6 +73,28 @@ if GameHasFlagRun( init_check_flag ) == false then
                 {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled )},
             }, gkbrkn_localization );
             EntityAddChild( player_entity, badge );
+
+            local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
+            if character_platforming ~= nil then
+                local speed_multiplier = 1.25;
+                local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
+                ComponentAdjustValues( character_platforming, {
+                    jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                    jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
+                    fly_smooth_y = function(value) return "0"; end,
+                    fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+                    fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
+                    fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
+                    fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+                });
+                ComponentAdjustMetaCustoms( character_platforming, {
+                    fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
+                    run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
+                    --velocity_min_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                    velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                    velocity_max_y = function(value) return tonumber( value ) * speed_multiplier; end,
+                });
+            end
         end
     end
 

@@ -28,6 +28,7 @@ HitEffect considerations
     WormAttractorComponent
 
 TODO
+    a projectile spell that wanders about with a high lifetime
     slowing attack champion
     modifier that reduces the projectile resistance of target it hits
     wand passive enemy drops one additional gold nugget

@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 local tracker_variable = "gkbrkn_lost_treasure_tracker";
 table.insert( perk_list,
-    generate_perk_entry( "GKBRKN_LOST_TREASURE", "lost_treasure", function( entity_perk_item, entity_who_picked, item_name )
+    generate_perk_entry( "GKBRKN_LOST_TREASURE", "lost_treasure", false, function( entity_perk_item, entity_who_picked, item_name )
         local x, y = EntityGetTransform( entity_who_picked );
         local tracker = EntityGetFirstComponent( entity_who_picked, "VariableStorageComponent", tracker_variable );
         if tracker ~= nil then

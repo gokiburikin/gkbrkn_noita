@@ -3,7 +3,7 @@ dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 table.insert( perk_list, 
-    generate_perk_entry( "GKBRKN_DUPLICATE_WAND", "duplicate_wand", function( entity_perk_item, entity_who_picked, item_name )
+    generate_perk_entry( "GKBRKN_DUPLICATE_WAND", "duplicate_wand", false, function( entity_perk_item, entity_who_picked, item_name )
         local x, y = EntityGetTransform( entity_who_picked );
         local base_wand = WandGetActiveOrRandom( entity_who_picked );
         if base_wand ~= nil then

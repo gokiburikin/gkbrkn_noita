@@ -1,7 +1,7 @@
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 table.insert( perk_list,
-    generate_perk_entry( "GKBRKN_MATERIAL_COMPRESSION", "material_compression", function( entity_perk_item, entity_who_picked, item_name )
+    generate_perk_entry( "GKBRKN_MATERIAL_COMPRESSION", "material_compression", false, function( entity_perk_item, entity_who_picked, item_name )
         local succ_bonus = EntityGetFirstComponent( entity_who_picked, "VariableStorageComponent", "gkbrkn_material_compression" );
         if succ_bonus == nil then
             succ_bonus = EntityAddComponent( entity_who_picked, "VariableStorageComponent", {

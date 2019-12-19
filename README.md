@@ -16,7 +16,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 
 ### Misc Features
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
-- [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
+- [x] **Persistent Gold**: Gold Nuggets no longer despawn.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
 - [x] **Champions**: Some enemies will be Champions with dangerous attributes.
 - [x] **Hero Mode**: Enemies gain resistances and treat you as the most important target.
@@ -52,6 +52,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 
 ### Perks
 - [x] **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
+- [x] **Chain Casting**: Your spells now chain cast (all spells gain Trigger - Death.)
 - [x] **Demolitionist**: Your spells cause larger, more powerful explosions.
 - [x] **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
 - [x] **Extra Projectile**: Your spells gain an additional projectile, but are less accurate and cast less quickly (their other effects aren't applied.)
@@ -74,6 +75,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 ### Projectile Modifier Spells
 - [x] **Barrier Trail**: Projectiles gain a trail of barriers.
 - [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
+- [x] **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
 - [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
@@ -126,3 +128,4 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
 - [x] **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
 - [x] **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*
+- [x] **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place. *(Doesn't jive well with the new gold amounts)*

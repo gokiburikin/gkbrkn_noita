@@ -1,27 +1,35 @@
-local entity_id = GetUpdatedEntityID();
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
+local entity = GetUpdatedEntityID();
 
-local projectile_component = EntityGetFirstComponent( entity_id, "ProjectileComponent" );
-if projectile_component ~= nil then
-    local last_bounces_variable_component = EntityGetFirstComponent( entity_id, "VariableStorageComponent", "gkbrkn_bounces_last" );
-    local initial_damage_variable_component = EntityGetFirstComponent( entity_id, "VariableStorageComponent", "gkbrkn_damage_initial" );
-    if last_bounces_variable_component ~= nil and initial_damage_variable_component ~= nil then
-        local last_bounces = tonumber(ComponentGetValueInt( last_bounces_variable_component, "value_int" ));
-        local initial_damage = tonumber(ComponentGetValue( initial_damage_variable_component, "value_string" ));
-        local current_bounces = tonumber(ComponentGetValue( projectile_component, "bounces_left" ));
-        local current_damage = tonumber(ComponentGetValue( projectile_component, "damage" ));
-        local bounces_done = last_bounces - current_bounces;
-        if bounces_done > 0 then
-            local new_damage = current_damage + initial_damage * 0.50;
-            ComponentSetValue( last_bounces_variable_component, "value_int", current_bounces );
-            ComponentSetValue( projectile_component, "damage", tostring(new_damage) );
-            local particle_emitter = EntityGetFirstComponent( entity_id, "ParticleEmitterComponent", "gkbrkn_dynamic_damage_particles" );
-            if particle_emitter ~= nil then
-                ComponentSetValue( particle_emitter, "x_vel_min", tostring( tonumber( ComponentGetValue( particle_emitter, "x_vel_min" ) - 10 ) ) );
-                ComponentSetValue( particle_emitter, "x_vel_max", tostring( tonumber( ComponentGetValue( particle_emitter, "x_vel_max" ) + 10 ) ) );
-                ComponentSetValue( particle_emitter, "y_vel_min", tostring( tonumber( ComponentGetValue( particle_emitter, "y_vel_min" ) - 10 ) ) );
-                ComponentSetValue( particle_emitter, "y_vel_max", tostring( tonumber( ComponentGetValue( particle_emitter, "y_vel_max" ) + 10 ) ) );
-                ComponentSetValue( particle_emitter, "trail_gap", tostring( math.max( 1, tonumber( ComponentGetValue( particle_emitter, "trail_gap" ) - 1 ) ) ) );
+local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+if projectile ~= nil then
+    local last_bounces = EntityGetVariableNumber( entity, "gkbrkn_bounces_last" );
+    local current_bounces = tonumber(ComponentGetValue( projectile, "bounces_left" ));
+    local bounces_done = last_bounces - current_bounces;
+    if bounces_done > 0 then
+        local initial_damage = EntityGetVariableNumber( entity, "gkbrkn_bounce_damage_initial" );
+        local current_damage = tonumber(ComponentGetValue( projectile, "damage" ));
+        local new_damage = current_damage + initial_damage * 0.50;
+        EntitySetVariableNumber( entity, "gkbrkn_bounces_last", current_bounces );
+        ComponentSetValue( projectile, "damage", tostring(new_damage) );
+
+        local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
+        for type,_ in pairs( damage_by_types ) do
+            local current_type_damage = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
+            local initial_type_damage = EntityGetVariableNumber( entity, "gkbrkn_bounce_initial_damage_"..type, 0.0 );
+            if initial_type_damage ~= 0 then
+                local new_type_damage = current_type_damage + initial_type_damage * 0.50;
+                ComponentObjectSetValue( projectile, "damage_by_type", type, tostring( new_type_damage ) );
             end
+        end
+
+        local particle_emitter = EntityGetFirstComponent( entity, "ParticleEmitterComponent", "gkbrkn_dynamic_damage_particles" );
+        if particle_emitter ~= nil then
+            ComponentSetValue( particle_emitter, "x_vel_min", tostring( tonumber( ComponentGetValue( particle_emitter, "x_vel_min" ) - 10 ) ) );
+            ComponentSetValue( particle_emitter, "x_vel_max", tostring( tonumber( ComponentGetValue( particle_emitter, "x_vel_max" ) + 10 ) ) );
+            ComponentSetValue( particle_emitter, "y_vel_min", tostring( tonumber( ComponentGetValue( particle_emitter, "y_vel_min" ) - 10 ) ) );
+            ComponentSetValue( particle_emitter, "y_vel_max", tostring( tonumber( ComponentGetValue( particle_emitter, "y_vel_max" ) + 10 ) ) );
+            ComponentSetValue( particle_emitter, "trail_gap", tostring( math.max( 1, tonumber( ComponentGetValue( particle_emitter, "trail_gap" ) - 1 ) ) ) );
         end
     end
 end

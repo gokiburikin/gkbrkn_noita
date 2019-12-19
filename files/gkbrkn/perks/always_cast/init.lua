@@ -21,7 +21,7 @@ function is_wand_always_cast_valid( wand )
 end
 
 table.insert( perk_list, 
-    generate_perk_entry( "GKBRKN_ALWAYS_CAST", "always_cast", function( entity_perk_item, entity_who_picked, item_name )
+    generate_perk_entry( "GKBRKN_ALWAYS_CAST", "always_cast", false, function( entity_perk_item, entity_who_picked, item_name )
         local base_wand = nil;
         local wands = {};
         local children = EntityGetAllChildren( entity_who_picked );
