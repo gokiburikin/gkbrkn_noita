@@ -322,7 +322,7 @@ CHAMPION_TYPES = {
         particle_material = "spark_white",
         sprite_particle_sprite_file = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/teleporting.xml",
-        game_effects = {"TELEPORTATION","TELEPORTITIS"},
+        game_effects = {"TELEPORTATION"},
         validator = function( entity ) return true end,
     }),
     Burning = register_champion_type( "burning", {
@@ -402,7 +402,10 @@ CHAMPION_TYPES = {
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", { 
                 script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/regeneration.lua",
-                execute_every_n_frame = "5",
+                execute_every_n_frame = "60",
+            } );
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/regeneration_damage_received.lua",
             } );
         end
     }),
@@ -673,6 +676,14 @@ CHAMPION_TYPES = {
     ]]
 }
 
+local register_item = function( key, options )
+    return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options );
+end
+
+ITEMS = {
+    SpellBag = register_item( "spell_bag", nil, true, nil, true ),
+}
+
 OPTIONS = {
     {
         Name = gkbrkn_localization.option_gold_tracking,
@@ -894,9 +905,13 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_no_pregen_wands",
         RequiresRestart = true,
     },
+    --{
+    --    Name = gkbrkn_localization.option_gold_decay,
+    --    PersistentFlag = "gkbrkn_gold_decay",
+    --},
     {
-        Name = gkbrkn_localization.option_gold_decay,
-        PersistentFlag = "gkbrkn_gold_decay",
+        Name = gkbrkn_localization.option_persistent_gold,
+        PersistentFlag = "gkbrkn_persistent_gold",
     },
     {
         Name = gkbrkn_localization.option_target_dummy,
@@ -919,16 +934,7 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.option_auto_hide,
         PersistentFlag = "gkbrkn_auto_hide",
-        RequiresRestart = true,
     }
-}
-
-local register_item = function( key, options )
-    return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options );
-end
-
-ITEMS = {
-    SpellBag = register_item( "spell_bag", nil, true, nil, true ),
 }
 
 MISC = {
@@ -1001,8 +1007,11 @@ MISC = {
     HealthBars = {
         Enabled = "gkbrkn_health_bars",
     },
-    GoldDecay = {
-        Enabled = "gkbrkn_gold_decay",
+    --GoldDecay = {
+    --    Enabled = "gkbrkn_gold_decay",
+    --},
+    PersistentGold = {
+        Enabled = "gkbrkn_persistent_gold",
     },
     PassiveRecharge = {
         Enabled = "gkbrkn_passive_recharge",
@@ -1166,17 +1175,12 @@ if SETTINGS.Debug then
                 permanent_actions = {
                 },
                 actions = {
-                    { "CHAINSAW" },
-                    { "HEAVY_SHOT" },
-                    { "HEAVY_SHOT" },
-                    { "ACCELERATING_SHOT" },
-                    { "ACCELERATING_SHOT" },
-                    { "HOMING" },
+                    { "GKBRKN_SPELL_MERGE" },
                     { "SCATTER_4" },
                     { "RUBBER_BALL" },
-                    { "RUBBER_BALL" },
-                    { "RUBBER_BALL" },
-                    { "RUBBER_BALL" },
+                    { "LIGHT_BULLET" },
+                    { "CHAINSAW" },
+                    { "CHAINSAW" },
                 }
             }
         },

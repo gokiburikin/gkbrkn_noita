@@ -1,10 +1,16 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 local entity = GetUpdatedEntityID();
-local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
-if #damage_models > 0 then
-    for _,damage_model in pairs( damage_models ) do
-        local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
-        local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-        -- heal up to full over 10 seconds (assuming this is called once every 5 frames )
-        ComponentSetValue( damage_model, "hp", tostring( math.min( max_hp, current_hp + max_hp * 0.0083 ) ) );
+local last_damage_frame = EntityGetVariableNumber( entity, "gkbrkn_last_damage_frame", 0.0 );
+if GameGetFrameNum() - last_damage_frame > 60 then
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+    if #damage_models > 0 then
+        for _,damage_model in pairs( damage_models ) do
+            local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+            local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+            -- heal up to full over 5 seconds (assuming this is called once every 60 frames )
+            if current_hp < max_hp then
+                ComponentSetValue( damage_model, "hp", tostring( math.min( max_hp, current_hp + max_hp * 0.2 ) ) );
+            end
+        end
     end
 end

@@ -52,6 +52,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 
 ### Perks
 - [x] **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
+- [x] **Chain Casting**: Your spells now chain cast (all spells gain Trigger - Death.)
 - [x] **Demolitionist**: Your spells cause larger, more powerful explosions.
 - [x] **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
 - [x] **Extra Projectile**: Your spells gain an additional projectile, but are less accurate and cast less quickly (their other effects aren't applied.)
@@ -74,6 +75,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 ### Projectile Modifier Spells
 - [x] **Barrier Trail**: Projectiles gain a trail of barriers.
 - [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
+- [x] **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
 - [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.

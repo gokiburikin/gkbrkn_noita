@@ -3,7 +3,7 @@ dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 table.insert( perk_list, 
-    generate_perk_entry( "GKBRKN_LIVING_WAND", "living_wand", function( entity_perk_item, entity_who_picked, item_name )
+    generate_perk_entry( "GKBRKN_LIVING_WAND", "living_wand", false, function( entity_perk_item, entity_who_picked, item_name )
         local x, y = EntityGetTransform( entity_who_picked );
         local valid_wands = {};
         local children = EntityGetAllChildren( entity_who_picked );

@@ -39,13 +39,14 @@ function add_update_time( amount )
     GlobalsSetValue( "gkbrkn_update_time", get_update_time() + amount );
 end
 
-function generate_perk_entry( perk_id, key, pickup_function )
+function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function )
     return {
         id = perk_id,
         ui_name = gkbrkn_localization["perk_name_"..key],
         ui_description = gkbrkn_localization["perk_description_"..key],
         ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ui.png",
         perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ig.png",
+        usable_by_enemies = usable_by_enemies,
         func = pickup_function,
     };
 end

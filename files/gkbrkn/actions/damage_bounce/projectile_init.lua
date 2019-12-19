@@ -1,18 +1,16 @@
-local entity_id    = GetUpdatedEntityID();
-local pos_x, pos_y = EntityGetTransform( entity_id );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
-local projectile_component = EntityGetFirstComponent( entity_id, "ProjectileComponent" );
-if projectile_component ~= nil then
-    local total_bounces = ComponentGetValue( projectile_component, "bounces_left" );
-    local total_damage = ComponentGetValue( projectile_component, "damage" );
-    EntityAddComponent( entity_id, "VariableStorageComponent", {
-        _tags="gkbrkn_bounces_last",
-        name="gkbrkn_bounces_last",
-        value_int=total_bounces
-    });
-    EntityAddComponent( entity_id, "VariableStorageComponent", {
-        _tags="gkbrkn_damage_initial",
-        name="gkbrkn_damage_initial",
-        value_string=tostring(total_damage)
-    });
+local entity    = GetUpdatedEntityID();
+local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+if projectile ~= nil then
+    EntitySetVariableNumber( entity, "gkbrkn_bounces_last", ComponentGetValue( projectile, "bounces_left" ) );
+    EntitySetVariableNumber( entity, "gkbrkn_bounce_damage_initial", ComponentGetValue( projectile, "damage" ) );
+    local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
+    for type,_ in pairs(damage_by_types) do
+        local amount = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
+        if amount == amount and amount ~= 0 then
+            GamePrint("has"..type.."damage");
+            EntitySetVariableNumber( entity, "gkbrkn_bounce_initial_damage_"..type, amount );
+        end
+    end
 end
