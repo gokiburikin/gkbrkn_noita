@@ -2,7 +2,7 @@ local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 local correction_distance = 36;
 
-dofile_once( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 --[[
 for word in string.gmatch(str, '([^,]+)') do
@@ -48,7 +48,7 @@ if target ~= nil then
     local target_genome = EntityGetFirstComponent( target, "GenomeDataComponent" );
     local target_herd = -1;
     if target_genome ~= nil then
-        traget_herd = ComponentGetMetaCustom( target_genome, "herd_id" );
+        target_herd = ComponentGetMetaCustom( target_genome, "herd_id" );
     end
     if tonumber(target) ~= tonumber(shooter) and target_herd ~= shooter_herd then
         local damaged_entities = {};
@@ -56,14 +56,13 @@ if target ~= nil then
         for word in string.gmatch( damaged_entities_string, '([^,]+)' ) do
             damaged_entities[tostring(word)] = true;
         end
-        --[[ TODO when someone figures this out, fix this
+        --[[ TODO fix this when someone figures this out
         if GameGetFrameNum() % 60 == 0 then
             for _,c_type in pairs( {
                 "int","string","float"
                 --"unsigned int","uint","unsigned","unsigned short","unsigned short int"
             })do
                 local damaged_entities = ComponentGetVector( projectile, "mDamagedEntities", c_type );
-                --GamePrint( type.." was there" );
             end
         end
         ]]

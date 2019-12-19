@@ -1,5 +1,5 @@
 dofile_once( "data/scripts/gun/gun_enums.lua" );
-dofile_once( "files/gkbrkn/config.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 _generate_gun = _generate_gun or generate_gun;
 
 local extended_types = {

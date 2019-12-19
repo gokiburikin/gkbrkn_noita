@@ -1,20 +1,17 @@
-dofile( "files/gkbrkn/config.lua" );
+dofile( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 if HasFlagPersistent( MISC.Loadouts.Enabled ) then
     dofile_once( "data/scripts/perks/perk.lua" );
     dofile_once("data/scripts/lib/utilities.lua");
     dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
 
     function get_random_from( target )
-        local rnd = Random(1, #target)
-        
-        return tostring(target[rnd])
+        return tostring( Random( 1, #target ) );
     end
 
     function get_random_between_range( target )
-        local minval = target[1]
-        local maxval = target[2]
-        
-        return Random(minval, maxval)
+        local min = target[1];
+        local max = target[2];
+        return Random( min, max );
     end
 
     local WAND_STAT_SETTER = {
@@ -126,7 +123,7 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
                 end
                 default_wands = {};
                 for wand_index,wand_data in pairs( loadout_data.wands ) do
-                    local wand = EntityLoad( wand_data.custom_file or "files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml" );
+                    local wand = EntityLoad( wand_data.custom_file or "mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml" );
                     SetRandomSeed( x, y );
 
                     local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
@@ -196,7 +193,7 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
                 for _,potion_data in pairs( loadout_data.potions or {} ) do
                     local choice = potion_data[ Random( 1, #potion_data ) ];
                     if choice ~= nil then
-                        local potion = EntityLoad( "files/gkbrkn_loadouts/potion_base.xml" );
+                        local potion = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn_loadouts/potion_base.xml" );
                         local material_inventory = EntityGetFirstComponent( potion, "MaterialInventoryComponent" );
                         for _,material_data in pairs( choice ) do
                             if material_data ~= nil then

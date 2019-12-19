@@ -125,7 +125,7 @@
         </SpriteParticleEmitterComponent>
 
 		<ProjectileComponent 
-			damage_game_effect_entities="files/gkbrkn/actions/modification_field/projectile_effect.xml,"
+			damage_game_effect_entities="mods/gkbrkn_noita/files/gkbrkn/actions/modification_field/projectile_effect.xml,"
 			friendly_fire="1"
             collide_with_shooter_frames="0"
 			>

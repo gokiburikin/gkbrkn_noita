@@ -1,4 +1,4 @@
-dofile_once("files/gkbrkn/lib/variables.lua");
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 function does_entity_drop_gold( entity )
     local drops_gold = false;

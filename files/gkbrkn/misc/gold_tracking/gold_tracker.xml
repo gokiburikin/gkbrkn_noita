@@ -7,7 +7,7 @@
     </LifetimeComponent>
     <LuaComponent
         execute_every_n_frame="3"
-        script_source_file="files/gkbrkn/misc/gold_tracking/gold_tracker_update.lua"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/gold_tracking/gold_tracker_update.lua"
     >
     </LuaComponent>
 </Entity>

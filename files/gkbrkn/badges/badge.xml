@@ -1,0 +1,7 @@
+<Entity>
+    <UIIconComponent
+        icon_sprite_file="mods/gkbrkn_noita/files/gkbrkn/badges/badge.png"
+        name="Custom Badge"
+        description="It's a badge. Set the description, goki.">
+    </UIIconComponent>
+</Entity>

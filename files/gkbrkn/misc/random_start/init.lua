@@ -1,6 +1,6 @@
 dofile_once( "data/scripts/perks/perk.lua" );
 dofile_once( "data/scripts/perks/perk_list.lua" );
-dofile_once( "files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 
 local init_check_flag = "gkbrkn_random_start_init";
 if GameHasFlagRun( init_check_flag ) == false then
@@ -62,7 +62,7 @@ if GameHasFlagRun( init_check_flag ) == false then
             }
             for i=1,2 do
                 if HasFlagPersistent( MISC.RandomStart.DefaultWandGenerationEnabled ) == false then
-                    local item_entity = EntityLoad( "files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
+                    local item_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
                     EntityAddComponent( item_entity, "VariableStorageComponent", {
                         name = "random_start_actions_pool",
                         value_string  = actions_pool[i],
@@ -70,7 +70,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                     EntityAddComponent( item_entity, "LuaComponent", {
                         execute_on_added = "1",
                         remove_after_executed = "1",
-                        script_source_file = "files/gkbrkn/misc/random_start/wand.lua"
+                        script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/wand.lua"
                     } );
                     EntityAddChild( inventory, item_entity );
                 else

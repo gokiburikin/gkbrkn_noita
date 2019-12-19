@@ -1,7 +1,7 @@
 <Entity tags="card_action">
     <Base file="data/entities/base_custom_card.xml" > 
 		<SpriteComponent 
-			image_file="files/gkbrkn/actions/passive_recharge/icon.png" 
+			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/passive_recharge/icon.png" 
 			>
 		</SpriteComponent>
 		
@@ -18,7 +18,7 @@
 	<LuaComponent
 	    _tags="enabled_in_inventory"
 	    execute_every_n_frame="1"
-		script_source_file="files/gkbrkn/actions/passive_recharge/action_update.lua"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/passive_recharge/action_update.lua"
 		>
 	</LuaComponent>
 </Entity>

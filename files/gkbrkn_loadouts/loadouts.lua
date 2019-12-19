@@ -1,16 +1,17 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 loadouts_to_parse = {};
 
 -- this works because the register_loadout function falls back to whatever the player has equipped when there are no wands or items defined
 register_loadout(
     "nolla_default", -- unique identifier
-    "Default TYPE", -- displayed loadout name
+    gkbrkn_localization.loadout_default, -- displayed loadout name
     "Nolla"
 );
 
 -- Speedrunner
 register_loadout(
     "gkbrkn_speedrunner", -- unique identifier
-    "Speedrunner TYPE", -- displayed loadout name
+    gkbrkn_localization.loadout_speedrunner, -- displayed loadout name
     "goki",
     0xffeeeeee, -- cape color (ABGR) *can be nil
     0xffffffff, -- cape edge color (ABGR) *can be nil
@@ -51,7 +52,7 @@ register_loadout(
 -- Hero
 register_loadout(
     "gkbrkn_heroic", -- unique identifier
-    "Heroic TYPE", -- displayed loadout name
+    gkbrkn_localization.loadout_heroic, -- displayed loadout name
     "goki",
     0xff11bbff, -- cape color (ABGR)
     0xff55eeff, -- cape edge color (ABGR)

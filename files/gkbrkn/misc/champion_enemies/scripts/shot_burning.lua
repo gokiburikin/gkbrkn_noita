@@ -4,7 +4,9 @@ function shot( entity )
     if projectile ~= nil then
         local effect_entities = ComponentGetValue( projectile, "damage_game_effect_entities" );
         ComponentSetValue( projectile, "blood_count_multiplier", "0" );
-        ComponentSetValue( projectile, "damage_game_effect_entities", effect_entities.."files/gkbrkn/misc/champion_enemies/entities/effect_burn.xml," );
-        EntityAddChild( entity, EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/burn_shot.xml", x, y ) );
+        ComponentSetValue( projectile, "damage_game_effect_entities", effect_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/effect_burn.xml," );
+        EntityAddChild( entity, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/burn_shot.xml", x, y ) );
+        ComponentSetValue( projectile, "on_collision_spawn_entity", "1" );
+        ComponentSetValue( projectile, "spawn_entity", "" );
     end
 end

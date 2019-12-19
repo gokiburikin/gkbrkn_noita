@@ -1,5 +1,5 @@
 <Sprite
- filename="files/gkbrkn/actions/arcane_buckshot/projectile.png"
+ filename="mods/gkbrkn_noita/files/gkbrkn/actions/arcane_buckshot/projectile.png"
  offset_x="2"
  offset_y="2"
  default_animation="fireball" >

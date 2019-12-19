@@ -16,14 +16,27 @@
         falling_damages="0" 
         fire_damage_amount="0" 
         fire_probability_of_ignition="0"
-        critical_damage_resistance="0"
-        hp="99999" 
+        hp="100000" 
         blood_multiplier="0"
         is_on_fire="0" 
         materials_create_messages="0" 
         materials_damage="0" 
         ragdoll_filenames_file="" 
         ragdoll_material="" >
+        <damage_multipliers
+            ice="1"
+            electricity="1"
+            radioactive="1"
+            slice="1"
+            projectile="1"
+            healing="1"
+            physics_hit="1"
+            explosion="1"
+            poison="1"
+            melee="1"
+            drill="1"
+            fire="1" >
+        </damage_multipliers>
     </DamageModelComponent>
 
     <HitboxComponent
@@ -34,7 +47,7 @@
 	>
 	</HitboxComponent>
     <LuaComponent
-        script_damage_received="files/gkbrkn/misc/dps_tracker.lua"
+        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
     >
     </LuaComponent>
 </Entity>

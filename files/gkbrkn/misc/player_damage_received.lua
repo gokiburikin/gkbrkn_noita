@@ -1,6 +1,6 @@
-dofile_once( "files/gkbrkn/helper.lua" );
-dofile_once( "files/gkbrkn/config.lua" );
-dofile_once( "files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 function damage_received( damage, message, entity_thats_responsible, is_fatal )
     local entity = GetUpdatedEntityID();
 

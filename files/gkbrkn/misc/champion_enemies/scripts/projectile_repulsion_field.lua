@@ -23,7 +23,7 @@ if #projectiles > 0 then
                     local velocity_component = EntityGetFirstComponent( projectile_id, "VelocityComponent" );
                     
                     local gravity_percent = math.max(( distance_full - distance ) / distance_full, 0.2 );
-                    local gravity_coeff = -150;
+                    local gravity_coeff = -333;
                     
                     if velocity_component ~= nil then
                         local vx,vy = ComponentGetValueVector2( velocity_component, "mVelocity" );

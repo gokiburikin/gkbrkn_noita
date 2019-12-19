@@ -1,9 +1,10 @@
-dofile_once( "files/gkbrkn/helper.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 
 SETTINGS = {
-    Debug = DebugGetIsDevBuild(),
+    Debug = true,
     ShowDeprecatedContent = false,
-    Version = "c59"
+    Version = "c70"
 }
 
 CONTENT_TYPE = {
@@ -14,6 +15,7 @@ CONTENT_TYPE = {
     ChampionType = 5,
     Item = 6,
     Loadout = 7,
+    StartingPerk = 8,
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -24,26 +26,30 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.ChampionType] = "champion_type_",
     [CONTENT_TYPE.Item] = "item_",
     [CONTENT_TYPE.Loadout] = "loadout_",
+    [CONTENT_TYPE.StartingPerk] = "starting_perk_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME = {
-    [CONTENT_TYPE.Action] = "Action",
-    [CONTENT_TYPE.Perk] = "Perk",
-    --[CONTENT_TYPE.Misc] = "Misc",
-    [CONTENT_TYPE.Tweak] = "Tweak",
-    [CONTENT_TYPE.ChampionType] = "Champion",
-    [CONTENT_TYPE.Item] = "Item",
-    [CONTENT_TYPE.Loadout] = "Loadout",
+    [CONTENT_TYPE.Action] = gkbrkn_localization.config_content_type_name_action,
+    [CONTENT_TYPE.Perk] = gkbrkn_localization.config_content_type_name_perk,
+    --[CONTENT_TYPE.Misc] = gkbrkn_localization.config_content_type_name_misc,
+    [CONTENT_TYPE.Tweak] = gkbrkn_localization.config_content_type_name_tweak,
+    [CONTENT_TYPE.ChampionType] = gkbrkn_localization.config_content_type_name_champion,
+    [CONTENT_TYPE.Item] = gkbrkn_localization.config_content_type_name_item,
+    [CONTENT_TYPE.Loadout] = gkbrkn_localization.config_content_type_name_loadout,
+    [CONTENT_TYPE.StartingPerk] = gkbrkn_localization.config_content_type_name_starting_perk,
 }
 
+
 CONTENT = {};
-function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted )
+function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
     local content_id = #CONTENT + 1;
     local content = {
         id = content_id,
         type = type,
         key = key,
-        name = CONTENT_TYPE_DISPLAY_NAME[type]..": "..display_name,
+        --name = CONTENT_TYPE_DISPLAY_NAME[type]..": "..display_name,
+        name = display_name or ("missing display name: "..key),
         disabled_by_default = disabled_by_default,
         deprecated = deprecated,
         enabled = function()
@@ -82,6 +88,7 @@ function register_content( type, key, display_name, options, disabled_by_default
             end
         end,
         options = options,
+        init_function = init_function,
     }
     table.insert( CONTENT, content );
     return content.id;
@@ -98,103 +105,129 @@ function get_content_flag( content_id )
     end
 end
 
+local register_perk = function( key, options, disabled_by_default, deprecated, inverted )
+    return register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted, function()
+        ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/init.lua" );
+    end );
+end
+
 PERKS = {
-    ShortTemper = register_content( CONTENT_TYPE.Perk, "short_temper","Short Temper" ),
-    LivingWand = register_content( CONTENT_TYPE.Perk, "living_wand","Living Wand", {
+    ShortTemper = register_perk( "short_temper" ),
+    LivingWand = register_perk( "living_wand", {
         TeleportDistance = 128
     }, true, true ),
-    DuplicateWand = register_content( CONTENT_TYPE.Perk, "duplicate_wand","Duplicate Wand" ),
-    GoldenBlood = register_content( CONTENT_TYPE.Perk, "golden_blood","Golden Blood", nil, true, true ),
-    SpellEfficiency = register_content( CONTENT_TYPE.Perk, "spell_efficiency","Spell Efficiency", {
+    DuplicateWand = register_perk( "duplicate_wand" ),
+    GoldenBlood = register_perk( "golden_blood", nil, true, true ),
+    SpellEfficiency = register_perk( "spell_efficiency", {
         RetainChance = 0.33
     }, true, true ),
-    MaterialCompression = register_content( CONTENT_TYPE.Perk, "material_compression","Material Compression" ),
-    ManaEfficiency = register_content( CONTENT_TYPE.Perk, "mana_efficiency","Mana Efficiency", {
+    MaterialCompression = register_perk( "material_compression" ),
+    ManaEfficiency = register_perk( "mana_efficiency", {
         Discount = 0.33
     }, true, true ),
-    RapidFire = register_content( CONTENT_TYPE.Perk, "rapid_fire","Rapid Fire" ),
-    KnockbackImmunity = register_content( CONTENT_TYPE.Perk, "knockback_immunity","Knockback Immunity" ),
-    Resilience = register_content( CONTENT_TYPE.Perk, "resilience","Resilience", { Resistances = {
+    RapidFire = register_perk( "rapid_fire" ),
+    KnockbackImmunity = register_perk( "knockback_immunity" ),
+    Resilience = register_perk( "resilience", { Resistances = {
         fire=0.35,
         radioactive=0.35,
         poison=0.35,
         electricity=0.35,
         ice=0.35,
     }} ),
-    PassiveRecharge = register_content( CONTENT_TYPE.Perk, "passive_recharge","Passive Recharge" ),
-    LostTreasure = register_content( CONTENT_TYPE.Perk, "lost_treasure","Lost Treasure" ),
-    AlwaysCast = register_content( CONTENT_TYPE.Perk, "always_cast","Always Cast" ),
-    HealthierHeart = register_content( CONTENT_TYPE.Perk, "healthier_heart","Healthier Heart" ),
-    InvincibilityFrames = register_content( CONTENT_TYPE.Perk, "invincibility_frames","Invincibility Frames" ),
-    ExtraProjectile = register_content( CONTENT_TYPE.Perk, "extra_projectile","Extra Projectile" ),
-    ManaRecovery = register_content( CONTENT_TYPE.Perk, "mana_recovery","Mana Recovery" ),
-    Protagonist = register_content( CONTENT_TYPE.Perk, "protagonist","Protagonist" ),
-    FragileEgo = register_content( CONTENT_TYPE.Perk, "fragile_ego","Fragile Ego" ),
-    ThriftyShopper = register_content( CONTENT_TYPE.Perk, "thrifty_shopper","Thrifty Shopper" ),
-    Swapper = register_content( CONTENT_TYPE.Perk, "swapper","Swapper" ),
-    Demolitionist = register_content( CONTENT_TYPE.Perk, "demolitionist","Demolitionist" ),
-    WIP = register_content( CONTENT_TYPE.Perk, "perk_wip","Work In Progress (Perk)", nil, true, not SETTINGS.Debug ),
+    PassiveRecharge = register_perk( "passive_recharge" ),
+    LostTreasure = register_perk( "lost_treasure" ),
+    AlwaysCast = register_perk( "always_cast" ),
+    HealthierHeart = register_perk( "healthier_heart" ),
+    InvincibilityFrames = register_perk( "invincibility_frames" ),
+    ExtraProjectile = register_perk( "extra_projectile" ),
+    ManaRecovery = register_perk( "mana_recovery" ),
+    Protagonist = register_perk( "protagonist" ),
+    FragileEgo = register_perk( "fragile_ego" ),
+    ThriftyShopper = register_perk( "thrifty_shopper" ),
+    Swapper = register_perk( "swapper" ),
+    Demolitionist = register_perk( "demolitionist" ),
+    Multicast = register_perk( "multicast" ),
+    MagicLight = register_perk( "magic_light", nil, true, true ),
+    ChainCasting = register_perk( "chain_casting" ),
+    WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
+
+local register_action = function( key, options, disabled_by_default, deprecated, inverted )
+    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key], options, disabled_by_default, deprecated, inverted, function()
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
+    end );
+end
 
 ACTIONS = {
-    ManaEfficiency = register_content( CONTENT_TYPE.Action, "mana_efficiency","Mana Efficiency", nil, true, true ),
-    SpellEfficiency =  register_content( CONTENT_TYPE.Action, "spell_efficiency","Spell Efficiency", nil, true, true ),
-    GoldenBlessing = register_content( CONTENT_TYPE.Action, "golden_blessing","Golden Blessing", nil, true, true ),
-    MagicLight = register_content( CONTENT_TYPE.Action, "magic_light","Magic Light" ),
-    Revelation = register_content( CONTENT_TYPE.Action, "revelation","Revelation" ),
-    MicroShield = register_content( CONTENT_TYPE.Action, "micro_shield","Micro Shield", nil, true, true ),
-    ModificationField = register_content( CONTENT_TYPE.Action, "modification_field","Modification Field" ),
-    SpectralShot = register_content( CONTENT_TYPE.Action, "spectral_shot","Spectral Shot" ),
-    ArcaneBuckshot = register_content( CONTENT_TYPE.Action, "arcane_buckshot","Arcane Buckshot", nil, true, true ),
-    ArcaneShot = register_content( CONTENT_TYPE.Action, "arcane_shot","Arcane Shot", nil, true, true ),
-    DoubleCast = register_content( CONTENT_TYPE.Action, "double_cast","Double Cast" ),
-    SpellMerge = register_content( CONTENT_TYPE.Action, "spell_merge","Spell Merge" ),
-    ExtraProjectile = register_content( CONTENT_TYPE.Action, "extra_projectile","Extra Projectile" ),
-    OrderDeck = register_content( CONTENT_TYPE.Action, "order_deck","Order Deck" ),
-    PerfectCritical = register_content( CONTENT_TYPE.Action, "perfect_critical","Perfect Critical" ),
-    ProjectileBurst = register_content( CONTENT_TYPE.Action, "projectile_burst","Projectile Burst" ),
-    TriggerHit = register_content( CONTENT_TYPE.Action, "trigger_hit","Trigger - Hit" ),
-    TriggerTimer = register_content( CONTENT_TYPE.Action, "trigger_timer","Trigger - Timer" ),
-    TriggerDeath = register_content( CONTENT_TYPE.Action, "trigger_death","Trigger - Death" ),
-    DrawDeck = register_content( CONTENT_TYPE.Action, "draw_deck","Draw Deck", nil, true, true ),
-    ProjectileGravityWell = register_content( CONTENT_TYPE.Action, "projectile_gravity_well","Projectile Gravity Well" ),
-    LifetimeDamage = register_content( CONTENT_TYPE.Action, "damage_lifetime","Damage Plus - Lifetime" ),
-    BounceDamage = register_content( CONTENT_TYPE.Action, "damage_bounce","Damage Plus - Bounce" ),
-    PathCorrection = register_content( CONTENT_TYPE.Action, "path_correction","Path Correction" ),
-    CollisionDetection = register_content( CONTENT_TYPE.Action, "collision_detection","Collision Detection" ),
-    PowerShot = register_content( CONTENT_TYPE.Action, "power_shot","Power Shot" ),
-    ShimmeringTreasure = register_content( CONTENT_TYPE.Action, "shimmering_treasure","Shimmering Treasure" ),
-    NgonShape = register_content( CONTENT_TYPE.Action, "ngon_shape","N-gon Shape", nil, true, true ),
-    ShuffleDeck = register_content( CONTENT_TYPE.Action, "shuffle_deck","Shuffle Deck", nil, true, true ),
-    BreakCast = register_content( CONTENT_TYPE.Action, "break_cast","Break Cast" ),
-    ProjectileOrbit = register_content( CONTENT_TYPE.Action, "projectile_orbit","Projectile Orbit" ),
-    PassiveRecharge = register_content( CONTENT_TYPE.Action, "passive_recharge","Passive Recharge" ),
-    ManaRecharge = register_content( CONTENT_TYPE.Action, "mana_recharge","Mana Recharge" ),
-    SuperBounce = register_content( CONTENT_TYPE.Action, "super_bounce","Super Bounce" ),
-    CopySpell = register_content( CONTENT_TYPE.Action, "copy_spell","Copy Spell" ),
-    TimeSplit = register_content( CONTENT_TYPE.Action, "time_split","Time Split" ),
-    FormationStack = register_content( CONTENT_TYPE.Action, "formation_stack","Formation Stack" ),
-    PiercingShot = register_content( CONTENT_TYPE.Action, "piercing_shot","Piercing Shot" ),
-    WIP = register_content( CONTENT_TYPE.Action, "action_wip","Work In Progress (Action)", nil, true, not SETTINGS.Debug )
+    ManaEfficiency = register_action( "mana_efficiency", nil, true, true ),
+    SpellEfficiency =  register_action( "spell_efficiency", nil, true, true ),
+    GoldenBlessing = register_action( "golden_blessing", nil, true, true ),
+    MagicLight = register_action( "magic_light" ),
+    Revelation = register_action( "revelation" ),
+    MicroShield = register_action( "micro_shield", nil, true, true ),
+    ModificationField = register_action( "modification_field" ),
+    SpectralShot = register_action( "spectral_shot", nil, true, true ),
+    ArcaneBuckshot = register_action( "arcane_buckshot", nil, true, true ),
+    ArcaneShot = register_action( "arcane_shot", nil, true, true ),
+    DoubleCast = register_action( "double_cast" ),
+    SpellMerge = register_action( "spell_merge" ),
+    ExtraProjectile = register_action( "extra_projectile" ),
+    OrderDeck = register_action( "order_deck" ),
+    PerfectCritical = register_action( "perfect_critical" ),
+    ProjectileBurst = register_action( "projectile_burst" ),
+    TriggerHit = register_action( "trigger_hit" ),
+    TriggerTimer = register_action( "trigger_timer" ),
+    TriggerDeath = register_action( "trigger_death" ),
+    DrawDeck = register_action( "draw_deck", nil, true, true ),
+    ProjectileGravityWell = register_action( "projectile_gravity_well" ),
+    DamageLifetime = register_action( "damage_lifetime" ),
+    DamageBounce = register_action( "damage_bounce" ),
+    PathCorrection = register_action( "path_correction" ),
+    CollisionDetection = register_action( "collision_detection", nil, true, true ),
+    PowerShot = register_action( "power_shot" ),
+    ShimmeringTreasure = register_action( "shimmering_treasure" ),
+    NgonShape = register_action( "ngon_shape", nil, true, true ),
+    ShuffleDeck = register_action( "shuffle_deck", nil, true, true ),
+    BreakCast = register_action( "break_cast" ),
+    ProjectileOrbit = register_action( "projectile_orbit" ),
+    PassiveRecharge = register_action( "passive_recharge" ),
+    ManaRecharge = register_action( "mana_recharge" ),
+    SuperBounce = register_action( "super_bounce" ),
+    CopySpell = register_action( "copy_spell" ),
+    TimeSplit = register_action( "time_split" ),
+    FormationStack = register_action( "formation_stack" ),
+    PiercingShot = register_action( "piercing_shot", nil, true, true ),
+    BarrierTrail = register_action( "barrier_trail" ),
+    GlitteringTrail = register_action( "glittering_trail" ),
+    ChaoticBurst = register_action( "chaotic_burst" ),
+    WIP = register_action( "wip", nil, true, not SETTINGS.Debug )
 }
 
+local register_tweak = function( key, options, disabled_by_default, deprecated, inverted )
+    return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] ),  options, disabled_by_default, deprecated, inverted );
+end
+
 TWEAKS = {
-    Chainsaw = register_content( CONTENT_TYPE.Tweak, "chainsaw","Chainsaw", { action_id="CHAINSAW" }, true, nil, true ),
-    HeavyShot = register_content( CONTENT_TYPE.Tweak, "heavy_shot","Heavy Shot", { action_id="HEAVY_SHOT" }, true, nil, true ),
-    Damage = register_content( CONTENT_TYPE.Tweak, "damage","Damage Plus", { action_id="DAMAGE" }, true, nil, true ),
-    Freeze = register_content( CONTENT_TYPE.Tweak, "freeze","Freeze Charge", { action_id="FREEZE" }, true, nil, true ),
-    IncreaseMana = register_content( CONTENT_TYPE.Tweak, "increase_mana","Increase Mana", { action_id="MANA_REDUCE" }, true, nil, true ),
-    Blindness = register_content( CONTENT_TYPE.Tweak, "blindness","Shorten Blindness", nil, true, true, true ),
-    RevengeExplosion = register_content( CONTENT_TYPE.Tweak, "revenge_explosion","Revenge Explosion",  { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
-    GlassCannon = register_content( CONTENT_TYPE.Tweak, "glass_cannon", "Glass Cannon",  { perk_id="GLASS_CANNON" }, true ),
-    AreaDamage = register_content( CONTENT_TYPE.Tweak, "area_damage", "Damage Field",  { action_id="AREA_DAMAGE" }, true ),
+    Chainsaw = register_tweak( "chainsaw", { action_id="CHAINSAW" }, true, nil, true ),
+    HeavyShot = register_tweak( "heavy_shot", { action_id="HEAVY_SHOT" }, true, nil, true ),
+    Damage = register_tweak( "damage", { action_id="DAMAGE" }, true, nil, true ),
+    Freeze = register_tweak( "freeze", { action_id="FREEZE" }, true, nil, true ),
+    IncreaseMana = register_tweak( "increase_mana", { action_id="MANA_REDUCE" }, true, nil, true ),
+    Blindness = register_tweak( "blindness","Shorten Blindness", nil, true, true, true ),
+    RevengeExplosion = register_tweak( "revenge_explosion", { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
+    GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" }, true ),
+    AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" }, true ),
 }
 
 LOADOUTS = {}
 
+local register_champion_type = function( key, options, disabled_by_default, deprecated, inverted )
+    return register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options, disabled_by_default, deprecated, inverted );
+end
+
 CHAMPION_TYPES = {
-    Damage = register_content( CONTENT_TYPE.ChampionType, "damage", "Damage Buff", {
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/damage.xml",
+    Damage = register_champion_type( "damage_buff", {
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/damage.xml",
         particle_material = "spark_red",
         sprite_particle_sprite_file = nil,
         game_effects = {},
@@ -205,18 +238,18 @@ CHAMPION_TYPES = {
                 for _,ai in pairs( animal_ai ) do
                     ComponentSetValue( ai, "attack_melee_damage_min", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_min" ) ) * 2 ) );
                     ComponentSetValue( ai, "attack_melee_damage_max", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_max" ) ) * 2 ) );
-                    ComponentSetValue( ai, "attack_melee_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_melee_frames_between" ) ) / 2 ) ) );
+                    --ComponentSetValue( ai, "attack_melee_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_melee_frames_between" ) ) / 2 ) ) );
                     ComponentSetValue( ai, "attack_dash_damage", tostring( tonumber( ComponentGetValue( ai, "attack_dash_damage" ) ) * 2 ) );
-                    ComponentSetValue( ai, "attack_dash_frames_between", tostring( tonumber( ComponentGetValue( ai, "attack_dash_frames_between" ) ) / 2 ) );
+                    --ComponentSetValue( ai, "attack_dash_frames_between", tostring( tonumber( ComponentGetValue( ai, "attack_dash_frames_between" ) ) / 2 ) );
                 end
             end
             EntityAddComponent( entity, "LuaComponent", {
-                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_damage_buff.lua"
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_damage_buff.lua"
             });
         end
     }),
-    Projectile = register_content( CONTENT_TYPE.ChampionType, "projectile", "Projectile Buff", {
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/projectile.xml",
+    Projectile = register_champion_type( "projectile_buff", {
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile.xml",
         particle_material = "spark_purple",
         sprite_particle_sprite_file = nil,
         game_effects = {},
@@ -238,7 +271,6 @@ CHAMPION_TYPES = {
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
                     ComponentSetValue( ai, "attack_ranged_predict", "1" );
-                    ComponentSetValue( ai, "attack_ranged_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_ranged_frames_between" ) ) / 2 ) ) );
                     ComponentSetValue( ai, "attack_ranged_min_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_min_distance" ) * 1.33 ) ) );
                     ComponentSetValue( ai, "attack_ranged_max_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_max_distance" ) * 1.33 ) ) );
                     ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
@@ -248,10 +280,30 @@ CHAMPION_TYPES = {
             end
         end
     }),
-    Fast = register_content( CONTENT_TYPE.ChampionType, "fast", "Fast", {
+    Haste = register_champion_type( "rapid_attack", {
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/haste.xml",
+        particle_material = "spark_purple",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true;
+        end,
+        apply = function( entity )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentAdjustValues( ai, {
+                        attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.5 ) end,
+                        attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.5 ) end,
+                        attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.5 ) end,
+                    });
+                end
+            end
+        end
+    }),
+    Fast = register_champion_type( "faster_movement", {
         particle_material = "spark_green",
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/movement_faster.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/movement_faster.xml",
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
@@ -266,118 +318,121 @@ CHAMPION_TYPES = {
             end
         end
     }),
-    Teleport = register_content( CONTENT_TYPE.ChampionType, "teleport", "Teleport", {
+    Teleport = register_champion_type( "teleporting", {
         particle_material = "spark_white",
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/teleporting.xml",
-        game_effects = {"TELEPORTATION","TELEPORTITIS"},
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/teleporting.xml",
+        game_effects = {"TELEPORTATION"},
         validator = function( entity ) return true end,
     }),
-    Burning = register_content( CONTENT_TYPE.ChampionType, "burning", "Burning", {
+    Burning = register_champion_type( "burning", {
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/burning.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/burning.xml",
         game_effects = {"PROTECTION_FIRE"},
         validator = function( entity ) return true end,
         apply = function( entity )
             local x,y = EntityGetTransform( entity );
-            local burn = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/fire.xml", x, y );
+            local burn = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/fire.xml", x, y );
             if burn ~= nil then
                 EntityAddChild( entity, burn );
             end
             EntityAddComponent( entity, "LuaComponent", {
-                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_burning.lua",
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_burning.lua",
             });
         end
     }),
-    Freezing = register_content( CONTENT_TYPE.ChampionType, "freezing", "Freezing", {
+    Freezing = register_champion_type( "freezing", {
         particle_material = "blood_cold_vapour",
         sprite_particle_sprite_file = "data/particles/snowflake_$[1-2].xml",
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/freezing.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/freezing.xml",
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
             local x,y = EntityGetTransform( entity );
-            local field = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/freeze_field.xml", x, y );
+            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/freeze_field.xml", x, y );
             if field ~= nil then
                 EntityAddChild( entity, field );
             end
             EntityAddComponent( entity, "LuaComponent", {
                 execute_every_n_frame="60",
                 execute_on_added="1",
-                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/freeze.lua",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/freeze.lua",
             });
             EntityAddComponent( entity, "LuaComponent", {
-                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_freeze.lua",
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_freeze.lua",
             });
         end
     }),
-    Shoot = register_content( CONTENT_TYPE.ChampionType, "shoot", "Shoot (NYI)", {
+    Shoot = register_champion_type( "shoot", {
         particle_material = "spark_purple",
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
         game_effects = {},
         validator = function( entity ) return true end,
     }, true, true),
     -- TODO Update this when Invisible game effect doesn't crash
-    Invisible = register_content( CONTENT_TYPE.ChampionType, "invisible", "Invisible", {
+    Invisible = register_champion_type( "invisible", {
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/invisible.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/invisible.xml",
         game_effects = {"STAINS_DROP_FASTER"},
         validator = function( entity ) return true end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", {
-                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/invisible.lua",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/invisible.lua",
                 execute_on_added="1",
                 execute_every_n_frame="10",
             });
         end
     } ),
-    Loot = register_content( CONTENT_TYPE.ChampionType, "loot", "Loot (NYI)", {
+    Loot =register_champion_type( "loot", {
         particle_material = "spark_white",
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
         game_effects = {},
         validator = function( entity ) return true end,
     }, true, true),
-    Regeneration = register_content( CONTENT_TYPE.ChampionType, "regeneration", "Regeneration", {
+    Regeneration = register_champion_type( "regenerating", {
         particle_material = "spark_green",
         sprite_particle_sprite_file = "data/particles/heal.xml",
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/regeneration.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/regeneration.xml",
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", { 
-                script_source_file = "files/gkbrkn/misc/champion_enemies/scripts/regeneration.lua",
-                execute_every_n_frame = "5",
+                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/regeneration.lua",
+                execute_every_n_frame = "60",
+            } );
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/regeneration_damage_received.lua",
             } );
         end
     }),
-    WormBait = register_content( CONTENT_TYPE.ChampionType, "worm_bait", "Worm Bait", {
+    WormBait = register_champion_type( "worm_bait", {
         particle_material = "meat",
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
         game_effects = {"WORM_ATTRACTOR"},
         validator = function( entity ) return true end,
     }, true, true ),
-    RevengeExplosion = register_content( CONTENT_TYPE.ChampionType, "revenge_explosion", "Revenge Explosion", {
+    RevengeExplosion = register_champion_type( "revenge_explosion", {
         particle_material = "spark_yellow",
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/revenge_explosion.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/revenge_explosion.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", { 
-                script_damage_received = "files/gkbrkn/misc/champion_enemies/scripts/revenge_explosion.lua",
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/revenge_explosion.lua",
                 execute_every_n_frame = "-1",
             } );
         end
     }),
-    EnergyShield = register_content( CONTENT_TYPE.ChampionType, "energy_shield", "Energy Shield", {
+    EnergyShield = register_champion_type( "energy_shield", {
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/energy_shield.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/energy_shield.xml",
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
@@ -391,7 +446,7 @@ CHAMPION_TYPES = {
                 width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
             end
             radius = math.max( height, width ) + 6;
-            local shield = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml", x, y );
+            local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml", x, y );
             local emitters = EntityGetComponent( shield, "ParticleEmitterComponent" ) or {};
             for _,emitter in pairs( emitters ) do
                 ComponentSetValueValueRange( emitter, "area_circle_radius", radius, radius );
@@ -407,10 +462,10 @@ CHAMPION_TYPES = {
             if shield ~= nil then EntityAddChild( entity, shield ); end
         end
     }),
-    Electricity = register_content( CONTENT_TYPE.ChampionType, "electricity", "Electricity", {
+    Electricity = register_champion_type( "electric", {
         particle_material = nil,
         sprite_particle_sprite_file = "data/particles/spark_electric.xml",
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/electricity.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/electricity.xml",
         game_effects = {"PROTECTION_ELECTRICITY"},
         validator = function( entity ) return true end,
         apply = function( entity ) 
@@ -426,34 +481,34 @@ CHAMPION_TYPES = {
             if electrocution ~= nil then
                 EntityAddChild( entity, electrocution );
             end
-            local field = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/electricity_field.xml", x, y );
+            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/electricity_field.xml", x, y );
             if field ~= nil then
                 EntityAddChild( entity, field );
             end
             EntityAddComponent( entity, "LuaComponent", {
                 execute_every_n_frame="60",
                 execute_on_added="1",
-                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/electricity.lua",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/electricity.lua",
             });
             EntityAddComponent( entity, "LuaComponent", {
-                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_electricity.lua",
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_electricity.lua",
             });
         end
     }),
-    ProjectileRepulsionField = register_content( CONTENT_TYPE.ChampionType, "projectile_repulsion_field", "Projectile Repulsion Field", {
+    ProjectileRepulsionField = register_champion_type( "projectile_repulsion_field", {
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/projectile_repulsion_field.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile_repulsion_field.xml",
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
-            local shield = EntityLoad( "files/gkbrkn/misc/champion_enemies/entities/projectile_repulsion_field.xml" );
+            local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/projectile_repulsion_field.xml" );
             if shield ~= nil then EntityAddChild( entity, shield ); end
         end
     }),
-    Healthy = register_content( CONTENT_TYPE.ChampionType, "healthy", "Healthy", {
+    Healthy = register_champion_type( "healthy", {
         particle_material = "plasma_fading_pink",
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/healthy.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/healthy.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true end,
@@ -469,9 +524,9 @@ CHAMPION_TYPES = {
             end
         end
     }),
-    HotBlooded = register_content( CONTENT_TYPE.ChampionType, "hot_blooded", "Hot Blooded", {
+    HotBlooded = register_champion_type( "hot_blooded", {
         particle_material = "fire",
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/hot_blooded.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/hot_blooded.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true end,
@@ -483,9 +538,9 @@ CHAMPION_TYPES = {
             end
         end
     }),
-    ProjectileBounce = register_content( CONTENT_TYPE.ChampionType, "projectile_bounce", "Projectile Bounce", {
+    ProjectileBounce =  register_champion_type( "projectile_bounce", {
         particle_material = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/projectile_bounce.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile_bounce.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity )
@@ -503,13 +558,13 @@ CHAMPION_TYPES = {
         end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", {
-                script_shot="files/gkbrkn/misc/champion_enemies/scripts/shot_projectile_bounce.lua",
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_projectile_bounce.lua",
             });
         end
     }),
-    Eldritch = register_content( CONTENT_TYPE.ChampionType, "eldritch", "Eldritch", {
+    Eldritch =  register_champion_type( "eldritch", {
         particle_material = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/eldritch.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/eldritch.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity )
@@ -532,7 +587,7 @@ CHAMPION_TYPES = {
                     ComponentSetValues( ai, {
                         attack_ranged_action_frame="4",
                         attack_ranged_min_distance="0",
-                        attack_ranged_max_distance="150",
+                        attack_ranged_max_distance="120",
                         attack_ranged_entity_file="data/entities/projectiles/tongue.xml",
                         attack_ranged_offset_x="0",
                         attack_ranged_offset_y="0",
@@ -542,28 +597,78 @@ CHAMPION_TYPES = {
             end
         end
     }),
-    InvincibilityFrames = register_content( CONTENT_TYPE.ChampionType, "invincibility_frames", "Invincibility Frames", {
+    InvincibilityFrames = register_champion_type( "invincibility_frames", {
         particle_material = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/invincibility_frames.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/invincibility_frames.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", {
-                script_damage_received="files/gkbrkn/misc/champion_enemies/scripts/invincibility_frames.lua",
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/invincibility_frames.lua",
+            });
+        end
+    }),
+    ToxicTrail =  register_champion_type( "toxic_trail", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/toxic_trail.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_toxic_trail.lua",
+            });
+        end
+    }),
+    Counter =  register_champion_type( "counter", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/counter.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="99999999",
+		        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/counter_damage_received.lua",
+            });
+        end
+    }),
+    Infested =  register_champion_type( "infested", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/infested.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="99999999",
+		        script_death="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/infested_death.lua",
             });
         end
     }),
     --[[
     Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
         particle_material = nil,
-        badge = "files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", {
-                script_source_file="files/gkbrkn/misc/champion_enemies/scripts/leader.lua",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/leader.lua",
                 execute_every_n_frame="30",
             });
         end
@@ -571,52 +676,60 @@ CHAMPION_TYPES = {
     ]]
 }
 
+local register_item = function( key, options )
+    return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options );
+end
+
+ITEMS = {
+    SpellBag = register_item( "spell_bag", nil, true, nil, true ),
+}
+
 OPTIONS = {
     {
-        Name = "Gold Tracking",
+        Name = gkbrkn_localization.option_gold_tracking,
     },
     {
-        Name = "Show Log Message",
+        Name = gkbrkn_localization.sub_option_gold_tracking_show_log_message,
         PersistentFlag = "gkbrkn_gold_tracking_message",
         SubOption = true,
     },
     {
-        Name = "Show In World",
+        Name = gkbrkn_localization.sub_option_gold_tracking_show_in_world,
         PersistentFlag = "gkbrkn_gold_tracking_in_world",
         SubOption = true,
         EnabledByDefault = true,
     },
     {
-        Name = "Invincibility Frames",
+        Name = gkbrkn_localization.option_invincibility_frames,
     },
     {
-        Name = "Enabled",
+        Name = gkbrkn_localization.sub_option_invincibility_frames_enabled,
         PersistentFlag = "gkbrkn_invincibility_frames",
         SubOption = true,
     },
     {
-        Name = "Show Flashing",
+        Name = gkbrkn_localization.sub_option_invincibility_frames_show_flashing,
         PersistentFlag = "gkbrkn_invincibility_frames_flashing",
         SubOption = true,
     },
     {
-        Name = "Heal New Health",
+        Name = gkbrkn_localization.option_heal_new_health,
     },
     {
-        Name = "Enabled",
+        Name = gkbrkn_localization.sub_option_heal_new_health_enabled,
         PersistentFlag = "gkbrkn_max_health_heal",
         SubOption = true,
     },
     {
-        Name = "Heal To Full",
+        Name = gkbrkn_localization.sub_option_heal_new_health_heal_to_full,
         PersistentFlag = "gkbrkn_max_health_heal_full",
         SubOption = true,
     },
     {
-        Name = "Less Particles",
+        Name = gkbrkn_localization.option_less_particles,
     },
     {
-        Name = "Enabled",
+        Name = gkbrkn_localization.sub_option_less_particles_enabled,
         PersistentFlag = "gkbrkn_less_particles",
         SubOption = true,
         ToggleCallback = function()
@@ -626,7 +739,7 @@ OPTIONS = {
         end
     },
     {
-        Name = "Disable Cosmetic Particles",
+        Name = gkbrkn_localization.sub_option_less_particles_disable_cosmetic_particles,
         PersistentFlag = "gkbrkn_less_particles_disable",
         SubOption = true,
         ToggleCallback = function()
@@ -636,171 +749,192 @@ OPTIONS = {
         end
     },
     {
-        Name = "Random Start",
+        Name = gkbrkn_localization.option_random_start,
     },
     {
-        Name = "Random Wands",
+        Name = gkbrkn_localization.sub_option_random_start_random_wands,
         PersistentFlag = "gkbrkn_random_start_random_wand",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Default Wand Generation",
+        Name = gkbrkn_localization.sub_option_random_start_default_wand_generation,
         PersistentFlag = "gkbrkn_random_start_default_wands",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Random Cape Colour",
+        Name = gkbrkn_localization.sub_option_random_start_random_cape_colour,
         PersistentFlag = "gkbrkn_random_start_random_cape",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Random Health",
+        Name = gkbrkn_localization.sub_option_random_start_random_health,
         PersistentFlag = "gkbrkn_random_start_random_health",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Random Flask",
+        Name = gkbrkn_localization.sub_option_random_start_random_flask,
         PersistentFlag = "gkbrkn_random_start_random_flask",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Random Perk",
+        Name = gkbrkn_localization.sub_option_random_start_random_perk,
         PersistentFlag = "gkbrkn_random_start_random_perk",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Champion Enemies",
+        Name = gkbrkn_localization.option_champion_enemies,
     },
     {
-        Name = "Enabled",
+        Name = gkbrkn_localization.sub_option_champion_enemies_enabled,
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies",
+        RequiresRestart = true,
     },
     {
-        Name = "Super Champions",
+        Name = gkbrkn_localization.sub_option_champion_enemies_super_champions,
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies_super",
+        RequiresRestart = true,
     },
     {
-        Name = "Champions Only",
+        Name = gkbrkn_localization.sub_option_champion_enemies_champions_only,
         SubOption = true,
         PersistentFlag = "gkbrkn_champion_enemies_always",
+        RequiresRestart = true,
     },
     {
-        Name = "Hero Mode",
+        Name = gkbrkn_localization.option_hero_mode,
     },
     {
-        Name = "Enabled",
+        Name = gkbrkn_localization.sub_option_hero_mode_enabled,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode",
+        RequiresRestart = true,
     },
     {
-        Name = "Orbs Increase Difficulty",
+        Name = gkbrkn_localization.sub_option_hero_mode_orbs_difficulty,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_orb_scale",
+        RequiresRestart = true,
     },
     {
-        Name = "Distance Increases Difficulty",
+        Name = gkbrkn_localization.sub_option_hero_mode_distance_difficulty,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_distance_scale",
+        RequiresRestart = true,
     },
     {
-        Name = "Loadouts",
+        Name = gkbrkn_localization.option_loadouts,
     },
     {
-        Name = "Manage",
+        Name = gkbrkn_localization.sub_option_loadouts_manage,
         PersistentFlag = "gkbrkn_loadouts_manage",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Enable Loadouts",
+        Name = gkbrkn_localization.sub_option_loadouts_enabled,
         PersistentFlag = "gkbrkn_loadouts_enabled",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Use Custom Cape Color",
+        Name = gkbrkn_localization.sub_option_loadouts_custom_cape_color,
         PersistentFlag = "gkbrkn_loadouts_cape_color",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Use Custom Player Sprites",
+        Name = gkbrkn_localization.sub_option_loadouts_custom_player_sprites,
         PersistentFlag = "gkbrkn_loadouts_player_sprites",
         SubOption = true,
         RequiresRestart = true,
     },
     {
-        Name = "Disable Random Spells",
+        Name = gkbrkn_localization.option_disable_random_spells,
         PersistentFlag = "gkbrkn_disable_spells",
         RequiresRestart = true,
     },
     {
-        Name = "Charm Nerf",
+        Name = gkbrkn_localization.option_charm_nerf,
         PersistentFlag = "gkbrkn_charm_nerf",
     },
     {
-        Name = "Limited Ammo",
+        Name = gkbrkn_localization.option_limited_ammo,
         PersistentFlag = "gkbrkn_limited_ammo",
         RequiresRestart = true,
     },
     {
-        Name = "Unlimited Ammo",
+        Name = gkbrkn_localization.option_unlimited_ammo,
         PersistentFlag = "gkbrkn_unlimited_ammo",
         RequiresRestart = true,
     },
     {
-        Name = "Quick Swap",
+        Name = gkbrkn_localization.option_quick_swap,
         PersistentFlag = "gkbrkn_quick_swap",
     },
     {
-        Name = "Wands Recharge While Holstered",
+        Name = gkbrkn_localization.option_passive_recharge,
         PersistentFlag = "gkbrkn_passive_recharge",
     },
     {
-        Name = "Wand Shops Only",
+        Name = gkbrkn_localization.option_wand_shops_only,
         PersistentFlag = "gkbrkn_wand_shops_only",
     },
     {
-        Name = "Any Spell On Any Wand",
+        Name = gkbrkn_localization.option_loose_spell_generation,
         PersistentFlag = "gkbrkn_loose_spell_generation",
         RequiresRestart = true,
     },
     {
-        Name = "Extended Wand Generation",
+        Name = gkbrkn_localization.option_extended_wand_generation,
         PersistentFlag = "gkbrkn_extended_wand_generation",
     },
     {
-        Name = "Chaotic Wand Generation",
+        Name = gkbrkn_localization.option_chaotic_wand_generation,
         PersistentFlag = "gkbrkn_chaotic_wand_generation",
     },
     {
-        Name = "Gold Nuggets -> Gold Powder",
-        PersistentFlag = "gkbrkn_gold_decay",
+        Name = gkbrkn_localization.option_no_pregen_wands,
+        PersistentFlag = "gkbrkn_no_pregen_wands",
+        RequiresRestart = true,
+    },
+    --{
+    --    Name = gkbrkn_localization.option_gold_decay,
+    --    PersistentFlag = "gkbrkn_gold_decay",
+    --},
+    {
+        Name = gkbrkn_localization.option_persistent_gold,
+        PersistentFlag = "gkbrkn_persistent_gold",
     },
     {
-        Name = "Target Dummy",
+        Name = gkbrkn_localization.option_target_dummy,
         PersistentFlag = "gkbrkn_target_dummy",
     },
     {
-        Name = "Health Bars",
+        Name = gkbrkn_localization.option_health_bars,
         PersistentFlag = "gkbrkn_health_bars",
     },
     {
-        Name = "Show FPS",
+        Name = gkbrkn_localization.option_show_fps,
         PersistentFlag = "gkbrkn_show_fps",
+    },
+    {
+        Name = gkbrkn_localization.option_show_badges,
+        PersistentFlag = "gkbrkn_show_badges",
+        RequiresRestart = true,
+        EnabledByDefault = true,
+    },
+    {
+        Name = gkbrkn_localization.option_auto_hide,
+        PersistentFlag = "gkbrkn_auto_hide",
     }
-}
-
-ITEMS = {
-    SpellBag = register_content( CONTENT_TYPE.Item, "spell_bag","Spell Bag", nil, true, nil, true ),
 }
 
 MISC = {
@@ -838,7 +972,7 @@ MISC = {
         SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
         AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
         ChampionChance = 0.125,
-        ExtraTypeChance = 0.125,
+        ExtraTypeChance = 0.25,
     },
     QuickSwap = {
         Enabled = "gkbrkn_quick_swap",
@@ -873,8 +1007,11 @@ MISC = {
     HealthBars = {
         Enabled = "gkbrkn_health_bars",
     },
-    GoldDecay = {
-        Enabled = "gkbrkn_gold_decay",
+    --GoldDecay = {
+    --    Enabled = "gkbrkn_gold_decay",
+    --},
+    PersistentGold = {
+        Enabled = "gkbrkn_persistent_gold",
     },
     PassiveRecharge = {
         Enabled = "gkbrkn_passive_recharge",
@@ -893,6 +1030,15 @@ MISC = {
         Enabled = "gkbrkn_hero_mode",
         OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
         DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
+    },
+    NoPregenWands = {
+        Enabled = "gkbrkn_no_pregen_wands",
+    },
+    Badges = {
+        Enabled = "gkbrkn_show_badges",
+    },
+    AutoHide = {
+        Enabled = "gkbrkn_auto_hide",
     }
 }
 
@@ -927,7 +1073,7 @@ if SETTINGS.Debug then
     -- Debug
     register_loadout(
         "gkbrkn_debug", -- unique identifier
-        "Debug TYPE", -- displayed loadout name
+        gkbrkn_localization.loadout_debug, -- displayed loadout name
         "goki",
         nil, -- cape color (ABGR)
         nil, -- cape edge color (ABGR)
@@ -957,7 +1103,7 @@ if SETTINGS.Debug then
                     { "SLOW_BULLET" },
                     { "SLOW_BULLET" },
                 }
-            },--[[
+            },
             {
                 name = "Debug Wand",
                 stats = {
@@ -976,7 +1122,11 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "TELEPORT_PROJECTILE" },
+                    { "SCATTER_4" },
+                    { "DEATH_CROSS" },
+                    { "DEATH_CROSS" },
+                    { "DEATH_CROSS" },
+                    { "CHAINSAW" },
                 }
             },
             {
@@ -1005,83 +1155,32 @@ if SETTINGS.Debug then
                     { "BLACK_HOLE" },
                     { "BLACK_HOLE" },
                 }
-            },]]
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 17, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {8,8}, -- capacity
-                    reload_time = {30,30}, -- recharge time in frames
-                    fire_rate_wait = {8,8}, -- cast delay in frames
-                    spread_degrees = {10,10}, -- spread
-                    mana_charge_speed = {500,500}, -- mana charge speed
-                    mana_max = {500,500}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {
-                    {"GKBRKN_PROJECTILE_GRAVITY_WELL"}
-                },
-                actions = {
-                    { "LIGHT_BULLET" },
-                    { "HEAVY_BULLET" },
-                    { "SLOW_BULLET" },
-                    { "RUBBER_BALL" },
-                }
             },
             {
                 name = "Debug Wand",
                 stats = {
                     shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 17, -- spells per cast
+                    actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {8,8}, -- capacity
-                    reload_time = {30,30}, -- recharge time in frames
-                    fire_rate_wait = {8,8}, -- cast delay in frames
-                    spread_degrees = {10,10}, -- spread
-                    mana_charge_speed = {500,500}, -- mana charge speed
-                    mana_max = {500,500}, -- mana max
+                    deck_capacity = {15,15}, -- capacity
+                    reload_time = {40,40}, -- recharge time in frames
+                    fire_rate_wait = {20,20}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {200,200}, -- mana charge speed
+                    mana_max = {1000,1000}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
-                    {"GKBRKN_SPELL_MERGE"}
                 },
                 actions = {
-                    { "LIGHT_BULLET" },
-                    { "HEAVY_BULLET" },
-                    { "SLOW_BULLET" },
+                    { "GKBRKN_SPELL_MERGE" },
+                    { "SCATTER_4" },
                     { "RUBBER_BALL" },
-                }
-            },
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 17, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {8,8}, -- capacity
-                    reload_time = {30,30}, -- recharge time in frames
-                    fire_rate_wait = {8,8}, -- cast delay in frames
-                    spread_degrees = {10,10}, -- spread
-                    mana_charge_speed = {500,500}, -- mana charge speed
-                    mana_max = {500,500}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {
-                    {"GKBRKN_PROJECTILE_ORBIT"}
-                },
-                actions = {
                     { "LIGHT_BULLET" },
-                    { "HEAVY_BULLET" },
-                    { "SLOW_BULLET" },
-                    { "RUBBER_BALL" },
+                    { "CHAINSAW" },
+                    { "CHAINSAW" },
                 }
             }
         },
@@ -1094,14 +1193,62 @@ if SETTINGS.Debug then
         },
         { -- actions
             {"LIGHT_BULLET"},
+            {"GKBRKN_MAGIC_LIGHT"},
             {"LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET"},
+            {"CHAINSAW"},
+            {"DIGGER"},
+            {"POWERDIGGER"},
+            {"GKBRKN_SPELL_MERGE"},
+            {"BURST_2"},
+            {"GKBRKN_GLITTERING_TRAIL"},
+            --[[
             {"GKBRKN_ACTION_WIP"},
+            {"GKBRKN_MANA_EFFICIENCY"},
+            {"GKBRKN_SPELL_EFFICIENCY"},
+            {"GKBRKN_GOLDEN_BLESSING"},
+            {"GKBRKN_MAGIC_LIGHT"},
+            {"GKBRKN_REVELATION"},
+            {"GKBRKN_MICRO_SHIELD"},
+            {"GKBRKN_MODIFICATION_FIELD"},
+            {"GKBRKN_SPECTRAL_SHOT"},
+            {"GKBRKN_ARCANE_BUCKSHOT"},
+            {"GKBRKN_ARCANE_SHOT"},
+            {"GKBRKN_DOUBLE_CAST"},
+            {"GKBRKN_SPELL_MERGE"},
+            {"GKBRKN_EXTRA_PROJECTILE"},
+            {"GKBRKN_ORDER_DECK"},
+            {"GKBRKN_PERFECT_CRITICAL"},
+            {"GKBRKN_PROJECTILE_BURST"},
+            {"GKBRKN_TRIGGER_HIT"},
+            {"GKBRKN_TRIGGER_TIMER"},
+            {"GKBRKN_TRIGGER_DEATH"},
+            {"GKBRKN_DRAW_DECK"},
+            {"GKBRKN_PROJECTILE_GRAVITY_WELL"},
+            {"GKBRKN_DAMAGE_LIFETIME"},
+            {"GKBRKN_DAMAGE_BOUNCE"},
+            {"GKBRKN_PATH_CORRECTION"},
+            {"GKBRKN_COLLISION_DETECTION"},
+            {"GKBRKN_POWER_SHOT"},
+            {"GKBRKN_SHIMMERING_TREASURE"},
+            {"GKBRKN_NGON_SHAPE"},
+            {"GKBRKN_SHUFFLE_DECK"},
+            {"GKBRKN_BREAK_CAST"},
+            {"GKBRKN_PROJECTILE_ORBIT"},
+            {"GKBRKN_PASSIVE_RECHARGE"},
+            {"GKBRKN_MANA_RECHARGE"},
+            {"GKBRKN_SUPER_BOUNCE"},
+            {"GKBRKN_COPY_SPELL"},
+            {"GKBRKN_TIME_SPLIT"},
+            {"GKBRKN_FORMATION_STACK"},
+            {"GKBRKN_PIERCING_SHOT"},
+            {"GKBRKN_ACTION_WIP"},
+            ]]
         },
         nil, -- sprites
         "", -- custom message
         function( player )
             local x, y = EntityGetTransform( player );
-            local target_dummy = EntityLoad( "files/gkbrkn/misc/dummy_target.xml", x - 80, y - 40 );
+            local target_dummy = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x - 80, y - 40 );
             local effect = GetGameEffectLoadTo( player, "EDIT_WANDS_EVERYWHERE", true );
             if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
             local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
@@ -1109,7 +1256,7 @@ if SETTINGS.Debug then
                 ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
             end
             --EntityAddComponent( player, "LuaComponent", {
-            --    script_source_file="files/gkbrkn/misc/regen.lua"
+            --    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/regen.lua"
             --});
         end
 

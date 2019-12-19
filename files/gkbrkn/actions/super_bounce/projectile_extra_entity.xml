@@ -2,6 +2,6 @@
     <LuaComponent 
 		remove_after_executed="1"
         execute_on_added="1"
-		script_source_file="files/gkbrkn/actions/super_bounce/projectile_init.lua" >
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/super_bounce/projectile_init.lua" >
 	</LuaComponent>
 </Entity>

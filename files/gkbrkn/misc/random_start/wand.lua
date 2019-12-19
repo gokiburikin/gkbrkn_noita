@@ -14,16 +14,13 @@ function EntityComponentGetValue( entity_id, component_type_name, component_key,
 end
 
 function get_random_from( target )
-    local rnd = Random( 1, #target );
-    
-	return target[rnd];
+    return tostring( Random( 1, #target ) );
 end
 
 function get_random_between_range( target )
-	local minval = target[1];
-	local maxval = target[2];
-	
-	return Random( minval, maxval );
+    local min = target[1];
+    local max = target[2];
+    return Random( min, max );
 end
 
 local entity_id = GetUpdatedEntityID();

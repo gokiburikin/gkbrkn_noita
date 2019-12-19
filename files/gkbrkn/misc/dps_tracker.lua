@@ -8,6 +8,13 @@ reset_frame = reset_frame or 0;
 function damage_received( damage, message, entity_thats_responsible, is_fatal )
     local now = GameGetFrameNum();
     local entity = GetUpdatedEntityID();
+
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+    for _,damage_model in pairs(damage_models) do
+        local max_hp = ComponentGetValue( damage_model, "max_hp" );
+        ComponentSetValue( damage_model, "hp", max_hp );
+    end
+    
     if now >= reset_frame then
         total_damage = 0;
         best = 0;
@@ -35,7 +42,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     end
     EntityAddComponent( entity, "SpriteComponent", {
         _tags="enabled_in_world,gkbrkn_dps_tracker",
-        image_file="files/gkbrkn/font_pixel_white.xml" ,
+        image_file="mods/gkbrkn_noita/files/gkbrkn/font_pixel_white.xml" ,
         emissive="1",
         is_text_sprite="1",
         offset_x="12" ,

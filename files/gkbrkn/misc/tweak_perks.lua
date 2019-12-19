@@ -1,12 +1,12 @@
-dofile_once( "files/gkbrkn/config.lua");
-dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 local edit_callbacks = {
     REVENGE_EXPLOSION = function( perk, index )
         perk.func = function( entity_perk_item, entity_who_picked, item_name )
 			EntityAddComponent( entity_who_picked, "LuaComponent", 
 			{ 
-				script_damage_received = "files/gkbrkn/tweaks/perks/revenge_explosion.lua",
+				script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/tweaks/perks/revenge_explosion.lua",
 				execute_every_n_frame = "-1",
 			} )
 		end

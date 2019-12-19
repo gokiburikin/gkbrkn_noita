@@ -2,7 +2,7 @@
     <LuaComponent
         execute_on_added="1",
         execute_every_n_frame="-1",
-        script_source_file="files/gkbrkn/test2.lua"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/test2.lua"
     >
     </LuaComponent>
 </Entity>

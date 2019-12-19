@@ -7,7 +7,7 @@
         </Transform>
     </InheritTransformComponent>
 	<LuaComponent 
-		script_source_file="files/gkbrkn/perks/lost_treasure/spawner_update.lua"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/spawner_update.lua"
         >
 	</LuaComponent>
     

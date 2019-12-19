@@ -35,7 +35,7 @@
     y_pos_offset_min="0"
     x_pos_offset_max="0"
     y_pos_offset_max="0"
-    is_trail="1"
+    is_trail="0"
 	trail_gap="1.0"
     x_vel_min="-5"
     x_vel_max="5"

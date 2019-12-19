@@ -1,4 +1,4 @@
-dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 local entity = GetUpdatedEntityID();
 local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
 if parent ~= 0 and EntityGetIsAlive(parent) then

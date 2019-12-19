@@ -9,3 +9,11 @@ local sprite_particle_emitters = EntityGetComponent( entity, "SpriteParticleEmit
 for _,emitter in pairs( sprite_particle_emitters ) do
     EntitySetComponentIsEnabled( entity, emitter, false );
 end
+
+local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+if projectile ~= nil then
+    ComponentObjectSetValues( projectile, "config_explosion", {
+        sparks_count_min="0",
+        sparks_count_max="0",
+    });
+end

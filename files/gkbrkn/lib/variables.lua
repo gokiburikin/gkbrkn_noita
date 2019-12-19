@@ -10,7 +10,7 @@ function EntitySetVariableString( entity, variable_tag, value )
     local current_variable = EntityGetFirstComponent( entity, "VariableStorageComponent", variable_tag );
     if current_variable == nil then
         EntityAddComponent( entity, "VariableStorageComponent", {
-            _tags=variable_tag,
+            _tags=variable_tag..",enabled_in_world,enabled_in_hand,enabled_in_inventory",
             value_string=tostring(value)
         } );
     else
@@ -55,5 +55,19 @@ end
 function ComponentObjectAdjustValues( component, object, member_callback_table )
     for member,callback in pairs(member_callback_table) do
         ComponentObjectSetValue( component, object, member, tostring( callback( ComponentObjectGetValue( component, object, member ) ) ) );
+    end
+end
+
+function ComponentSetMetaCustoms( component, member_value_table )
+    for member,new_value in pairs(member_value_table) do
+        ComponentSetMetaCustom( component, member, tostring( new_value ) );
+    end
+end
+
+function ComponentAdjustMetaCustoms( component, member_callback_table )
+    for member,callback in pairs(member_callback_table) do
+        local current_value = ComponentGetMetaCustom( component, member );
+        local new_value = callback( current_value );
+        ComponentSetMetaCustom( component, member, tostring( new_value ) );
     end
 end

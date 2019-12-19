@@ -1,6 +1,6 @@
-dofile_once( "files/gkbrkn/config.lua");
-dofile_once( "files/gkbrkn/helper.lua");
-dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 gkbrkn = {
     TRIGGER_TYPE = {
@@ -47,6 +47,7 @@ local reset_per_casts = function()
     gkbrkn.projectiles_fired = 0;
     gkbrkn.stack_next_actions = 0;
     gkbrkn.stack_projectiles = "";
+    gkbrkn.extra_projectiles = 0;
 end
 
 function move_hand_to_discarded()
@@ -65,7 +66,11 @@ end
 
 function draw_actions( how_many, instant_reload_if_empty )
     gkbrkn.instant_reload_if_empty = instant_reload_if_empty;
-    gkbrkn._draw_actions( how_many, instant_reload_if_empty );
+    local actions_to_draw = how_many;
+    local player = GetUpdatedEntityID();
+    local extra_actions = EntityGetVariableNumber( player, "gkbrkn_draw_actions_bonus", 0 );
+    actions_to_draw = extra_actions + actions_to_draw;
+    gkbrkn._draw_actions( actions_to_draw, instant_reload_if_empty );
 end
 
 function discard_action()
@@ -102,21 +107,20 @@ function draw_action( instant_reload_if_empty )
     if gkbrkn.draw_action_stack_size == 0 then
         if HasFlagPersistent( MISC.LessParticles.Enabled ) then
             if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
-                c.extra_entities = c.extra_entities.."files/gkbrkn/misc/less_particles/disable_particles.xml,";
+                c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.xml,";
             else
-                c.extra_entities = c.extra_entities.."files/gkbrkn/misc/less_particles/less_particles.xml,";
+                c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/less_particles.xml,";
             end
         end
         local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
         if current_protagonist_bonus ~= 0 then
-            c.extra_entities = c.extra_entities.."files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
+            c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
         end
         if #deck == 0 then
             current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
         end
         c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
-        c.spread_degrees = c.spread_degrees + 3 * extra_projectiles_level;
     end
     c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
     current_reload_time = current_reload_time + 8 * extra_projectiles_level;
@@ -161,7 +165,7 @@ function add_projectile( filepath )
             gkbrkn._add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Instant then
             if reflecting then 
-                Reflection_RegisterProjectile( filepath )
+                Reflection_RegisterProjectile( filepath );
                 return;
             end
         
@@ -169,7 +173,12 @@ function add_projectile( filepath )
                 draw_shot( create_shot( trigger_action_draw_count ), true );
             EndProjectile()
         else
-            gkbrkn._add_projectile( filepath );
+            local force_trigger_death = EntityGetVariableNumber( player, "gkbrkn_force_trigger_death", 0 );
+            if force_trigger_death ~= 1 then
+                gkbrkn._add_projectile( filepath );
+            else
+                gkbrkn._add_projectile_trigger_death( filepath, 1 );
+            end
         end
     end
     gkbrkn.extra_projectiles = 0;

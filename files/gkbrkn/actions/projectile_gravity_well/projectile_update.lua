@@ -1,4 +1,4 @@
-dofile_once( "files/gkbrkn/lib/variables.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 local random_offset = 8;
 local maximum_strength = 96;
