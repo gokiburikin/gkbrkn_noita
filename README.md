@@ -59,7 +59,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Fragile Ego**: Receive 50% less damage, but damage is permanent (damage is dealt to maximum health.)
 - [x] **Healthier Heart**: You heal for the amount gained when gaining maximum health.
 - [x] **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
-- [x] **Knockback Immunity**: Immunity to knockback and recoil.
+- [x] **Knockback Immunity**: Immunity to knockback.
 - [x] **Lost Treasure**: Recover the Gold Nuggets that were left behind.
 - [x] **Mana Recovery**: Your wands charge more quickly.
 - [x] **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)

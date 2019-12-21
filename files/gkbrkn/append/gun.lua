@@ -26,6 +26,7 @@ gkbrkn = {
     trigger_queue = {},
     draw_action_stack_size = 0,
     _draw_actions = draw_actions,
+    _set_current_action = set_current_action,
     _play_action = play_action,
     _add_projectile = add_projectile,
     _move_hand_to_discarded = move_hand_to_discarded,
@@ -56,6 +57,22 @@ function move_hand_to_discarded()
     gkbrkn.reset_on_draw = true;
 end
 
+function pre_play_action( action )
+    local player = GetUpdatedEntityID();
+    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+    local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
+
+    if current_action ~= nil and current_action.type == ACTION_TYPE_PROJECTILE then
+        c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
+        current_reload_time = current_reload_time + 8 * extra_projectiles_level;
+    end
+end
+
+function set_current_action( action )
+    gkbrkn._set_current_action( action );
+    pre_play_action( action );
+end
+
 function play_action( action )
     if gkbrkn.reset_on_draw == true then
         gkbrkn.reset_on_draw = false;
@@ -82,7 +99,19 @@ end
 function draw_action( instant_reload_if_empty )
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining + 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
+
     local result = false;
+    local player = GetUpdatedEntityID();
+    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+    local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
+
+    --[[
+        if current_action ~= and current_action.type == ACTION_TYPE_PROJECTILE then
+            c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
+            current_reload_time = current_reload_time + 8 * extra_projectiles_level;
+        end
+    ]]
+
     if gkbrkn.skip_cards <= 0 then
         --for index,extra_modifier in pairs( active_extra_modifiers ) do
         --    handle_extra_modifier( extra_modifier, index, gkbrkn.draw_action_stack_size );
@@ -101,9 +130,7 @@ function draw_action( instant_reload_if_empty )
     end
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size - 1;
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
-    local player = GetUpdatedEntityID();
-    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
-    local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
+    
     if gkbrkn.draw_action_stack_size == 0 then
         if HasFlagPersistent( MISC.LessParticles.Enabled ) then
             if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
@@ -122,8 +149,6 @@ function draw_action( instant_reload_if_empty )
         c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
     end
-    c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
-    current_reload_time = current_reload_time + 8 * extra_projectiles_level;
     return result;
 end
 

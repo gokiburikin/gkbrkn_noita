@@ -16,6 +16,12 @@ api issues
     
 
 changelog
+    -m "Change Champion random seed logic (stacked champions won't all be the same type)"
+    -m "Add Debug Mode as an option"
+    -m "Fix extra projectile methods adding additional recharge and cast delay for non-projectile spells (fixes extreme recharge and cast delay)"
+    -m "Rework numbers for to Action: Chaotic Burst to add support for trigger Tentacles"
+    -m "Update graphics for Action: Chaotic Burst"
+    -m "Update Perk: Lost Treasure to use the new gold nuggets"
 
 kill streaks events
 grze events

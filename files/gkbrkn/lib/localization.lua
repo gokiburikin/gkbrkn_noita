@@ -74,6 +74,7 @@ gkbrkn_localization = {
     option_show_fps = "Show FPS",
     option_show_badges = "Show Badges",
     option_auto_hide = "Auto-hide Config Button",
+    option_debug_mode = "Debug Mode",
 
     --[[ Champions ]]
     champion_type_name_damage_buff = "Damage Buff",

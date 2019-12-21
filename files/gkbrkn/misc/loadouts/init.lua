@@ -55,7 +55,7 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
     end
     if #loadouts > 0 then
         local x,y = EntityGetTransform( player_entity );
-        SetRandomSeed( x + 344, y - 523 );
+        SetRandomSeed( GameGetFrameNum(), x + y + player_entity + 718 );
 
         local chosen_loadout = loadouts[Random( 1, #loadouts )];
         local loadout_data = CONTENT[chosen_loadout].options;

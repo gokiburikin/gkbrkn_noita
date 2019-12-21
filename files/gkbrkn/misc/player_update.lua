@@ -20,15 +20,25 @@ local x, y = EntityGetTransform( player_entity );
 local children = EntityGetAllChildren( player_entity ) or {};
 
 --[[
-if now % 180 == 0 then
+if now % 30 == 0 then
     local game_effect = GetGameEffectLoadTo( player_entity, "POLYMORPH_RANDOM", true );
     if game_effect ~= nil then
         ComponentSetValue( game_effect, "polymorph_target", "data/entities/animals/longleg.xml" );
         ComponentSetValue( game_effect, "frames", "30" );
     end
-    
+    local children = EntityGetAllChildren( player_entity ) or {};
+	for i,child_entity in ipairs( children ) do
+		if EntityGetName( child_entity ) == "cape" then
+            local x, y = EntityGetTransform( child_entity );
+			GamePrint( x.."/"..y );
+            local verlet = EntityGetFirstComponent( child_entity, "VerletPhysicsComponent" );
+            ComponentSetValue( verlet, "m_is_culled_previous", "0" );
+			break;
+		end
+	end
 end
 ]]
+
 --[[ material immunities
 TODO still can't really make use of this without polymorphing
 if true then
@@ -381,9 +391,9 @@ if now % 10 == 0 then
     --[[ Champions ]]
     if GameHasFlagRun( MISC.ChampionEnemies.Enabled ) then
         for _,nearby in pairs( nearby_enemies ) do
+            SetRandomSeed( now, x + y + nearby );
 
             --SetRandomSeed( x, y );
-            SetRandomSeed( math.random() * 10000, math.random() * 10000 );
             if EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false then
                 EntityAddTag( nearby, "gkbrkn_champions" );
                 if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then

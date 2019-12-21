@@ -1,10 +1,12 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 
+local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
+
 SETTINGS = {
-    Debug = true,
+    Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c70"
+    Version = "c74"
 }
 
 CONTENT_TYPE = {
@@ -934,10 +936,17 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.option_auto_hide,
         PersistentFlag = "gkbrkn_auto_hide",
+    },
+    {
+        Name = gkbrkn_localization.option_debug_mode,
+        PersistentFlag = DEBUG_MODE_FLAG,
     }
 }
 
 MISC = {
+    DebugMode = {
+        Enabled = DEBUG_MODE_FLAG,
+    },
     GoldPickupTracker = {
         TrackDuration = 180, -- in game frames
         ShowMessageEnabled = "gkbrkn_gold_tracking_message",

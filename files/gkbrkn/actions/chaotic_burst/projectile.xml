@@ -4,9 +4,9 @@
 
 	<Base file="data/entities/base_projectile.xml" >
 		<VelocityComponent
-		  gravity_y="0"
+		  gravity_y="500"
 		  air_friction="0"
-		  mass="0.04"
+		  mass="0.01"
 		  >
 		</VelocityComponent>
 	</Base>
@@ -15,8 +15,8 @@
     _enabled="1" 
     lob_min="0.5"
     lob_max="0.7"
-    speed_min="300"
-    speed_max="400"
+    speed_min="400"
+    speed_max="500"
     friction="0"
     direction_random_rad="11.623892818282234982311780518134"
     on_death_explode="0"
@@ -25,7 +25,7 @@
     explosion_dont_damage_shooter="1"
     on_collision_die="1"
     on_collision_remove_projectile="0"
-    lifetime="180"
+    lifetime="240"
     damage="0.4"
     lifetime_randomness="0"
     ragdoll_force_multiplier="0"
@@ -38,7 +38,7 @@
     shoot_light_flash_radius="30"
     die_on_low_velocity="0"
     bounce_always="1"
-    bounces_left="99"
+    bounces_left="20"
     bounce_energy="1.0"
     velocity_sets_rotation="1"
     velocity_updates_animation="1"
@@ -60,7 +60,6 @@
     image_file="mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile_sprite.xml" 
     next_rect_animation="default"
     rect_animation="default" 
-	additive="1"
      >
   </SpriteComponent>
 
@@ -90,7 +89,7 @@
 		airflow_time="0.401"
 		airflow_scale="0.25"
 		is_trail="1"
-		trail_gap="1.0"
+		trail_gap="3"
 		create_real_particles="0"
 		emit_cosmetic_particles="1"
 		render_on_grid="1"

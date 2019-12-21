@@ -1,18 +1,18 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 local tracker_variable = "gkbrkn_lost_treasure_tracker";
 local entity = GetUpdatedEntityID();
 
-local players = EntityGetWithTag( "player_unit" );
+local players = EntityGetWithTag( "player_unit" ) or {};
 for index,player in pairs( players ) do
-    local tracker = EntityGetFirstComponent( player, "VariableStorageComponent", tracker_variable );
-    if tracker == nil then
-        tracker = EntityAddComponent( player, "VariableStorageComponent", {
-            _enabled="1",
-            _tags = tracker_variable,
-            name = tracker_variable,
-            value_string = "0",
-        });
+    -- load the gold_value from VariableStorageComponent
+	local variables = EntityGetComponent( entity, "VariableStorageComponent" ) or {};
+    local gold_value = 0;
+    for key,comp_id in pairs(variables) do 
+        if ComponentGetValue( comp_id, "name" ) == "gold_value" then
+            gold_value = ComponentGetValueInt( comp_id, "value_int" );
+            break;
+        end
     end
-    tracker = EntityGetFirstComponent( player, "VariableStorageComponent", tracker_variable );
-    local current_lost_treasure_count = tonumber(ComponentGetValue( tracker, "value_string" ));
-    ComponentSetValue( tracker, "value_string", tostring(current_lost_treasure_count + 1) );
+    EntityAdjustVariableNumber( player, tracker_variable, 0.0, function( value ) return tonumber( value ) + gold_value; end );
+    --GamePrint( "lost treasure is now: ".. EntityGetVariableNumber( player, tracker_variable, 0.0 ) );
 end

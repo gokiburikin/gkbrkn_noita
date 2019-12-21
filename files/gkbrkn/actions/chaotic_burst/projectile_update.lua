@@ -7,7 +7,6 @@ function RGBtoABGR( r, g, b )
 end
 
 local entity = GetUpdatedEntityID();
-
 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
 if velocity ~= nil then
     local vx,vy = ComponentGetValueVector2( velocity, "mVelocity", vx, vy );
