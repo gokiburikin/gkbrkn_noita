@@ -222,6 +222,18 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     end
 end
 
+--[[ Hero Mode Gold Autopick ]]
+if GameHasFlagRun( MISC.HeroMode.Enabled ) then
+    local gold_nuggets = EntityGetWithTag( "gold_nugget" );
+    for _,gold_nugget in pairs( gold_nuggets ) do
+        EntitySetTransform( gold_nugget, x, y );
+        --local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+        --if lifetime_component ~= nil then
+        --    EntityRemoveComponent( gold_nugget, lifetime_component );
+        --end
+    end
+end
+
 --[[ Gold Tracking ]]
 local gold_tracker_world = HasFlagPersistent( MISC.GoldPickupTracker.ShowTrackerEnabled );
 local gold_tracker_message = HasFlagPersistent( MISC.GoldPickupTracker.ShowMessageEnabled );
@@ -278,61 +290,63 @@ if gold_tracker_world or gold_tracker_message then
     end
 end
 
-local gold_nuggets = EntityGetWithTag( "gold_nugget" );
-for _,gold_nugget in pairs( gold_nuggets ) do
-    if HasFlagPersistent( MISC.PersistentGold.Enabled ) then
-        local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-        if lifetime_component ~= nil then
-            EntityRemoveComponent( gold_nugget, lifetime_component );
-        end
-    end
-    if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( gold_nugget ) == false then
-        EntityAddComponent( gold_nugget, "LuaComponent", {
-            execute_every_n_frame = "-1",
-            remove_after_executed = "1",
-            script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
-        });
-        EntityAddComponent( gold_nugget, "LuaComponent", {
-            _tags="gkbrkn_lost_treasure",
-            execute_on_removed="1",
-            execute_every_n_frame="-1",
-            script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
-        });
-    end
-        --[[
-    if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( gold_nugget ) == false then
-        EntityAddComponent( gold_nugget, "LuaComponent", {
-            execute_every_n_frame = "-1",
-            remove_after_executed = "1",
-            script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
-        });
-        EntityAddComponent( gold_nugget, "LuaComponent", {
-            _tags="gkbrkn_gold_decay",
-            execute_on_removed="1",
-            execute_every_n_frame="-1",
-            script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
-        });
-    end
-    ]]
-
---[[ This was an attempt to increase the radius of gold nuggets but it seems it uses the physics body rendering these hitboxes useless
-    TODO not that important anyway, but noita enhanced has an auto pickup method, look at that
-    local lua_components = EntityGetComponent( nearby, "LuaComponent" ) or {};
-    for _,component in pairs( lua_components ) do
-        if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-            local hitbox = EntityGetFirstComponent( nearby, "HitboxComponent" );
-            if hitbox ~= nil then
-                ComponentSetValues( hitbox, {
-                    aabb_min_x=tostring(-20),
-                    aabb_max_x=tostring(20),
-                    aabb_min_y=tostring(-20),
-                    aabb_max_y=tostring(20),
-                });
+if now % 60 == 0 then
+    local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
+    for _,gold_nugget in pairs( gold_nuggets ) do
+        if HasFlagPersistent( MISC.PersistentGold.Enabled ) then
+            local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+            if lifetime_component ~= nil then
+                EntityRemoveComponent( gold_nugget, lifetime_component );
             end
-            break;
         end
+        if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( gold_nugget ) == false then
+            EntityAddComponent( gold_nugget, "LuaComponent", {
+                execute_every_n_frame = "-1",
+                remove_after_executed = "1",
+                script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
+            });
+            EntityAddComponent( gold_nugget, "LuaComponent", {
+                _tags="gkbrkn_lost_treasure",
+                execute_on_removed="1",
+                execute_every_n_frame="-1",
+                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
+            });
+        end
+            --[[
+        if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( gold_nugget ) == false then
+            EntityAddComponent( gold_nugget, "LuaComponent", {
+                execute_every_n_frame = "-1",
+                remove_after_executed = "1",
+                script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
+            });
+            EntityAddComponent( gold_nugget, "LuaComponent", {
+                _tags="gkbrkn_gold_decay",
+                execute_on_removed="1",
+                execute_every_n_frame="-1",
+                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
+            });
+        end
+        ]]
+
+    --[[ This was an attempt to increase the radius of gold nuggets but it seems it uses the physics body rendering these hitboxes useless
+        TODO not that important anyway, but noita enhanced has an auto pickup method, look at that
+        local lua_components = EntityGetComponent( nearby, "LuaComponent" ) or {};
+        for _,component in pairs( lua_components ) do
+            if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
+                local hitbox = EntityGetFirstComponent( nearby, "HitboxComponent" );
+                if hitbox ~= nil then
+                    ComponentSetValues( hitbox, {
+                        aabb_min_x=tostring(-20),
+                        aabb_max_x=tostring(20),
+                        aabb_min_y=tostring(-20),
+                        aabb_max_y=tostring(20),
+                    });
+                end
+                break;
+            end
+        end
+        ]]
     end
-    ]]
 end
 
 --[[ Material Compression ]]
@@ -394,7 +408,7 @@ if now % 10 == 0 then
             SetRandomSeed( now, x + y + nearby );
 
             --SetRandomSeed( x, y );
-            if EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false then
+            if EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and (EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false) and does_entity_drop_gold( nearby ) == true then
                 EntityAddTag( nearby, "gkbrkn_champions" );
                 if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                     EntityRemoveTag( nearby, "gkbrkn_force_champion" );
@@ -407,11 +421,18 @@ if now % 10 == 0 then
                     end
 
                     local champion_types_to_apply = 1;
+                    local champions_encountered = tonumber( GlobalsGetValue( "gkbrkn_champion_enemies_encountered" ) ) or 0;
                     if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled ) then
-                        while Random() <= MISC.ChampionEnemies.ExtraTypeChance and champion_types_to_apply < #valid_champion_types do
+                        local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0004;
+                        local random_roll = Random();
+                        while random_roll <= extra_type_chance and champion_types_to_apply < #valid_champion_types do
                             champion_types_to_apply = champion_types_to_apply + 1;
+                            extra_type_chance = extra_type_chance - random_roll;
+                            random_roll = Random();
                         end
                     end
+
+                    GlobalsSetValue( "gkbrkn_champion_enemies_encountered", champions_encountered + 1 );
                     
                     --[[ Things to apply to all champions ]]
                     EntityAddComponent( nearby, "LuaComponent", {
@@ -748,14 +769,6 @@ if now % 10 == 0 then
                         mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 20, 40 ) ) * rand( 1.1, 1.2 ) ); end,
                     } );
                 end
-            end
-        end
-
-        local gold_nuggets = EntityGetWithTag( "gold_nugget" );
-        for _,gold_nugget in pairs( gold_nuggets ) do
-            local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-            if lifetime_component ~= nil then
-                EntityRemoveComponent( gold_nugget, lifetime_component );
             end
         end
     end

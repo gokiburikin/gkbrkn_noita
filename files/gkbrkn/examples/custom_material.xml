@@ -1,0 +1,23 @@
+<Materials> 
+ 
+ <CellData 
+    name="test_fire"  
+      ui_name="test"
+      tags="[fire]"
+    burnable="0"  
+    density="1"  
+    cell_type="fire" 
+    wang_color="7fFF6060"
+    generates_smoke="0"  
+    liquid_gravity="0.5"  
+    liquid_sand="0"  
+    on_fire="1"  
+    requires_oxygen="1"  
+    temperature_of_fire="100"
+    gfx_glow="255" >
+    <Graphics
+    color="7fff6000" >
+    </Graphics>
+  </CellData>
+  
+</Materials>

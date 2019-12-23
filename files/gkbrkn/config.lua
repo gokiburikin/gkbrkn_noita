@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c74"
+    Version = "c75"
 }
 
 CONTENT_TYPE = {
@@ -230,7 +230,7 @@ end
 CHAMPION_TYPES = {
     Damage = register_champion_type( "damage_buff", {
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/damage.xml",
-        particle_material = "spark_red",
+        particle_material = nil,
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true; end,
@@ -252,7 +252,7 @@ CHAMPION_TYPES = {
     }),
     Projectile = register_champion_type( "projectile_buff", {
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile.xml",
-        particle_material = "spark_purple",
+        particle_material = nil,
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity )
@@ -284,7 +284,7 @@ CHAMPION_TYPES = {
     }),
     Haste = register_champion_type( "rapid_attack", {
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/haste.xml",
-        particle_material = "spark_purple",
+        particle_material = nil,
         sprite_particle_sprite_file = nil,
         game_effects = {},
         validator = function( entity ) return true;
@@ -303,7 +303,7 @@ CHAMPION_TYPES = {
         end
     }),
     Fast = register_champion_type( "faster_movement", {
-        particle_material = "spark_green",
+        particle_material = nil,
         sprite_particle_sprite_file = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/movement_faster.xml",
         game_effects = {},
@@ -345,7 +345,7 @@ CHAMPION_TYPES = {
         end
     }),
     Freezing = register_champion_type( "freezing", {
-        particle_material = "blood_cold_vapour",
+        particle_material = nil,
         sprite_particle_sprite_file = "data/particles/snowflake_$[1-2].xml",
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/freezing.xml",
         game_effects = {},
@@ -412,14 +412,14 @@ CHAMPION_TYPES = {
         end
     }),
     WormBait = register_champion_type( "worm_bait", {
-        particle_material = "meat",
+        particle_material = nil,
         sprite_particle_sprite_file = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
         game_effects = {"WORM_ATTRACTOR"},
         validator = function( entity ) return true end,
     }, true, true ),
     RevengeExplosion = register_champion_type( "revenge_explosion", {
-        particle_material = "spark_yellow",
+        particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/revenge_explosion.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
@@ -509,7 +509,7 @@ CHAMPION_TYPES = {
         end
     }),
     Healthy = register_champion_type( "healthy", {
-        particle_material = "plasma_fading_pink",
+        particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/healthy.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
@@ -527,7 +527,7 @@ CHAMPION_TYPES = {
         end
     }),
     HotBlooded = register_champion_type( "hot_blooded", {
-        particle_material = "fire",
+        particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/hot_blooded.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
@@ -661,6 +661,19 @@ CHAMPION_TYPES = {
             });
         end
     }),
+    Digging =  register_champion_type( "digging", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/digging.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+		        script_death="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_digging.lua",
+            });
+        end
+    }, true, true),
     --[[
     Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
         particle_material = nil,
@@ -981,7 +994,7 @@ MISC = {
         SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
         AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
         ChampionChance = 0.125,
-        ExtraTypeChance = 0.25,
+        ExtraTypeChance = 0.05,
     },
     QuickSwap = {
         Enabled = "gkbrkn_quick_swap",

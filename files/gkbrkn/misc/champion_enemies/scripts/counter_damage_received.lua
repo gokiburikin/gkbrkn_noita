@@ -4,10 +4,8 @@ function damage_received( damage, desc, entity_who_caused, is_fatal )
 	local entity_id = GetUpdatedEntityID();
 	local x, y = EntityGetTransform( entity_id );
 
-	if entity_who_caused == entity_id then return end
-
-	-- check that we're only shooting every 10 frames
-	if script_wait_frames( entity_id, 2 ) then  return  end
+	if entity_who_caused == entity_id or entity_who_caused == 0 then return end
+	if script_wait_frames( entity_id, 10 ) then return end
 	
 	local angle_inc = 0;
 	local angle_inc_set = false;

@@ -8,13 +8,15 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     if HasFlagPersistent( MISC.InvincibilityFrames.Enabled ) and invincibility_duration < MISC.InvincibilityFrames.Duration then
         invincibility_duration = MISC.InvincibilityFrames.Duration;
     end
-    local components = EntityGetComponent( entity, "DamageModelComponent" );
-    if components ~= nil and entity_thats_responsible ~= 0 then
-        for _,data_component in pairs( components ) do
-            local current_invincibility_frames = tonumber( ComponentGetValue( data_component, "invincibility_frames" ) );
-            -- only add invincibility frames if we are not currently invincible
-            if current_invincibility_frames <= 0 then
-                ComponentSetValue( data_component, "invincibility_frames", tostring( invincibility_duration ) );
+    if invincibility_duration > 0 and damage > 0 then
+        local components = EntityGetComponent( entity, "DamageModelComponent" );
+        if components ~= nil and entity_thats_responsible ~= 0 then
+            for _,data_component in pairs( components ) do
+                local current_invincibility_frames = tonumber( ComponentGetValue( data_component, "invincibility_frames" ) );
+                -- only add invincibility frames if we are not currently invincible
+                if current_invincibility_frames <= 0 then
+                    ComponentSetValue( data_component, "invincibility_frames", tostring( invincibility_duration ) );
+                end
             end
         end
     end

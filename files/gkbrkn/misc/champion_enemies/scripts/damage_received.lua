@@ -1,20 +1,5 @@
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
-
-function does_entity_drop_gold( entity )
-    local drops_gold = false;
-    for _,component in pairs( EntityGetComponent( entity, "LuaComponent" ) ) do
-        if ComponentGetValue( component, "script_death" ) == "data/scripts/items/drop_money.lua" then
-            drops_gold = true;
-            break;
-        end
-    end
-    if drops_gold == true then
-        if EntityGetFirstComponent( entity, "VariableStorageComponent", "no_drop_gold" ) ~= nil then
-            drops_gold = false;
-        end
-    end
-    return drops_gold;
-end
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 function damage_received( damage, message, entity_thats_responsible, is_fatal  )
     local entity = GetUpdatedEntityID();
@@ -26,13 +11,8 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
                 total_health = total_health + ComponentGetValue( damage_model, "max_hp" );
             end
             local x, y = EntityGetTransform( entity );
-            local gold_reward = math.ceil( total_health / 6 );
-            local extra_gold = EntityLoad( "data/entities/items/pickup/goldnugget.xml", x + Random( -2, 2 ), y - 8 + Random( -2, 2 ) );
-            --while gold_reward > 0 do
-            --    local to_spawn = math.min( 5, gold_reward );
-            --    gold_reward = gold_reward - to_spawn;
-            --    GameCreateParticle( "gold", x + Random( -2, 2 ), y + Random( -2, 2 ), to_spawn, Random( -10, 10 ), Random( -100, 0 ), false, true );
-            --end
+            local gold_reward = math.ceil( total_health / 6 ) * 10;
+            spawn_gold_nuggets( gold_reward, x, y );
         end
     end
 end
