@@ -15,15 +15,7 @@ api issues
     no component copy methods
     
 
-changelog 
-    -m "Update Champions to use the new gold nuggets"
-    -m "Rework Super Champion logic to increase extra type chance as champions are encountered (lower type rate at the start, higher type rate by the end)"
-    -m "Fix Champion: Counter/Reflect counter attacking on environmental damage"
-    -m "Reduce rate at which gold nuggets are handled (lost treasure, persistent gold, hero mode, etc, every 1 -> 60 frames)"
-    -m "Update Any Spell On Any Wand to average probabilities instead of overwrite them (fixes rare spells being made common)"
-    -m "Add a check for the tags 'gkbrkn_no_champion' and 'drone_friendly' to prevent champion logic"
-    -m "Fix most enemies that don't spawn gold (adds, nest spawns) from becoming champions"
-    -m "Fix Invincibility Frames activating on negative damage"
+changelog
 
 kill streaks events
 grze events
