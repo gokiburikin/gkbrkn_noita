@@ -222,15 +222,18 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     end
 end
 
---[[ Hero Mode Gold Autopick ]]
-if GameHasFlagRun( MISC.HeroMode.Enabled ) then
-    local gold_nuggets = EntityGetWithTag( "gold_nugget" );
+--[[ Auto-collect Gold ]]
+if HasFlagPersistent( MISC.AutoPickupGold.Enabled ) then
+    local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
         EntitySetTransform( gold_nugget, x, y );
-        --local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-        --if lifetime_component ~= nil then
-        --    EntityRemoveComponent( gold_nugget, lifetime_component );
-        --end
+        break;
+        --[[
+        local gx, gy = EntityGetTransform( gold_nugget );
+        local dx, dy = x - gx, y - gy;
+        local pdx, pdy = GameVecToPhysicsVec( dx, dy );
+        PhysicsApplyForce( gold_nugget, dx, dy );
+        ]]
     end
 end
 
@@ -452,7 +455,6 @@ if now % 10 == 0 then
                                 creature_detection_check_every_x_frames="60",
                                 creature_detection_angular_range_deg="180",
                                 dont_counter_attack_own_herd="1",
-                                attack_dash_enabled="1",
                             });
                             ComponentAdjustValues( ai, {
                                 max_distance_to_cam_to_start_hunting=function( value ) return  tonumber( value ) * 2; end,
@@ -501,14 +503,11 @@ if now % 10 == 0 then
 
                             local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
                             local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
-                            local new_max = max_hp * 1.5;
+                            local new_max = max_hp * 1.25;
                             local regained = new_max - current_hp;
                             ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
                             ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
 
-                            local critical_damage_resistance = tonumber( ComponentGetValue( damage_model, "critical_damage_resistance" ) );
-                            ComponentSetValue( damage_model, "critical_damage_resistance", tostring( math.max( critical_damage_resistance, 0.67 ) ) );
-                        
                             local minimum_knockback_force = tonumber( ComponentGetValue( damage_model, "minimum_knockback_force" ) );
                             ComponentSetValue( damage_model, "minimum_knockback_force", tostring( math.max( minimum_knockback_force * 2, 10 ) ) );
                             

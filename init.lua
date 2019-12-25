@@ -16,30 +16,23 @@ api issues
     
 
 changelog
-
-kill streaks events
-grze events
-passives as mini perks
-    greed
-
-HitEffect considerations
-    ElectricitySourceComponent
-    DamageNearbyEntitiesComponent
-    WormAttractorComponent
+    -m "Remove some debug prints"
+    -m "Rework Action: Order Deck (it now works as a passive, functionally making the wand a no shuffle wand)"
+    -m "Add Action: Zap"
+    -m "Nerf Action: Chaotic Burst (mana 7 -> 30, damage 10 -> 6)"
+    -m "Move Action: Chaotic Burst's projectile update script from c.extra_entities to the base projectile xml"
+    -m "Separate Persistent Gold and Auto-collect Gold from Hero Mode"
+    -m "Add Champion: Digging Projectile, Champion: Ice Burst, Champion: Leaping"
+    -m "Remove allowing enemies spawned from Champion: Infested to be champions"
+    -m "Rebalance Champion bonuses (max health 150% -> 125%, critical damage resistance 33% -> 0%)"
+    -m "Add Loadout: Demolitionist, Loadout: Unstable, Loadout: Spark"
+    -m "Add loadout spellcaster types to the localization file"
 
 TODO
     a projectile spell that wanders about with a high lifetime
     slowing attack champion
     modifier that reduces the projectile resistance of target it hits
-    wand passive enemy drops one additional gold nugget
-    king champion: champion enemies nearby
-    infested champion: spawn rats, spiders, or mini lobs upon death
     demolitionist champion: explosive projectiles
-
-    look into using spread to determine formation stack distance
-    champions that move the player around
-
-    7 cast odd firebolt gravity well
 
     figure out physics based projectile velocity application
     look into what it takes to perform actions with an AbilityComponent

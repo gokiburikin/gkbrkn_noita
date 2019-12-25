@@ -1,5 +1,6 @@
 dofile( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 if HasFlagPersistent( MISC.Loadouts.Enabled ) then
+    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
     dofile_once( "data/scripts/perks/perk.lua" );
     dofile_once("data/scripts/lib/utilities.lua");
     dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
@@ -61,7 +62,7 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
         local loadout_data = CONTENT[chosen_loadout].options;
 
         -- Add a random spellcaster type to the loadout name
-        local spellcaster_types = { "wizard", "warlock", "witch", "mage", "druid", "magician" };
+        local spellcaster_types = gkbrkn_localization.loadout_spellcaster_types;
         local spellcaster_types_rnd = Random( 1, #spellcaster_types );
         local loadout_name = loadout_data.name;
         loadout_name = string.gsub( loadout_name, "TYPE", spellcaster_types[spellcaster_types_rnd] );

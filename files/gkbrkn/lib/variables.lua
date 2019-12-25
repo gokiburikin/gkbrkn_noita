@@ -27,11 +27,15 @@ function EntitySetVariableNumber( entity, variable_tag, value )
 end
 
 function EntityAdjustVariableNumber( entity, variable_tag, default, callback )
-    EntitySetVariableNumber( entity, variable_tag, callback( EntityGetVariableNumber( entity, variable_tag, default ) ) );
+    local new_value = callback( EntityGetVariableNumber( entity, variable_tag, default ) );
+    EntitySetVariableNumber( entity, variable_tag, tostring( new_value ) );
+    return new_value;
 end
 
 function ComponentAdjustValue( component, member, callback )
-    ComponentSetValue( component, member, tostring( callback( ComponentGetValue( component, member ) ) ) );
+    local new_value = callback( ComponentGetValue( component, member ) );
+    ComponentSetValue( component, member, tostring( new_value ) );
+    return new_value;
 end
 
 function ComponentSetValues( component, member_value_table )

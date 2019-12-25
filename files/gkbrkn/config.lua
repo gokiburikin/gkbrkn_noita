@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c76"
+    Version = "c77"
 }
 
 CONTENT_TYPE = {
@@ -41,7 +41,6 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.Loadout] = gkbrkn_localization.config_content_type_name_loadout,
     [CONTENT_TYPE.StartingPerk] = gkbrkn_localization.config_content_type_name_starting_perk,
 }
-
 
 CONTENT = {};
 function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
@@ -202,6 +201,7 @@ ACTIONS = {
     BarrierTrail = register_action( "barrier_trail" ),
     GlitteringTrail = register_action( "glittering_trail" ),
     ChaoticBurst = register_action( "chaotic_burst" ),
+    Zap = register_action( "zap" ),
     WIP = register_action( "wip", nil, true, not SETTINGS.Debug )
 }
 
@@ -648,6 +648,19 @@ CHAMPION_TYPES = {
             });
         end
     }),
+    IceBurst =  register_champion_type( "ice_burst", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/ice_burst.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+		        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/ice_burst_damage_received.lua",
+            });
+        end
+    }),
     Infested =  register_champion_type( "infested", {
         particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/infested.xml",
@@ -666,14 +679,58 @@ CHAMPION_TYPES = {
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/digging.xml",
         sprite_particle_sprite_file = nil,
         game_effects = {},
-        validator = function( entity ) return true end,
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
         apply = function( entity )
             EntityAddComponent( entity, "LuaComponent", {
                 execute_every_n_frame="-1",
-		        script_death="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_digging.lua",
+		        script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_digging.lua",
             });
         end
-    }, true, true),
+    }),
+    Leaping =  register_champion_type( "leaping", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/leaping.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_dash_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "attack_dash_enabled" ) == "1" then
+                        has_dash_attack = true;
+                        break;
+                    end
+                end
+            end
+            return not has_dash_attack;
+        end,
+        apply = function( entity )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    ComponentSetValues( ai, {
+                        attack_dash_enabled="1",
+                    });
+                    ComponentAdjustValues( ai, {
+                        attack_dash_distance=function(value) return math.max( tonumber( value ), 150 ) end,
+                    });
+                end
+            end
+        end
+    }),
     --[[
     Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
         particle_material = nil,
@@ -929,6 +986,10 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_persistent_gold",
     },
     {
+        Name = gkbrkn_localization.option_auto_pickup_gold,
+        PersistentFlag = "gkbrkn_auto_pickup_gold",
+    },
+    {
         Name = gkbrkn_localization.option_target_dummy,
         PersistentFlag = "gkbrkn_target_dummy",
     },
@@ -1034,6 +1095,9 @@ MISC = {
     --},
     PersistentGold = {
         Enabled = "gkbrkn_persistent_gold",
+    },
+    AutoPickupGold = {
+        Enabled = "gkbrkn_auto_pickup_gold",
     },
     PassiveRecharge = {
         Enabled = "gkbrkn_passive_recharge",

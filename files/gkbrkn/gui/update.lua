@@ -120,9 +120,9 @@ function do_gui()
                 is_current_tab = true;
             end
             if is_current_tab then
-                tab_title = "> "..tab_title.." <";
+                tab_title = ">"..tab_title.."<";
             else
-                tab_title = "[ "..tab_title.." ]";
+                tab_title = "["..tab_title.."]";
             end
             if GuiButton( gui, 0, 0, tab_title.."    ", next_id() ) then
                 change_screen( tab_data.screen );

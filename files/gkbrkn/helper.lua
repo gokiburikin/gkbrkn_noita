@@ -25,6 +25,29 @@ function ShootProjectile( who_shot, entity_file, x, y, vx, vy, send_message )
 	return entity;
 end
 
+function WandGetActive( entity )
+    local chosen_wand = nil;
+    local wands = {};
+    local children = EntityGetAllChildren( entity )  or {};
+    for key, child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            wands = EntityGetChildrenWithTag( child, "wand" );
+            break;
+        end
+    end
+    if #wands > 0 then
+        local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+        local active_item = tonumber( ComponentGetValue( inventory2, "mActiveItem" ) );
+        for _,wand in pairs( wands ) do
+            if wand == active_item then
+                chosen_wand = wand;
+                break;
+            end
+        end
+        return chosen_wand;
+    end
+end
+
 function WandGetActiveOrRandom( entity )
     local chosen_wand = nil;
     local wands = {};
@@ -175,7 +198,7 @@ function ExploreGlobals()
             g[k] = v;
         end
     end
-    LogTableCompact(g);
+    LogTable(g);
 end
 
 function ListEntityComponents( entity )

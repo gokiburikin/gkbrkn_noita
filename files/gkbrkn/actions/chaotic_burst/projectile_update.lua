@@ -17,7 +17,6 @@ if velocity ~= nil then
     ComponentSetValueVector2( velocity, "mVelocity", math.cos( angle ) * magnitude, math.sin( angle ) * magnitude );
 end
 
---[[
 local particle_emitters = EntityGetComponent( entity, "ParticleEmitterComponent" ) or {};
 for _,particle_emitter in pairs( particle_emitters ) do
     local red = Random( 0x88, 0xFF );
@@ -25,4 +24,3 @@ for _,particle_emitter in pairs( particle_emitters ) do
     local blue = Random( 0x00, 0x44 );
     ComponentSetValue( particle_emitter, "color", tostring( RGBtoABGR( red, green, blue ) ) );
 end
-]]

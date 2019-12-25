@@ -4,9 +4,12 @@ A collection of changes and additions to Noita. This mod contains an in-game con
 This mod has a loadout manager. Enable it to control loadouts, loadout skins (for player skin support) and the toggling of individual loadouts. Goki's Things must be loaded before (higher in the list than) other loadout mods!
 
 ### Loadouts
-- [x] **Default**: No changes. Just in case you want a normal run in rotation.
-- [x] **Heroic**: The standard protagonist with a sword and shield.
-- [x] **Speedrunner**: Teleportation, Teleportitis, Black Holes. Time to go fast.
+- [x] **Default**: The standard loadout.
+- [x] **Demolitionist**: Dormant Crystal, Dormant Crystal Detonator, Demolitionist.
+- [x] **Heroic**: Luminous Drill, Energy Shield, Protagonist.
+- [x] **Spark**: Chain Casted Triple Zap, Electric Charger Sparkbolt.
+- [x] **Speedrunner**: Teleport, Black Hole, Teleportitis.
+- [x] **Unstable**: Chaotic Burst, Unstable Crystal, Fragile Ego.
 
 ### Loadout Mod Support
 *Make sure these are below Goki's Things in the mod list for proper support*
@@ -17,6 +20,7 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 ### Misc Features
 - [x] **Gold Counter**: Add a message showing how much gold was picked recently.
 - [x] **Persistent Gold**: Gold Nuggets no longer despawn.
+- [x] **Auto-collect Gold**: Automatically collect gold nuggets.
 - [x] **Charm Nerf**: Charmed enemies no longer drop Gold Nuggets.
 - [x] **Champions**: Some enemies will be Champions with dangerous attributes.
 - [x] **Hero Mode**: Enemies gain resistances and treat you as the most important target.
@@ -72,10 +76,14 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Thrifty Shopper**: Holy Mountain shops carry two additional items.
 - [x] **Swapper**: Switch places with your attacker upon taking damage.
 
+### Projectile Spells
+
+- [x] **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
+- [x] **Zap**: A short lived spark of electricity.
+
 ### Projectile Modifier Spells
 - [x] **Barrier Trail**: Projectiles gain a trail of barriers.
 - [x] **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
-- [x] **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
 - [x] **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - [x] **Damage Plus: Time**: Cast a spell that gains damage over time.
 - [x] **Extra Projectile**: Duplicate a projectile.
@@ -99,17 +107,17 @@ This mod has a loadout manager. Enable it to control loadouts, loadout skins (fo
 - [x] **Mana Recharge**: Your wand charges mana slightly faster.
 - [x] **Passive Recharge**: Your wand recharges even when holstered.
 - [x] **Magic Light**: Control a magic light that cuts through darkness.
-
-### Other Spells
-- [x] **Order Deck**: Correct the order of all remaining spells.
+- [x] **Order Deck**: Your wand casts spells in order.
 
 ### Multicast Spells
-- [x] **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
-- [x] **Double Cast**: Cast the next spell twice.
 - [x] **Formation - Stack**: Cast 3 spells stacked vertically.
 - [x] **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
 - [x] **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - [x] **Spell Merge**: Cast 2 spells of which the first is merged with the second.
+
+### Other Spells
+- [x] **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
+- [x] **Double Cast**: Cast the next spell and a copy of the next spell.
 
 ### Deprecated
 - [x] **Action: Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*

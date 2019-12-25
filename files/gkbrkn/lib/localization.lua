@@ -69,6 +69,7 @@ gkbrkn_localization = {
     option_no_pregen_wands = "No Preset Wands",
     option_gold_decay = "Gold Nuggets -> Gold Powder",
     option_persistent_gold = "Persistent Gold",
+    option_auto_pickup_gold = "Auto-collect Gold",
     option_target_dummy = "Target Dummy",
     option_health_bars = "Health Bars",
     option_show_fps = "Show FPS",
@@ -101,6 +102,9 @@ gkbrkn_localization = {
     champion_type_name_toxic_trail = "Toxic Trail",
     champion_type_name_counter = "Counter/Reflect",
     champion_type_name_infested = "Infested",
+    champion_type_name_digging = "Digging Projectile",
+    champion_type_name_ice_burst = "Ice Burst",
+    champion_type_name_leaping = "Leaping",
 
     --[[ Badges ]]
     ui_icon_name_champion_mode = "Champions Mode",
@@ -225,7 +229,7 @@ gkbrkn_localization = {
     action_name_ngon_shape = "Formation - N-gon",
     action_description_ngon_shape = "Cast all remaining spells in a circular pattern",
     action_name_order_deck = "Order Deck",
-    action_description_order_deck = "Correct the order all remaining spells will be cast",
+    action_description_order_deck = "Your wand casts spells in order",
     action_name_passive_recharge = "Passive Recharge",
     action_description_passive_recharge = "Your wand recharges even while holstered",
     action_name_path_correction = "Path Correction",
@@ -270,6 +274,8 @@ gkbrkn_localization = {
     action_description_glittering_trail = "Projectiles gain a trail of explosions.",
     action_name_chaotic_burst = "Chaotic Burst",
     action_description_chaotic_burst = "Cast an uncontrolled burst of projectiles.",
+    action_name_zap = "Zap",
+    action_description_zap = "A short lived spark of electricity.",
     action_name_wip = "WIP Action",
     action_description_wip = "A work in progress action.",
 
@@ -289,8 +295,12 @@ gkbrkn_localization = {
     item_description_spell_bag = "A bag in which to hold your spells",
     
     --[[ Loadouts ]]
+    loadout_spellcaster_types = { "Wizard", "Warlock", "Witch", "Mage", "Druid", "Magician", "Spellcaster" },
     loadout_heroic = "Heroic TYPE",
     loadout_speedrunner = "Speedrunner TYPE",
     loadout_default = "Default TYPE",
+    loadout_unstable = "Unstable TYPE",
+    loadout_demolitionist = "Demolistionist TYPE",
+    loadout_spark = "Spark TYPE",
     loadout_debug = "Debugger TYPE",
 }

@@ -94,3 +94,14 @@ function does_entity_drop_gold( entity )
     end
     return drops_gold;
 end
+
+function script_wait_frames_fixed( entity_id, frames )
+	local frame_now = GameGetFrameNum();
+	local last_execution = ComponentGetValueInt( GetUpdatedComponentID(),  "mLastExecutionFrame" );
+
+	if ( frame_now - last_execution ) < frames then 
+		return true;
+	end
+	
+	return false;
+end

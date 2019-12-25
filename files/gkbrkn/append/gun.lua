@@ -30,6 +30,7 @@ gkbrkn = {
     _play_action = play_action,
     _add_projectile = add_projectile,
     _move_hand_to_discarded = move_hand_to_discarded,
+    _order_deck = order_deck,
     _draw_action = draw_action,
     _add_projectile_trigger_timer = add_projectile_trigger_timer,
     _add_projectile_trigger_death = add_projectile_trigger_death,
@@ -49,6 +50,35 @@ local reset_per_casts = function()
     gkbrkn.stack_next_actions = 0;
     gkbrkn.stack_projectiles = "";
     gkbrkn.extra_projectiles = 0;
+end
+
+function order_deck()
+    local force_sorted = false;
+    local player = GetUpdatedEntityID();
+    local base_wand = WandGetActive( player );
+    if base_wand ~= nil then
+        local wand_children = EntityGetAllChildren( base_wand ) or{};
+        for _,wand_child in pairs( wand_children ) do
+            if EntityHasTag( wand_child, "card_action" ) then
+                local components = (EntityGetAllComponents( wand_child, "ItemActionComponent" ) or {});
+                for _,component in pairs(components) do
+                    if ComponentGetTypeName( component ) == "ItemActionComponent" then
+                        if ComponentGetValue( component, "action_id" ) == "GKBRKN_ORDER_DECK" then
+                            force_sorted = true;
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if force_sorted then
+        local before = gun.shuffle_deck_when_empty;
+        gun.shuffle_deck_when_empty = false;
+        gkbrkn._order_deck();
+        gun.shuffle_deck_when_empty = before;
+    else
+        gkbrkn._order_deck();
+    end
 end
 
 function move_hand_to_discarded()

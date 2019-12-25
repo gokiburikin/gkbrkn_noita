@@ -16,5 +16,4 @@ for _,action in pairs(actions) do
     end
     action.spawn_level       = table.concat( spawn_levels, "," );
     action.spawn_probability = table.concat( spawn_probabilities, "," );
-    print( action.id.."/"..action.spawn_level.."/"..action.spawn_probability);
 end
