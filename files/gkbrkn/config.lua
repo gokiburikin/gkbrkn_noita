@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c77"
+    Version = "c78"
 }
 
 CONTENT_TYPE = {
@@ -217,8 +217,9 @@ TWEAKS = {
     IncreaseMana = register_tweak( "increase_mana", { action_id="MANA_REDUCE" }, true, nil, true ),
     Blindness = register_tweak( "blindness","Shorten Blindness", nil, true, true, true ),
     RevengeExplosion = register_tweak( "revenge_explosion", { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
-    GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" }, true ),
-    AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" }, true ),
+    GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" }, true, nil, true ),
+    AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" }, true, nil, true ),
+    ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" }, true, nil, true ),
 }
 
 LOADOUTS = {}
@@ -277,7 +278,6 @@ CHAMPION_TYPES = {
                     ComponentSetValue( ai, "attack_ranged_max_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_max_distance" ) * 1.33 ) ) );
                     ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
                     ComponentSetValue( ai, "attack_ranged_entity_count_max", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_max" ) + 2 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_state_duration_frames", "1" );
                 end
             end
         end
@@ -609,6 +609,39 @@ CHAMPION_TYPES = {
             EntityAddComponent( entity, "LuaComponent", {
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/invincibility_frames.lua",
             });
+        end
+    }, true, true),
+    Armored = register_champion_type( "armored", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/armored.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local resistances = {
+                ice = 0.50,
+                electricity = 0.50,
+                radioactive = 0.50,
+                slice = 0.50,
+                projectile = 0.50,
+                healing = 0.50,
+                physics_hit = 0.50,
+                explosion = 0.50,
+                poison = 0.50,
+                melee = 0.50,
+                drill = 0.50,
+                fire = 0.50,
+            };
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+            for index,damage_model in pairs( damage_models ) do
+                for damage_type,multiplier in pairs( resistances ) do
+                    local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                    resistance = resistance * multiplier;
+                    ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                end
+                local minimum_knockback_force = tonumber( ComponentGetValue( damage_model, "minimum_knockback_force" ) );
+                ComponentSetValue( damage_model, "minimum_knockback_force", "99999" );
+            end
         end
     }),
     ToxicTrail =  register_champion_type( "toxic_trail", {
@@ -990,6 +1023,10 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_auto_pickup_gold",
     },
     {
+        Name = gkbrkn_localization.option_combine_gold,
+        PersistentFlag = "gkbrkn_combine_gold",
+    },
+    {
         Name = gkbrkn_localization.option_target_dummy,
         PersistentFlag = "gkbrkn_target_dummy",
     },
@@ -1099,6 +1136,10 @@ MISC = {
     AutoPickupGold = {
         Enabled = "gkbrkn_auto_pickup_gold",
     },
+    CombineGold = {
+        Enabled = "gkbrkn_combine_gold",
+        Radius = 48,
+    },
     PassiveRecharge = {
         Enabled = "gkbrkn_passive_recharge",
         Speed = 1
@@ -1182,11 +1223,9 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "GKBRKN_COPY_SPELL" },
-                    { "SCATTER_2" },
-                    { "SLOW_BULLET" },
-                    { "SLOW_BULLET" },
-                    { "SLOW_BULLET" },
+                    { { action="GKBRKN_COPY_SPELL",locked=true } },
+                    { { action="SLOW_BULLET",permanent=true } },
+                    { { action="SLOW_BULLET",permanent=true,locked=true } },
                     { "SLOW_BULLET" },
                 }
             },

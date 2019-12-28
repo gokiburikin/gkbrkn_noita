@@ -1,1 +1,0 @@
-function death() GamePrint("ouch"); end

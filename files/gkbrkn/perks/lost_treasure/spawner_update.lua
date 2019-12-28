@@ -26,7 +26,6 @@ else
     remove = true;
 end
 if remove == true then
-    local parent = EntityGetParent( entity );
+    EntityRemoveFromParent( entity );
     EntityKill( entity );
-    EntityRemoveChild( parent, entity );
 end

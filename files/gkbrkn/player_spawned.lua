@@ -54,11 +54,13 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
     if inventory ~= nil then
+        --[[ Spell Bag ]]
         if CONTENT[ITEMS.SpellBag].enabled() then
             EntityAddChild( inventory, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/spell_bag.xml", x, y ) );
         end
     end
 
+    --[[ Hero Mode ]]
     if HasFlagPersistent( MISC.HeroMode.Enabled ) then
         GameAddFlagRun( MISC.HeroMode.Enabled );
         if HasFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
@@ -98,6 +100,7 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
     end
 
+    --[[ Champions Mode ]]
     if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
         GameAddFlagRun( MISC.ChampionEnemies.Enabled );
         if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsEnabled ) then
@@ -115,6 +118,7 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
     end
 
+    --[[ Starting Perks ]]
     for _,content_id in pairs( STARTING_PERKS or {} ) do
         local starting_perk = CONTENT[content_id];
         if starting_perk ~= nil then

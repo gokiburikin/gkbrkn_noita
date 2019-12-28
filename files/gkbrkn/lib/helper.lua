@@ -1,4 +1,5 @@
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua");
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 function load_dynamic_badge ( key, append_bool_table, localization_table )
     local badge_image = "ui_icon_image_"..key;
@@ -104,4 +105,29 @@ function script_wait_frames_fixed( entity_id, frames )
 	end
 	
 	return false;
+end
+
+function set_lost_treasure( gold_nugget_entity )
+    EntityAddComponent( gold_nugget_entity, "LuaComponent", {
+        execute_every_n_frame = "-1",
+        script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
+    });
+    local removal_lua = EntityAddComponent( gold_nugget_entity, "LuaComponent", {
+        _enabled="1",
+        _tags="gkbrkn_lost_treasure",
+        execute_on_removed="1",
+        execute_every_n_frame="-1",
+        script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
+    });
+end
+
+function clear_lost_treasure( gold_nugget_entity )
+    local lost_treasure_script = EntityGetFirstComponent( gold_nugget_entity, "LuaComponent", "gkbrkn_lost_treasure" );
+    if lost_treasure_script ~= nil then
+        EntityRemoveComponent( gold_nugget_entity, lost_treasure_script );
+    end
+end
+
+function is_lost_treasure( entity )
+    return EntityGetFirstComponent( gold_nugget_entity, "LuaComponent", "gkbrkn_lost_treasure" ) ~= nil;
 end

@@ -5,6 +5,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "data/scripts/lib/utilities.lua" );
 
+--TODO a lot of this stuff should be done in a world update rather than a player update
+
 local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
 
@@ -296,24 +298,22 @@ end
 if now % 60 == 0 then
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
+
+        --[[ Persistent Gold ]]
         if HasFlagPersistent( MISC.PersistentGold.Enabled ) then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
             if lifetime_component ~= nil then
                 EntityRemoveComponent( gold_nugget, lifetime_component );
             end
         end
+
+        --[[ Lost Treasure ]]
         if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( gold_nugget ) == false then
-            EntityAddComponent( gold_nugget, "LuaComponent", {
-                execute_every_n_frame = "-1",
-                remove_after_executed = "1",
-                script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
-            });
-            EntityAddComponent( gold_nugget, "LuaComponent", {
-                _tags="gkbrkn_lost_treasure",
-                execute_on_removed="1",
-                execute_every_n_frame="-1",
-                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_removed.lua",
-            });
+            local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+            -- don't track gold nuggets that won't despawn naturally
+            if lifetime_component ~= nil then
+                set_lost_treasure( gold_nugget );
+            end
         end
             --[[
         if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( gold_nugget ) == false then
@@ -330,25 +330,90 @@ if now % 60 == 0 then
             });
         end
         ]]
+    end
 
-    --[[ This was an attempt to increase the radius of gold nuggets but it seems it uses the physics body rendering these hitboxes useless
-        TODO not that important anyway, but noita enhanced has an auto pickup method, look at that
-        local lua_components = EntityGetComponent( nearby, "LuaComponent" ) or {};
-        for _,component in pairs( lua_components ) do
-            if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/items/gold_pickup.lua" then
-                local hitbox = EntityGetFirstComponent( nearby, "HitboxComponent" );
-                if hitbox ~= nil then
-                    ComponentSetValues( hitbox, {
-                        aabb_min_x=tostring(-20),
-                        aabb_max_x=tostring(20),
-                        aabb_min_y=tostring(-20),
-                        aabb_max_y=tostring(20),
-                    });
+    --[[ Combine Gold ]]
+    if HasFlagPersistent( MISC.CombineGold.Enabled ) then
+        local nugget_sizes = { 10, 50, 200, 1000, 10000 };
+        for _,gold_nugget in pairs( gold_nuggets ) do
+            local average_kill_frame = 0;
+            local average_creation_frame = 0;
+            if EntityGetIsAlive( gold_nugget ) then
+                local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+                if lifetime ~= nil then
+                    average_kill_frame  = average_kill_frame + tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
+                    average_creation_frame  = average_creation_frame + tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
                 end
-                break;
+                local gx, gy = EntityGetTransform( gold_nugget );
+                local check_radius = MISC.CombineGold.Radius or 48;
+                local nearby_gold_nuggets = EntityGetInRadiusWithTag( gx, gy, check_radius, "gold_nugget" ) or {};
+                local merge_sum = 0;
+                for _,nearby in pairs(nearby_gold_nuggets) do
+                    if tonumber(nearby) ~= tonumber(gold_nugget) then
+                        local lifetime = EntityGetFirstComponent( nearby, "LifetimeComponent" );
+                        if lifetime ~= nil then
+                            average_kill_frame  = average_kill_frame + tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
+                            average_creation_frame  = average_creation_frame + tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
+                        end
+                        local components = EntityGetComponent( nearby, "VariableStorageComponent" ) or {};
+                        for _,component in pairs( components ) do 
+                            if ComponentGetValue( component, "name" ) == "gold_value" then
+                                local gold_value = ComponentGetValueInt( component, "value_int" );
+                                merge_sum = merge_sum + gold_value;
+                                clear_lost_treasure( nearby );
+                                EntityKill( nearby );
+                                break;
+                            end
+                        end
+                    end
+                end
+                average_kill_frame = math.ceil( average_kill_frame / #nearby_gold_nuggets );
+                average_creation_frame = math.ceil( average_creation_frame / #nearby_gold_nuggets );
+                if merge_sum > 0 then
+                    local new_size = nil;
+                    local new_gold_value = nil;
+                    local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
+                    for _,component in pairs( components ) do 
+                        if ComponentGetValue( component, "name" ) == "gold_value" then
+                            local gold_value = tonumber(ComponentGetValueInt( component, "value_int" ));
+                            new_gold_value = merge_sum + gold_value;
+                            for i=2,#nugget_sizes do
+                                local size = nugget_sizes[i];
+                                local previous_size = nugget_sizes[i - 1];
+                                if gold_value < size and new_gold_value >= size then
+                                    new_size = size;
+                                end
+                            end
+                            ComponentSetValue( component, "value_int", new_gold_value );
+                        end
+                    end
+                    if new_size ~= nil and new_gold_value ~= nil then
+                        clear_lost_treasure( gold_nugget );
+                        EntityKill( gold_nugget );
+                        gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..new_size..".xml", gx, gy );
+                        local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
+                        for _,component in pairs( components ) do 
+                            if ComponentGetValue( component, "name" ) == "gold_value" then
+                                ComponentSetValue( component, "value_int", new_gold_value );
+                            end
+                        end
+                    end
+                    local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+                    if lifetime ~= nil and average_kill_frame ~= 0 and average_creation_frame ~= 0 then
+                        local old_kill_frame = tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
+                        local old_creation_frame = tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
+                        ComponentSetValue( lifetime, "kill_frame", average_kill_frame );
+                        ComponentSetValue( lifetime, "creation_frame", average_creation_frame );
+                    end
+                    local item = EntityGetFirstComponent( gold_nugget, "ItemComponent" );
+                    if item ~= nil then
+                        ComponentSetValue( item, "item_name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..new_gold_value..")" );
+                    end
+                    break;
+                end
             end
         end
-        ]]
+        gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     end
 end
 
@@ -460,7 +525,7 @@ if now % 10 == 0 then
                                 max_distance_to_cam_to_start_hunting=function( value ) return  tonumber( value ) * 2; end,
                                 creature_detection_range_x=function( value ) return  tonumber( value ) * 2; end,
                                 creature_detection_range_y=function( value ) return  tonumber( value ) * 2; end,
-                                attack_dash_distance=function(value) return math.max( tonumber( value ), 150 ) end,
+                                --attack_dash_distance=function(value) return math.max( tonumber( value ), 150 ) end,
                             });
                         end
                     end
@@ -507,10 +572,6 @@ if now % 10 == 0 then
                             local regained = new_max - current_hp;
                             ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
                             ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
-
-                            local minimum_knockback_force = tonumber( ComponentGetValue( damage_model, "minimum_knockback_force" ) );
-                            ComponentSetValue( damage_model, "minimum_knockback_force", tostring( math.max( minimum_knockback_force * 2, 10 ) ) );
-                            
                         end
                     end
                     local badges = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/badges.xml");
@@ -676,7 +737,6 @@ if now % 10 == 0 then
                             resistance = resistance * multiplier * orb_multiplier * distance_multiplier;
                             ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
                         end
-                        ComponentSetValue( damage_model, "minimum_knockback_force", "100000" );
                     end
 
                     local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
@@ -729,7 +789,7 @@ if now % 10 == 0 then
             --[[
             -- only do it twice a second to reduce performance hit
             ]]
-            if now % 60 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
+            if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
                 local charmed = GameGetGameEffectCount( nearby, "CHARM" );
                 if charmed < 1 then
                     local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );

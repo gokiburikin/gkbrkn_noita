@@ -10,7 +10,13 @@ for _,nearby in pairs( nearby_entities ) do
     local item = EntityGetFirstComponent( nearby, "ItemComponent" );
     if item ~= nil then
         shimmer = ComponentGetValue( item, "auto_pickup" ) == "1";
+        if shimmer == false then
+            if EntityGetParent( nearby ) == 0 then
+                shimmer = true;
+            end
+        end
     end
+    
     if shimmer == true then
         local nearby_x, nearby_y = EntityGetTransform( nearby );
         local offset_distance = 2;

@@ -555,3 +555,31 @@ function adjust_material_damage( damage_model, callback )
     end
     ComponentSetValue( damage_model, "materials_how_much_damage", new_materials_how_much_damage );
 end
+
+function EntityIterateComponentsByType( entity, component_type_name, callback )
+    local matched_components = {};
+    local components = EntityGetAllComponents( entity ) or {};
+    for _,component in pairs(components) do
+        if ComponentGetTypeName( component ) == component_type_name then
+            table.insert( matched_components, component );
+        end
+    end
+    if callback ~= nil then
+        for _,component in pairs(matched_components) do
+            callback( component );
+        end
+    end
+    return matched_components;
+end
+
+function EntityGetHitboxCenter( entity )
+    local tx, ty = EntityGetTransform( entity );
+    local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
+    if hitbox ~= nil then
+        local width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
+        local height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
+        tx = tx + tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) ) + width * 0.5;
+        ty = ty + tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) ) + height * 0.5;
+    end
+    return tx, ty;
+end

@@ -70,8 +70,10 @@ if target ~= nil then
             local tx, ty = EntityGetTransform( target );
             local hitbox = EntityGetFirstComponent( target, "HitboxComponent" );
             if hitbox ~= nil then
-                local height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) )
-                ty = ty - height * 0.5;
+                local width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
+                local height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
+                tx = tx + tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) ) + width * 0.5;
+                ty = ty + tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) ) + height * 0.5;
             end
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );

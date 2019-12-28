@@ -51,6 +51,13 @@ local edit_callbacks = {
 			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/area_damage.xml,";
 			draw_actions( 1, true );
 		end
+    end,
+    CHAIN_BOLT = function( action, index )
+        action.action 		= function()
+			add_projectile("mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/chain_bolt.xml");
+			c.spread_degrees = c.spread_degrees + 7.0;
+			c.fire_rate_wait = c.fire_rate_wait + 45;
+		end
     end
 }
 

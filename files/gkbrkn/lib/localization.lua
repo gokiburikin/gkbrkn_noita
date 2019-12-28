@@ -70,6 +70,7 @@ gkbrkn_localization = {
     option_gold_decay = "Gold Nuggets -> Gold Powder",
     option_persistent_gold = "Persistent Gold",
     option_auto_pickup_gold = "Auto-collect Gold",
+    option_combine_gold = "Combine Gold",
     option_target_dummy = "Target Dummy",
     option_health_bars = "Health Bars",
     option_show_fps = "Show FPS",
@@ -99,6 +100,7 @@ gkbrkn_localization = {
     champion_type_name_projectile_bounce = "Projectile Bounce",
     champion_type_name_eldritch = "Eldritch",
     champion_type_name_invincibility_frames = "Invincibility Frames",
+    champion_type_name_armored = "Armoured",
     champion_type_name_toxic_trail = "Toxic Trail",
     champion_type_name_counter = "Counter/Reflect",
     champion_type_name_infested = "Infested",
@@ -289,6 +291,7 @@ gkbrkn_localization = {
     tweak_name_revenge_explosion = "$perk_revenge_explosion",
     tweak_name_glass_cannon = "$perk_glass_cannon",
     tweak_name_area_damage = "$action_area_damage",
+    tweak_name_chain_bolt = "$action_chain_bolt",
 
     --[[ Items ]]
     item_name_spell_bag = "Spell Bag",

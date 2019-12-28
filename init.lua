@@ -16,19 +16,19 @@ api issues
     
 
 changelog
-    -m "Remove some debug prints"
-    -m "Rework Action: Order Deck (it now works as a passive, functionally making the wand a no shuffle wand)"
-    -m "Add Action: Zap"
-    -m "Nerf Action: Chaotic Burst (mana 7 -> 30, damage 10 -> 6)"
-    -m "Move Action: Chaotic Burst's projectile update script from c.extra_entities to the base projectile xml"
-    -m "Separate Persistent Gold and Auto-collect Gold from Hero Mode"
-    -m "Add Champion: Digging Projectile, Champion: Ice Burst, Champion: Leaping"
-    -m "Remove allowing enemies spawned from Champion: Infested to be champions"
-    -m "Rebalance Champion bonuses (max health 150% -> 125%, critical damage resistance 33% -> 0%)"
-    -m "Add Loadout: Demolitionist, Loadout: Unstable, Loadout: Spark"
-    -m "Add loadout spellcaster types to the localization file"
+    -m "Add Misc: Combine Gold"
+    -m "Buff Action: Shimmering Treasure (mana cast 7 -> 2)"
+    -m "Remove Dash Attack Distance buff from Champions (consistently getting killed only by ice skull / frozen champion dashes)"
+    -m "Deprecate Champion: Invincibility Frames"
+    -m "Add Champion: Armoured (additional damage resistance, gain knockback immunity)"
+    -m "Remove knockback immunity from Hero Mode enemies"
+    -m "Fix up some Lost Treasure code"
+    -m "Improve Action: Path Correction targeting some more (aims directly for the center of the active hitbox, fixed missing some enemies)"
+    -m "Add action options to loadouts (permanent, locked. eg; { action="SLOW_BULLET", permanent = true, locked = true } )"
+    -m "Add Tweak: Chain Bolt (fixes targeting issues)"
 
 TODO
+    figure out some way around frozen entities counting as "removed" (lost treasure count manipulation)
     a projectile spell that wanders about with a high lifetime
     slowing attack champion
     modifier that reduces the projectile resistance of target it hits

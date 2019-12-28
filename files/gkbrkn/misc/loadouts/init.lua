@@ -1,5 +1,6 @@
 dofile( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 if HasFlagPersistent( MISC.Loadouts.Enabled ) then
+    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
     dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
     dofile_once( "data/scripts/perks/perk.lua" );
     dofile_once("data/scripts/lib/utilities.lua");
@@ -173,7 +174,19 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
                     for _,actions in pairs( wand_data.actions or {} ) do
                         local random_action = actions[ Random( 1, #actions ) ];
                         if random_action ~= nil then
-                            AddGunAction( wand, random_action );
+                            if type(random_action) == "table" then
+                                local action_entity = CreateItemActionEntity( random_action.action );
+                                local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
+                                if random_action.locked then
+                                    ComponentSetValue( component, "is_frozen", "1" );
+                                end
+                                if random_action.permanent then
+                                    ComponentSetValue( component, "permanently_attached", "1" );
+                                end
+                                EntityAddChild( wand, action_entity );
+                            else
+                                AddGunAction( wand, random_action );
+                            end
                         end
                     end
 
