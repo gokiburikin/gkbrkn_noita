@@ -50,7 +50,10 @@
 	<damage_by_type
 		>
 	</damage_by_type>
-    <config_explosion>
+    <config_explosion
+        damage="0.0"
+        explosion_radius="0"
+    >
     </config_explosion>
   </ProjectileComponent>
   

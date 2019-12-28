@@ -162,7 +162,7 @@ function draw_action( instant_reload_if_empty )
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     
     if gkbrkn.draw_action_stack_size == 0 then
-        if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+        if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
             if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
                 c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.xml,";
             else

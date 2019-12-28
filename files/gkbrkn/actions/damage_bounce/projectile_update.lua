@@ -7,10 +7,10 @@ if projectile ~= nil then
     local current_bounces = tonumber(ComponentGetValue( projectile, "bounces_left" ));
     local bounces_done = last_bounces - current_bounces;
     if bounces_done > 0 then
+        EntitySetVariableNumber( entity, "gkbrkn_bounces_last", current_bounces );
         local initial_damage = EntityGetVariableNumber( entity, "gkbrkn_bounce_damage_initial" );
         local current_damage = tonumber(ComponentGetValue( projectile, "damage" ));
         local new_damage = current_damage + initial_damage * 0.50;
-        EntitySetVariableNumber( entity, "gkbrkn_bounces_last", current_bounces );
         ComponentSetValue( projectile, "damage", tostring(new_damage) );
 
         local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};

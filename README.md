@@ -35,7 +35,6 @@ Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded
 - **Freezing**: Freeze nearby entities and materials. Proejctiles freeze things they hit.
 - **Invisible**: Invisible.
 - **Regenerating**: If damage hasn't been taken in the last second, rapidly recover missing health.
-- **Worm Bait**: Attract worms.
 - **Revenge Explosion**: Explode upon death.
 - **Energy Shield**: Gain a weak energy shield.
 - **Electric**: Electrocute nearby materials. Projectile electrocute things they hit.
@@ -57,6 +56,9 @@ Hero mode is a challenge mode. When activated by Misc > Hero Mode > Enabled the 
 
 Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increase creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all costs.
 
+## Content
+All content can be toggled on or off. Pick and choose what you like, or disable it all if you're only interested in the utility of Goki's Things.
+
 ### Misc Features
 - **Any Spell On Any Wand**: Allows any standard spell to spawn on any generated wand, ignoring spawn level.
 - **Auto-collect Gold**: Automatically collect gold nuggets.
@@ -67,6 +69,7 @@ Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight t
 - **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
 - **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. - *Required for some spells to show up if using Wand Shops Only.*
 - **Gold Counter**: Add a message showing how much gold was picked recently.
+- **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
 - **Heal On Max Health Up**: Heals the health gained from max health pickups.
 - **Health Bars**: Show enemy health bars.
 - **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
@@ -93,6 +96,8 @@ Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight t
 - **Glass Cannon**: You deal 3x damage, but take 3x damage.
 - **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across spells that can crit.
 - **Increase Mana**: Disable.
+- **Revenge Explosion**: No longer activates on environmental / self damage, fixes the explosions not proccing when taking rapid tick (fire) damage.
+- **Revenge Tentacle**: No longer activates on environmental / self damage, fixes the tentacle not proccing when taking rapid tick (fire) damage.
 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
@@ -158,7 +163,9 @@ Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight t
 - **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
 - **Double Cast**: Cast the next spell and a copy of the next spell.
 
-### Deprecated
+## Deprecated
+These features were disabled or removed from the mod for one reason or another. Most can still be found in the code or enabled if config.lua is changed locally to show deprecated content.
+
 - **Action: Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
 - **Action: Arcane Shot**: A fast bolt of arcane energy. *(Superceded officially by Triplicate Bolt)*
 - **Action: Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*
@@ -166,7 +173,6 @@ Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight t
 - **Perk/Action: Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
 - **Perk: Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
 - **Tweak: Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds. *(Official patched this)*
-- **Tweak: Revenge Explosion**: Revenge Explosion no longer activates on environmental / self damage. *(Official patched this)*
 - **Perk: Golden Blood**: You bleed gold. *(Not very good or interesting)*
 - **Action: Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold. *(Lots of issues I don't care to fix)*
 - **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*
@@ -175,4 +181,3 @@ Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight t
 - **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
 - **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
 - **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*
-- **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place. *(Doesn't jive well with the new gold amounts)*

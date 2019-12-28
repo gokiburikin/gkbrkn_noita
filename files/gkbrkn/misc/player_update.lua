@@ -10,13 +10,6 @@ dofile_once( "data/scripts/lib/utilities.lua" );
 local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
 
-function IsGoldNuggetLostTreasure( entity )
-    return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_lost_treasure" ) ~= nil
-end
-function IsGoldNuggetDecayTracked( entity )
-    return EntityGetFirstComponent( entity, "LuaComponent", "gkbrkn_gold_decay" ) ~= nil;
-end
-
 local player_entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( player_entity );
 local children = EntityGetAllChildren( player_entity ) or {};
@@ -308,28 +301,20 @@ if now % 60 == 0 then
         end
 
         --[[ Lost Treasure ]]
-        if CONTENT[PERKS.LostTreasure].enabled() and IsGoldNuggetLostTreasure( gold_nugget ) == false then
+        if CONTENT[PERKS.LostTreasure].enabled() and is_lost_treasure( gold_nugget ) == false then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
             -- don't track gold nuggets that won't despawn naturally
             if lifetime_component ~= nil then
                 set_lost_treasure( gold_nugget );
             end
         end
-            --[[
-        if HasFlagPersistent( MISC.GoldDecay.Enabled ) and IsGoldNuggetDecayTracked( gold_nugget ) == false then
-            EntityAddComponent( gold_nugget, "LuaComponent", {
-                execute_every_n_frame = "-1",
-                remove_after_executed = "1",
-                script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
-            });
-            EntityAddComponent( gold_nugget, "LuaComponent", {
-                _tags="gkbrkn_gold_decay",
-                execute_on_removed="1",
-                execute_every_n_frame="-1",
-                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
-            });
+        --[[ Gold Decay ]]
+        if HasFlagPersistent( MISC.GoldDecay.Enabled ) and is_gold_decay( gold_nugget ) == false then
+            local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+            if lifetime_component ~= nil then
+                set_gold_decay( gold_nugget );
+            end
         end
-        ]]
     end
 
     --[[ Combine Gold ]]
@@ -361,6 +346,7 @@ if now % 60 == 0 then
                                 local gold_value = ComponentGetValueInt( component, "value_int" );
                                 merge_sum = merge_sum + gold_value;
                                 clear_lost_treasure( nearby );
+                                clear_gold_decay( nearby );
                                 EntityKill( nearby );
                                 break;
                             end
@@ -389,6 +375,7 @@ if now % 60 == 0 then
                     end
                     if new_size ~= nil and new_gold_value ~= nil then
                         clear_lost_treasure( gold_nugget );
+                        clear_gold_decay( gold_nugget );
                         EntityKill( gold_nugget );
                         gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..new_size..".xml", gx, gy );
                         local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
@@ -836,7 +823,7 @@ end
 --[[ Less Particles ]]
 -- TODO update this one too
 local nearby_entities = EntityGetInRadius( x, y, 256 );
-if HasFlagPersistent( MISC.LessParticles.Enabled ) then
+if HasFlagPersistent( MISC.LessParticles.OtherStuffEnabled ) then
     local disable = HasFlagPersistent( MISC.LessParticles.DisableEnabled );
     _less_particle_entity_cache = _less_particle_entity_cache or {};
     for _,nearby in pairs( nearby_entities ) do

@@ -11,6 +11,15 @@ local edit_callbacks = {
 			} )
 		end
     end,
+    REVENGE_TENTACLE = function( perk, index )
+        perk.func = function( entity_perk_item, entity_who_picked, item_name )
+			EntityAddComponent( entity_who_picked, "LuaComponent", 
+			{ 
+				script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/tweaks/perks/revenge_tentacle.lua",
+				execute_every_n_frame = "-1",
+			} )
+		end
+    end,
     GLASS_CANNON = function( perk, index )
         perk.game_effect = nil;
         perk.ui_description = "Deal 3x more damage, receive 3x more damage.";

@@ -97,13 +97,10 @@ function does_entity_drop_gold( entity )
 end
 
 function script_wait_frames_fixed( entity_id, frames )
-	local frame_now = GameGetFrameNum();
-	local last_execution = ComponentGetValueInt( GetUpdatedComponentID(),  "mLastExecutionFrame" );
+	local now = GameGetFrameNum();
+	local last_execution = ComponentGetValueInt( GetUpdatedComponentID(), "mLastExecutionFrame" );
 
-	if ( frame_now - last_execution ) < frames then 
-		return true;
-	end
-	
+	if now - last_execution < frames then return true; end
 	return false;
 end
 
@@ -128,6 +125,32 @@ function clear_lost_treasure( gold_nugget_entity )
     end
 end
 
-function is_lost_treasure( entity )
+function is_lost_treasure( gold_nugget_entity )
     return EntityGetFirstComponent( gold_nugget_entity, "LuaComponent", "gkbrkn_lost_treasure" ) ~= nil;
+end
+
+
+function is_gold_decay( gold_nugget_entity )
+    return EntityGetFirstComponent( gold_nugget_entity, "LuaComponent", "gkbrkn_gold_decay" ) ~= nil;
+end
+
+function set_gold_decay( gold_nugget_entity )
+    EntityAddComponent( gold_nugget_entity, "LuaComponent", {
+        execute_every_n_frame = "-1",
+        remove_after_executed = "1",
+        script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_pickup.lua",
+    });
+    EntityAddComponent( gold_nugget_entity, "LuaComponent", {
+        _tags="gkbrkn_gold_decay",
+        execute_on_removed="1",
+        execute_every_n_frame="-1",
+        script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/gold_decay/gold_removed.lua",
+    });
+end
+
+function clear_gold_decay( gold_nugget_entity )
+    local script = EntityGetFirstComponent( gold_nugget_entity, "LuaComponent", "gkbrkn_gold_decay" );
+    if script ~= nil then
+        EntityRemoveComponent( gold_nugget_entity, script );
+    end
 end

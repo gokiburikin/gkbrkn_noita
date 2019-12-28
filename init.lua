@@ -3,7 +3,6 @@ api issues
     no event callback hook registration whatver for certain important actions
         the biggest nice to haves:
             entity created / loaded
-            projectiles fired in a spell cast
             
     no overriding of base game events in a modular interoperable way (currently have to overwrite or keep custom code up to date
         with every change)
@@ -16,16 +15,6 @@ api issues
     
 
 changelog
-    -m "Add Misc: Combine Gold"
-    -m "Buff Action: Shimmering Treasure (mana cast 7 -> 2)"
-    -m "Remove Dash Attack Distance buff from Champions (consistently getting killed only by ice skull / frozen champion dashes)"
-    -m "Deprecate Champion: Invincibility Frames"
-    -m "Add Champion: Armoured (additional damage resistance, gain knockback immunity)"
-    -m "Remove knockback immunity from Hero Mode enemies"
-    -m "Fix up some Lost Treasure code"
-    -m "Improve Action: Path Correction targeting some more (aims directly for the center of the active hitbox, fixed missing some enemies)"
-    -m "Add action options to loadouts (permanent, locked. eg; { action="SLOW_BULLET", permanent = true, locked = true } )"
-    -m "Add Tweak: Chain Bolt (fixes targeting issues)"
 
 TODO
     figure out some way around frozen entities counting as "removed" (lost treasure count manipulation)

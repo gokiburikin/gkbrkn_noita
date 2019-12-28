@@ -13,8 +13,8 @@ local options = {}
 local gui = gui or GuiCreate();
 local gui_id = 1707;
 local gui_require_restart = false;
-local wrap_threshold = 18;
-local wrap_limit = 2;
+local wrap_threshold = 16;
+local wrap_limit = 3;
 local wrap_size = 28;
 local last_time = 0;
 local fps_easing = 20;
@@ -135,22 +135,28 @@ function do_gui()
     end
 
     if screen == SCREEN.Options then
+        local wrap_threshold = 12;
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
-            change_screen( 0 );
-        end
+            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
+                change_screen( 0 );
+            end
         GuiLayoutEnd( gui );
-        GuiLayoutBeginVertical( gui, 0, 0 );
+        do_pagination( options, wrap_threshold * wrap_limit );
         GuiText( gui, 0, 0, " ");
-        local wrap_index = 0;
-        for index,option in pairs( options ) do
-            if option.sub_option == nil and index > ( wrap_index + 1 ) * wrap_threshold then
+        GuiLayoutBeginVertical( gui, 0, 0 );
+        local wrap_index = 1;
+        local start_index = 1 + page * wrap_threshold * wrap_limit;
+        local option_index = 0;
+        for index=start_index,math.min( start_index + wrap_threshold * wrap_limit - 1, #options ),1 do
+            local option = options[index];
+            if option.sub_option == nil and option_index >= wrap_index * wrap_threshold then
                 wrap_index = wrap_index + 1;
                 GuiLayoutEnd( gui );
-                GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 0 );
+                GuiLayoutBeginVertical( gui, wrap_size * math.floor( option_index / wrap_threshold ), 0 );
             end
             do_option( option, index );
+            option_index = option_index + 1;
         end
         if gui_require_restart == true then
             GuiText( gui, 0, 0, " ");
@@ -176,42 +182,42 @@ function do_gui()
         --for index,action_id in pairs( sorted_actions ) do
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
-        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
-            change_screen( 0 );
-        end
-        GuiText( gui, 0, 0, "        " );
-        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_enable_all.."]", next_id() ) then
-            for index,content_mapping in pairs( filtered_content ) do
-                CONTENT[ content_mapping.id ].toggle( true );
+            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
+                change_screen( 0 );
             end
-            gui_require_restart = true;
-        end
-        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_disable_all.."]", next_id() ) then
-            for index,content_mapping in pairs( filtered_content ) do
-                CONTENT[ content_mapping.id ].toggle( false );
+            GuiText( gui, 0, 0, "        " );
+            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_enable_all.."]", next_id() ) then
+                for index,content_mapping in pairs( filtered_content ) do
+                    CONTENT[ content_mapping.id ].toggle( true );
+                end
+                gui_require_restart = true;
             end
-            gui_require_restart = true;
-        end
-        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_toggle_all.."]", next_id() ) then
-            for index,content_mapping in pairs( filtered_content ) do
-                CONTENT[ content_mapping.id ].toggle();
+            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_disable_all.."]", next_id() ) then
+                for index,content_mapping in pairs( filtered_content ) do
+                    CONTENT[ content_mapping.id ].toggle( false );
+                end
+                gui_require_restart = true;
             end
-            gui_require_restart = true;
-        end
+            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_toggle_all.."]", next_id() ) then
+                for index,content_mapping in pairs( filtered_content ) do
+                    CONTENT[ content_mapping.id ].toggle();
+                end
+                gui_require_restart = true;
+            end
         GuiLayoutEnd( gui ); -- quick bar horizontal
-        
         do_pagination( filtered_content, wrap_threshold * wrap_limit );
-
-        GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
         GuiText( gui, 0, 0, " " );
-        local start_index = 1+page * wrap_threshold * wrap_limit;
+        GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
+        local wrap_index = 1;
+        local start_index = 1 + page * wrap_threshold * wrap_limit;
         local option_index = 0;
-        for i=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
-            if option_index >= wrap_threshold then
+        for index=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
+            local content = CONTENT[ filtered_content[index].id ];
+            if option_index >= wrap_threshold * wrap_index then
+                wrap_index = wrap_index + 1;
                 GuiLayoutEnd( gui ); -- content wrapping vertical
                 GuiLayoutBeginVertical( gui, wrap_size * math.floor( option_index / wrap_threshold ), 0 ); -- content wrapping vertical
             end
-            local content = CONTENT[ filtered_content[i].id ];
             local text = "";
             local flag = get_content_flag( content.id );
             if flag ~= nil then
@@ -223,10 +229,12 @@ function do_gui()
                 text = text .. " "..content.name;
             end
             
+            GuiLayoutBeginHorizontal( gui, 0, 0 );
             if GuiButton( gui, 0, 0, text, next_id() ) then
                 gui_require_restart = true;
                 content.toggle();
             end
+            GuiLayoutEnd( gui ); -- content wrapping vertical
             option_index = option_index + 1;
         end
         if gui_require_restart == true then

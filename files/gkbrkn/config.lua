@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c78"
+    Version = "c79"
 }
 
 CONTENT_TYPE = {
@@ -216,7 +216,8 @@ TWEAKS = {
     Freeze = register_tweak( "freeze", { action_id="FREEZE" }, true, nil, true ),
     IncreaseMana = register_tweak( "increase_mana", { action_id="MANA_REDUCE" }, true, nil, true ),
     Blindness = register_tweak( "blindness","Shorten Blindness", nil, true, true, true ),
-    RevengeExplosion = register_tweak( "revenge_explosion", { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
+    RevengeExplosion = register_tweak( "revenge_explosion", { perk_id="REVENGE_EXPLOSION" }, true, nil, true ),
+    RevengeTentacle = register_tweak( "revenge_tentacle", { perk_id="REVENGE_TENTACLE" }, true, nil, true ),
     GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" }, true, nil, true ),
     AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" }, true, nil, true ),
     ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" }, true, nil, true ),
@@ -789,6 +790,122 @@ ITEMS = {
     SpellBag = register_item( "spell_bag", nil, true, nil, true ),
 }
 
+MISC = {
+    DebugMode = {
+        Enabled = DEBUG_MODE_FLAG,
+    },
+    GoldPickupTracker = {
+        TrackDuration = 180, -- in game frames
+        ShowMessageEnabled = "gkbrkn_gold_tracking_message",
+        ShowTrackerEnabled = "gkbrkn_gold_tracking_in_world",
+    },
+    CharmNerf = {
+        Enabled = "gkbrkn_charm_nerf",
+    },
+    InvincibilityFrames = {
+        Duration = 40,
+        Enabled = "gkbrkn_invincibility_frames",
+        FlashEnabled = "gkbrkn_invincibility_frames_flashing",
+    },
+    HealOnMaxHealthUp = {
+        Enabled = "gkbrkn_max_health_heal",
+        FullHeal = "gkbrkn_max_health_heal_full",
+    },
+    LooseSpellGeneration = {
+        Enabled = "gkbrkn_loose_spell_generation",
+    },
+    LimitedAmmo = {
+        Enabled = "gkbrkn_limited_ammo",
+    },
+    UnlimitedAmmo = {
+        Enabled = "gkbrkn_unlimited_ammo",
+    },
+    DisableSpells = {
+        Enabled = "gkbrkn_disable_spells",
+    },
+    ChampionEnemies = {
+        Enabled = "gkbrkn_champion_enemies",
+        SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
+        AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
+        ChampionChance = 0.125,
+        ExtraTypeChance = 0.05,
+    },
+    QuickSwap = {
+        Enabled = "gkbrkn_quick_swap",
+    },
+    LessParticles = {
+        PlayerProjectilesEnabled = "gkbrkn_less_particles_player",
+        OtherStuffEnabled = "gkbrkn_less_particles_other_stuff",
+        DisableEnabled = "gkbrkn_less_particles_disable"
+    },
+    RandomStart = {
+        RandomWandEnabled = "gkbrkn_random_start_random_wand",
+        RandomHealthEnabled = "gkbrkn_random_start_random_health",
+        MinimumHP = 50,
+        MaximumHP = 150,
+        DefaultWandGenerationEnabled = "gkbrkn_random_start_default_wands",
+        RandomCapeColorEnabled = "gkbrkn_random_start_random_cape",
+        RandomFlaskEnabled = "gkbrkn_random_start_random_flask",
+        RandomPerkEnabled = "gkbrkn_random_start_random_perk",
+        RandomPerks = 1,
+    },
+    WandShopsOnly = {
+        Enabled = "gkbrkn_wand_shops_only",
+    },
+    ExtendedWandGeneration = {
+        Enabled = "gkbrkn_extended_wand_generation",
+    },
+    ChaoticWandGeneration = {
+        Enabled = "gkbrkn_chaotic_wand_generation",
+    },
+    ShowFPS = {
+        Enabled = "gkbrkn_show_fps",
+    },
+    HealthBars = {
+        Enabled = "gkbrkn_health_bars",
+    },
+    GoldDecay = {
+        Enabled = "gkbrkn_gold_decay",
+    },
+    PersistentGold = {
+        Enabled = "gkbrkn_persistent_gold",
+    },
+    AutoPickupGold = {
+        Enabled = "gkbrkn_auto_pickup_gold",
+    },
+    CombineGold = {
+        Enabled = "gkbrkn_combine_gold",
+        Radius = 48,
+    },
+    PassiveRecharge = {
+        Enabled = "gkbrkn_passive_recharge",
+        Speed = 1
+    },
+    TargetDummy = {
+        Enabled = "gkbrkn_target_dummy",
+    },
+    Loadouts = {
+        Manage = "gkbrkn_loadouts_manage",
+        Enabled = "gkbrkn_loadouts_enabled",
+        CapeColorEnabled = "gkbrkn_loadouts_cape_color",
+        PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
+    },
+    HeroMode = {
+        Enabled = "gkbrkn_hero_mode",
+        OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
+        DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
+    },
+    NoPregenWands = {
+        Enabled = "gkbrkn_no_pregen_wands",
+    },
+    Badges = {
+        Enabled = "gkbrkn_show_badges",
+    },
+    AutoHide = {
+        Enabled = "gkbrkn_auto_hide",
+    }
+}
+
 OPTIONS = {
     {
         Name = gkbrkn_localization.option_gold_tracking,
@@ -834,24 +951,19 @@ OPTIONS = {
         Name = gkbrkn_localization.option_less_particles,
     },
     {
-        Name = gkbrkn_localization.sub_option_less_particles_enabled,
-        PersistentFlag = "gkbrkn_less_particles",
+        Name = gkbrkn_localization.sub_option_less_particles_player_projectiles_enabled,
+        PersistentFlag = MISC.LessParticles.PlayerProjectilesEnabled,
         SubOption = true,
-        ToggleCallback = function()
-            for _,entity in pairs( EntityGetWithTag("gkbrkn_less_particles") or {} ) do
-                EntityRemoveTag( entity, "gkbrkn_less_particles" );
-            end
-        end
+    },
+    {
+        Name = gkbrkn_localization.sub_option_less_particles_other_stuff_enabled,
+        PersistentFlag = MISC.LessParticles.OtherStuffEnabled,
+        SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_less_particles_disable_cosmetic_particles,
-        PersistentFlag = "gkbrkn_less_particles_disable",
+        PersistentFlag =  MISC.LessParticles.DisableEnabled,
         SubOption = true,
-        ToggleCallback = function()
-            for _,entity in pairs( EntityGetWithTag("gkbrkn_less_particles") or {} ) do
-                EntityRemoveTag( entity, "gkbrkn_less_particles" );
-            end
-        end
     },
     {
         Name = gkbrkn_localization.option_random_start,
@@ -1010,10 +1122,10 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_no_pregen_wands",
         RequiresRestart = true,
     },
-    --{
-    --    Name = gkbrkn_localization.option_gold_decay,
-    --    PersistentFlag = "gkbrkn_gold_decay",
-    --},
+    {
+        Name = gkbrkn_localization.option_gold_decay,
+        PersistentFlag = "gkbrkn_gold_decay",
+    },
     {
         Name = gkbrkn_localization.option_persistent_gold,
         PersistentFlag = "gkbrkn_persistent_gold",
@@ -1051,121 +1163,6 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.option_debug_mode,
         PersistentFlag = DEBUG_MODE_FLAG,
-    }
-}
-
-MISC = {
-    DebugMode = {
-        Enabled = DEBUG_MODE_FLAG,
-    },
-    GoldPickupTracker = {
-        TrackDuration = 180, -- in game frames
-        ShowMessageEnabled = "gkbrkn_gold_tracking_message",
-        ShowTrackerEnabled = "gkbrkn_gold_tracking_in_world",
-    },
-    CharmNerf = {
-        Enabled = "gkbrkn_charm_nerf",
-    },
-    InvincibilityFrames = {
-        Duration = 40,
-        Enabled = "gkbrkn_invincibility_frames",
-        FlashEnabled = "gkbrkn_invincibility_frames_flashing",
-    },
-    HealOnMaxHealthUp = {
-        Enabled = "gkbrkn_max_health_heal",
-        FullHeal = "gkbrkn_max_health_heal_full",
-    },
-    LooseSpellGeneration = {
-        Enabled = "gkbrkn_loose_spell_generation",
-    },
-    LimitedAmmo = {
-        Enabled = "gkbrkn_limited_ammo",
-    },
-    UnlimitedAmmo = {
-        Enabled = "gkbrkn_unlimited_ammo",
-    },
-    DisableSpells = {
-        Enabled = "gkbrkn_disable_spells",
-    },
-    ChampionEnemies = {
-        Enabled = "gkbrkn_champion_enemies",
-        SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
-        AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
-        ChampionChance = 0.125,
-        ExtraTypeChance = 0.05,
-    },
-    QuickSwap = {
-        Enabled = "gkbrkn_quick_swap",
-    },
-    LessParticles = {
-        Enabled = "gkbrkn_less_particles",
-        DisableEnabled = "gkbrkn_less_particles_disable"
-    },
-    RandomStart = {
-        RandomWandEnabled = "gkbrkn_random_start_random_wand",
-        RandomHealthEnabled = "gkbrkn_random_start_random_health",
-        MinimumHP = 50,
-        MaximumHP = 150,
-        DefaultWandGenerationEnabled = "gkbrkn_random_start_default_wands",
-        RandomCapeColorEnabled = "gkbrkn_random_start_random_cape",
-        RandomFlaskEnabled = "gkbrkn_random_start_random_flask",
-        RandomPerkEnabled = "gkbrkn_random_start_random_perk",
-        RandomPerks = 1,
-    },
-    WandShopsOnly = {
-        Enabled = "gkbrkn_wand_shops_only",
-    },
-    ExtendedWandGeneration = {
-        Enabled = "gkbrkn_extended_wand_generation",
-    },
-    ChaoticWandGeneration = {
-        Enabled = "gkbrkn_chaotic_wand_generation",
-    },
-    ShowFPS = {
-        Enabled = "gkbrkn_show_fps",
-    },
-    HealthBars = {
-        Enabled = "gkbrkn_health_bars",
-    },
-    --GoldDecay = {
-    --    Enabled = "gkbrkn_gold_decay",
-    --},
-    PersistentGold = {
-        Enabled = "gkbrkn_persistent_gold",
-    },
-    AutoPickupGold = {
-        Enabled = "gkbrkn_auto_pickup_gold",
-    },
-    CombineGold = {
-        Enabled = "gkbrkn_combine_gold",
-        Radius = 48,
-    },
-    PassiveRecharge = {
-        Enabled = "gkbrkn_passive_recharge",
-        Speed = 1
-    },
-    TargetDummy = {
-        Enabled = "gkbrkn_target_dummy",
-    },
-    Loadouts = {
-        Manage = "gkbrkn_loadouts_manage",
-        Enabled = "gkbrkn_loadouts_enabled",
-        CapeColorEnabled = "gkbrkn_loadouts_cape_color",
-        PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
-    },
-    HeroMode = {
-        Enabled = "gkbrkn_hero_mode",
-        OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
-        DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
-    },
-    NoPregenWands = {
-        Enabled = "gkbrkn_no_pregen_wands",
-    },
-    Badges = {
-        Enabled = "gkbrkn_show_badges",
-    },
-    AutoHide = {
-        Enabled = "gkbrkn_auto_hide",
     }
 }
 
