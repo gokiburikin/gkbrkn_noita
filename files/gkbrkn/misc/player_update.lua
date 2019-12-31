@@ -288,7 +288,7 @@ if gold_tracker_world or gold_tracker_message then
     end
 end
 
-if now % 60 == 0 then
+if now % 10 == 0 then
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
 
@@ -478,7 +478,7 @@ if now % 10 == 0 then
                     local champion_types_to_apply = 1;
                     local champions_encountered = tonumber( GlobalsGetValue( "gkbrkn_champion_enemies_encountered" ) ) or 0;
                     if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled ) then
-                        local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0004;
+                        local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0012;
                         local random_roll = Random();
                         while random_roll <= extra_type_chance and champion_types_to_apply < #valid_champion_types do
                             champion_types_to_apply = champion_types_to_apply + 1;

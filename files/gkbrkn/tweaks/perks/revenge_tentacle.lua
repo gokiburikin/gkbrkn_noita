@@ -7,7 +7,7 @@ function damage_received( damage, desc, entity_who_caused, is_fatal )
 	
 	SetRandomSeed( GameGetFrameNum(), x + y + entity );
 	
-	if entity_who_caused == entity or entity_who_caused == EntityGetParent( entity ) or entity_who_caused == NULL_ENTITY then return; end
+	if entity_who_caused == entity or entity_who_caused == EntityGetParent( entity ) or entity_who_caused == NULL_ENTITY or damage <= 0 then return; end
     local now = GameGetFrameNum();
 	if now - EntityGetVariableNumber( entity, "gkbrkn_rtentacle_last_proc", 0 ) < 2 then return; end
     EntitySetVariableNumber( entity, "gkbrkn_rtentacle_last_proc", now );

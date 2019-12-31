@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c79"
+    Version = "c80"
 }
 
 CONTENT_TYPE = {
@@ -202,7 +202,9 @@ ACTIONS = {
     GlitteringTrail = register_action( "glittering_trail" ),
     ChaoticBurst = register_action( "chaotic_burst" ),
     Zap = register_action( "zap" ),
-    WIP = register_action( "wip", nil, true, not SETTINGS.Debug )
+    StoredShot = register_action( "stored_shot" ),
+    CarryShot = register_action( "carry_shot" ),
+    WIP = register_action( "wip", nil, true, not SETTINGS.Debug ),
 }
 
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted )
@@ -765,6 +767,58 @@ CHAMPION_TYPES = {
             end
         end
     }),
+    Jetpack =  register_champion_type( "jetpack", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/jetpack.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local can_fly = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue( ai, "can_fly" ) == "1" then
+                        can_fly = true;
+                        break;
+                    end
+                end
+            end
+            return not can_fly;
+        end,
+        apply = function( entity )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            for _,ai in pairs( animal_ais ) do
+                ComponentSetValues( ai, {can_fly="1"});
+            end
+            local path_finding = EntityGetFirstComponent( entity, "PathFindingComponent" );
+            if path_finding ~= nil then
+
+                ComponentSetValues( path_finding, { can_fly="1" } );
+            end
+            
+            local jetpack_particles = EntityAddComponent( entity, "ParticleEmitterComponent", {
+                _tags="jetpack",
+                emitted_material_name="rocket_particles",
+                x_pos_offset_min="-1",
+                x_pos_offset_max="1",
+                y_pos_offset_min="",
+                y_pos_offset_max="0",
+                x_vel_min="-7",
+                x_vel_max="7",
+                y_vel_min="80",
+                y_vel_max="180",
+                count_min="3",
+                count_max="7",
+                lifetime_min="0.1",
+                lifetime_max="0.2",
+                create_real_particles="0",
+                emit_cosmetic_particles="1",
+                emission_interval_min_frames="0",
+                emission_interval_max_frames="1",
+                is_emitting="1",
+            } );
+        end
+    }),
     --[[
     Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
         particle_material = nil,
@@ -827,7 +881,7 @@ MISC = {
         Enabled = "gkbrkn_champion_enemies",
         SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
         AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
-        ChampionChance = 0.125,
+        ChampionChance = 0.20,
         ExtraTypeChance = 0.05,
     },
     QuickSwap = {
@@ -1244,11 +1298,19 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "SCATTER_4" },
-                    { "DEATH_CROSS" },
-                    { "DEATH_CROSS" },
-                    { "DEATH_CROSS" },
-                    { "CHAINSAW" },
+                    { "BURST_4" },
+                    { "BURST_4" },
+                    { "BURST_4" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
+                    { "LIGHT_BULLET" },
                 }
             },
             {
@@ -1297,12 +1359,9 @@ if SETTINGS.Debug then
                 permanent_actions = {
                 },
                 actions = {
-                    { "GKBRKN_SPELL_MERGE" },
-                    { "SCATTER_4" },
-                    { "RUBBER_BALL" },
+                    { "GKBRKN_CARRY_SHOT" },
+                    { "GKBRKN_STORED_SHOT" },
                     { "LIGHT_BULLET" },
-                    { "CHAINSAW" },
-                    { "CHAINSAW" },
                 }
             }
         },
@@ -1323,6 +1382,7 @@ if SETTINGS.Debug then
             {"GKBRKN_SPELL_MERGE"},
             {"BURST_2"},
             {"GKBRKN_GLITTERING_TRAIL"},
+            {"GKBRKN_STORED_SHOT"},
             --[[
             {"GKBRKN_ACTION_WIP"},
             {"GKBRKN_MANA_EFFICIENCY"},

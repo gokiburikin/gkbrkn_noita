@@ -287,6 +287,72 @@ register_loadout(
     }
 );
 
+-- Bubble
+register_loadout(
+    "gkbrkn_bubble", -- unique identifier
+    gkbrkn_localization.loadout_bubble, -- displayed loadout name
+    "goki",
+    0xFFFF6600, -- cape color (ABGR)
+    0xFFFFAA66, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {4,4}, -- capacity
+                reload_time = {20,20}, -- recharge time in frames
+                fire_rate_wait = {15,15}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {60,60}, -- mana charge speed
+                mana_max = {300,300}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "GRAVITY" },
+                { "BUBBLESHOT_TRIGGER" },
+                { "MATERIAL_WATER" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {4,4}, -- capacity
+                reload_time = {16,16}, -- recharge time in frames
+                fire_rate_wait = {40,40}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {50,50}, -- mana charge speed
+                mana_max = {160,160}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                {"BOUNCE"},
+                {"GRENADE_LARGE"},
+            }
+        }
+    },
+    { -- potions
+        { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+        { "SPEED_DIVER" }
+    }
+);
+
 --[[ reference this example of bringing the base starting loadouts into the new method
     -- Nolla Summoner
     register_loadout(

@@ -1,44 +1,42 @@
 <Entity  tags="prop,hittable,mortal,homing_target" >
 	<VelocityComponent />
     <SimplePhysicsComponent/>
-
 	<SpriteComponent 
 		z_index="1"
 		image_file="data/props_gfx/dummy_target.xml" 
 		offset_x="0"
 		offset_y="0" >
 	</SpriteComponent>
-	
-	<DamageModelComponent 
-        air_needed="0" 
-        blood_material="sand" 
-        drop_items_on_death="0" 
-        falling_damages="0" 
-        fire_damage_amount="0" 
-        fire_probability_of_ignition="0"
-        hp="100000" 
-        blood_multiplier="0"
-        is_on_fire="0" 
-        materials_create_messages="0" 
-        materials_damage="0" 
-        ragdoll_filenames_file="" 
-        ragdoll_material="" >
-        <damage_multipliers
-            ice="1"
-            electricity="1"
-            radioactive="1"
-            slice="1"
-            projectile="1"
-            healing="1"
-            physics_hit="1"
-            explosion="1"
-            poison="1"
-            melee="1"
-            drill="1"
-            fire="1" >
-        </damage_multipliers>
-    </DamageModelComponent>
-
+	<AnimalAIComponent 
+        attack_melee_enabled="0"
+        needs_food="0"
+        sense_creatures="0"
+        can_fly="0"
+        can_walk="0"
+    >
+	</AnimalAIComponent>
+	<DamageModelComponent
+		air_in_lungs="5" 
+		air_in_lungs_max="5" 
+		air_lack_of_damage="0.2" 
+		air_needed="0" 
+		falling_damage_damage_max="1.2" 
+		falling_damage_damage_min="0.1" 
+		falling_damage_height_max="250" 
+		falling_damage_height_min="70" 
+		falling_damages="0" 
+		fire_damage_amount="0.2" 
+		fire_probability_of_ignition="0.5" 
+		hp="10000" 
+		is_on_fire="0" 
+		materials_damage="1" 
+		materials_that_damage="acid,lava,poison,blood_cold,blood_cold_vapour,radioactive_gas,radioactive_gas_static,rock_static_radioactive,rock_static_poison,ice_radioactive_static,ice_radioactive_glass,ice_acid_static,ice_acid_glass,rock_static_cursed" 
+		materials_how_much_damage="0.004,0.004,0.001,0.0008,0.0007,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.005"
+		ragdoll_filenames_file="data/ragdolls/player/filenames.txt"
+		ragdoll_material="meat"
+		physics_objects_damage="1"
+		ragdoll_offset_y="-6" >
+	</DamageModelComponent>
     <HitboxComponent
 		aabb_min_x="-8.5"
 		aabb_max_x="8.5"
@@ -50,4 +48,6 @@
         script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
     >
     </LuaComponent>
+    <SpriteAnimatorComponent>
+	</SpriteAnimatorComponent>
 </Entity>

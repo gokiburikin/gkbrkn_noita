@@ -47,4 +47,27 @@
         fade_based_on_lifetime="1"
 		is_emitting="1" >
 	</ParticleEmitterComponent>
+
+    <SpriteParticleEmitterComponent
+		sprite_file="data/particles/spark_glitter.xml"
+		emission_interval_min_frames="2"
+		emission_interval_max_frames="16"
+		additive="1"
+		emissive="1"
+		scale.x="1.0"
+		scale.y="1.0"
+		randomize_lifetime.min="0.5"
+		randomize_lifetime.max="2.0"
+		scale_velocity.x="0"
+		scale_velocity.y="0"
+		randomize_velocity.min_x="-10"
+		randomize_velocity.max_x="10"
+		randomize_velocity.min_y="-10"
+		randomize_velocity.max_y="10"
+		randomize_position.min_x="-6"
+		randomize_position.max_x="6"
+		randomize_position.min_y="-6"
+		randomize_position.max_y="6"
+		>
+	</SpriteParticleEmitterComponent>
 </Entity>

@@ -31,7 +31,7 @@
     ragdoll_force_multiplier="0"
     hit_particle_force_multiplier="0.1"
     create_shell_casing="0"
-    muzzle_flash_file="data/entities/particles/muzzle_flashes/muzzle_magic_small.xml"
+    muzzle_flash_file="data/entities/particles/muzzle_flashes/muzzle_flash_magic_small.xml"
     shoot_light_flash_r="0"
     shoot_light_flash_g="255"
     shoot_light_flash_b="255"
@@ -48,7 +48,9 @@
         electricity="0.2"
 		>
 	</damage_by_type>
-    <config_explosion>
+    <config_explosion
+        damage="0.0"
+        explosion_radius="0">
     </config_explosion>
   </ProjectileComponent>
   

@@ -26,30 +26,31 @@ Aside from management, you can also easily disable loadouts with the Misc > Load
 Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded with special attributes. Misc > Champions > Super Champions allows the chance for additional special attributes to be applied to champion enemies, resulting in multiple attributes. The chance increases the more champions are encountered. Misc > Champions > Champions Only ensures all enemies that can be champions are champions.
 
 ### Champion Types
-- **Damage Buff**: Melee, projectile, and dash damage increased.
-- **Projectile Buff**: Additional projectiles, additional projectile range, predicts ranged attacks.
-- **Rapid Attack**: 67% increase in melee, projectile, and dash rate.
-- **Faster Movement**: 200% additional walking speed, 100% additional flying and jumping speed.
-- **Teleporting**: Teleport around.
+- **Armoured**: 50% damage resistance and knockback immunity.
 - **Burning**: Fire immunity, set nearby things on fire. Projectiles set things they hit on fire.
-- **Freezing**: Freeze nearby entities and materials. Proejctiles freeze things they hit.
-- **Invisible**: Invisible.
-- **Regenerating**: If damage hasn't been taken in the last second, rapidly recover missing health.
-- **Revenge Explosion**: Explode upon death.
-- **Energy Shield**: Gain a weak energy shield.
+- **Counter/Reflect**: Counter attack with a white projectile that explodes after some time.
+- **Damage Buff**: Melee, projectile, and dash damage increased.
+- **Digging Projectile**: Projectiles gain material penetration.
+- **Eldritch**: Gain a mid-range tentacle attack.
 - **Electric**: Electrocute nearby materials. Projectile electrocute things they hit.
-- **Projectile Repulsion Field**: Push projectiles away.
+- **Energy Shield**: Gain a weak energy shield.
+- **Faster Movement**: 200% additional walking speed, 100% additional flying and jumping speed.
+- **Freezing**: Freeze nearby entities and materials. Proejctiles freeze things they hit.
 - **Healthy**: 50% additional health.
 - **Hot Blooded**: Bleed lava.
-- **Projectile Bounce**: Projectiles gain additional bounces (4 or 2x existing bounces, whichever is higher.)
-- **Eldritch**: Gain a mid-range tentacle attack.
-- **Armoured**: 50% damage resistance and knockback immunity.
-- **Toxic Trail**: Projectiles gain a trail of toxic slude.
-- **Counter/Reflect**: Counter attack with a white projectile that explodes after some time.
-- **Infested**: Spawn rats, spiders, and blobs upon death.
-- **Digging Projectile**: Projectiles gain material penetration.
 - **Ice Burst**: Shoot a burst of freezing projectile upon taking damage.
+- **Infested**: Spawn rats, spiders, and blobs upon death.
+- **Invisible**: Invisible.
+- **Jetpack**: Gain flight.
 - **Leaping**: Gain a long-range dash attack.
+- **Projectile Bounce**: Projectiles gain additional bounces (4 or 2x existing bounces, whichever is higher.)
+- **Projectile Buff**: Additional projectiles, additional projectile range, predicts ranged attacks.
+- **Projectile Repulsion Field**: Push projectiles away.
+- **Rapid Attack**: 67% increase in melee, projectile, and dash rate.
+- **Regenerating**: If damage hasn't been taken in the last second, rapidly recover missing health.
+- **Revenge Explosion**: Explode upon death.
+- **Teleporting**: Teleport around.
+- **Toxic Trail**: Projectiles gain a trail of toxic slude.
 
 ## Hero Mode
 Hero mode is a challenge mode. When activated by Misc > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Misc > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Misc > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
@@ -127,10 +128,8 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 
 ### Projectile Modifier Spells
 - **Barrier Trail**: Projectiles gain a trail of barriers.
-- **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
 - **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - **Damage Plus: Time**: Cast a spell that gains damage over time.
-- **Extra Projectile**: Duplicate a projectile.
 - **Glittering Trail**: Projectiles gain a trail of explosions.
 - **Projectile Burst**: Duplicate a projectile multiple times.
 - **Path Correction**: Projectiles target enemies within a short line of sight.
@@ -145,12 +144,17 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 
 ### Static Projectile Spells
 - **Modification Field**: A field of modification magic. (Concept by curry_murmurs)
+- **Stored Spell**: Summon a magical phenomenon that casts a spell when you stop casting.
 
 ### Passive Spells
 - **Magic Light**: Control a magic light that cuts through darkness.
 - **Mana Recharge**: Your wand charges mana slightly faster.
 - **Order Deck**: Your wand casts spells in order.
 - **Passive Recharge**: Your wand recharges even when holstered.
+
+### Utility Spells
+- **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
+- **Magic Hand**: Cast a spell that lingers near the tip of your wand.
 - **Shimmering Treasure**: Treasure (wands, gold nuggets, hearts, chests, potions, etc.) catches your eye.
 
 ### Multicast Spells
@@ -162,6 +166,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 ### Other Spells
 - **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
 - **Double Cast**: Cast the next spell and a copy of the next spell.
+- **Extra Projectile**: Duplicate a projectile.
 
 ## Deprecated
 These features were disabled or removed from the mod for one reason or another. Most can still be found in the code or enabled if config.lua is changed locally to show deprecated content.

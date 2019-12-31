@@ -108,6 +108,7 @@ gkbrkn_localization = {
     champion_type_name_digging = "Digging Projectile",
     champion_type_name_ice_burst = "Ice Burst",
     champion_type_name_leaping = "Leaping",
+    champion_type_name_jetpack = "Jetpack",
 
     --[[ Badges ]]
     ui_icon_name_champion_mode = "Champions Mode",
@@ -279,6 +280,10 @@ gkbrkn_localization = {
     action_description_chaotic_burst = "Cast an uncontrolled burst of projectiles.",
     action_name_zap = "Zap",
     action_description_zap = "A short lived spark of electricity.",
+    action_name_stored_shot = "Stored Shot",
+    action_description_stored_shot = "Summon a magical phenomenon that casts a spell when you stop casting.",
+    action_name_carry_shot = "Magic Hand",
+    action_description_carry_shot = "Cast a spell that lingers near the tip of your wand.",
     action_name_wip = "WIP Action",
     action_description_wip = "A work in progress action.",
 
@@ -307,5 +312,6 @@ gkbrkn_localization = {
     loadout_unstable = "Unstable TYPE",
     loadout_demolitionist = "Demolistionist TYPE",
     loadout_spark = "Spark TYPE",
+    loadout_bubble = "Bubble TYPE",
     loadout_debug = "Debugger TYPE",
 }
