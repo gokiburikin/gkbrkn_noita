@@ -1,0 +1,83 @@
+<Entity>
+    <VelocityComponent
+        air_friction="-0.2"
+        gravity_y="0"
+        mass="0.05"
+    >
+    </VelocityComponent>
+
+    <HomingComponent
+		target_tag="player_unit"
+		homing_targeting_coeff="24"
+		detect_distance="768"
+		homing_velocity_multiplier="0.90"
+		>
+	</HomingComponent>
+
+    <ProjectileComponent 
+        _enabled="1" 
+        lob_min="0.8"
+        lob_max="1.0"
+        speed_min="100"
+        speed_max="100"
+        friction="1.0"
+        direction_random_rad="0"
+        on_death_explode="0"
+        on_death_gfx_leave_sprite="0" 
+        on_lifetime_out_explode="0"
+        ground_collision_fx="0"
+        on_collision_die="1"
+        lifetime="80"
+        damage="0.0"
+        velocity_sets_scale="0"
+        lifetime_randomness="0"
+        ragdoll_force_multiplier="0.0"
+        hit_particle_force_multiplier="0.0"
+        penetrate_entities="0"
+        penetrate_world="1"
+        penetrate_world_velocity_coeff="1"
+        collide_with_world="0"
+        collide_with_tag="player_unit"
+        die_on_low_velocity="1"
+        die_on_low_velocity_limit="10"
+        collide_with_entities="1"
+        friendly_fire="1"
+    >
+	<config_explosion
+      damage="0.0"
+      explosion_radius="0"
+    >
+    </config_explosion>
+  </ProjectileComponent>
+
+    <SpriteParticleEmitterComponent
+		sprite_file="data/particles/spark_glitter.xml"
+		emission_interval_min_frames="1"
+		emission_interval_max_frames="1"
+		additive="1"
+		emissive="1"
+		scale.x="1.0"
+		scale.y="1.0"
+        count_max="3"
+		randomize_lifetime.min="0.04"
+		randomize_lifetime.max="0.2"
+		scale_velocity.x="0.2"
+		scale_velocity.y="0.2"
+		randomize_velocity.min_x="-4"
+		randomize_velocity.max_x="4"
+		randomize_velocity.min_y="-4"
+		randomize_velocity.max_y="4"
+		randomize_position.min_x="-1"
+		randomize_position.max_x="1"
+		randomize_position.min_y="-1"
+		randomize_position.max_y="1"
+		>
+	</SpriteParticleEmitterComponent>
+
+    <LuaComponent
+	    execute_every_n_frame="1"
+	    script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/treasure_sense/sparkler.lua"
+	    >
+	</LuaComponent>
+
+</Entity>

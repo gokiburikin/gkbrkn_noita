@@ -24,10 +24,14 @@ if now % 30 == 0 then
     local children = EntityGetAllChildren( player_entity ) or {};
 	for i,child_entity in ipairs( children ) do
 		if EntityGetName( child_entity ) == "cape" then
-            local x, y = EntityGetTransform( child_entity );
-			GamePrint( x.."/"..y );
+            local cx, cy = EntityGetTransform( child_entity );
             local verlet = EntityGetFirstComponent( child_entity, "VerletPhysicsComponent" );
-            ComponentSetValue( verlet, "m_is_culled_previous", "0" );
+            if ComponentGetValue( verlet, "m_is_culled_previous" ) == "1" then
+                EntityRemoveFromParent( child_entity );
+                EntitySetTransform( child_entity, x+cx, y+cy );
+                EntityAddChild( player_entity, child_entity );
+            end
+            GamePrint( "is cape culled: ".. ComponentGetValue( verlet, "m_is_culled_previous", "0" ) );
 			break;
 		end
 	end
@@ -221,14 +225,10 @@ end
 if HasFlagPersistent( MISC.AutoPickupGold.Enabled ) then
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
-        EntitySetTransform( gold_nugget, x, y );
-        break;
-        --[[
-        local gx, gy = EntityGetTransform( gold_nugget );
-        local dx, dy = x - gx, y - gy;
-        local pdx, pdy = GameVecToPhysicsVec( dx, dy );
-        PhysicsApplyForce( gold_nugget, dx, dy );
-        ]]
+        if EntityHasTag( gold_nugget, "gkbrkn_special_goldnugget" ) == false then
+            EntitySetTransform( gold_nugget, x, y );
+            break;
+        end
     end
 end
 
@@ -291,7 +291,6 @@ end
 if now % 10 == 0 then
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
-
         --[[ Persistent Gold ]]
         if HasFlagPersistent( MISC.PersistentGold.Enabled ) then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
@@ -299,7 +298,7 @@ if now % 10 == 0 then
                 EntityRemoveComponent( gold_nugget, lifetime_component );
             end
         end
-
+        
         --[[ Lost Treasure ]]
         if CONTENT[PERKS.LostTreasure].enabled() and is_lost_treasure( gold_nugget ) == false then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
@@ -308,6 +307,7 @@ if now % 10 == 0 then
                 set_lost_treasure( gold_nugget );
             end
         end
+            
         --[[ Gold Decay ]]
         if HasFlagPersistent( MISC.GoldDecay.Enabled ) and is_gold_decay( gold_nugget ) == false then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
@@ -321,86 +321,94 @@ if now % 10 == 0 then
     if HasFlagPersistent( MISC.CombineGold.Enabled ) then
         local nugget_sizes = { 10, 50, 200, 1000, 10000 };
         for _,gold_nugget in pairs( gold_nuggets ) do
-            local average_kill_frame = 0;
-            local average_creation_frame = 0;
-            if EntityGetIsAlive( gold_nugget ) then
-                local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-                if lifetime ~= nil then
-                    average_kill_frame  = average_kill_frame + tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
-                    average_creation_frame  = average_creation_frame + tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
-                end
-                local gx, gy = EntityGetTransform( gold_nugget );
-                local check_radius = MISC.CombineGold.Radius or 48;
-                local nearby_gold_nuggets = EntityGetInRadiusWithTag( gx, gy, check_radius, "gold_nugget" ) or {};
-                local merge_sum = 0;
-                for _,nearby in pairs(nearby_gold_nuggets) do
-                    if tonumber(nearby) ~= tonumber(gold_nugget) then
-                        local lifetime = EntityGetFirstComponent( nearby, "LifetimeComponent" );
-                        if lifetime ~= nil then
-                            average_kill_frame  = average_kill_frame + tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
-                            average_creation_frame  = average_creation_frame + tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
-                        end
-                        local components = EntityGetComponent( nearby, "VariableStorageComponent" ) or {};
-                        for _,component in pairs( components ) do 
-                            if ComponentGetValue( component, "name" ) == "gold_value" then
-                                local gold_value = ComponentGetValueInt( component, "value_int" );
-                                merge_sum = merge_sum + gold_value;
-                                clear_lost_treasure( nearby );
-                                clear_gold_decay( nearby );
-                                EntityKill( nearby );
-                                break;
-                            end
-                        end
+            if EntityHasTag( gold_nugget, "gkbrkn_special_goldnugget" ) == false then
+                local average_kill_frame = 0;
+                local average_creation_frame = 0;
+                if EntityGetIsAlive( gold_nugget ) then
+                    local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+                    if lifetime ~= nil then
+                        average_kill_frame  = average_kill_frame + tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
+                        average_creation_frame  = average_creation_frame + tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
                     end
-                end
-                average_kill_frame = math.ceil( average_kill_frame / #nearby_gold_nuggets );
-                average_creation_frame = math.ceil( average_creation_frame / #nearby_gold_nuggets );
-                if merge_sum > 0 then
-                    local new_size = nil;
-                    local new_gold_value = nil;
-                    local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
-                    for _,component in pairs( components ) do 
-                        if ComponentGetValue( component, "name" ) == "gold_value" then
-                            local gold_value = tonumber(ComponentGetValueInt( component, "value_int" ));
-                            new_gold_value = merge_sum + gold_value;
-                            for i=2,#nugget_sizes do
-                                local size = nugget_sizes[i];
-                                local previous_size = nugget_sizes[i - 1];
-                                if gold_value < size and new_gold_value >= size then
-                                    new_size = size;
+                    local gx, gy = EntityGetTransform( gold_nugget );
+                    local check_radius = MISC.CombineGold.Radius or 48;
+                    local nearby_gold_nuggets = EntityGetInRadiusWithTag( gx, gy, check_radius, "gold_nugget" ) or {};
+                    local merge_sum = 0;
+                    for _,nearby in pairs(nearby_gold_nuggets) do
+                        if EntityHasTag( nearby, "gkbrkn_special_goldnugget" ) == false then
+                            if tonumber(nearby) ~= tonumber(gold_nugget) then
+                                local lifetime = EntityGetFirstComponent( nearby, "LifetimeComponent" );
+                                if lifetime ~= nil then
+                                    average_kill_frame  = average_kill_frame + tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
+                                    average_creation_frame  = average_creation_frame + tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
+                                end
+                                local components = EntityGetComponent( nearby, "VariableStorageComponent" ) or {};
+                                for _,component in pairs( components ) do 
+                                    if ComponentGetValue( component, "name" ) == "gold_value" then
+                                        local gold_value = ComponentGetValueInt( component, "value_int" );
+                                        merge_sum = merge_sum + gold_value;
+                                        clear_lost_treasure( nearby );
+                                        clear_gold_decay( nearby );
+                                        EntityKill( nearby );
+                                        break;
+                                    end
                                 end
                             end
-                            ComponentSetValue( component, "value_int", new_gold_value );
                         end
                     end
-                    if new_size ~= nil and new_gold_value ~= nil then
-                        clear_lost_treasure( gold_nugget );
-                        clear_gold_decay( gold_nugget );
-                        EntityKill( gold_nugget );
-                        gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..new_size..".xml", gx, gy );
+                    average_kill_frame = math.ceil( average_kill_frame / #nearby_gold_nuggets );
+                    average_creation_frame = math.ceil( average_creation_frame / #nearby_gold_nuggets );
+                    if merge_sum > 0 then
+                        local new_size = nil;
+                        local new_gold_value = nil;
                         local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
                         for _,component in pairs( components ) do 
                             if ComponentGetValue( component, "name" ) == "gold_value" then
+                                local gold_value = tonumber(ComponentGetValueInt( component, "value_int" ));
+                                new_gold_value = merge_sum + gold_value;
+                                for i=2,#nugget_sizes do
+                                    local size = nugget_sizes[i];
+                                    local previous_size = nugget_sizes[i - 1];
+                                    if gold_value < size and new_gold_value >= size then
+                                        new_size = size;
+                                    end
+                                end
                                 ComponentSetValue( component, "value_int", new_gold_value );
                             end
                         end
+                        if new_size ~= nil and new_gold_value ~= nil then
+                            clear_lost_treasure( gold_nugget );
+                            clear_gold_decay( gold_nugget );
+                            EntityKill( gold_nugget );
+                            gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..new_size..".xml", gx, gy );
+                            local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
+                            for _,component in pairs( components ) do 
+                                if ComponentGetValue( component, "name" ) == "gold_value" then
+                                    ComponentSetValue( component, "value_int", new_gold_value );
+                                end
+                            end
+                        end
+                        local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
+                        if lifetime ~= nil and average_kill_frame ~= 0 and average_creation_frame ~= 0 then
+                            local old_kill_frame = tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
+                            local old_creation_frame = tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
+                            ComponentSetValue( lifetime, "kill_frame", average_kill_frame );
+                            ComponentSetValue( lifetime, "creation_frame", average_creation_frame );
+                        end
+                        local item = EntityGetFirstComponent( gold_nugget, "ItemComponent" );
+                        if item ~= nil then
+                            ComponentSetValue( item, "item_name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..new_gold_value..")" );
+                        end
+
+                        local ui_info = EntityGetFirstComponent( gold_nugget, "UIInfoComponent" );
+                        if ui_info ~= nil then
+                            ComponentSetValue( ui_info, "name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..new_gold_value..")" );
+                        end
+                        break;
                     end
-                    local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-                    if lifetime ~= nil and average_kill_frame ~= 0 and average_creation_frame ~= 0 then
-                        local old_kill_frame = tonumber( ComponentGetValue( lifetime, "kill_frame" ) );
-                        local old_creation_frame = tonumber( ComponentGetValue( lifetime, "creation_frame" ) );
-                        ComponentSetValue( lifetime, "kill_frame", average_kill_frame );
-                        ComponentSetValue( lifetime, "creation_frame", average_creation_frame );
-                    end
-                    local item = EntityGetFirstComponent( gold_nugget, "ItemComponent" );
-                    if item ~= nil then
-                        ComponentSetValue( item, "item_name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..new_gold_value..")" );
-                    end
-                    break;
                 end
             end
         end
-        gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     end
 end
 
@@ -415,20 +423,22 @@ if succ_bonus ~= nil then
             for _,item in pairs( EntityGetAllChildren( child ) ) do
                 local components = EntityGetAllComponents( item ) or {};
                 for _,component in pairs(components) do
-                    local succ_size = tonumber( ComponentGetValue( component, "barrel_size" ) );
-                    if succ_size ~= nil then
-                        local item_succ_bonus = EntityGetFirstComponent( item, "VariableStorageComponent", "gkbrkn_material_compression" );
-                        if item_succ_bonus == nil then
-                            item_succ_bonus = EntityAddComponent( item, "VariableStorageComponent", {
-                                _tags="gkbrkn_material_compression,enabled_in_hand,enabled_in_inventory,enabled_in_world",
-                                value_string="0"
-                            });
-                        end
-                        local item_current_succ_bonus = tonumber( ComponentGetValue( item_succ_bonus, "value_string" ) );
-                        local succ_bonus_difference = current_succ_bonus - item_current_succ_bonus;
-                        if succ_bonus_difference > 0 then
-                            ComponentSetValue( component, "barrel_size", tostring( succ_size * math.pow( 2, succ_bonus_difference )  ) );
-                            ComponentSetValue( item_succ_bonus, "value_string", tostring(current_succ_bonus) );
+                    if ComponentGetTypeName( component ) == "MaterialSuckerComponent" then
+                        local succ_size = tonumber( ComponentGetValue( component, "barrel_size" ) );
+                        if succ_size ~= nil then
+                            local item_succ_bonus = EntityGetFirstComponent( item, "VariableStorageComponent", "gkbrkn_material_compression" );
+                            if item_succ_bonus == nil then
+                                item_succ_bonus = EntityAddComponent( item, "VariableStorageComponent", {
+                                    _tags="gkbrkn_material_compression,enabled_in_hand,enabled_in_inventory,enabled_in_world",
+                                    value_string="0"
+                                });
+                            end
+                            local item_current_succ_bonus = tonumber( ComponentGetValue( item_succ_bonus, "value_string" ) );
+                            local succ_bonus_difference = current_succ_bonus - item_current_succ_bonus;
+                            if succ_bonus_difference > 0 then
+                                ComponentSetValue( component, "barrel_size", tostring( succ_size * math.pow( 2, succ_bonus_difference ) ) );
+                                ComponentSetValue( item_succ_bonus, "value_string", tostring( current_succ_bonus ) );
+                            end
                         end
                     end
                 end
@@ -467,6 +477,8 @@ if now % 10 == 0 then
                 EntityAddTag( nearby, "gkbrkn_champions" );
                 if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                     EntityRemoveTag( nearby, "gkbrkn_force_champion" );
+                    local is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
+
                     local valid_champion_types = {};
                     for index,champion_type in pairs( CHAMPION_TYPES ) do
                         local champion_type_data = CONTENT[champion_type].options;
@@ -546,6 +558,9 @@ if now % 10 == 0 then
                             drill = 0.67,
                             fire = 0.67,
                         };
+                        if is_mini_boss then
+                            resistances.physics_hit = 0.10;
+                        end
                         for index,damage_model in pairs( damage_models ) do
                             for damage_type,multiplier in pairs( resistances ) do
                                 local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
@@ -556,37 +571,43 @@ if now % 10 == 0 then
                             local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
                             local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
                             local new_max = max_hp * 1.25;
+                            if is_mini_boss then
+                                new_max = max_hp * 6;
+                            end
                             local regained = new_max - current_hp;
                             ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
                             ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
                         end
                     end
-                    local badges = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/badges.xml");
-                    EntityAddChild( nearby, badges );
+
+                    local add_these_badges = {};
+
+                    local apply_these_champion_types = {};
+                    if is_mini_boss then
+                        apply_these_champion_types = {
+                            CHAMPION_TYPES.Damage,
+                            CHAMPION_TYPES.Projectile,
+                            CHAMPION_TYPES.Haste,
+                            CHAMPION_TYPES.Fast,
+                            CHAMPION_TYPES.Armored,
+                            CHAMPION_TYPES.Jetpack,
+                            CHAMPION_TYPES.Reward,
+                        };
+                        add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/mini_boss.xml"};
+                    end
+
+                    for i=1,math.min(#valid_champion_types, champion_types_to_apply) do
+                        local champion_type_index = math.ceil( Random() * #valid_champion_types );
+                        table.insert( apply_these_champion_types, valid_champion_types[ champion_type_index ] );
+                        table.remove( valid_champion_types, champion_type_index );
+                    end
 
                     --[[ Per champion type ]]
-                    for i=1,champion_types_to_apply do
-                        local champion_type_index = math.ceil( Random() * #valid_champion_types );
-                        if champion_type_index == 0 then
-                            break;
-                        end
-                        local champion_type = valid_champion_types[ champion_type_index ];
-                        table.remove( valid_champion_types, champion_type_index );
+                    for _,champion_type in pairs(apply_these_champion_types) do
                         local champion_data = CONTENT[champion_type].options;
                         
                         if champion_data.badge ~= nil then
-                            local badge = EntityCreateNew();
-                            
-                            local sprite = EntityAddComponent( badge, "SpriteComponent",{
-                                z_index="-9000",
-                                image_file=champion_data.badge
-                            });
-                            ComponentSetValue( sprite, "has_special_scale", "1");
-                            ComponentSetValue( sprite, "z_index", "-9000");
-                            EntityAddComponent( badge, "InheritTransformComponent",{
-                                only_position="1"
-                            });
-                            EntityAddChild( badges, badge );
+                            table.insert( add_these_badges, champion_data.badge );
                         end
 
                         --[[ Game Effects ]]
@@ -627,6 +648,25 @@ if now % 10 == 0 then
                         EntityAddComponent( nearby, "LuaComponent", {
                             script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/damage_received.lua"
                         });
+                    end
+
+                    if #add_these_badges > 0 then
+                        local badges = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/badges.xml" );
+                        EntityAddChild( nearby, badges );
+                        for _,badge_filepath in pairs( add_these_badges ) do
+                            local badge = EntityCreateNew();
+                            
+                            local sprite = EntityAddComponent( badge, "SpriteComponent",{
+                                z_index="-9000",
+                                image_file=badge_filepath
+                            });
+                            ComponentSetValue( sprite, "has_special_scale", "1");
+                            ComponentSetValue( sprite, "z_index", "-9000");
+                            EntityAddComponent( badge, "InheritTransformComponent",{
+                                only_position="1"
+                            });
+                            EntityAddChild( badges, badge );
+                        end
                     end
                 end
             end
@@ -767,11 +807,16 @@ if now % 10 == 0 then
                         velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
                     });
                 end
-                --[[ Rewards Drop
+
+                -- this is an attempt to fix enemies getting stuck in meat piles which is dumb
+                EntityAddComponent( nearby, "CellEaterComponent", {
+                    radius="2",
+                    eat_probability="25",
+                } );
+
                 EntityAddComponent( nearby, "LuaComponent", {
                     script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
                 });
-                ]]
             end
             --[[
             -- only do it twice a second to reduce performance hit
@@ -786,7 +831,9 @@ if now % 10 == 0 then
                         if player_herd ~= nearby_herd then
                             local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
                             for _,ai in pairs( animal_ais ) do
-                                ComponentSetValue( ai, "mGreatestPrey", tostring( player_entity ) );
+                                if ComponentGetValue( ai, "tries_to_ranged_attack_friends" ) ~= "1" then
+                                    ComponentSetValue( ai, "mGreatestPrey", tostring( player_entity ) );
+                                end
                             end
                         end
                     end
@@ -796,23 +843,25 @@ if now % 10 == 0 then
 
         local nearby_wands = EntityGetInRadiusWithTag( x, y, 256, "wand" );
         for _,wand in pairs( nearby_wands ) do
-            if EntityGetVariableNumber( wand, "gkbrkn_hero_wand", 0 ) == 0 then
+            if EntityGetVariableNumber( wand, "gkbrkn_hero_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_duplicate_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_loadout_wand", 0 ) == 0 then
                 --local ability = EntityGetFirstComponent( wand, "AbilityComponent", false );
-                local ability = FindFirstComponentThroughTags( wand, "mana_max" );
+                local x, y = EntityGetTransform( wand );
+                SetRandomSeed( now, x + y + wand );
+                local ability = FindFirstComponentByType( wand, "AbilityComponent" );
                 if ability ~= nil then
                     EntitySetVariableNumber( wand, "gkbrkn_hero_wand", 1 );
-                    local mana_multiplier = rand( 1.2, 1.4 );
+                    local mana_multiplier = rand( 1.25, 1.5 );
                     ability_component_adjust_stats( ability, {
                         --shuffle_deck_when_empty = function(value) end,
                         --actions_per_round = function(value) end,
                         --speed_multiplier = function(value) end,
                         mana_max = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
                         mana = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
-                        deck_capacity = function(value) return math.min( 26, tonumber( value ) + Random( 1,2 ) ); end,
-                        reload_time = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.7, 0.9 ) ) ); end,
-                        fire_rate_wait = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.7, 0.9 ) ) ); end,
-                        spread_degrees = function(value) return tonumber( value ) - Random( 1, 4 ); end,
-                        mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 20, 40 ) ) * rand( 1.1, 1.2 ) ); end,
+                        deck_capacity = function(value) return math.min( 25, tonumber( value ) + Random( 1, 2 ) ); end,
+                        reload_time = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.75, 0.95 ) ) ); end,
+                        fire_rate_wait = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.75, 0.95 ) ) ); end,
+                        spread_degrees = function(value) return tonumber( value ) - Random( 0, 4 ); end,
+                        mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 20, 30 ) ) * rand( 1.10, 1.25 ) ); end,
                     } );
                 end
             end

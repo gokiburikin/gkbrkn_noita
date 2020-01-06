@@ -10,11 +10,13 @@ if projectile ~= nil then
         if ComponentGetTypeName( component ) == "ControlsComponent" then
             local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
             local angle = math.atan2( ay, ax );
+            local initial_angle = 0;
 
             local active_wand = WandGetActive( shooter );
             if active_wand ~= nil then
-                local distance = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_distance", nil ) + 8;
-                if distance ~= nil then
+                local distance = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_distance", nil ) + 2;
+                initial_angle = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_angle", nil );
+                if distance ~= nil and angle ~= nil then
                     local wx, wy = EntityGetTransform( active_wand );
                     EntitySetTransform( entity, wx + math.cos( angle ) * distance, wy + math.sin( angle ) * distance );
                 end
@@ -25,7 +27,7 @@ if projectile ~= nil then
                 local vx,vy = ComponentGetValueVector2( velocity, "mVelocity", vx, vy );
                 local magnitude = math.sqrt( vx * vx + vy * vy );
 
-                ComponentSetValueVector2( velocity, "mVelocity", math.cos( angle ) * magnitude, math.sin( angle ) * magnitude );
+                ComponentSetValueVector2( velocity, "mVelocity", math.cos( angle + initial_angle ) * magnitude, math.sin( angle + initial_angle ) * magnitude );
             end
         end
     end

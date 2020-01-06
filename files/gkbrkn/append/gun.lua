@@ -24,6 +24,8 @@ gkbrkn = {
     projectiles_fired = 0,
     skip_cards = 0,
     trigger_queue = {},
+    capture_drawn_actions = false,
+    drawn_actions = {},
     draw_action_stack_size = 0,
     _draw_actions = draw_actions,
     _set_current_action = set_current_action,
@@ -50,6 +52,7 @@ local reset_per_casts = function()
     gkbrkn.stack_next_actions = 0;
     gkbrkn.stack_projectiles = "";
     gkbrkn.extra_projectiles = 0;
+    gkbrkn.trigger_queue = {};
 end
 
 function order_deck()
@@ -85,6 +88,7 @@ function move_hand_to_discarded()
     GlobalsSetValue( "gkbrkn_projectiles_fired", gkbrkn.projectiles_fired );
     gkbrkn._move_hand_to_discarded();
     gkbrkn.reset_on_draw = true;
+    gkbrkn.drawn_actions = {};
 end
 
 function pre_play_action( action )
@@ -127,6 +131,9 @@ function discard_action()
 end
 
 function draw_action( instant_reload_if_empty )
+    --if deck ~= nil and #deck > 0 then
+    --    print("draw_action "..deck[1].id);
+    --end
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining + 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
 
@@ -146,6 +153,9 @@ function draw_action( instant_reload_if_empty )
         --for index,extra_modifier in pairs( active_extra_modifiers ) do
         --    handle_extra_modifier( extra_modifier, index, gkbrkn.draw_action_stack_size );
         --end
+        if gkbrkn.capture_drawn_actions == true then
+            table.insert( gkbrkn.drawn_actions, deck[1] );
+        end
         result = gkbrkn._draw_action( instant_reload_if_empty );
         --[[
         if current_action ~= nil and current_action.uses_remaining ~= nil and current_action.uses_remaining >= 0 then

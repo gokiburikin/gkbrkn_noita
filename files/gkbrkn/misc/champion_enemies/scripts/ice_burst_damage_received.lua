@@ -16,12 +16,15 @@ function damage_received( damage, desc, entity_who_caused, is_fatal )
 	local how_many = 6;
 	local angle_inc = ( 2 * math.pi ) / how_many;
 	local length = 100;
+    local distance = 16;
 
 	for i=0,how_many-1 do
 		local theta = i * angle_inc + GameGetFrameNum();
+        local px = x + math.cos( theta ) * distance;
+		local py = y + math.sin( theta ) * distance;
 		local vx = math.cos( theta ) * length;
 		local vy = math.sin( theta ) * length;
 
-		shoot_projectile( entity, "data/entities/projectiles/ice.xml", x, y, vx, vy );
+		shoot_projectile( entity, "data/entities/projectiles/ice.xml", px, py, vx, vy );
 	end
 end

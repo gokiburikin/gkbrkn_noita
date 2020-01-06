@@ -317,12 +317,25 @@ function EntityGetChildrenWithTag( entity_id, tag )
     return valid_children;
 end
 
-function FindFirstComponentThroughTags( entity_id, ... )
-    return FindComponentThroughTags( entity_id, ...)[1];
+
+
+function FindComponentByType( entity_id, component_type_name )
+    local components = EntityGetAllComponents( entity_id ) or {};
+    local valid_components = {};
+    for _,component in pairs( components ) do
+        if ComponentGetTypeName( component ) == component_type_name then
+            table.insert( valid_components, component );
+        end
+    end
+    return valid_components;
+end
+
+function FindFirstComponentByType( entity_id, component_type_name ) 
+    return FindComponentByType( entity_id, component_type_name )[1];
 end
 
 function FindComponentThroughTags( entity_id, ... )
-    local matching_components = EntityGetAllComponents( entity_id );
+    local matching_components = EntityGetAllComponents( entity_id ) or {};
     local valid_components = {};
     for _,tag in pairs( {...} ) do
         for index,component in pairs( matching_components ) do
@@ -334,6 +347,10 @@ function FindComponentThroughTags( entity_id, ... )
         valid_components = {};
     end
     return matching_components;
+end
+
+function FindFirstComponentThroughTags( entity_id, ... )
+    return FindComponentThroughTags( entity_id, ...)[1];
 end
 
 function ComponentGetValueDefault( component_id, key, default )
@@ -468,7 +485,7 @@ function FindEntityInInventory( inventory, entity )
     -- remove default items
     if inventory_items ~= nil then
         for i,item_entity in ipairs( inventory_items ) do
-            Log( i, item_entity );
+            --Log( i, item_entity );
         end
         --    GameKillInventoryItem( player_entity, item_entity )
         --end
@@ -582,4 +599,10 @@ function EntityGetHitboxCenter( entity )
         ty = ty + tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) ) + height * 0.5;
     end
     return tx, ty;
+end
+
+function EntitySetVelocity( entity, x, y )
+    EntityIterateComponentsByType( entity, "VelocityComponent", function( component )
+        ComponentSetValueVector2( component, "mVelocity", x, y );
+    end );
 end

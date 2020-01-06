@@ -5,6 +5,6 @@ table.insert( actions, generate_action_entry(
     nil,
     function()
         add_projectile_trigger_death( "mods/gkbrkn_noita/files/gkbrkn/actions/stored_shot/projectile.xml", 1 );
-		current_reload_time = current_reload_time + 12;
+		current_reload_time = current_reload_time + 3;
     end
 ) );

@@ -15,22 +15,58 @@ api issues
     
 
 changelog
+    -m "Shoutouts to DunkOrSlam and the Moist Mob for the gameplay and feedback"
+    -m "Rework Action: Magic Hand so that it retains spread"
+    -m "Rework Action: Zap to be closer to the original concept"
+    -m "Rework Action: Perfect Critical into Damage Plus - Critical. Increases spell critical damage instead of 100% critical chance"
+    -m "Rework Loadout: Spark to fit the new Action: Zap rework"
+    -m "Rework Champion: Digging Projectile to be more effective"
+    -m "Rework Perk: Demolitionist (explosion power and radius x1.5 -> explosion power and radius +200%)"
+    -m "Rework Misc: Hero Mode wand adjustment values"
+    -m "Reduce the spawn probability of Action: Projectile Orbit and Action: Projectile Gravity Well"
+    -m "Rename Action: Modification Field to Circle of Divine Blessing"
+    -m "Reword some spell descriptions"
+    -m "Add Loadout: Charge"
+    -m "Add Loadout: Alchemist"
+    -m "Add Loadout: Kamikaze"
+    -m "Add Loadout: Trickster"
+    -m "Add Loadout: Treasure Hunter"
+    -m "Add the loadout message to the localization file"
+    -m "Add Misc: Chests Can Contain Perks"
+    -m "Add Misc: Legendary Wands (work in progress)"
+    -m "Add a Mini-Boss option to Misc: Champion Enemies"
+    -m "Add Champion: Reward (used for Mini-Bosses)"
+    -m "Add Action: Treasure Sense"
+    -m "Add Action: Nugget Shot"
+    -m "Add Action: Protective Enchantment"
+    -m "Add Action: Chain Cast"
+    -m "Add Perk: Demote Always Cast"
+    -m "Add Tweak: Reduce Stun Lock"
+    -m "Add support for not processing (combining, etc) gold nuggets with the tag gkbrkn_special_goldnugget"
+    -m "Add a gold bonus for killing Hero Mode enemies (re-added since persistent gold was separated from Hero Mode)"
+    -m "Buff Perk: Fragile Ego (damage resistance 50% -> 75%)"
+    -m "Update Perk: Always Cast icon"
+    -m "Update Action: Barrier Trail icon"
+    -m "Deprecate: Action: Shimmering Treasure"
+    -m "Deprecate: Action: Relevation"
+    -m "Deprecate: Action: Super Bounce"
+    -m "Fix Misc: No Preset Wands not including trap room wands"
+    -m "Fix Misc: Gold Decay not properly clearing scripts on pickup"
+    -m "Fix Misc: Target Dummy burning and taking massive damage from fire"
+    -m "Fix Misc: Target Dummy not appearing in the final Holy Mountain"
+    -m "Fix Misc: Hero Mode buffing duplicated wands and loadout wands"
+    -m "Fix Misc: Hero Mode causing support enemies to prioritize you"
+    -m "Fix Champion: Ice Burst spawning projectiles inside of enemies killing them instantly"
+    -m "Fix Champion: Revenge Explosion not using the updated revenge explosion script"
+    -m "Fix Action: Damage Plus - Lifetime and Damage Plus: Bounce icons not matching vanilla icons"
+    -m "Fix Action: Projectile Orbit not working correctly with disc projectiles"
+    -m "Fix Perk: Demolitionist not working on lightning spells"
+    -m "Fix options that were intended to be disabled by default being enabled by default"
 
 TODO
-    figure out some way around frozen entities counting as "removed" (lost treasure count manipulation)
-    a projectile spell that wanders about with a high lifetime
-    slowing attack champion
-    modifier that reduces the projectile resistance of target it hits
-    demolitionist champion: explosive projectiles
+    make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
+    remove or rework super bounce
 
-    figure out physics based projectile velocity application
-    look into what it takes to perform actions with an AbilityComponent
-    add a disable cosmetic particles blacklist for certain entities (might not be possible)
-    golden recharge (picking up gold reduces the recharge time on the wand) (passive? perk?)
-    spell drop chance (drop money override, a chance to drop a spell of equal value)
-    modifier that applies the next modifier to all projectiles in the wand
-    make enemies imperfect / take time to aim towards you
-    try a pathfinding algorithm
 
 UTILITY
     TODO
@@ -38,7 +74,7 @@ UTILITY
 
 ACTIONS
     TODO
-        cut duration
+        damage cut (damage below a certain number is blocked) (can't override damage right now)
         Swarm Projectile Modifier (like Spellbundle, but a proper modifier and on enemies)
         Sticky Projectile Modifier (stick to surfaces / enemies) (useful for what kinds of projectiles?)
         Dynamic spell compression (combine random spells into single cards that expand into their actions when cast)
@@ -47,9 +83,8 @@ PERKS
     TODO
         Double Cast (all spells cast twice)
         Lucky Dodge (small chance to evade damage) (can't be implemented how i want it yet)
-        Crit Crits (crits can crit) (probably can't do this yet)
         Wand Merge (merge two wands into a new wand with the best aspects of either wand)
-        Lucky Draw (reset the perk reroll cost)
+        Lucky Draw (reset the perk reroll cost) (too powerful)
         Gold Rush (enemies explode into more and more gold as your kill streak continues)
         Chaos (randomize projectile stuff)
     NYI
@@ -80,7 +115,7 @@ dofile_once( "data/scripts/lib/utilities.lua");
 if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
     for _,content in pairs(CONTENT) do
-        if content.disabled_by_default == true then
+        if content.disabled_by_default == true and content.inverted == true then
             AddFlagPersistent( get_content_flag( content.id ) );
         end
     end
@@ -105,6 +140,9 @@ end
 ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_actions.lua" );
 ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
 ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_altar.lua" );
+ModLuaFileAppend( "data/scripts/biomes/boss_arena.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_arena.lua" );
+ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );
+ModLuaFileAppend( "data/scripts/items/chest_random_super.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random_super.lua" );
 
 if HasFlagPersistent( MISC.NoPregenWands.Enabled ) then
     local pregen_wand_biomes = {
@@ -155,11 +193,16 @@ if HasFlagPersistent( MISC.Badges.Enabled ) then
     try_append( "mods/nightmare/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/nightmare_mode_badge.lua" );
 end
 
+if HasFlagPersistent( MISC.LegendaryWands.Enabled ) then
+    dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" );
+end
+
 function OnModPreInit()
     -- append the logic to parse the old loadouts as new loadouts 
     ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn_loadouts/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/parse_old_loadouts.lua" );
     -- slap the fully combined set of loadout files onto the end of config so it can be caught by the config menu and performed
     ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/loadouts.lua" );
+    ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn_legendary_wands/register.lua" );
 end
 
 function OnModPostInit()

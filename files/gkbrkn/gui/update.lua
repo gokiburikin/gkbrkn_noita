@@ -124,7 +124,7 @@ function do_gui()
             else
                 tab_title = "["..tab_title.."]";
             end
-            if GuiButton( gui, 0, 0, tab_title.."    ", next_id() ) then
+            if GuiButton( gui, 0, 0, tab_title.." ", next_id() ) then
                 change_screen( tab_data.screen );
                 if tab_data.content_type ~= nil then
                     content_type = tab_data.content_type;
@@ -185,7 +185,7 @@ function do_gui()
             if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
                 change_screen( 0 );
             end
-            GuiText( gui, 0, 0, "        " );
+            GuiText( gui, 0, 0, "  " );
             if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_enable_all.."]", next_id() ) then
                 for index,content_mapping in pairs( filtered_content ) do
                     CONTENT[ content_mapping.id ].toggle( true );

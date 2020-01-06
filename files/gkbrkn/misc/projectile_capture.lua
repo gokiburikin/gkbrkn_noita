@@ -168,7 +168,7 @@ if #projectile_entities > 0 then
                 if projectile ~= leader then
                     local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
                     local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
-                    ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+                    --ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
 
                     local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
                     local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );

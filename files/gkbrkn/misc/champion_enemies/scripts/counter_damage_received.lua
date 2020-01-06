@@ -29,7 +29,7 @@ function damage_received( damage, desc, entity_who_caused, is_fatal )
         angle = math.rad( Random( 1, 360 ) );
     end
     
-    local vel_x = math.cos( angle ) * length;
-    local vel_y = 0- math.sin( angle ) * length;
-    shoot_projectile( entity_id, "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/counter_laser.xml", x, y, vel_x, vel_y );
+    local vx = math.cos( angle ) * length;
+    local vy = 0 - math.sin( angle ) * length;
+    shoot_projectile( entity_id, "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/counter_laser.xml", x, y, vx, vy );
 end

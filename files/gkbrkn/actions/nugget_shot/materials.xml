@@ -1,0 +1,19 @@
+<Materials>
+  <CellDataChild
+  	_parent="gem_box2d"
+  	_inherit_reactions="1"
+	tags="[box2d],[gold],[alchemy]"
+  	name="gkbrkn_gold_box2d_shot"
+	ui_name="$mat_gold_box2d"
+	gfx_glow_color="0xffffc74e"
+	wang_color="FF5AD05A"
+	electrical_conductivity="1"
+	audio_physics_material_wall="gravel"
+	audio_physics_material_solid="gold"
+	platform_type="1"
+	>
+  	<Graphics
+		color="ffffc74e" >
+    </Graphics>
+  </CellDataChild>
+</Materials>

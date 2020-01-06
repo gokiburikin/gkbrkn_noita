@@ -2,6 +2,7 @@ dofile( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 if HasFlagPersistent( MISC.Loadouts.Enabled ) then
     dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
     dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
+    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
     dofile_once( "data/scripts/perks/perk.lua" );
     dofile_once("data/scripts/lib/utilities.lua");
     dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
@@ -127,6 +128,8 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
                 for wand_index,wand_data in pairs( loadout_data.wands ) do
                     local wand = EntityLoad( wand_data.custom_file or "mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml" );
                     SetRandomSeed( x, y );
+
+                    EntitySetVariableNumber( wand, "gkbrkn_loadout_wand", 1 );
 
                     local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
                     ComponentSetValue( ability, "ui_name", wand_data.name );
@@ -284,7 +287,8 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) then
             if loadout_data.author ~= nil then
                 note = "By "..loadout_data.author;
             end
-            GamePrintImportant( "You're a " .. loadout_name .. "!", note );
+            --GamePrintImportant( "You're a " .. loadout_name .. "!", note );
+            GamePrintImportant( string.format( gkbrkn_localization.loadout_message_format, loadout_name ), note );
         elseif loadout_data.custom_message ~= "" then
             GamePrintImportant( loadout_data.custom_message, "" );
         end

@@ -25,8 +25,8 @@
 		falling_damage_height_max="250" 
 		falling_damage_height_min="70" 
 		falling_damages="0" 
-		fire_damage_amount="0.2" 
-		fire_probability_of_ignition="0.5" 
+		fire_damage_amount="0.0" 
+		fire_probability_of_ignition="0.0" 
 		hp="10000" 
 		is_on_fire="0" 
 		materials_damage="1" 
@@ -36,6 +36,12 @@
 		ragdoll_material="meat"
 		physics_objects_damage="1"
 		ragdoll_offset_y="-6" >
+        <damage_multipliers
+            fire="0.0"
+            poison="0.0"
+            radioactive="0.0"
+        >
+        </damage_multipliers>
 	</DamageModelComponent>
     <HitboxComponent
 		aabb_min_x="-8.5"

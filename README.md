@@ -1,19 +1,27 @@
 # Goki's Things
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. **To install just download the latest release zip (not the Source code) from https://github.com/gokiburikin/gkbrkn_noita/releases and extract the gkbrkn_noita folder to your Noita mods folder.**
 
-This mod has a loadout manager. Enable it to control loadouts, loadout skins (for player skin support) and the toggling of individual loadouts. Goki's Things must be loaded before (higher in the list than) other loadout mods!
+**I highly recommend taking the time to tailor the mod to your liking.** My intention is to offer a selection of options for the player to choose from, not for every option to be enabled. Every change this mod makes can be toggled on or off in the config menu.
 
 ## Loadouts
+This mod includes a loadout manager. Enable it to control loadouts, loadout skins (for player skin support) and the toggling of individual loadouts. Goki's Things must be loaded before (higher in the list than) other loadout mods!
+
 In the config menu you can enable loadout management under Misc > Loadouts > Manage. This will overwrite the loadout logic of supported mods and let Goki's Things handle loadouts in place of all of them, allowing compatibility between multiple loadout mods at once. Modders can also look at the loadouts file in this mod as an example of how to add new loadouts to Goki's Things.
 
 Aside from management, you can also easily disable loadouts with the Misc > Loadouts > Enabled option, and you can choose if you want to use the custom player sprites and capes that loadouts use. This is for player character skin compatibility.
 
 ### Loadouts
+- **Alchemist**: Chaotic Transmutation Acid Ball, Water, Potions, Material Compression.
+- **Bubble**: Gravity Bubble Spark, Bouncy Dropper Shot, Fast Swimmer.
+- **Charge**: Magic Hand, Stored Shot, Sparkbolt, Critical Hit +.
 - **Default**: The standard loadout.
 - **Demolitionist**: Dormant Crystal, Dormant Crystal Detonator, Demolitionist.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
+- **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
 - **Spark**: Chain Casted Triple Zap, Electric Charger Sparkbolt.
-- **Speedrunner**: Teleport, Black Hole, Teleportitis.
+- **Speedrunning**: Teleport, Black Hole, Teleportitis.
+- **Treasure Hunter**: Treasure Sense, Nugget Shot, Digging Bolt, Attract Gold.
+- **Trickster**: Long Distance Cast Magicbolt / Sparkbolt split cast, Forward and Back Teleport, Passive Recharge.
 - **Unstable**: Chaotic Burst, Unstable Crystal, Fragile Ego.
 
 ### Loadout Mod Support
@@ -23,7 +31,9 @@ Aside from management, you can also easily disable loadouts with the Misc > Load
 - **Kaelos Archetypes**: https://modworkshop.net/mydownloads.php?action=view_down&did=26084
 
 ## Champions
-Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded with special attributes. Misc > Champions > Super Champions allows the chance for additional special attributes to be applied to champion enemies, resulting in multiple attributes. The chance increases the more champions are encountered. Misc > Champions > Champions Only ensures all enemies that can be champions are champions.
+Champions Mode is a challenge mode intended for players familiar with Noita. The intention is to push the player into more difficult combat scenarios that even veteran players can find difficult.
+
+Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded with special attributes. Misc > Champions > Super Champions allows the chance for additional special attributes to be applied to champion enemies, resulting in multiple attributes. The chance increases the more champions are encountered. Misc > Champions > Champions Only ensures all enemies that can be champions are champions. Misc > Champions > Mini-Bosses gives any champion a chance to gain a preset choice of champion types to make it more diffiult as well as a substantial health boost. Mini-Bosses drop a chest upon defeat.
 
 ### Champion Types
 - **Armoured**: 50% damage resistance and knockback immunity.
@@ -35,7 +45,7 @@ Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded
 - **Electric**: Electrocute nearby materials. Projectile electrocute things they hit.
 - **Energy Shield**: Gain a weak energy shield.
 - **Faster Movement**: 200% additional walking speed, 100% additional flying and jumping speed.
-- **Freezing**: Freeze nearby entities and materials. Proejctiles freeze things they hit.
+- **Freezing**: Freeze nearby entities and materials. Projectiles freeze things they hit.
 - **Healthy**: 50% additional health.
 - **Hot Blooded**: Bleed lava.
 - **Ice Burst**: Shoot a burst of freezing projectile upon taking damage.
@@ -49,32 +59,35 @@ Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded
 - **Rapid Attack**: 67% increase in melee, projectile, and dash rate.
 - **Regenerating**: If damage hasn't been taken in the last second, rapidly recover missing health.
 - **Revenge Explosion**: Explode upon death.
+- **Reward**: Spawn a chest on death (used for mini-bosses.)
 - **Teleporting**: Teleport around.
 - **Toxic Trail**: Projectiles gain a trail of toxic slude.
 
 ## Hero Mode
-Hero mode is a challenge mode. When activated by Misc > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Misc > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Misc > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
+Hero mode is a challenge mode intended for players familiar with Noita. The intention is to speed up the gameplay by giving a bonus to both the player and the enemies. It is faster paced and little unfair. Combined with Champions Mode it is my attempt to create a more interesting Nightmare Mode.
 
-Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increase creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all costs.
+When activated by Misc > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Misc > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Misc > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
 
-## Content
-All content can be toggled on or off. Pick and choose what you like, or disable it all if you're only interested in the utility of Goki's Things.
+Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all costs.
 
-### Misc Features
+## Utility
+These options have an impact on general gameplay and are meant to be picked and chosen based on your preferred play style.
+
 - **Any Spell On Any Wand**: Allows any standard spell to spawn on any generated wand, ignoring spawn level.
 - **Auto-collect Gold**: Automatically collect gold nuggets.
 - **Auto-hide Config Menu**: Hide the config menu 5 seconds after the start of the run or closing the menu.
 - **Chaotic Wand Generation**: Replace all spells on a wand with random spells.
 - **Charm Nerf**: Charmed enemies no longer drop gold nuggets.
-- **Combine Gold**: Automatically combine nearby gold nuggets to reduce physics load.
+- **Chests Can Contain Perks**: Chests have a chance (12% or 25% for a super chest) to spawn a perk instead of the usual drop table (one perk only.)
+- **Combine Gold**: Automatically combine nearby gold nuggets (to reduce physics load.)
 - **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
 - **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. - *Required for some spells to show up if using Wand Shops Only.*
-- **Gold Counter**: Add a message showing how much gold was picked recently.
-- **Gold Decay**: When Gold Nuggets despawn, material Gold will appear in their place.
-- **Heal On Max Health Up**: Heals the health gained from max health pickups.
+- **Gold Counter**: Add a message showing how much gold was recently collected.
+- **Gold Decay**: Gold nuggets will turn into gold power instead of disappearing.
+- **Heal On Max Health Up**: Heal for the amount gained when gaining max health.
 - **Health Bars**: Show enemy health bars.
-- **Invincibility Frames**: Adds invincibility frames to damage dealt by enemies.
-- **Less Particles**: Reduce or disable cosmetic particle emission for extra performance.
+- **Invincibility Frames**: Become invincibile for a short time when damaged by enemies.
+- **Less Particles**: Reduce or disable cosmetic particle emission (to reduce particle load.)
 - **Limited Ammo**: Gives all unlimited projectile spells limited uses.
 - **No Preset Wands**: Replace the preset wands in the first biome with procedural wands.
 - **Passive Recharge**: Wands recharge while holstered.
@@ -88,15 +101,19 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Unimited Ammo**: Gives all limited spells unlimited uses.
 - **Wand Shops Only**: All spell shops will be replaced with wand shops.
 
+## Content
+All content can be toggled on or off. Pick and choose what you like, or disable it all if you're only interested in the utility of Goki's Things.
+
 ### Tweaks
 - **Chainsaw**: Now costs mana, reduces cast delay to 0.08 instead of 0 (unless it is already lower.)
-- **Chain Bolt**: Fixes targeting issues.
+- **Chain Bolt**: Fix targeting issues.
 - **Damage Field**: Reduce damage tick rate (tick rate 1 -> 5 frames.)
 - **Damage Plus**: Costs more mana, doubled recharge time.
 - **Freeze Charge**: Remove the particle effects (affects gameplay.)
 - **Glass Cannon**: You deal 3x damage, but take 3x damage.
 - **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across spells that can crit.
 - **Increase Mana**: Disable.
+- **Reduce Stun Lock**: Reduces the time the player can't fly for when taking a knockback hit.
 - **Revenge Explosion**: No longer activates on environmental / self damage, fixes the explosions not proccing when taking rapid tick (fire) damage.
 - **Revenge Tentacle**: No longer activates on environmental / self damage, fixes the tentacle not proccing when taking rapid tick (fire) damage.
 
@@ -106,7 +123,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Demolitionist**: Your spells cause larger, more powerful explosions.
 - **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
 - **Extra Projectile**: Your spells gain an additional projectile, but are less accurate and cast less quickly (their other effects aren't applied.)
-- **Fragile Ego**: Receive 50% less damage, but damage is permanent (damage is dealt to maximum health.)
+- **Fragile Ego**: Receive 75% less damage, but damage is dealt to maximum health.
 - **Healthier Heart**: You heal for the amount gained when gaining maximum health.
 - **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
 - **Knockback Immunity**: Immunity to knockback.
@@ -124,18 +141,19 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 
 ### Projectile Spells
 - **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
-- **Zap**: A short lived spark of electricity.
+- **Zap**: A short lived bolt of electricity.
+- **Nugget Shot**: Hurl your hard earned gold at the enemy. Requires 10 gold.
 
-### Projectile Modifier Spells
+### Modifier Spells
 - **Barrier Trail**: Projectiles gain a trail of barriers.
 - **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - **Damage Plus: Time**: Cast a spell that gains damage over time.
 - **Glittering Trail**: Projectiles gain a trail of explosions.
 - **Projectile Burst**: Duplicate a projectile multiple times.
+- **Protective Enchantment**: Cast a spell that can not deal damage to you.
 - **Path Correction**: Projectiles target enemies within a short line of sight.
 - **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
-- **Revelation**: Cast a spell that reveals the area around the enemy it hits.
 - **Super Bounce**: Cast a spell that bounces more energetically.
 - **Time Split**: Equalize current cast delay and recharge time.
 - **Trigger: Hit**: Cast another spell upon collision.
@@ -143,7 +161,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Trigger: Death**: Cast another spell after the spell expires.
 
 ### Static Projectile Spells
-- **Modification Field**: A field of modification magic. (Concept by curry_murmurs)
+- **Circle of Divine Blessing**: A field of modification magic. (Concept by curry_murmurs, name by Gastogh)
 - **Stored Spell**: Summon a magical phenomenon that casts a spell when you stop casting.
 
 ### Passive Spells
@@ -154,11 +172,12 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 
 ### Utility Spells
 - **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
-- **Magic Hand**: Cast a spell that lingers near the tip of your wand.
-- **Shimmering Treasure**: Treasure (wands, gold nuggets, hearts, chests, potions, etc.) catches your eye.
+- **Magic Hand**: Cast a spell that maintains a fixed position from the tip of your wand.
+- **Treasure Sense**: Treasure (wands, hearts, chests, potions, etc.) cast a visible trail towards themselves.
 
 ### Multicast Spells
-- **Formation - Stack**: Cast 3 spells stacked vertically.
+- **Chain Cast**: Chain cast 4 spells.
+- **Formation - Stack**: Cast 3 spells in parallel.
 - **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
 - **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - **Spell Merge**: Cast 2 spells of which the first is merged with the second.
@@ -186,3 +205,5 @@ These features were disabled or removed from the mod for one reason or another. 
 - **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
 - **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
 - **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*
+- **Shimmering Treasure**: Treasure (wands, gold nuggets, hearts, chests, potions, etc.) is revealed in the darkness. *(Superceded by Treasure Sense)*
+- **Revelation**: Cast a spell that reveals the area around the enemy it hits. *(Not very fun or interesting)*

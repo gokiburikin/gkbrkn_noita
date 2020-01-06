@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c80"
+    Version = "c81"
 }
 
 CONTENT_TYPE = {
@@ -18,6 +18,7 @@ CONTENT_TYPE = {
     Item = 6,
     Loadout = 7,
     StartingPerk = 8,
+    LegendaryWand = 9,
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -29,6 +30,7 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.Item] = "item_",
     [CONTENT_TYPE.Loadout] = "loadout_",
     [CONTENT_TYPE.StartingPerk] = "starting_perk_",
+    [CONTENT_TYPE.LegendaryWand] = "legendary_wand_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME = {
@@ -40,6 +42,7 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.Item] = gkbrkn_localization.config_content_type_name_item,
     [CONTENT_TYPE.Loadout] = gkbrkn_localization.config_content_type_name_loadout,
     [CONTENT_TYPE.StartingPerk] = gkbrkn_localization.config_content_type_name_starting_perk,
+    [CONTENT_TYPE.LegendaryWand] = gkbrkn_localization.config_content_type_name_legendary_wand,
 }
 
 CONTENT = {};
@@ -150,12 +153,16 @@ PERKS = {
     Multicast = register_perk( "multicast" ),
     MagicLight = register_perk( "magic_light", nil, true, true ),
     ChainCasting = register_perk( "chain_casting" ),
+    DisenchantSpell = register_perk( "disenchant_spell" ),
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
 local register_action = function( key, options, disabled_by_default, deprecated, inverted )
     return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key], options, disabled_by_default, deprecated, inverted, function()
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
+        if options ~= nil and options.callback ~= nil then
+            options.callback();
+        end
     end );
 end
 
@@ -164,7 +171,7 @@ ACTIONS = {
     SpellEfficiency =  register_action( "spell_efficiency", nil, true, true ),
     GoldenBlessing = register_action( "golden_blessing", nil, true, true ),
     MagicLight = register_action( "magic_light" ),
-    Revelation = register_action( "revelation" ),
+    Revelation = register_action( "revelation", nil,true, true ),
     MicroShield = register_action( "micro_shield", nil, true, true ),
     ModificationField = register_action( "modification_field" ),
     SpectralShot = register_action( "spectral_shot", nil, true, true ),
@@ -175,7 +182,7 @@ ACTIONS = {
     ExtraProjectile = register_action( "extra_projectile" ),
     OrderDeck = register_action( "order_deck" ),
     PerfectCritical = register_action( "perfect_critical" ),
-    ProjectileBurst = register_action( "projectile_burst" ),
+    ProjectileBurst = register_action( "projectile_burst", nil, true, true ),
     TriggerHit = register_action( "trigger_hit" ),
     TriggerTimer = register_action( "trigger_timer" ),
     TriggerDeath = register_action( "trigger_death" ),
@@ -186,14 +193,14 @@ ACTIONS = {
     PathCorrection = register_action( "path_correction" ),
     CollisionDetection = register_action( "collision_detection", nil, true, true ),
     PowerShot = register_action( "power_shot" ),
-    ShimmeringTreasure = register_action( "shimmering_treasure" ),
+    ShimmeringTreasure = register_action( "shimmering_treasure", nil, true, true ),
     NgonShape = register_action( "ngon_shape", nil, true, true ),
     ShuffleDeck = register_action( "shuffle_deck", nil, true, true ),
     BreakCast = register_action( "break_cast" ),
     ProjectileOrbit = register_action( "projectile_orbit" ),
     PassiveRecharge = register_action( "passive_recharge" ),
     ManaRecharge = register_action( "mana_recharge" ),
-    SuperBounce = register_action( "super_bounce" ),
+    SuperBounce = register_action( "super_bounce", nil, true, true ),
     CopySpell = register_action( "copy_spell" ),
     TimeSplit = register_action( "time_split" ),
     FormationStack = register_action( "formation_stack" ),
@@ -204,6 +211,10 @@ ACTIONS = {
     Zap = register_action( "zap" ),
     StoredShot = register_action( "stored_shot" ),
     CarryShot = register_action( "carry_shot" ),
+    TreasureSense = register_action( "treasure_sense" ),
+    NuggetShot = register_action( "nugget_shot", { callback=function() ModMaterialsFileAdd("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/materials.xml") end } ),
+    ProtectiveEnchantment = register_action( "protective_enchantment" ),
+    ChainCast = register_action( "chain_cast" ),
     WIP = register_action( "wip", nil, true, not SETTINGS.Debug ),
 }
 
@@ -223,9 +234,11 @@ TWEAKS = {
     GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" }, true, nil, true ),
     AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" }, true, nil, true ),
     ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" }, true, nil, true ),
+    StunLock = register_tweak( "stun_lock", nil, true, nil, true ),
 }
 
-LOADOUTS = {}
+LOADOUTS = {};
+LEGENDARY_WANDS = {};
 
 local register_champion_type = function( key, options, disabled_by_default, deprecated, inverted )
     return register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options, disabled_by_default, deprecated, inverted );
@@ -476,7 +489,6 @@ CHAMPION_TYPES = {
         apply = function( entity ) 
             local electric = EntityAddComponent( entity, "ElectricChargeComponent", { 
                 _tags="enabled_in_world",
-                radius="128",
                 charge_time_frames="15",
                 electricity_emission_interval_frames="15",
                 fx_velocity_max="10",
@@ -540,6 +552,7 @@ CHAMPION_TYPES = {
             for _,damage_model in pairs( damage_models ) do
                 ComponentSetValue( damage_model, "blood_material", "lava" );
                 ComponentSetValue( damage_model, "blood_spray_material", "lava" );
+                ComponentSetValue( damage_model, "blood_multiplier", "2" );
             end
         end
     }),
@@ -819,6 +832,18 @@ CHAMPION_TYPES = {
             } );
         end
     }),
+    Reward =  register_champion_type( "reward", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/reward.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return false; end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/reward_damage_received.lua"
+            });
+        end
+    }),
     --[[
     Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
         particle_material = nil,
@@ -836,8 +861,8 @@ CHAMPION_TYPES = {
     ]]
 }
 
-local register_item = function( key, options )
-    return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options );
+local register_item = function( key, options, disabled_by_default, deprecated, inverted )
+    return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options, disabled_by_default, deprecated, inverted );
 end
 
 ITEMS = {
@@ -881,7 +906,9 @@ MISC = {
         Enabled = "gkbrkn_champion_enemies",
         SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
         AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
+        MiniBossChampionsEnabled = "gkbrkn_champion_mini_bosses_enable",
         ChampionChance = 0.20,
+        MiniBossChance = 0.02, -- rolled after champion chance
         ExtraTypeChance = 0.05,
     },
     QuickSwap = {
@@ -902,6 +929,9 @@ MISC = {
         RandomFlaskEnabled = "gkbrkn_random_start_random_flask",
         RandomPerkEnabled = "gkbrkn_random_start_random_perk",
         RandomPerks = 1,
+    },
+    LegendaryWands = {
+        Enabled = "gkbrkn_legendary_wands",
     },
     WandShopsOnly = {
         Enabled = "gkbrkn_wand_shops_only",
@@ -951,6 +981,12 @@ MISC = {
     },
     NoPregenWands = {
         Enabled = "gkbrkn_no_pregen_wands",
+    },
+    ChestsContainPerks = {
+        Enabled = "gkbrkn_chests_contain_perks",
+        Chance=0.12,
+        SuperChance=0.25,
+        RemovePerkTag=true, -- this makes it so that picking up other perks doesn't kill this perk. might have side effects!!!
     },
     Badges = {
         Enabled = "gkbrkn_show_badges",
@@ -1064,19 +1100,25 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_enabled,
         SubOption = true,
-        PersistentFlag = "gkbrkn_champion_enemies",
+        PersistentFlag = MISC.ChampionEnemies.Enabled,
+        RequiresRestart = true,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_champion_enemies_mini_bosses,
+        SubOption = true,
+        PersistentFlag = MISC.ChampionEnemies.MiniBossChampionsEnabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_super_champions,
         SubOption = true,
-        PersistentFlag = "gkbrkn_champion_enemies_super",
+        PersistentFlag = MISC.ChampionEnemies.SuperChampionsEnabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_champions_only,
         SubOption = true,
-        PersistentFlag = "gkbrkn_champion_enemies_always",
+        PersistentFlag = MISC.ChampionEnemies.AlwaysChampionsEnabled,
         RequiresRestart = true,
     },
     {
@@ -1155,6 +1197,11 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_passive_recharge",
     },
     {
+        Name = gkbrkn_localization.option_legendary_wands,
+        PersistentFlag = MISC.LegendaryWands.Enabled,
+        RequiresRestart = true,
+    },
+    {
         Name = gkbrkn_localization.option_wand_shops_only,
         PersistentFlag = "gkbrkn_wand_shops_only",
     },
@@ -1175,6 +1222,10 @@ OPTIONS = {
         Name = gkbrkn_localization.option_no_pregen_wands,
         PersistentFlag = "gkbrkn_no_pregen_wands",
         RequiresRestart = true,
+    },
+    {
+        Name = gkbrkn_localization.option_chests_contain_perks,
+        PersistentFlag = MISC.ChestsContainPerks.Enabled,
     },
     {
         Name = gkbrkn_localization.option_gold_decay,
@@ -1223,6 +1274,149 @@ OPTIONS = {
 function trim(s)
    local from = s:match"^%s*()"
    return from > #s and "" or s:match(".*%S", from)
+end
+
+function register_legendary_wand( id, name, author, wand_data, min_level, max_level, weight, custom_message, callback )
+    local content_id = register_content( CONTENT_TYPE.LegendaryWand, id, name, {
+        name = name,
+        author = author,
+        wand_data = wand_data,
+        min_level = min_level,
+        max_level = max_level,
+        weight = weight,
+        custom_message = custom_message,
+        callback = callback,
+    } );
+    LEGENDARY_WANDS[id] = content_id;
+end
+
+local get_random_from = function( target )
+    return tostring( Random( 1, #target ) );
+end
+
+local get_random_between_range = function( target )
+    local min = target[1];
+    local max = target[2];
+    return Random( min, max );
+end
+
+local WAND_STAT_SETTER = {
+    Direct = 1,
+    Gun = 2,
+    GunAction = 3
+}
+
+local WAND_STAT_SETTERS = {
+    shuffle_deck_when_empty = WAND_STAT_SETTER.Gun,
+    actions_per_round = WAND_STAT_SETTER.Gun,
+    speed_multiplier = WAND_STAT_SETTER.GunAction,
+    deck_capacity = WAND_STAT_SETTER.Gun,
+    reload_time = WAND_STAT_SETTER.Gun,
+    fire_rate_wait = WAND_STAT_SETTER.GunAction,
+    spread_degrees = WAND_STAT_SETTER.GunAction,
+    mana_charge_speed = WAND_STAT_SETTER.Direct,
+    mana_max = WAND_STAT_SETTER.Direct,
+}
+
+local ability_component_set_stat = function( ability, stat, value )
+    local setter = WAND_STAT_SETTERS[stat];
+    if setter ~= nil then
+        if setter == WAND_STAT_SETTER.Direct then
+            ComponentSetValue( ability, stat, tostring( value ) );
+            if stat == "mana_max" then
+                ComponentSetValue( ability, "mana", tostring( value ) );
+            end
+        elseif setter == WAND_STAT_SETTER.Gun then
+            ComponentObjectSetValue( ability, "gun_config", stat, tostring( value ) );
+        elseif setter == WAND_STAT_SETTER.GunAction then
+            ComponentObjectSetValue( ability, "gunaction_config", stat, tostring( value ) );
+        end
+    end
+end
+
+function initialize_legendary_wand( base_wand, x, y, level )
+    SetRandomSeed( GameGetFrameNum(), x + y );
+    local valid_wands = {};
+    for _,content_id in pairs( LEGENDARY_WANDS ) do
+        local content = CONTENT[content_id];
+        if level == nil or ( level >= content.options.min_level and level <= content.options.max_level ) then
+            table.insert( valid_wands, content_id );
+        end
+    end
+    local chosen_wand = valid_wands[Random( 1, #valid_wands )];
+    local content_data = CONTENT[chosen_wand];
+    if content_data == nil then print_error("no wand data found"); return; end
+    local wand_data = content_data.options.wand_data;
+    local wand = base_wand;
+
+    local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
+    ComponentSetValue( ability, "ui_name", wand_data.name );
+    if wand_data.sprite ~= nil then
+        if wand_data.sprite.file ~= nil then
+            ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
+            -- TODO this takes a second to apply, probably work fixing, but for now just prefer using custom file
+            local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
+            if sprite ~= nil then
+                ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
+            end
+        end
+        if wand_data.sprite.hotspot ~= nil then
+            local hotspot = EntityGetFirstComponent( wand, "HotspotComponent", "shoot_pos" );
+            if hotspot ~= nil then
+                ComponentSetValueVector2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
+            end
+        end
+    end
+
+    local item = EntityGetFirstComponent( wand, "ItemComponent" );
+    if item ~= nil then
+        ComponentSetValue( item, "item_name", wand_data.name );
+    end
+
+    for stat,value in pairs( wand_data.stats or {} ) do
+        ability_component_set_stat( ability, stat, value );
+    end
+
+    for stat,range in pairs( wand_data.stat_ranges or {} ) do
+        ability_component_set_stat( ability, stat, Random( range[1], range[2] ) );
+    end
+
+    for stat,random_values in pairs( wand_data.stat_randoms or {} ) do
+        ability_component_set_stat( ability, stat, random_values[ Random( 1, #random_values ) ] );
+    end
+
+    for _,actions in pairs( wand_data.permanent_actions or {} ) do
+        local random_action = actions[ Random( 1, #actions ) ];
+        if random_action ~= nil then
+            AddGunActionPermanent( wand, random_action );
+        end
+    end
+
+    for _,actions in pairs( wand_data.actions or {} ) do
+        local random_action = actions[ Random( 1, #actions ) ];
+        if random_action ~= nil then
+            if type(random_action) == "table" then
+                local action_entity = CreateItemActionEntity( random_action.action );
+                local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
+                if random_action.locked then
+                    ComponentSetValue( component, "is_frozen", "1" );
+                end
+                if random_action.permanent then
+                    ComponentSetValue( component, "permanently_attached", "1" );
+                end
+                EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                EntityAddChild( wand, action_entity );
+            else
+                AddGunAction( wand, random_action );
+            end
+        end
+    end
+
+    if wand_data.callback ~= nil then
+        wand_data.callback( wand, ability );
+    end
+
+    return wand;
 end
 
 function register_loadout( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
@@ -1298,19 +1492,17 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
+                    { "LIGHT_BULLET_TRIGGER" },
+                    { "HITFX_CRITICAL_WATER" },
+                    { "HITFX_CRITICAL_WATER" },
+                    { "HITFX_CRITICAL_WATER" },
+                    { "HITFX_CRITICAL_WATER" },
+                    { "HITFX_CRITICAL_WATER" },
                     { "BURST_4" },
-                    { "BURST_4" },
-                    { "BURST_4" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
-                    { "LIGHT_BULLET" },
+                    { "MATERIAL_WATER" },
+                    { "CHAINSAW" },
+                    { "CHAINSAW" },
+                    { "CHAINSAW" },
                 }
             },
             {
@@ -1359,9 +1551,10 @@ if SETTINGS.Debug then
                 permanent_actions = {
                 },
                 actions = {
-                    { "GKBRKN_CARRY_SHOT" },
-                    { "GKBRKN_STORED_SHOT" },
-                    { "LIGHT_BULLET" },
+                    { "LIFETIME_DOWN" },
+                    { "LIFETIME_DOWN" },
+                    { "LIFETIME_DOWN" },
+                    { "BLACK_HOLE" },
                 }
             }
         },

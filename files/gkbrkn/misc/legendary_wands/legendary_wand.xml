@@ -1,0 +1,61 @@
+<Entity tags="wand">
+
+	<AbilityComponent
+		_enabled="1" 
+		sprite_file="mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand_sprite.xml"
+		swim_propel_amount="0"
+		ui_name="Base Wand"
+		drop_as_item_on_death="0"
+		cooldown_frames="1"
+		entity_count="1"
+		reload_time_frames="0"
+		mana_charge_speed="1"
+		mana_max="1"
+		use_gun_script="1" 
+		>
+		<gun_config 
+			shuffle_deck_when_empty="0"
+			reload_time="1"
+			deck_capacity="1" >
+		</gun_config>
+		<gunaction_config 
+			fire_rate_wait="1" >
+		</gunaction_config>
+	</AbilityComponent>
+
+	<HotspotComponent 
+		_tags="shoot_pos" 
+		offset.x="6" 
+		offset.y="-0.5" >
+	</HotspotComponent>
+
+	<Base file="data/entities/base_item.xml">
+        <SpriteComponent 
+            next_rect_animation="JobAbilityMachinegun" >
+        </SpriteComponent>
+        
+        <ItemComponent
+			item_name="Legendary Wand"
+            play_hover_animation="1">
+        </ItemComponent>
+
+        <SimplePhysicsComponent
+            _enabled="0">
+        </SimplePhysicsComponent>
+    </Base>
+    
+    <Base file="data/entities/base_wand.xml">
+    </Base>
+    
+    <ManaReloaderComponent
+		_tags="enabled_in_world,enabled_in_hand,enabled_in_inventory" >
+	</ManaReloaderComponent>
+
+    <LuaComponent
+        remove_after_executed="1"
+        execute_on_added="1"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.lua"
+    ></LuaComponent>
+   
+</Entity>
+

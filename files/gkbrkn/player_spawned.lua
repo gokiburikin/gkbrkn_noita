@@ -27,6 +27,7 @@ for i=1,50 do
     EntityLoad( "data/entities/animals/zombie.xml", x- 100, y - 100 );
 end
 ]]
+
 if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_player_update" ) == nil then
     EntityAddComponent( player_entity, "LuaComponent", {
         _tags="gkbrkn_player_update",
@@ -56,7 +57,7 @@ if GameHasFlagRun( init_check_flag ) == false then
     if inventory ~= nil then
         --[[ Spell Bag ]]
         if CONTENT[ITEMS.SpellBag].enabled() then
-            EntityAddChild( inventory, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/spell_bag/spell_bag.xml", x, y ) );
+            EntityAddChild( inventory, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/spell_bag.xml", x, y ) );
         end
     end
 
@@ -109,9 +110,13 @@ if GameHasFlagRun( init_check_flag ) == false then
         if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) then
             GameAddFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled );
         end
+        if HasFlagPersistent( MISC.ChampionEnemies.MiniBossChampionsEnabled ) then
+            GameAddFlagRun( MISC.ChampionEnemies.MiniBossChampionsEnabled );
+        end
         if HasFlagPersistent( MISC.Badges.Enabled ) then
             local badge = load_dynamic_badge( "champion_mode", {
                 {_always=GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled )},
+                {_mini_boss=GameHasFlagRun( MISC.ChampionEnemies.MiniBossChampionsEnabled )},
                 {_super=GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled )},
             }, gkbrkn_localization );
             EntityAddChild( player_entity, badge );
@@ -128,6 +133,13 @@ if GameHasFlagRun( init_check_flag ) == false then
                     perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
                 end
             end
+        end
+    end
+
+    if CONTENT[TWEAKS.StunLock].enabled() then 
+        local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
+        if character_platforming ~= nil then
+            ComponentSetValue( character_platforming, "precision_jumping_max_duration_frames", "10" );
         end
     end
 end
