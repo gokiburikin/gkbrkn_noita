@@ -1,17 +1,18 @@
 <Entity name="unknown" tags="hittable,teleportable_NOT,item_physics" >
 
-    <PhysicsBodyComponent 
-        _tags="enabled_in_world"
-        uid="1" 
-        allow_sleep="1" 
-        angular_damping="0" 
-        fixed_rotation="0" 
-        is_bullet="1" 
-        linear_damping="0"
-        auto_clean="0"
-        hax_fix_going_through_ground="1"
-        on_death_leave_physics_body="1"
-    ></PhysicsBodyComponent>
+   <PhysicsBodyComponent 
+		_tags="enabled_in_world"
+		uid="1" 
+		allow_sleep="1" 
+		angular_damping="0" 
+		fixed_rotation="0" 
+		is_bullet="1" 
+		linear_damping="0"
+		auto_clean="1"
+		hax_fix_going_through_ground="1"
+		on_death_leave_physics_body="0"
+		on_death_really_leave_body="0"
+	></PhysicsBodyComponent>
     
     <PhysicsImageShapeComponent 
         body_id="1"
@@ -24,7 +25,8 @@
         _tags="enabled_in_world"
         lifetime="-1"
         penetrate_entities="1"
-        damage="0"
+		never_hit_player="1"
+        damage="0.4"
     >
         <config_explosion
             damage="0"
@@ -34,10 +36,8 @@
 
     <PhysicsThrowableComponent
         _tags="enabled_in_world"
-        max_throw_speed="250"
-        throw_force_coeff="5"
-        min_torque="6"
-        max_torque="9"
+        max_throw_speed="220"
+        throw_force_coeff="2"
     ></PhysicsThrowableComponent>
 
     <HitboxComponent 

@@ -1,0 +1,12 @@
+<Entity >
+<LuaComponent
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/chain_cast/projectile_init.lua"
+        remove_after_executed="1"
+		>
+	</LuaComponent>
+    <LuaComponent
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/chain_cast/projectile_update.lua"
+		execute_every_n_frame="10"
+		>
+	</LuaComponent>
+</Entity>

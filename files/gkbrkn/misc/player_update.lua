@@ -473,11 +473,19 @@ if now % 10 == 0 then
             SetRandomSeed( now, x + y + nearby );
 
             --SetRandomSeed( x, y );
-            if EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and (EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false) and does_entity_drop_gold( nearby ) == true then
+            if EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and ( EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false ) and does_entity_drop_gold( nearby ) == true then
                 EntityAddTag( nearby, "gkbrkn_champions" );
                 if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                     EntityRemoveTag( nearby, "gkbrkn_force_champion" );
-                    local is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
+                    local is_mini_boss = false;
+                    local kills = StatsGetValue("enemies_killed");
+                    local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) );
+                    if kills >= GlobalsGetValue( "gkbrkn_next_miniboss" ) then
+                        is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
+                        if is_mini_boss == true then
+                            GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
+                        end
+                    end
 
                     local valid_champion_types = {};
                     for index,champion_type in pairs( CHAMPION_TYPES ) do
@@ -592,6 +600,7 @@ if now % 10 == 0 then
                             CHAMPION_TYPES.Armored,
                             CHAMPION_TYPES.Jetpack,
                             CHAMPION_TYPES.Reward,
+                            CHAMPION_TYPES.Burning,
                         };
                         add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/mini_boss.xml"};
                     end
@@ -603,7 +612,7 @@ if now % 10 == 0 then
                     end
 
                     --[[ Per champion type ]]
-                    for _,champion_type in pairs(apply_these_champion_types) do
+                    for _,champion_type in pairs( apply_these_champion_types ) do
                         local champion_data = CONTENT[champion_type].options;
                         
                         if champion_data.badge ~= nil then
@@ -631,6 +640,14 @@ if now % 10 == 0 then
                                 EntityAddChild( nearby, emitter_entity );
                             end
                             ComponentSetValueVector2( emitter, "gravity", 0, -200 );
+                        end
+
+                        --[[ Mini-Boss Particle Emitter ]]
+                        if is_mini_boss then
+                            if particle_material ~= nil then
+                                local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/mini_boss_particles.xml" );
+                                EntityAddChild( nearby, emitter_entity );
+                            end
                         end
 
                         --[[ Sprite Particle Emitter ]]
@@ -706,13 +723,7 @@ if now % 10 == 0 then
         local speed_multiplier = 1.25; 
 
         local distance = EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode_distance", 0.0 );
-        local distance_multiplier = math.pow( 0.9, math.floor(distance / 7000) );
-        local velocity = EntityGetFirstComponent( player_entity, "VelocityComponent" );
-        local vx,vy = ComponentGetValueVector2( velocity, "mVelocity" );
-        local magnitude = math.sqrt( vx * vx );
-        if magnitude > 0.01 then
-            EntitySetVariableNumber( player_entity, "gkbrkn_hero_mode_distance", distance + magnitude );
-        end
+        local distance_multiplier = math.pow( 0.9, tonumber( StatsGetValue("places_visited") ) - 1 );
 
         local orb_multiplier =  1;
         if GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
@@ -734,9 +745,11 @@ if now % 10 == 0 then
 
         local player_genome = EntityGetFirstComponent( player_entity, "GenomeDataComponent" );
         local player_herd = -1;
+        
         if player_genome ~= nil then
             player_herd = ComponentGetMetaCustom( player_genome, "herd_id" );
         end
+        
         for _,nearby in pairs( nearby_enemies ) do
             if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 then
                 EntitySetVariableNumber( nearby, "gkbrkn_hero_mode", 1.0 );
@@ -808,12 +821,6 @@ if now % 10 == 0 then
                     });
                 end
 
-                -- this is an attempt to fix enemies getting stuck in meat piles which is dumb
-                EntityAddComponent( nearby, "CellEaterComponent", {
-                    radius="2",
-                    eat_probability="25",
-                } );
-
                 EntityAddComponent( nearby, "LuaComponent", {
                     script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
                 });
@@ -850,7 +857,10 @@ if now % 10 == 0 then
                 local ability = FindFirstComponentByType( wand, "AbilityComponent" );
                 if ability ~= nil then
                     EntitySetVariableNumber( wand, "gkbrkn_hero_wand", 1 );
-                    local mana_multiplier = rand( 1.25, 1.5 );
+                    local kills = StatsGetValue("enemies_killed");
+                    local kills_divisor = 100;
+                    local mana_multiplier = rand( 1.10, trend_towards_range( kills, kills_divisor, 1.25, 2.00 ) );
+                    print( "kills trend "..trend_towards_range( kills, kills_divisor, 0, 1 ) );
                     ability_component_adjust_stats( ability, {
                         --shuffle_deck_when_empty = function(value) end,
                         --actions_per_round = function(value) end,
@@ -858,12 +868,20 @@ if now % 10 == 0 then
                         mana_max = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
                         mana = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
                         deck_capacity = function(value) return math.min( 25, tonumber( value ) + Random( 1, 2 ) ); end,
-                        reload_time = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.75, 0.95 ) ) ); end,
-                        fire_rate_wait = function(value) return math.min( tonumber( value ), math.floor( tonumber( value ) * rand( 0.75, 0.95 ) ) ); end,
+                        reload_time = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
+                        fire_rate_wait = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
                         spread_degrees = function(value) return tonumber( value ) - Random( 0, 4 ); end,
-                        mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 20, 30 ) ) * rand( 1.10, 1.25 ) ); end,
+                        mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 10, trend_towards_range( kills, kills_divisor, 20, 50 ) ) ) * rand( 1.10, trend_towards_range( kills, kills_divisor, 1.20, 1.50 ) ) ); end,
                     } );
                 end
+            end
+        end
+
+        for _,boss in pairs( EntityGetWithTag( "boss_centipede" ) or {} ) do
+            if EntityGetVariableNumber( boss, "gkbrkn_hero_mode_boss", 0 ) == 0 then
+                EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );
+                local health_bonus = math.pow( tonumber( StatsGetValue("enemies_killed") ) * 100, 1.1 ) / 25;
+                TryAdjustMaxHealth( boss, function( max, current ) return tonumber( max ) + health_bonus; end );
             end
         end
     end

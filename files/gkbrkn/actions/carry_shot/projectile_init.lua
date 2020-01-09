@@ -15,12 +15,15 @@ if projectile ~= nil then
                 aim_angle = math.atan2( ay, ax );
             end
         end
+        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+        local magnitude = 0;
+        if velocity ~= nil then
+            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            magnitude = math.sqrt( vx * vx + vy * vy ) / 60;
+        end
         local x, y, angle = EntityGetTransform( entity );
         angle = aim_angle - angle;
         local wx, wy = EntityGetTransform( active_wand );
-        local distance = math.sqrt( math.pow( wx - x, 2 ) + math.pow( wy - y, 2 ) );
-        --local angle = math.atan2( y - wy, x - wx );
-        EntitySetVariableNumber( entity, "gkbrkn_magic_hand_distance", distance );
         EntitySetVariableNumber( entity, "gkbrkn_magic_hand_angle", angle );
     end
 end

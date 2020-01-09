@@ -82,7 +82,7 @@ end
 
 function does_entity_drop_gold( entity )
     local drops_gold = false;
-    for _,component in pairs( EntityGetComponent( entity, "LuaComponent" ) ) do
+    for _,component in pairs( EntityGetComponent( entity, "LuaComponent" ) or {} ) do
         if ComponentGetValue( component, "script_death" ) == "data/scripts/items/drop_money.lua" then
             drops_gold = true;
             break;
@@ -153,4 +153,89 @@ function clear_gold_decay( gold_nugget_entity )
     if script ~= nil then
         EntityRemoveComponent( gold_nugget_entity, script );
     end
+end
+
+function limit_to_every_n_frames( entity, variable_name, n, callback )
+    local now = GameGetFrameNum();
+	if now - EntityGetVariableNumber( entity, variable_name, 0 ) >= n then
+        EntitySetVariableNumber( entity, variable_name, now );
+        callback();
+    end
+end
+
+function trend_towards_range( value, divisor, min, max )
+    return min + (max - min) * ( value / ( value + divisor ) );
+end
+
+-- TODO this doesn't handle all damage components and doesn't handle multiple components of the same type
+function adjust_entity_damage( entity, projectile_damage_callback, typed_damage_callback, explosive_damage_callback, lightning_damage_callback, area_damage_callback )
+    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    local lightning = EntityGetFirstComponent( entity, "LightningComponent" );
+
+    if projectile ~= nil then
+        if projectile_damage_callback ~= nil then
+            local current_damage = tonumber( ComponentGetValue( projectile, "damage" ) );
+            local new_damage = projectile_damage_callback( current_damage );
+            if current_damage ~= new_damage then
+                ComponentSetValue( projectile, "damage", tostring( new_damage ) );
+            end
+            if typed_damage_callback ~= nil then
+                local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
+                local damage_by_types_fixed = {};
+                for type,_ in pairs( damage_by_types ) do
+                    damage_by_types_fixed[type] = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
+                end
+                local damage_by_types_adjusted = typed_damage_callback( damage_by_types_fixed );
+                for type,amount in pairs( damage_by_types_adjusted ) do
+                    if amount ~= nil then
+                        ComponentObjectSetValue( projectile, "damage_by_type", type, tonumber( amount ) or damage_by_types_fixed[type] or 0 );
+                    end
+                end
+            end
+            if explosive_damage_callback ~= nil then
+                local current_damage = ComponentObjectGetValue( projectile, "config_explosion", "damage" );
+                local new_damage = explosive_damage_callback( current_damage );
+                if current_damage ~= new_damage then
+                    ComponentObjectSetValue( projectile, "config_explosion", "damage", tostring( new_damage ) );
+                end
+            end
+        end
+        if lightning_damage_callback ~= nil then
+            local lightning = EntityGetFirstComponent( entity, "LightningComponent" );
+            if lightning ~= nil then
+                local current_damage = tonumber( ComponentObjectGetValue( lightning, "config_explosion", "damage" ) );
+                local new_damage = lightning_damage_callback( current_damage );
+                if current_damage ~= new_damage then
+                    ComponentObjectSetValue( lightning, "config_explosion", "damage", tostring( new_damage ) );
+                end
+            end
+        end
+        if area_damage_callback ~= nil then
+            local area_damage = EntityGetFirstComponent( entity, "AreaDamageComponent" );
+            if area_damage ~= nil then
+                local current_damage = tonumber( ConfigGetValue( area_damage, "damage_per_frame" ) );
+                local new_damage = area_damage_callback( current_damage );
+                if current_damage ~= new_damage then
+                    ComponentSetValue( area_damage, "damage_per_frame", tostring( new_damage ) );
+                end
+            end
+        end
+    end
+end
+
+function adjust_all_entity_damage( entity, callback )
+    adjust_entity_damage( entity,
+        function( current_damage ) return callback( current_damage ); end,
+        function( current_damages )
+            for type,current_damage in pairs( current_damages ) do
+                if current_damage ~= 0 then
+                    current_damages[type] = callback( current_damage );
+                end
+            end
+            return current_damages;
+        end,
+        function( current_damage ) return callback( current_damage ); end,
+        function( current_damage ) return callback( current_damage ); end,
+        function( current_damage ) return callback( current_damage ); end
+    );
 end

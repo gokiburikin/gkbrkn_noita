@@ -61,7 +61,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                 "cost_actions"
             }
             for i=1,2 do
-                if HasFlagPersistent( MISC.RandomStart.DefaultWandGenerationEnabled ) == false then
+                if HasFlagPersistent( MISC.RandomStart.CustomWandGenerationEnabled ) == true then
                     local item_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
                     EntityAddComponent( item_entity, "VariableStorageComponent", {
                         name = "random_start_actions_pool",

@@ -514,6 +514,22 @@ function TryAdjustDamageMultipliers( entity, resistances )
     end
 end
 
+
+--[[
+    ice
+    electricity
+    radioactive
+    slice
+    projectile
+    healing
+    physics_hit
+    explosion
+    poison
+    melee
+    drill
+    fire
+]]
+
 function TryAdjustMaxHealth( entity, callback )
     local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
     if damage_models ~= nil then

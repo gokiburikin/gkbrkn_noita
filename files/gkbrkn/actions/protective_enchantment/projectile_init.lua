@@ -1,4 +1,4 @@
-
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
@@ -17,5 +17,19 @@ if projectile ~= nil then
             end
         end );
     end
+    adjust_entity_damage( entity,
+        function( current_damage ) return current_damage * 0.3; end,
+        function( current_damages )
+            for type,damage in pairs( current_damages ) do
+                if damage ~= 0 then
+                    current_damages[type] = damage * 0.3;
+                end
+            end
+            return current_damages;
+        end,
+        function( current_damage ) return current_damage * 0.3; end,
+        function( current_damage ) return current_damage * 0.3; end,
+        function( current_damage ) return current_damage * 0.3; end
+    );
 end
 

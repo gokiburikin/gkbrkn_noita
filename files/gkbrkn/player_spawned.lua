@@ -49,6 +49,26 @@ if GameHasFlagRun( init_check_flag ) == false then
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/init.lua", { player_entity = player_entity } );
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
 
+--[[
+    local children = EntityGetAllChildren( player_entity ) or {};
+    local inventory = nil;
+    for _,child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            inventory = child;
+        end
+    end
+    
+    if inventory ~= nil then
+        local items = EntityGetAllChildren( inventory );
+        for _,child in pairs( items ) do
+            if EntityHasTag( child, "wand" ) then 
+                print("dis a wand")
+                ComponentSetValue( child, "ItemComponent", "1" );
+            end
+        end
+    end
+]]
+
     EntityAddComponent( player_entity, "LuaComponent", {
         script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/player_shot.lua"
     });
@@ -104,6 +124,7 @@ if GameHasFlagRun( init_check_flag ) == false then
     --[[ Champions Mode ]]
     if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
         GameAddFlagRun( MISC.ChampionEnemies.Enabled );
+        GlobalsSetValue( "gkbrkn_next_miniboss", MISC.ChampionEnemies.MiniBossThreshold );
         if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsEnabled ) then
             GameAddFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled );
         end

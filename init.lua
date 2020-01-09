@@ -1,107 +1,61 @@
 --[[
-api issues
-    no event callback hook registration whatver for certain important actions
-        the biggest nice to haves:
-            entity created / loaded
-            
-    no overriding of base game events in a modular interoperable way (currently have to overwrite or keep custom code up to date
-        with every change)
-
-    not enough returning of important values in widely use functions
-
-    too much blackboxing of otherwise important game information (the biome levels in generate_shop_item for example)
-
-    no component copy methods
-    
-
 changelog
-    -m "Shoutouts to DunkOrSlam and the Moist Mob for the gameplay and feedback"
-    -m "Rework Action: Magic Hand so that it retains spread"
-    -m "Rework Action: Zap to be closer to the original concept"
-    -m "Rework Action: Perfect Critical into Damage Plus - Critical. Increases spell critical damage instead of 100% critical chance"
-    -m "Rework Loadout: Spark to fit the new Action: Zap rework"
-    -m "Rework Champion: Digging Projectile to be more effective"
-    -m "Rework Perk: Demolitionist (explosion power and radius x1.5 -> explosion power and radius +200%)"
-    -m "Rework Misc: Hero Mode wand adjustment values"
-    -m "Reduce the spawn probability of Action: Projectile Orbit and Action: Projectile Gravity Well"
-    -m "Rename Action: Modification Field to Circle of Divine Blessing"
-    -m "Reword some spell descriptions"
-    -m "Add Loadout: Charge"
-    -m "Add Loadout: Alchemist"
-    -m "Add Loadout: Kamikaze"
-    -m "Add Loadout: Trickster"
-    -m "Add Loadout: Treasure Hunter"
-    -m "Add the loadout message to the localization file"
-    -m "Add Misc: Chests Can Contain Perks"
-    -m "Add Misc: Legendary Wands (work in progress)"
-    -m "Add a Mini-Boss option to Misc: Champion Enemies"
-    -m "Add Champion: Reward (used for Mini-Bosses)"
-    -m "Add Action: Treasure Sense"
-    -m "Add Action: Nugget Shot"
-    -m "Add Action: Protective Enchantment"
-    -m "Add Action: Chain Cast"
-    -m "Add Perk: Demote Always Cast"
-    -m "Add Tweak: Reduce Stun Lock"
-    -m "Add support for not processing (combining, etc) gold nuggets with the tag gkbrkn_special_goldnugget"
-    -m "Add a gold bonus for killing Hero Mode enemies (re-added since persistent gold was separated from Hero Mode)"
-    -m "Buff Perk: Fragile Ego (damage resistance 50% -> 75%)"
-    -m "Update Perk: Always Cast icon"
-    -m "Update Action: Barrier Trail icon"
-    -m "Deprecate: Action: Shimmering Treasure"
-    -m "Deprecate: Action: Relevation"
-    -m "Deprecate: Action: Super Bounce"
-    -m "Fix Misc: No Preset Wands not including trap room wands"
-    -m "Fix Misc: Gold Decay not properly clearing scripts on pickup"
-    -m "Fix Misc: Target Dummy burning and taking massive damage from fire"
-    -m "Fix Misc: Target Dummy not appearing in the final Holy Mountain"
-    -m "Fix Misc: Hero Mode buffing duplicated wands and loadout wands"
-    -m "Fix Misc: Hero Mode causing support enemies to prioritize you"
-    -m "Fix Champion: Ice Burst spawning projectiles inside of enemies killing them instantly"
-    -m "Fix Champion: Revenge Explosion not using the updated revenge explosion script"
-    -m "Fix Action: Damage Plus - Lifetime and Damage Plus: Bounce icons not matching vanilla icons"
-    -m "Fix Action: Projectile Orbit not working correctly with disc projectiles"
-    -m "Fix Perk: Demolitionist not working on lightning spells"
-    -m "Fix options that were intended to be disabled by default being enabled by default"
+-m "Adjust many action spawn weights"
+-m "Add Action: Spell Duplicator"
+-m "Add Tweak: Projectile Repulsion"
+-m "Buff Perk: Mana Recovery (mana recharge speed +50 -> +100)"
+-m "Buff Perk: Demolitionist (max durability to destroy +0 -> +2)"
+-m "Fix Perk: Demolitionist increasing explosion damage (unintentional)"
+-m "Fix Perk: Protagonist and Misc: Less Particle -> Player Projectiles not working on trigger fired projectiles"
+-m "Fix Action: Magic Hand's initial capture distance"
+-m "Fix Action: Zap going absolutely crazy with increased lifetime (just a little bit less crazy now)"
+-m "Nerf Action: Protective Enchantment (mana cost 20 -> 23, spawn weighting 1.0 -> 0.4, cast delay 0 -> .283, recharge time 0 -> .283, projectile -> utility type, damage reduction 0% -> 70%)"
+-m "Rebalance Action: Chaotic Burst to make it less powerful without modifiers (lifetime 240 -> 120, lifetime randomness 0 -> 60, mana cost 30 -> 42, damage 6 -> 4)"
+-m "Rebalance Perk: Protagonist (damage +100% -> +200%, linear -> less effective while healthy)"
+-m "Rename Action: Chain Cast to Action: Queued Cast"
+-m "Rename Perk: Chain Casting to Queue Casting"
+-m "Rework Action: Chain Cast to be a general Chain Bolt modifier"
+-m "Rework Action: Nugget Shot to be more consistent (add projectile damage, lower speed slightly)"
+-m "Add final boss health scaling to Misc: Hero Mode"
+-m "Change Misc: Hero Mode distance scaling to use the places visited stat instead of total horizontal distance"
+-m "Add Champion: Knockback"
+-m "Add appropriate damage type resistances to relevant champion types"
+-m "Buff Mini-Bosses (add Burning champion type)"
+-m "Buff Champion: Haste (attack speed 150% -> 200%)"
+-m "Fix Champion: Ice Burst and Champion: Counter/Reflect scripts not proccing when taking rapid tick damage (like fire)"
+-m "Remove the cell eater from enemies in Misc: Hero Mode (ineffective, caused terrain oddities)"
+-m "Remove projectile prediction from Champion: Projectile Buff (odd behaviour)"
+-m "Rework Champion: Teleportation (less unprompted Holy Moutain assassination attempts)"
+-m "Rework Misc: Champions -> Mini-Bosses (no more mini-bosses too early or too often)"
+-m "Add Misc: Fixed Camera"
+-m "Add Misc: Spell Slot Machine"
+-m "Fix a script error when checking if an entity drops gold"
+-m "Reword a handful of spell descriptions and config options for clarity"
+-m "Update a handful of graphics here and there"
 
 TODO
     make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
-    remove or rework super bounce
-
-
-UTILITY
-    TODO
-        Spell Power (utility stat on wand stat windows) (not yet possible?)
+    nest tweak (1 gold for things spawned from nests)
 
 ACTIONS
-    TODO
-        damage cut (damage below a certain number is blocked) (can't override damage right now)
-        Swarm Projectile Modifier (like Spellbundle, but a proper modifier and on enemies)
-        Sticky Projectile Modifier (stick to surfaces / enemies) (useful for what kinds of projectiles?)
-        Dynamic spell compression (combine random spells into single cards that expand into their actions when cast)
+    damage cut (damage below a certain number is blocked) (can't override damage right now)
+    Swarm Projectile Modifier (like Spellbundle, but a proper modifier and on enemies)
+    Sticky Projectile Modifier (stick to surfaces / enemies) (useful for what kinds of projectiles?)
+    Dynamic spell compression (combine random spells into single cards that expand into their actions when cast)
 
 PERKS
-    TODO
-        Double Cast (all spells cast twice)
-        Lucky Dodge (small chance to evade damage) (can't be implemented how i want it yet)
-        Wand Merge (merge two wands into a new wand with the best aspects of either wand)
-        Lucky Draw (reset the perk reroll cost) (too powerful)
-        Gold Rush (enemies explode into more and more gold as your kill streak continues)
-        Chaos (randomize projectile stuff)
+    Double Cast (all spells cast twice) (probably too powerful)
+    Lucky Dodge (small chance to evade damage) (can't be implemented how i want it yet)
+    Wand Merge (merge two wands into a new wand with the best aspects of either wand)
+    Lucky Draw (reset the perk reroll cost) (too powerful)
+    Gold Rush (enemies explode into more and more gold as your kill streak continues)
+    Chaos (randomize projectile stuff) (probably not useful)
     NYI
         Dual Wield would probably be an excessively difficulty task to implement, but it would be cool if you could designate a Wand to dual wield.
 
 ABANDONED
-    Lava, Acid, Poison (Material) Immunities (impossible for now? can ignore _all_ materials, but not individual materials)
-        damage_materials cached or something
-    Stunlock Immunity (might be possible with small levels of knockback protection?)
-        just don't think it's possible right now
-    Life Steal (1% of damage dealt is returned as life)
-        probably overpowered
-    Spell Steal ( n% gain an additional spell charge for a random (weighted by max use) spell in a random wand )
-        probably overpowered
+    Lava, Acid, Poison (Material) Immunities (works if you're willing to polymorph the player for a frame. i'm not)
     Slot Machine (official mechanic)
-        could still be done buuuuuuuut...
-    The ability to swallow an item (wand, spell, flask?) and spit it back up upon taking damage? Kind of weird, but has interesting utility. Basically a janky additional inventory slot.
     Projectile Repulsion Field (official mechanic)
 
 ]]
@@ -195,6 +149,10 @@ end
 
 if HasFlagPersistent( MISC.LegendaryWands.Enabled ) then
     dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" );
+end
+
+if HasFlagPersistent( MISC.FixedCamera.Enabled ) then
+    ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" );
 end
 
 function OnModPreInit()

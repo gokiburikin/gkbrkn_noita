@@ -24,9 +24,11 @@ gkbrkn = {
     projectiles_fired = 0,
     skip_cards = 0,
     trigger_queue = {},
-    capture_drawn_actions = false,
-    drawn_actions = {},
+    add_projectile_capture_callback = nil,
+    draw_actions_capture = nil,
+    capture_draw_actions = true,
     draw_action_stack_size = 0,
+    _create_shot = create_shot,
     _draw_actions = draw_actions,
     _set_current_action = set_current_action,
     _play_action = play_action,
@@ -38,6 +40,70 @@ gkbrkn = {
     _add_projectile_trigger_death = add_projectile_trigger_death,
     _add_projectile_trigger_hit_world = add_projectile_trigger_hit_world,
 }
+
+function state_per_cast( state )
+    if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
+        if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
+            state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.xml,";
+        else
+            state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/less_particles.xml,";
+        end
+    end
+    local player = GetUpdatedEntityID();
+    local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
+    if current_protagonist_bonus ~= 0 then
+        state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
+    end
+	--[[ disintegrate ragdolls. could be good for hero mode or a performance settings? less physics bodies to obstruct friends and cuase physics issues
+    ]]
+    state.game_effect_entities = state.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
+end
+
+function create_shot( num_of_cards_to_draw )
+    local shot = gkbrkn._create_shot( num_of_cards_to_draw );
+    state_per_cast( shot.state );
+    return shot;
+end
+
+function deck_snapshot()
+    deck_snapshot = {};
+    local s = ""
+    for _,action in pairs(gkbrkn.drawn_actions) do
+        if action.id ~= "GKBRKN_ACTION_WIP" then
+            s = s ..action.id..", ";
+            table.insert( deck_snapshot, action );
+        end
+    end
+    print("--- drawn_actions snapshot: "..s);
+end
+
+function capture_draw_actions( amount, instant_reload )
+    local old_capture = gkbrkn.draw_actions_capture;
+    if old_capture == nil then
+        print( " ");
+    end
+    local capture = {};
+    print( "start capturing "..tostring( capture ) );
+    local drawn_actions = {};
+    gkbrkn.draw_actions_capture = capture;
+    draw_actions( amount, instant_reload );
+    for _,action in pairs( capture ) do
+        table.insert( drawn_actions, action );
+    end
+    if old_capture ~= nil then
+        for _,action in pairs( capture ) do
+            table.insert( old_capture, action );
+        end
+    end
+    gkbrkn.draw_actions_capture = old_capture;
+
+    local s = "";
+    for _,action in pairs(drawn_actions) do
+        s = s ..action.id..", ";
+    end
+    print("--- drawn_actions snapshot: "..s);
+    return drawn_actions;
+end
 
 function skip_cards( amount )
     if amount == nil then
@@ -153,8 +219,9 @@ function draw_action( instant_reload_if_empty )
         --for index,extra_modifier in pairs( active_extra_modifiers ) do
         --    handle_extra_modifier( extra_modifier, index, gkbrkn.draw_action_stack_size );
         --end
-        if gkbrkn.capture_drawn_actions == true then
-            table.insert( gkbrkn.drawn_actions, deck[1] );
+        if gkbrkn.draw_actions_capture ~= nil and gkbrkn.capture_draw_actions then
+            print( "capture "..deck[1].id.." into "..tostring( gkbrkn.draw_actions_capture ) );
+            table.insert( gkbrkn.draw_actions_capture, deck[1] );
         end
         result = gkbrkn._draw_action( instant_reload_if_empty );
         --[[
@@ -172,17 +239,7 @@ function draw_action( instant_reload_if_empty )
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     
     if gkbrkn.draw_action_stack_size == 0 then
-        if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
-            if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
-                c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.xml,";
-            else
-                c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/less_particles.xml,";
-            end
-        end
-        local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
-        if current_protagonist_bonus ~= 0 then
-            c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
-        end
+        state_per_cast( c );
         if #deck == 0 then
             current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
         end
@@ -222,7 +279,9 @@ function add_projectile( filepath )
     
     for i=1,projectiles_to_add do
         gkbrkn.projectiles_fired = gkbrkn.projectiles_fired + 1;
-        if trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
+        if gkbrkn.add_projectile_capture_callback ~= nil then
+            gkbrkn.add_projectile_capture_callback( filepath, trigger_action_draw_count, trigger_delay_frames );
+        elseif trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
             gkbrkn._add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Death then
             gkbrkn._add_projectile_trigger_death( filepath, trigger_action_draw_count );

@@ -82,6 +82,7 @@ These options have an impact on general gameplay and are meant to be picked and 
 - **Combine Gold**: Automatically combine nearby gold nuggets (to reduce physics load.)
 - **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
 - **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. - *Required for some spells to show up if using Wand Shops Only.*
+- **Fixed Camera**: Keep the camera centered on the player.
 - **Gold Counter**: Add a message showing how much gold was recently collected.
 - **Gold Decay**: Gold nuggets will turn into gold power instead of disappearing.
 - **Heal On Max Health Up**: Heal for the amount gained when gaining max health.
@@ -96,6 +97,7 @@ These options have an impact on general gameplay and are meant to be picked and 
 - **Random Start**: Options to start runs with random wands, perks, flasks, cape colours, and health.
 - **Show Badges**: Show selected game mode options as UI icons.
 - **Show FPS**: Add an FPS counter.
+- **Spell Slot Machine**: Add a slot machine that you can buy spells from in the Holy Mountain.
 - **Starting Perks**: Adds the ability to start with a selection of perks from all loaded mods.
 - **Target Dummy**: Add a target dummy to each Holy Mountain.
 - **Unimited Ammo**: Gives all limited spells unlimited uses.
@@ -116,6 +118,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Reduce Stun Lock**: Reduces the time the player can't fly for when taking a knockback hit.
 - **Revenge Explosion**: No longer activates on environmental / self damage, fixes the explosions not proccing when taking rapid tick (fire) damage.
 - **Revenge Tentacle**: No longer activates on environmental / self damage, fixes the tentacle not proccing when taking rapid tick (fire) damage.
+- **Projectile Repulsion**: No longer rejects self projectiles, performance improvements.
 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
@@ -151,10 +154,9 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Glittering Trail**: Projectiles gain a trail of explosions.
 - **Projectile Burst**: Duplicate a projectile multiple times.
 - **Protective Enchantment**: Cast a spell that can not deal damage to you.
-- **Path Correction**: Projectiles target enemies within a short line of sight.
+- **Path Correction**: Projectiles redirect towards nearby enemies.
 - **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
-- **Super Bounce**: Cast a spell that bounces more energetically.
 - **Time Split**: Equalize current cast delay and recharge time.
 - **Trigger: Hit**: Cast another spell upon collision.
 - **Trigger: Time**: Cast another spell after a short duration.
@@ -207,3 +209,4 @@ These features were disabled or removed from the mod for one reason or another. 
 - **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*
 - **Shimmering Treasure**: Treasure (wands, gold nuggets, hearts, chests, potions, etc.) is revealed in the darkness. *(Superceded by Treasure Sense)*
 - **Revelation**: Cast a spell that reveals the area around the enemy it hits. *(Not very fun or interesting)*
+- **Super Bounce**: Cast a spell that bounces more energetically. *(Not unique enough)*

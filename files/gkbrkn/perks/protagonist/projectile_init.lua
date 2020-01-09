@@ -1,4 +1,5 @@
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
@@ -18,7 +19,8 @@ if projectile ~= nil then
     end
     if shooter ~= nil then
         local current_protagonist_bonus = EntityGetVariableNumber( shooter, "gkbrkn_low_health_damage_bonus", 0.0 );
-        local damage_multiplier = 1.0 + current_protagonist_bonus * ( 1 - health_ratio );
-        ComponentSetValue( projectile, "damage", tostring( tonumber( ComponentGetValue( projectile, "damage" ) ) * damage_multiplier ) );
+        local adjuted_ratio = ( 1 - health_ratio ) ^ 1.5;
+        local damage_multiplier = 1.0 + current_protagonist_bonus * adjuted_ratio;
+        adjust_all_entity_damage( entity, function( current_damage ) return current_damage * damage_multiplier; end );
     end
 end

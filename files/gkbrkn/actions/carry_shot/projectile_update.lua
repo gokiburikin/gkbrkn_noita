@@ -15,7 +15,7 @@ if projectile ~= nil then
             local active_wand = WandGetActive( shooter );
             if active_wand ~= nil then
                 local distance = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_distance", nil ) + 2;
-                initial_angle = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_angle", nil );
+                initial_angle = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_angle", 0 );
                 if distance ~= nil and angle ~= nil then
                     local wx, wy = EntityGetTransform( active_wand );
                     EntitySetTransform( entity, wx + math.cos( angle ) * distance, wy + math.sin( angle ) * distance );

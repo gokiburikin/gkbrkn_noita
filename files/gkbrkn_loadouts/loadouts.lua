@@ -117,7 +117,6 @@ register_loadout(
             },
             stat_randoms = {},
             permanent_actions = {
-                { "CHAOTIC_ARC" }
             },
             actions = {
                 { "GKBRKN_CHAOTIC_BURST" }

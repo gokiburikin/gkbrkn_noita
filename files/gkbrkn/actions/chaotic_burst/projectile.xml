@@ -4,8 +4,8 @@
 
 	<Base file="data/entities/base_projectile.xml" >
 		<VelocityComponent
-		  gravity_y="500"
-		  air_friction="0"
+		  gravity_y="400"
+		  air_friction="0.0"
 		  mass="0.01"
 		  >
 		</VelocityComponent>
@@ -15,8 +15,8 @@
     _enabled="1" 
     lob_min="0.5"
     lob_max="0.7"
-    speed_min="400"
-    speed_max="500"
+    speed_min="200"
+    speed_max="300"
     friction="0"
     direction_random_rad="11.623892818282234982311780518134"
     on_death_explode="0"
@@ -25,9 +25,9 @@
     explosion_dont_damage_shooter="1"
     on_collision_die="1"
     on_collision_remove_projectile="0"
-    lifetime="240"
-    damage="0.24"
-    lifetime_randomness="0"
+    lifetime="120"
+    damage="0.16"
+    lifetime_randomness="60"
     ragdoll_force_multiplier="0"
     hit_particle_force_multiplier="0.1"
     create_shell_casing="0"

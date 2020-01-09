@@ -2,6 +2,22 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 local edit_callbacks = {
+    PROJECTILE_REPULSION = function( perk, index )
+        perk.func = function( entity_perk_item, entity_who_picked, item_name )
+			EntityAddComponent( entity_who_picked, "LuaComponent", 
+			{ 
+				script_source_file = "mods/gkbrkn_noita/files/gkbrkn/tweaks/perks/projectile_repulsion.lua",
+				execute_every_n_frame = "2",
+			} );
+			
+			local damagemodels = EntityGetComponent( entity_who_picked, "DamageModelComponent" ) or {};
+            for _,damagemodel in pairs( damagemodels ) do
+                local projectile_resistance = tonumber( ComponentObjectGetValue( damagemodel, "damage_multipliers", "projectile" ) );
+                projectile_resistance = projectile_resistance * 1.26;
+                ComponentObjectSetValue( damagemodel, "damage_multipliers", "projectile", tostring( projectile_resistance ) );
+            end
+		end
+    end,
     REVENGE_EXPLOSION = function( perk, index )
         perk.func = function( entity_perk_item, entity_who_picked, item_name )
 			EntityAddComponent( entity_who_picked, "LuaComponent", 
