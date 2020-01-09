@@ -56,7 +56,7 @@ function state_per_cast( state )
     end
 	--[[ disintegrate ragdolls. could be good for hero mode or a performance settings? less physics bodies to obstruct friends and cuase physics issues
     ]]
-    state.game_effect_entities = state.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
+    --state.game_effect_entities = state.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
 end
 
 function create_shot( num_of_cards_to_draw )

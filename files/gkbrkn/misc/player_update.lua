@@ -479,11 +479,13 @@ if now % 10 == 0 then
                     EntityRemoveTag( nearby, "gkbrkn_force_champion" );
                     local is_mini_boss = false;
                     local kills = StatsGetValue("enemies_killed");
-                    local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) );
-                    if kills >= GlobalsGetValue( "gkbrkn_next_miniboss" ) then
-                        is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
-                        if is_mini_boss == true then
-                            GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
+                    if GameHasFlagRun( MISC.ChampionEnemies.MiniBossesEnabled ) then
+                        local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) );
+                        if kills >= GlobalsGetValue( "gkbrkn_next_miniboss" ) then
+                            is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
+                            if is_mini_boss == true then
+                                GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
+                            end
                         end
                     end
 
@@ -697,7 +699,6 @@ if now % 10 == 0 then
                 EntityAddComponent( nearby, "HealthBarComponent" );
                 EntityAddComponent( nearby, "SpriteComponent", { 
                     _tags="health_bar,ui,no_hitbox",
-                    _enabled="1",
                     alpha="1",
                     has_special_scale="1",
                     image_file="mods/gkbrkn_noita/files/gkbrkn/misc/health_bar.png",

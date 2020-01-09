@@ -46,6 +46,7 @@ register_loadout(
     },
     { -- perks
         {"TELEPORTITIS"},
+        {"REPELLING_CAPE"},
     }
 );
 
@@ -371,7 +372,7 @@ register_loadout(
                 deck_capacity = {6,6}, -- capacity
                 reload_time = {16,16}, -- recharge time in frames
                 fire_rate_wait = {12,12}, -- cast delay in frames
-                spread_degrees = {3,3}, -- spread
+                spread_degrees = {4,4}, -- spread
                 mana_charge_speed = {40,40}, -- mana charge speed
                 mana_max = {120,120}, -- mana max
             },

@@ -18,7 +18,7 @@ Aside from management, you can also easily disable loadouts with the Misc > Load
 - **Demolitionist**: Dormant Crystal, Dormant Crystal Detonator, Demolitionist.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
 - **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
-- **Spark**: Chain Casted Triple Zap, Electric Charger Sparkbolt.
+- **Spark**: Zap, Electric Charge Sparkbolt.
 - **Speedrunning**: Teleport, Black Hole, Teleportitis.
 - **Treasure Hunter**: Treasure Sense, Nugget Shot, Digging Bolt, Attract Gold.
 - **Trickster**: Long Distance Cast Magicbolt / Sparkbolt split cast, Forward and Back Teleport, Passive Recharge.

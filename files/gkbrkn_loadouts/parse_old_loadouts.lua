@@ -6,9 +6,15 @@ if loadouts_to_parse ~= nil then
         local cape_edge_color = loadout_data.cape_edge_color;
         local items = {};
         for _,item_data in pairs( loadout_data.items or {} ) do
-            if type(item_data) == "table" then
+            if type( item_data ) == "table" then
+                print(item_data.amount);
                 for i=1,item_data.amount do
-                    table.insert( items, item_data.options );
+                    if item_data.options ~= nil then
+                        table.insert( items, item_data.options );
+                    else
+                        print(item_data[1]);
+                        table.insert( items, { item_data[1] } );
+                    end
                 end
             else
                 table.insert( items, { item_data } );

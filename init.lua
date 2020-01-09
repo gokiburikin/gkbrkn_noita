@@ -1,41 +1,11 @@
 --[[
 changelog
--m "Adjust many action spawn weights"
--m "Add Action: Spell Duplicator"
--m "Add Tweak: Projectile Repulsion"
--m "Buff Perk: Mana Recovery (mana recharge speed +50 -> +100)"
--m "Buff Perk: Demolitionist (max durability to destroy +0 -> +2)"
--m "Fix Perk: Demolitionist increasing explosion damage (unintentional)"
--m "Fix Perk: Protagonist and Misc: Less Particle -> Player Projectiles not working on trigger fired projectiles"
--m "Fix Action: Magic Hand's initial capture distance"
--m "Fix Action: Zap going absolutely crazy with increased lifetime (just a little bit less crazy now)"
--m "Nerf Action: Protective Enchantment (mana cost 20 -> 23, spawn weighting 1.0 -> 0.4, cast delay 0 -> .283, recharge time 0 -> .283, projectile -> utility type, damage reduction 0% -> 70%)"
--m "Rebalance Action: Chaotic Burst to make it less powerful without modifiers (lifetime 240 -> 120, lifetime randomness 0 -> 60, mana cost 30 -> 42, damage 6 -> 4)"
--m "Rebalance Perk: Protagonist (damage +100% -> +200%, linear -> less effective while healthy)"
--m "Rename Action: Chain Cast to Action: Queued Cast"
--m "Rename Perk: Chain Casting to Queue Casting"
--m "Rework Action: Chain Cast to be a general Chain Bolt modifier"
--m "Rework Action: Nugget Shot to be more consistent (add projectile damage, lower speed slightly)"
--m "Add final boss health scaling to Misc: Hero Mode"
--m "Change Misc: Hero Mode distance scaling to use the places visited stat instead of total horizontal distance"
--m "Add Champion: Knockback"
--m "Add appropriate damage type resistances to relevant champion types"
--m "Buff Mini-Bosses (add Burning champion type)"
--m "Buff Champion: Haste (attack speed 150% -> 200%)"
--m "Fix Champion: Ice Burst and Champion: Counter/Reflect scripts not proccing when taking rapid tick damage (like fire)"
--m "Remove the cell eater from enemies in Misc: Hero Mode (ineffective, caused terrain oddities)"
--m "Remove projectile prediction from Champion: Projectile Buff (odd behaviour)"
--m "Rework Champion: Teleportation (less unprompted Holy Moutain assassination attempts)"
--m "Rework Misc: Champions -> Mini-Bosses (no more mini-bosses too early or too often)"
--m "Add Misc: Fixed Camera"
--m "Add Misc: Spell Slot Machine"
--m "Fix a script error when checking if an entity drops gold"
--m "Reword a handful of spell descriptions and config options for clarity"
--m "Update a handful of graphics here and there"
 
 TODO
     make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
     nest tweak (1 gold for things spawned from nests)
+    fix the dynamically loaded nolla loadouts
+    check why some enemies weren't getting health bars
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)

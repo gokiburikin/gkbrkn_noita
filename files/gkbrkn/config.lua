@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c82"
+    Version = "c83"
 }
 
 CONTENT_TYPE = {
@@ -943,7 +943,7 @@ MISC = {
         Enabled = "gkbrkn_champion_enemies",
         SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
         AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
-        MiniBossChampionsEnabled = "gkbrkn_champion_mini_bosses_enable",
+        MiniBossesEnabled = "gkbrkn_champion_mini_bosses",
         ChampionChance = 0.20,
         MiniBossChance = 0.10, -- rolled after champion chance only if mini boss kill threshold has been met
         MiniBossThreshold = 50, -- the amount of enemies that must be killed before a miniboss can spawn
@@ -1150,7 +1150,7 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_mini_bosses,
         SubOption = true,
-        PersistentFlag = MISC.ChampionEnemies.MiniBossChampionsEnabled,
+        PersistentFlag = MISC.ChampionEnemies.MiniBossesEnabled,
         RequiresRestart = true,
     },
     {

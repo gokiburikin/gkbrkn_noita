@@ -10,5 +10,6 @@ function shot( projectile_entity )
     EntityAddComponent( projectile_entity, "CellEaterComponent", {
         radius="4",
         eat_probability="100",
+        eat_dynamic_physics_bodies="0"
     } );
 end

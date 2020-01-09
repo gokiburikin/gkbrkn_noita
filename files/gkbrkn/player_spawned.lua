@@ -131,13 +131,13 @@ if GameHasFlagRun( init_check_flag ) == false then
         if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) then
             GameAddFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled );
         end
-        if HasFlagPersistent( MISC.ChampionEnemies.MiniBossChampionsEnabled ) then
-            GameAddFlagRun( MISC.ChampionEnemies.MiniBossChampionsEnabled );
+        if HasFlagPersistent( MISC.ChampionEnemies.MiniBossesEnabled ) then
+            GameAddFlagRun( MISC.ChampionEnemies.MiniBossesEnabled );
         end
         if HasFlagPersistent( MISC.Badges.Enabled ) then
             local badge = load_dynamic_badge( "champion_mode", {
                 {_always=GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled )},
-                {_mini_boss=GameHasFlagRun( MISC.ChampionEnemies.MiniBossChampionsEnabled )},
+                {_mini_boss=GameHasFlagRun( MISC.ChampionEnemies.MiniBossesEnabled )},
                 {_super=GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled )},
             }, gkbrkn_localization );
             EntityAddChild( player_entity, badge );
