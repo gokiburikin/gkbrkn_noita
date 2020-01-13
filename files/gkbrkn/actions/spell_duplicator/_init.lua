@@ -20,7 +20,6 @@ table.insert( actions, generate_action_entry(
                     table.insert( deck_snapshot, action );
                 end
             end
-            print("--- drawn_actions snapshot: "..s);
         end
 
         function deck_from_drawn_actions( start_index )

@@ -62,7 +62,6 @@ if GameHasFlagRun( init_check_flag ) == false then
         local items = EntityGetAllChildren( inventory );
         for _,child in pairs( items ) do
             if EntityHasTag( child, "wand" ) then 
-                print("dis a wand")
                 ComponentSetValue( child, "ItemComponent", "1" );
             end
         end
@@ -77,7 +76,7 @@ if GameHasFlagRun( init_check_flag ) == false then
     if inventory ~= nil then
         --[[ Spell Bag ]]
         if CONTENT[ITEMS.SpellBag].enabled() then
-            EntityAddChild( inventory, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/spell_bag.xml", x, y ) );
+            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/spell_bag.xml", x + 20, y - 10 );
         end
     end
 

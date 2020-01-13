@@ -5,7 +5,8 @@
 	<Base file="data/entities/base_projectile.xml" >
 		<VelocityComponent
 			gravity_y="0"
-			mass="0.04"
+            air_friction="0"
+			mass="0"
 		>
 		</VelocityComponent>
 	</Base>
@@ -28,16 +29,22 @@
     ragdoll_force_multiplier="0.0"
     hit_particle_force_multiplier="0.0"
     camera_shake_when_shot="5.0"
-    bounce_energy="0.7"
+    bounce_energy="0"
     bounces_left="0"
 	muzzle_flash_file=""
 	shoot_light_flash_radius="1"
 	knockback_force="0"
 	physics_impulse_coeff="0"
-	penetrate_entities="1"
+	penetrate_entities="0"
+	penetrate_world="1"
 	damage_every_x_frames="25"
+    collide_with_world="0"
 	>
-    <config_explosion />
+    <config_explosion
+        damage="0.0"
+        explosion_radius="0"
+    >
+    </config_explosion>
   </ProjectileComponent>
 
   <LightComponent 

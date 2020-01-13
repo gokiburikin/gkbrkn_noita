@@ -10,19 +10,24 @@ In the config menu you can enable loadout management under Misc > Loadouts > Man
 
 Aside from management, you can also easily disable loadouts with the Misc > Loadouts > Enabled option, and you can choose if you want to use the custom player sprites and capes that loadouts use. This is for player character skin compatibility.
 
+There is another mod called Selectable Classes by Ruri (https://modworkshop.net/mod/26171) that spawns class pickups at the start of the run so you can choose the loadout you want instead of rerolling for it. If Misc > Loadouts > Selectable Classes Integration is enabled alongside Selectable Classes then Goki's Things will take all managed and enabled loadouts and add them as class pickups to the starting room.
+
 ### Loadouts
 - **Alchemist**: Chaotic Transmutation Acid Ball, Water, Potions, Material Compression.
 - **Bubble**: Gravity Bubble Spark, Bouncy Dropper Shot, Fast Swimmer.
 - **Charge**: Magic Hand, Stored Shot, Sparkbolt, Critical Hit +.
 - **Default**: The standard loadout.
 - **Demolitionist**: Dormant Crystal, Dormant Crystal Detonator, Demolitionist.
+- **Glitter**: Long Distance Glittering Trail Stored Shot, Glitter Bomb.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
 - **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
-- **Spark**: Zap, Electric Charge Sparkbolt.
+- **Seeker**: Double Persistent Avoiding Drilling Bolts, TNT.
+- **Spark**: Electric Charge Sparkbolt Timer Zap, Thunder Charge.
 - **Speedrunning**: Teleport, Black Hole, Teleportitis.
 - **Treasure Hunter**: Treasure Sense, Nugget Shot, Digging Bolt, Attract Gold.
 - **Trickster**: Long Distance Cast Magicbolt / Sparkbolt split cast, Forward and Back Teleport, Passive Recharge.
 - **Unstable**: Chaotic Burst, Unstable Crystal, Fragile Ego.
+- **Zoning**: Energy Sphere Mines, Giga Death Cross.
 
 ### Loadout Mod Support
 *Make sure these are below Goki's Things in the mod list for proper support*
@@ -111,6 +116,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Chain Bolt**: Fix targeting issues.
 - **Damage Field**: Reduce damage tick rate (tick rate 1 -> 5 frames.)
 - **Damage Plus**: Costs more mana, doubled recharge time.
+- **Explosion of Thunder**: Fixes the interaction with Protective Enchantment.
 - **Freeze Charge**: Remove the particle effects (affects gameplay.)
 - **Glass Cannon**: You deal 3x damage, but take 3x damage.
 - **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across spells that can crit.
@@ -151,19 +157,21 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Barrier Trail**: Projectiles gain a trail of barriers.
 - **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
 - **Damage Plus: Time**: Cast a spell that gains damage over time.
+- **Follow Shot**: Cast a spell that is influenced by your movements.
 - **Glittering Trail**: Projectiles gain a trail of explosions.
-- **Projectile Burst**: Duplicate a projectile multiple times.
-- **Protective Enchantment**: Cast a spell that can not deal damage to you.
+- **Lock Shot**: Cast a spell that locks onto a nearby target.
 - **Path Correction**: Projectiles redirect towards nearby enemies.
 - **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
 - **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
+- **Projectile Burst**: Duplicate a projectile multiple times.
 - **Time Split**: Equalize current cast delay and recharge time.
+- **Trigger: Death**: Cast another spell after the spell expires.
 - **Trigger: Hit**: Cast another spell upon collision.
 - **Trigger: Time**: Cast another spell after a short duration.
-- **Trigger: Death**: Cast another spell after the spell expires.
 
 ### Static Projectile Spells
 - **Circle of Divine Blessing**: A field of modification magic. (Concept by curry_murmurs, name by Gastogh)
+- **Spell Duplicator**: Summon a magical phenomenon that casts a spell in a random direction every second.
 - **Stored Spell**: Summon a magical phenomenon that casts a spell when you stop casting.
 
 ### Passive Spells
@@ -173,13 +181,15 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Passive Recharge**: Your wand recharges even when holstered.
 
 ### Utility Spells
-- **Break Cast**: Skip casting all remaining spells. (Inspired by Kaizer0002)
-- **Magic Hand**: Cast a spell that maintains a fixed position from the tip of your wand.
+- **Break Cast**: Ignore all remaining spells. (Inspired by Kaizer0002)
+- **Magic Hand**: Cast a spell that is held in place a set distance from the tip of your wand.
+- **Protective Enchantment**: Cast a spell with greatly reduced damage that can not directly damage you.
 - **Treasure Sense**: Treasure (wands, hearts, chests, potions, etc.) cast a visible trail towards themselves.
 
 ### Multicast Spells
 - **Chain Cast**: Chain cast 4 spells.
 - **Formation - Stack**: Cast 3 spells in parallel.
+- **Persistent Shot**: Cast 2 spells that keep moving in the direction they were cast.
 - **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
 - **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
 - **Spell Merge**: Cast 2 spells of which the first is merged with the second.

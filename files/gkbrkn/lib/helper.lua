@@ -43,8 +43,8 @@ end
 function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function )
     return {
         id = perk_id,
-        ui_name = gkbrkn_localization["perk_name_"..key],
-        ui_description = gkbrkn_localization["perk_description_"..key],
+        ui_name = gkbrkn_localization["perk_name_"..key] or ("missing name "..key),
+        ui_description = gkbrkn_localization["perk_description_"..key] or ("missing description "..key),
         ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ui.png",
         perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ig.png",
         usable_by_enemies = usable_by_enemies,
@@ -55,8 +55,8 @@ end
 function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function )
     return {
         id = action_id,
-        name 		        = gkbrkn_localization["action_name_"..key],
-        description         = gkbrkn_localization["action_description_"..key],
+        name 		        = gkbrkn_localization["action_name_"..key] or ("missing name "..key),
+        description         = gkbrkn_localization["action_description_"..key] or ( "missing description "..key),
         sprite 		        = "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
         sprite_unidentified = "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
         type 		        = action_type,
@@ -167,6 +167,47 @@ function trend_towards_range( value, divisor, min, max )
     return min + (max - min) * ( value / ( value + divisor ) );
 end
 
+function get_projectile_root_shooter( entity )
+    local root_shooter = entity;
+    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    if projectile ~= nil then
+        local shooter = tonumber( ComponentGetValue( projectile, "mWhoShot" ) );
+        while shooter ~= nil and shooter ~= 0 do
+            root_shooter = shooter;
+            local shooter_projectile = EntityGetFirstComponent( shooter, "ProjectileComponent" );
+            if shooter_projectile == nil then
+                break;
+            end
+            shooter = tonumber( ComponentGetValue( shooter_projectile, "mWhoShot" ) );
+        end
+    end
+    return root_shooter;
+end
+
+function make_projectile_not_damage_shooter( entity, force_shooter )
+    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    if projectile ~= nil then
+        ComponentSetValue( projectile, "explosion_dont_damage_shooter", "1" );
+        ComponentSetValue( projectile, "friendly_fire", "0" );
+        local shooter = force_shooter or get_projectile_root_shooter( entity );
+        if shooter ~= nil and shooter ~= 0 then
+            ComponentObjectSetValue( projectile, "config_explosion", "dont_damage_this", tostring( shooter ) );
+            EntityIterateComponentsByType( entity, "AreaDamageComponent", function(component)
+                if EntityHasTag( shooter, "player_unit" ) then
+                    ComponentSetValue( component, "entities_with_tag", "enemy" );
+                else
+                    ComponentSetValue( component, "entities_with_tag", "player_unit" );
+                end
+            end );
+
+            local lightning = EntityGetFirstComponent( entity, "LightningComponent" );
+            if lightning ~= nil then
+                ComponentObjectSetValue( lightning, "config_explosion", "dont_damage_this", tostring( shooter ) );
+            end
+        end
+    end
+end
+
 -- TODO this doesn't handle all damage components and doesn't handle multiple components of the same type
 function adjust_entity_damage( entity, projectile_damage_callback, typed_damage_callback, explosive_damage_callback, lightning_damage_callback, area_damage_callback )
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
@@ -213,7 +254,7 @@ function adjust_entity_damage( entity, projectile_damage_callback, typed_damage_
         if area_damage_callback ~= nil then
             local area_damage = EntityGetFirstComponent( entity, "AreaDamageComponent" );
             if area_damage ~= nil then
-                local current_damage = tonumber( ConfigGetValue( area_damage, "damage_per_frame" ) );
+                local current_damage = tonumber( ComponentGetValue( area_damage, "damage_per_frame" ) );
                 local new_damage = area_damage_callback( current_damage );
                 if current_damage ~= new_damage then
                     ComponentSetValue( area_damage, "damage_per_frame", tostring( new_damage ) );

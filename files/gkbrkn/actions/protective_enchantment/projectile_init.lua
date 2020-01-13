@@ -1,22 +1,11 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
-    ComponentSetValue( projectile, "explosion_dont_damage_shooter", "1" );
-    --ComponentSetValue( projectile, "never_hit_player", "1" );
-    ComponentSetValue( projectile, "friendly_fire", "0" );
-    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
-    local shooter = ComponentGetValue( projectile, "mWhoShot" );
-    if shooter ~= nil then
-        EntityIterateComponentsByType( entity, "AreaDamageComponent", function(component)
-            if EntityHasTag( shooter, "player_unit" ) then
-                ComponentSetValue( component, "entities_with_tag", "enemy" );
-            else
-                ComponentSetValue( component, "entities_with_tag", "player_unit" );
-            end
-        end );
-    end
+    EntitySetVariableNumber( entity, "gkbrkn_shooter", tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) );
+    make_projectile_not_damage_shooter( entity );
     adjust_entity_damage( entity,
         function( current_damage ) return current_damage * 0.3; end,
         function( current_damages )
@@ -31,5 +20,8 @@ if projectile ~= nil then
         function( current_damage ) return current_damage * 0.3; end,
         function( current_damage ) return current_damage * 0.3; end
     );
+    EntityAddComponent( entity, "LuaComponent", {
+		script_shot="mods/gkbrkn_noita/files/gkbrkn/actions/protective_enchantment/shot.lua"
+    } );
 end
 

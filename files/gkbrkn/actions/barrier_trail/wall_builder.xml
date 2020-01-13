@@ -32,7 +32,7 @@
   </ParticleEmitterComponent>
   
   <LuaComponent
-	script_source_file="data/scripts/projectiles/wall_builder.lua"
+	script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/barrier_trail/wall_builder.lua"
 	execute_every_n_frame="1"
 	>
 	</LuaComponent>

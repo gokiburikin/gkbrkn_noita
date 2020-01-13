@@ -14,5 +14,5 @@ for index,player in pairs( players ) do
         end
     end
     EntityAdjustVariableNumber( player, tracker_variable, 0.0, function( value ) return tonumber( value ) + gold_value; end );
-    --GamePrint( "lost treasure is now: ".. EntityGetVariableNumber( player, tracker_variable, 0.0 ) );
+    --( "lost treasure is now: ".. EntityGetVariableNumber( player, tracker_variable, 0.0 ) );
 end

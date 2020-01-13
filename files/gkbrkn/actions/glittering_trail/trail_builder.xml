@@ -2,7 +2,7 @@
 
   <LuaComponent
 	script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/glittering_trail/trail.lua"
-	execute_every_n_frame="5"
+	execute_every_n_frame="11"
 	>
 	</LuaComponent>
 

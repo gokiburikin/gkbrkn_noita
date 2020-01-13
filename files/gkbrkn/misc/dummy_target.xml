@@ -34,6 +34,7 @@
 		materials_how_much_damage="0.004,0.004,0.001,0.0008,0.0007,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.005"
 		ragdoll_filenames_file="data/ragdolls/player/filenames.txt"
 		ragdoll_material="meat"
+        blood_multiplier="0"
 		physics_objects_damage="1"
 		ragdoll_offset_y="-6" >
         <damage_multipliers

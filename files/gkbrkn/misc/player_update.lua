@@ -420,7 +420,7 @@ if succ_bonus ~= nil then
     local children = EntityGetAllChildren( player_entity );
     for key, child in pairs( children ) do
         if EntityGetName( child ) == "inventory_quick" then
-            for _,item in pairs( EntityGetAllChildren( child ) ) do
+            for _,item in pairs( EntityGetAllChildren( child ) or {} ) do
                 local components = EntityGetAllComponents( item ) or {};
                 for _,component in pairs(components) do
                     if ComponentGetTypeName( component ) == "MaterialSuckerComponent" then
@@ -861,7 +861,6 @@ if now % 10 == 0 then
                     local kills = StatsGetValue("enemies_killed");
                     local kills_divisor = 100;
                     local mana_multiplier = rand( 1.10, trend_towards_range( kills, kills_divisor, 1.25, 2.00 ) );
-                    print( "kills trend "..trend_towards_range( kills, kills_divisor, 0, 1 ) );
                     ability_component_adjust_stats( ability, {
                         --shuffle_deck_when_empty = function(value) end,
                         --actions_per_round = function(value) end,

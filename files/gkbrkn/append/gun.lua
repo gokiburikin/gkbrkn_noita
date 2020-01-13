@@ -74,16 +74,11 @@ function deck_snapshot()
             table.insert( deck_snapshot, action );
         end
     end
-    print("--- drawn_actions snapshot: "..s);
 end
 
 function capture_draw_actions( amount, instant_reload )
     local old_capture = gkbrkn.draw_actions_capture;
-    if old_capture == nil then
-        print( " ");
-    end
     local capture = {};
-    print( "start capturing "..tostring( capture ) );
     local drawn_actions = {};
     gkbrkn.draw_actions_capture = capture;
     draw_actions( amount, instant_reload );
@@ -98,10 +93,9 @@ function capture_draw_actions( amount, instant_reload )
     gkbrkn.draw_actions_capture = old_capture;
 
     local s = "";
-    for _,action in pairs(drawn_actions) do
+    for _,action in pairs( drawn_actions ) do
         s = s ..action.id..", ";
     end
-    print("--- drawn_actions snapshot: "..s);
     return drawn_actions;
 end
 
@@ -112,7 +106,7 @@ function skip_cards( amount )
     gkbrkn.skip_cards = amount;
 end
 
-local reset_per_casts = function()
+function reset_per_casts()
     delete_cloned_actions();
     gkbrkn.projectiles_fired = 0;
     gkbrkn.stack_next_actions = 0;
@@ -197,9 +191,6 @@ function discard_action()
 end
 
 function draw_action( instant_reload_if_empty )
-    --if deck ~= nil and #deck > 0 then
-    --    print("draw_action "..deck[1].id);
-    --end
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining + 1;
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
 
@@ -220,7 +211,6 @@ function draw_action( instant_reload_if_empty )
         --    handle_extra_modifier( extra_modifier, index, gkbrkn.draw_action_stack_size );
         --end
         if gkbrkn.draw_actions_capture ~= nil and gkbrkn.capture_draw_actions then
-            print( "capture "..deck[1].id.." into "..tostring( gkbrkn.draw_actions_capture ) );
             table.insert( gkbrkn.draw_actions_capture, deck[1] );
         end
         result = gkbrkn._draw_action( instant_reload_if_empty );
@@ -417,4 +407,17 @@ function duplicate_draw_action( amount, instant_reload_if_empty )
         end
         draw_actions( original_amount, instant_reload_if_empty );
     end
-end 
+end
+
+function temporary_deck( callback, new_deck, new_hand, new_discarded )
+    local _deck = deck;
+    local _hand = hand;
+    local _discarded = discarded;
+    deck = new_deck;
+    hand = new_hand;
+    discarded = new_discarded;
+    callback( deck, hand, discarded );
+    deck = _deck;
+    hand = _hand;
+    discarded = _discarded;
+end

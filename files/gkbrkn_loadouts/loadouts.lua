@@ -240,15 +240,17 @@ register_loadout(
             stat_ranges = {
                 deck_capacity = {6,6}, -- capacity
                 reload_time = {23,23}, -- recharge time in frames
-                fire_rate_wait = {12,12}, -- cast delay in frames
+                fire_rate_wait = {2,2}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
-                mana_charge_speed = {100,100}, -- mana charge speed
-                mana_max = {100,100}, -- mana max
+                mana_charge_speed = {40,40}, -- mana charge speed
+                mana_max = {60,60}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
+                {"ELECTRIC_CHARGE"},
             },
             actions = {
+                {"LIGHT_BULLET_TIMER"},
                 { "GKBRKN_ZAP" },
             }
         },
@@ -269,10 +271,10 @@ register_loadout(
             },
             stat_randoms = {},
             permanent_actions = {
-                {"ELECTRIC_CHARGE"}
             },
             actions = {
-                {"LIGHT_BULLET"}
+                {"THUNDERBALL"},
+                {"THUNDERBALL"},
             }
         }
     },
@@ -380,8 +382,8 @@ register_loadout(
             permanent_actions = {
             },
             actions = {
-                { { action="GKBRKN_CARRY_SHOT", locked=true } },
-                { { action="GKBRKN_STORED_SHOT", locked=true } },
+                { "GKBRKN_CARRY_SHOT" },
+                { "GKBRKN_STORED_SHOT" },
                 { "LIGHT_BULLET" },
             }
         },
@@ -599,11 +601,11 @@ register_loadout(
             },
             stat_ranges = {
                 deck_capacity = {2,2}, -- capacity
-                reload_time = {2,2}, -- recharge time in frames
-                fire_rate_wait = {2,2}, -- cast delay in frames
-                spread_degrees = {360,360}, -- spread
+                reload_time = {3,3}, -- recharge time in frames
+                fire_rate_wait = {3,3}, -- cast delay in frames
+                spread_degrees = {30,30}, -- spread
                 mana_charge_speed = {6,6}, -- mana charge speed
-                mana_max = {6,6}, -- mana max
+                mana_max = {15,15}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
@@ -691,6 +693,205 @@ register_loadout(
         { "BLEED_OIL" },
     }
 );
+
+-- Glitter
+register_loadout(
+    "gkbrkn_glitter", -- unique identifier
+    gkbrkn_localization.loadout_glitter, -- displayed loadout name
+    "goki",
+    0xFFD755BE, -- cape color (ABGR)
+    0xFFF295E0, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {5,5}, -- capacity
+                reload_time = {90,90}, -- recharge time in frames
+                fire_rate_wait = {30,30}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {50,50}, -- mana charge speed
+                mana_max = {160,160}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "GKBRKN_PROTECTIVE_ENCHANTMENT" },
+                { "GKBRKN_GLITTERING_TRAIL" },
+                { "GKBRKN_STORED_SHOT" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {4,4}, -- capacity
+                reload_time = {40,40}, -- recharge time in frames
+                fire_rate_wait = {20,20}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {90,90}, -- mana charge speed
+                mana_max = {200,200}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "GLITTER_BOMB" },
+            }
+        }
+    },
+    { -- potions
+        { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+    }
+);
+
+-- Zoning
+register_loadout(
+    "gkbrkn_zoning", -- unique identifier
+    gkbrkn_localization.loadout_zoning, -- displayed loadout name
+    "goki",
+    0xFF666666, -- cape color (ABGR)
+    0xFF333333, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {6,6}, -- capacity
+                reload_time = {17,17}, -- recharge time in frames
+                fire_rate_wait = {9,9}, -- cast delay in frames
+                spread_degrees = {2,2}, -- spread
+                mana_charge_speed = {60,60}, -- mana charge speed
+                mana_max = {160,160}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "HORIZONTAL_ARC" },
+                { "FLY_UPWARDS" },
+                { "FLY_DOWNWARDS" },
+                { "GKBRKN_FEATHER_SHOT" },
+                { "BOUNCY_ORB" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {3,3}, -- capacity
+                reload_time = {30,30}, -- recharge time in frames
+                fire_rate_wait = {30,30}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {100,100}, -- mana charge speed
+                mana_max = {200,200}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "LIFETIME" },
+                { "DEATH_CROSS_BIG" },
+            }
+        }
+    },
+    { -- potions
+        { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+    }
+);
+
+-- Seeker
+register_loadout(
+    "gkbrkn_seeker", -- unique identifier
+    gkbrkn_localization.loadout_seeker, -- displayed loadout name
+    "goki",
+    0xFF666666, -- cape color (ABGR)
+    0xFF333333, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {8,8}, -- capacity
+                reload_time = {13,13}, -- recharge time in frames
+                fire_rate_wait = {11,11}, -- cast delay in frames
+                spread_degrees = {4,4}, -- spread
+                mana_charge_speed = {50,50}, -- mana charge speed
+                mana_max = {90,90}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+                { "LIFETIME" },
+            },
+            actions = {
+                { "GKBRKN_PERSISTENT_SHOT" },
+                { "BOUNCE" },
+                { "AVOIDING_ARC" },
+                { "DIGGER" },
+                { "DIGGER" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {3,3}, -- capacity
+                reload_time = {30,30}, -- recharge time in frames
+                fire_rate_wait = {30,30}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {40,40}, -- mana charge speed
+                mana_max = {80,80}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "DYNAMITE" },
+            }
+        }
+    },
+    { -- potions
+        { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+    }
+);
+
 
 --[[ reference this example of bringing the base starting loadouts into the new method
     -- Nolla Summoner

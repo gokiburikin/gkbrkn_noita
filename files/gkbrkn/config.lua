@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c83"
+    Version = "c84"
 }
 
 CONTENT_TYPE = {
@@ -158,7 +158,7 @@ PERKS = {
 }
 
 local register_action = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key], options, disabled_by_default, deprecated, inverted, function()
+    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key] or key, options, disabled_by_default, deprecated, inverted, function()
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
         if options ~= nil and options.callback ~= nil then
             options.callback();
@@ -217,14 +217,20 @@ ACTIONS = {
     ChainCast = register_action( "chain_cast" ),
     MultiDeathTrigger = register_action( "multi_death_trigger" ),
     SpellDuplicator = register_action( "spell_duplicator" ),
+    FeatherShot = register_action( "feather_shot" ),
+    FollowShot = register_action( "follow_shot" ),
+    StickyShot = register_action( "sticky_shot", nil, true, true ),
+    ClingingShot = register_action( "clinging_shot" ),
+    Duplicast = register_action( "duplicast" ),
+    CarpetBomb = register_action( "carpet_bomb", nil, true, true ),
+    PersistentShot = register_action( "persistent_shot" ),
     WIP = register_action( "wip", nil, true, not SETTINGS.Debug ),
 }
 
-local register_tweak = function( key, options, disabled_by_default, deprecated, inverted )
+local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
     if disabled_by_default == nil then disabled_by_default = true; end
     if inverted == nil then inverted = true; end
-
-    return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] ),  options, disabled_by_default, deprecated, inverted );
+    return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] ),  options, disabled_by_default, deprecated, inverted, init_function );
 end
 
 TWEAKS = {
@@ -239,8 +245,9 @@ TWEAKS = {
     GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" } ),
     AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" } ),
     ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" } ),
-    StunLock = register_tweak( "stun_lock", nil ),
+    StunLock = register_tweak( "stun_lock" ),
     RevengeTentacle = register_tweak( "projectile_repulsion", { perk_id="PROJECTILE_REPULSION" } ),
+    ExplosionOfThunder = register_tweak( "explosion_of_thunder", { action_id="THUNDER_BLAST" } ),
 }
 
 LOADOUTS = {};
@@ -679,11 +686,11 @@ CHAMPION_TYPES = {
                 physics_hit = 0.50,
                 explosion = 0.50,
                 poison = 0.50,
-                melee = 0.50,
+                melee = 0.00,
                 drill = 0.50,
                 fire = 0.50,
             };
-            local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for index,damage_model in pairs( damage_models ) do
                 for damage_type,multiplier in pairs( resistances ) do
                     local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
@@ -693,7 +700,6 @@ CHAMPION_TYPES = {
                 local minimum_knockback_force = tonumber( ComponentGetValue( damage_model, "minimum_knockback_force" ) );
                 ComponentSetValue( damage_model, "minimum_knockback_force", "99999" );
             end
-            TryAdjustDamageMultipliers( entity, { melee = 0.00 } );
         end
     }),
     ToxicTrail =  register_champion_type( "toxic_trail", {
@@ -1014,6 +1020,7 @@ MISC = {
         Enabled = "gkbrkn_loadouts_enabled",
         CapeColorEnabled = "gkbrkn_loadouts_cape_color",
         PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
+        SelectableClassesIntegration = "gkbrkn_selectable_classes_integration",
     },
     HeroMode = {
         Enabled = "gkbrkn_hero_mode",
@@ -1028,6 +1035,7 @@ MISC = {
         Chance=0.12,
         SuperChance=0.25,
         RemovePerkTag=true, -- this makes it so that picking up other perks doesn't kill this perk. might have side effects!!!
+        DontKillOtherPerks=true,
     },
     Badges = {
         Enabled = "gkbrkn_show_badges",
@@ -1202,6 +1210,12 @@ OPTIONS = {
         RequiresRestart = true,
     },
     {
+        Name = gkbrkn_localization.sub_option_selectable_classes_integration,
+        PersistentFlag = MISC.Loadouts.SelectableClassesIntegration,
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
         Name = gkbrkn_localization.sub_option_loadouts_custom_cape_color,
         PersistentFlag = "gkbrkn_loadouts_cape_color",
         SubOption = true,
@@ -1211,6 +1225,42 @@ OPTIONS = {
         Name = gkbrkn_localization.sub_option_loadouts_custom_player_sprites,
         PersistentFlag = "gkbrkn_loadouts_player_sprites",
         SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = gkbrkn_localization.option_wands,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_legendary_wands,
+        PersistentFlag = MISC.LegendaryWands.Enabled,
+        RequiresRestart = true,
+        SubOption = true,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_wand_shops_only,
+        PersistentFlag = "gkbrkn_wand_shops_only",
+        SubOption = true,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_loose_spell_generation,
+        PersistentFlag = "gkbrkn_loose_spell_generation",
+        SubOption = true,
+        RequiresRestart = true,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_extended_wand_generation,
+        SubOption = true,
+        PersistentFlag = "gkbrkn_extended_wand_generation",
+    },
+    {
+        Name = gkbrkn_localization.sub_option_chaotic_wand_generation,
+        SubOption = true,
+        PersistentFlag = "gkbrkn_chaotic_wand_generation",
+    },
+    {
+        Name = gkbrkn_localization.sub_option_no_pregen_wands,
+        SubOption = true,
+        PersistentFlag = "gkbrkn_no_pregen_wands",
         RequiresRestart = true,
     },
     {
@@ -1239,33 +1289,6 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.option_passive_recharge,
         PersistentFlag = "gkbrkn_passive_recharge",
-    },
-    {
-        Name = gkbrkn_localization.option_legendary_wands,
-        PersistentFlag = MISC.LegendaryWands.Enabled,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_wand_shops_only,
-        PersistentFlag = "gkbrkn_wand_shops_only",
-    },
-    {
-        Name = gkbrkn_localization.option_loose_spell_generation,
-        PersistentFlag = "gkbrkn_loose_spell_generation",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_extended_wand_generation,
-        PersistentFlag = "gkbrkn_extended_wand_generation",
-    },
-    {
-        Name = gkbrkn_localization.option_chaotic_wand_generation,
-        PersistentFlag = "gkbrkn_chaotic_wand_generation",
-    },
-    {
-        Name = gkbrkn_localization.option_no_pregen_wands,
-        PersistentFlag = "gkbrkn_no_pregen_wands",
-        RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_chests_contain_perks,
@@ -1398,7 +1421,7 @@ function initialize_legendary_wand( base_wand, x, y, level )
     end
     local chosen_wand = valid_wands[Random( 1, #valid_wands )];
     local content_data = CONTENT[chosen_wand];
-    if content_data == nil then print_error("no wand data found"); return; end
+    if content_data == nil then print("legendary wand error: no wand data found"); return; end
     local wand_data = content_data.options.wand_data;
     local wand = base_wand;
 
@@ -1473,6 +1496,7 @@ function initialize_legendary_wand( base_wand, x, y, level )
 end
 
 function register_loadout( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
+    name = name or id;
     local display_name = trim(string.gsub( name, "TYPE", "" ));
     if author ~= nil then
         display_name = display_name .. " ("..author..")";
@@ -1576,13 +1600,6 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "SPEED" },
-                    { "SPEED" },
-                    { "LIFETIME" },
-                    { "BLACK_HOLE" },
-                    { "BLACK_HOLE" },
-                    { "BLACK_HOLE" },
-                    { "BLACK_HOLE" },
                 }
             },
             {

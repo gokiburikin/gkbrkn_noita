@@ -58,6 +58,14 @@ local edit_callbacks = {
 			c.spread_degrees = c.spread_degrees + 7.0;
 			c.fire_rate_wait = c.fire_rate_wait + 45;
 		end
+    end,
+    THUNDER_BLAST = function( action, index )
+        action.action 		= function()
+			add_projectile("mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/thunder_blast.xml");
+			c.fire_rate_wait = c.fire_rate_wait + 15
+			c.screenshake = c.screenshake + 3.0
+			shot_effects.recoil_knockback = shot_effects.recoil_knockback + 30.0
+		end
     end
 }
 

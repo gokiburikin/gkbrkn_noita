@@ -1,11 +1,35 @@
 --[[
 changelog
+    -m "Add Action: Duplicast"
+    -m "Add Action: Follow Shot"
+    -m "Add Action: Lock Shot"
+    -m "Add Action: Persistent Shot"
+    -m "Add Loadout: Zoning"
+    -m "Add Loadouts: Selectable Classes Integration (use with Selectable Classes to choose classes at the start of runs)"
+    -m "Add Tweak: Explosion of Thunder (fixes Protective Enchantment not working with it)"
+    -m "Change Action: Barrier Trail (barrier lifetime 400 -> 60)"
+    -m "Change Action: Copy Spell (mana cost 30 -> 20 + copied spells mana cost)"
+    -m "Change Action: Feather Shot (lifetime +0 -> +21)"
+    -m "Change Action: Glittering Trail (explode every 5 -> 11 frames)"
+    -m "Change Action: Order Deck (mana cost 1 -> 7)"
+    -m "Change Action: Protective Enchantment (blocks direct damage -> blocks (almost) all damage)"
+    -m "Change Action: Spell Duplicator (no longer collides with world)
+    -m "Change Action: Zap (lifetime 3 -> 4)
+    -m "Change Item: Spell Bag (spawns by your feet instead of in your inventory)"
+    -m "Change Loadout: Charge (unlocked the first wand's spells)"
+    -m "Change Loadout: Spark (redesigned)"
+    -m "Change Loadout: Treasure Hunter (rebalance digging wand for more Always Cast potential)"
+    -m "Fix Action: Spell Duplicator and Action: Stored Shot having unset explosion values"
+    -m "Fix Action: Spell Duplicator and Action: Stored Shot not ticking damage with damage modifiers"
+    -m "Fix Misc: Chests Can Contain Perks perks removing other perks when picked up"
+    -m "Fix Misc: Slot Machine not setting the rng properly (fixes repetitive spells)"
+    -m "Remove blood from Misc: Target Dummy"
 
 TODO
     make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
     nest tweak (1 gold for things spawned from nests)
-    fix the dynamically loaded nolla loadouts
     check why some enemies weren't getting health bars
+    store c.extra_entities in projectiles that are created so that they can be applied outside of spell casts
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)
@@ -25,8 +49,6 @@ PERKS
 
 ABANDONED
     Lava, Acid, Poison (Material) Immunities (works if you're willing to polymorph the player for a frame. i'm not)
-    Slot Machine (official mechanic)
-    Projectile Repulsion Field (official mechanic)
 
 ]]
 
@@ -35,6 +57,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once( "data/scripts/lib/utilities.lua");
+
 
 if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
@@ -54,8 +77,10 @@ ModLuaFileAppend( "data/scripts/gun/gun.lua", "mods/gkbrkn_noita/files/gkbrkn/ap
 ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_extra_modifiers.lua" );
 
 for content_id,content in pairs( CONTENT ) do
-    if content.init_function ~= nil and content.enabled() then
-        content.init_function();
+    if content.init_function ~= nil then
+        if content.enabled() then
+            content.init_function();
+        end
     end
 end
 
@@ -105,14 +130,22 @@ function try_append( init_filepath, support_append_filepath )
     local _, err = loadfile( init_filepath );
     if err == nil then
         ModLuaFileAppend( init_filepath, support_append_filepath );
+        return truel
     end
+    return false;
 end
 
 if HasFlagPersistent( MISC.Loadouts.Manage ) then
     try_append( "mods/starting_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/starting_loadouts_support.lua" );
     try_append( "mods/more_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/more_loadouts_support.lua" );
     try_append( "mods/Kaelos_Archetypes/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/kaelos_loadouts_support.lua" );
+end
+
+-- if selectable classes is loaded and available then
+if HasFlagPersistent( MISC.Loadouts.SelectableClassesIntegration ) then
+    try_append( "mods/selectable_classes/init.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_support.lua" )
 end 
+
 if HasFlagPersistent( MISC.Badges.Enabled ) then
     try_append( "mods/nightmare/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/nightmare_mode_badge.lua" );
 end
