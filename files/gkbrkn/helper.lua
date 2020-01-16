@@ -265,10 +265,8 @@ end
 function WandGetAbilityComponent( wand )
     local components = EntityGetAllComponents( wand ) or {};
     for _, component in pairs( components ) do
-        for key, value in pairs( ComponentGetMembers( component ) or {} ) do
-            if key == "mItemRecoil" then
-                return component;
-            end
+        if ComponentGetTypeName( component ) == "AbilityComponent" then
+            return component;
         end
     end
 end

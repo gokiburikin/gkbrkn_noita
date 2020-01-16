@@ -29,9 +29,11 @@ gkbrkn = {
     capture_draw_actions = true,
     draw_action_stack_size = 0,
     _create_shot = create_shot,
+    _create_shot = create_shot,
     _draw_actions = draw_actions,
     _set_current_action = set_current_action,
     _play_action = play_action,
+    __play_permanent_card = _play_permanent_card,
     _add_projectile = add_projectile,
     _move_hand_to_discarded = move_hand_to_discarded,
     _order_deck = order_deck,
@@ -172,6 +174,19 @@ function play_action( action )
         gkbrkn.reset_on_draw = false;
         reset_per_casts();
     end
+    if playing_permanent_card then
+        local player = GetUpdatedEntityID();
+        local blood_magic_stacks = EntityGetVariableNumber( player, "gkbrkn_blood_magic_stacks", 0 );
+        if blood_magic_stacks > 0 then
+            local blood_to_mana_ratio = CONTENT[PERKS.BloodMagic].options.BloodToManaRatio * blood_magic_stacks / 25;
+            local used_mana = action.mana;
+            local damage_models = EntityGetComponent( player, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+                ComponentSetValue( damage_model, "hp", tostring( hp - blood_to_mana_ratio * used_mana ) );
+            end
+        end
+    end
     gkbrkn._play_action(action);
 end
 
@@ -197,6 +212,7 @@ function draw_action( instant_reload_if_empty )
     local result = false;
     local player = GetUpdatedEntityID();
     local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+    local blood_magic_stacks = EntityGetVariableNumber( player, "gkbrkn_blood_magic_stacks", 0 );
     local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
 
     --[[
@@ -213,7 +229,21 @@ function draw_action( instant_reload_if_empty )
         if gkbrkn.draw_actions_capture ~= nil and gkbrkn.capture_draw_actions then
             table.insert( gkbrkn.draw_actions_capture, deck[1] );
         end
-        result = gkbrkn._draw_action( instant_reload_if_empty );
+        if blood_magic_stacks > 0 then
+            local old_mana = mana;
+            -- NOTE this could cause mod interoperability issues
+            mana = 100000;
+            result = gkbrkn._draw_action( instant_reload_if_empty );
+            local used_mana = 100000 - mana;
+            mana = old_mana;
+            local damage_models = EntityGetComponent( player, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+                ComponentSetValue( damage_model, "hp", tostring( hp - used_mana / 25 ) );
+            end
+        else
+            result = gkbrkn._draw_action( instant_reload_if_empty );
+        end
         --[[
         if current_action ~= nil and current_action.uses_remaining ~= nil and current_action.uses_remaining >= 0 then
             current_action.uses_remaining = current_action.uses_remaining + 1;

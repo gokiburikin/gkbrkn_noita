@@ -66,6 +66,17 @@ local edit_callbacks = {
 			c.screenshake = c.screenshake + 3.0
 			shot_effects.recoil_knockback = shot_effects.recoil_knockback + 30.0
 		end
+    end,
+    X_RAY = function( action, index )
+        action.action = function()
+			add_projectile("mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/xray.xml");
+		end
+    end,
+    SPIRAL_SHOT = function ( action, index )
+        action.action = function()
+			add_projectile( "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/spiral_shot/spiral_shot.xml" );
+			c.fire_rate_wait = c.fire_rate_wait + 20;
+		end
     end
 }
 

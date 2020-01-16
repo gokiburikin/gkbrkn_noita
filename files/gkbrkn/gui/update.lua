@@ -77,7 +77,7 @@ function RegisterFlagOption( name, flag, require_restart, sub_option, required_f
 end
 
 for _,option in pairs( OPTIONS ) do
-    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.ToggleCallback, option.RequiresNewGame );
+    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.RequiredFlags, option.ToggleCallback, option.RequiresNewGame );
 end
 
 function next_id()

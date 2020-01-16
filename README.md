@@ -195,6 +195,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 
 ### Other Spells
+- **Arcane Bouquet**: Cast 2 spells the first of which bursts into multiples of the second after a timer runs out.
 - **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
 - **Double Cast**: Cast the next spell and a copy of the next spell.
 - **Extra Projectile**: Duplicate a projectile.

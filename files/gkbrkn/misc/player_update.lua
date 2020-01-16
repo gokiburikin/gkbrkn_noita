@@ -13,6 +13,22 @@ local now = GameGetFrameNum();
 local player_entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( player_entity );
 local children = EntityGetAllChildren( player_entity ) or {};
+local wands = {};
+local active_wand = nil;
+local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
+if inventory2 ~= nil then
+    local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+    for key, child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+            break;
+        end
+    end
+    if active_item ~= nil and EntityHasTag( active_item, "wand" ) then
+        active_wand = active_item;
+    end
+end
+local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
 
 --[[
 if now % 30 == 0 then
@@ -60,7 +76,7 @@ if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
     local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
     local max_invincibility_frames = 0;
     for _,damage_model in pairs( damage_models ) do
-        local invincibility_frames = tonumber(ComponentGetValue( damage_model, "invincibility_frames" ));
+        local invincibility_frames = tonumber( ComponentGetValue( damage_model, "invincibility_frames" ) );
         if invincibility_frames > max_invincibility_frames then
             max_invincibility_frames = invincibility_frames;
         end
@@ -99,17 +115,8 @@ end
 --[[ Mana Recovery ]]
 local mana_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_mana_recovery", 0 );
 if mana_recovery ~= 0 then
-    local valid_wands = {};
-    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
-    if inventory2 ~= nil then
-        for key, child in pairs( children ) do
-            if EntityGetName( child ) == "inventory_quick" then
-                valid_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
-                break;
-            end
-        end
-
-        for _,wand in pairs(valid_wands) do
+    if #wands > 0 then
+        for _,wand in pairs( wands ) do
             local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
             if ability ~= nil then
                 local mana = tonumber( ComponentGetValue( ability, "mana" ) );
@@ -128,17 +135,13 @@ if HasFlagPersistent( MISC.PassiveRecharge.Enabled ) and recharge_speed < MISC.P
     recharge_speed = MISC.PassiveRecharge.Speed;
 end
 if recharge_speed ~= 0 then
-    local valid_wands = {};
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     local active_item = ComponentGetValue( inventory2, "mActiveItem" );
-    for key, child in pairs( children ) do
-        if EntityGetName( child ) == "inventory_quick" then
-            for _,wand in pairs( EntityGetChildrenWithTag( child, "wand" ) or {} ) do
-                if tonumber(wand) ~= tonumber(active_item) then
-                    table.insert( valid_wands, wand );
-                end
-            end
-            break;
+    local valid_wands = {};
+    
+    for _,wand in pairs(wands) do
+        if tonumber( wand ) ~= tonumber( active_item ) then
+            table.insert( valid_wands, wand );
         end
     end
     
@@ -156,14 +159,14 @@ end
 --[[ Heal New Health ]]
 -- TODO this might eventually need to be changed to variable storage
 last_max_hp = last_max_hp or {};
-local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
 for _,damage_model in pairs( damage_models ) do
-    local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
-    if last_max_hp[tostring(damage_model)] == nil then
-        last_max_hp[tostring(damage_model)] = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+    damage_model = tostring( damage_model );
+    local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+    if last_max_hp[ damage_model ] == nil then
+        last_max_hp[ damage_model ] = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
     end
-    if max_hp > last_max_hp[tostring(damage_model)] then
-        local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
+    if max_hp > last_max_hp[ damage_model ] then
+        local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
         local hp_difference = max_hp - current_hp;
         local target_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_max_health_recovery", 0.0 );
         if HasFlagPersistent( MISC.HealOnMaxHealthUp.Enabled ) and target_recovery < 1.0 then
@@ -172,15 +175,15 @@ for _,damage_model in pairs( damage_models ) do
         if HasFlagPersistent( MISC.HealOnMaxHealthUp.FullHeal ) then
             target_recovery = 1000.0;
         end
-        local gained_hp = (max_hp - last_max_hp[tostring(damage_model)]) * target_recovery;
+        local gained_hp = (max_hp - last_max_hp[ damage_model ]) * target_recovery;
         if gained_hp > 0 then
             gained_hp = math.min( gained_hp, hp_difference );
             ComponentSetValue( damage_model, "hp", tostring( current_hp + gained_hp ) );
-            if math.ceil(gained_hp) ~= 0 then
+            if math.ceil( gained_hp ) ~= 0 then
                 GamePrint("Regained "..math.ceil(gained_hp * 25).." health");
             end
         end
-        last_max_hp[tostring(damage_model)] = max_hp;
+        last_max_hp[ damage_model ] = max_hp;
     end
 end
 
@@ -228,6 +231,46 @@ if HasFlagPersistent( MISC.AutoPickupGold.Enabled ) then
         if EntityHasTag( gold_nugget, "gkbrkn_special_goldnugget" ) == false then
             EntitySetTransform( gold_nugget, x, y );
             break;
+        end
+    end
+end
+
+--[[ Blood Magic ]]
+local blood_magic_stacks = EntityGetVariableNumber( player_entity, "gkbrkn_blood_magic_stacks", 0 );
+local blood_to_mana_ratio = CONTENT[PERKS.BloodMagic].options.BloodToManaRatio * blood_magic_stacks;
+if blood_magic_stacks ~= 0 then
+    if #wands > 0 then
+        local recoverable_mana = 0;
+        for _,wand in pairs( wands ) do
+            if tonumber( wand ) ~= tonumber( active_wand ) then
+                local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
+                if ability ~= nil then
+                    ComponentSetValue( ability, "mana", "0" );
+                end
+            end
+        end
+        if active_wand ~= nil then
+            local ability = WandGetAbilityComponent( active_wand, "AbilityComponent" );
+            if ability ~= nil then
+                local mana = tonumber( ComponentGetValue( ability, "mana" ) );
+                if mana > 0 then
+                    recoverable_mana = recoverable_mana + mana;
+                    ComponentSetValue( ability, "mana", "0" );
+                end
+            end
+        end
+        if recoverable_mana ~= 0 then
+            local recovery_rate_adjustment = math.min( 1, ( GameGetFrameNum() - EntityGetVariableNumber( player_entity, "gkbrkn_last_frame_damaged", 0 ) ) / 180 );
+            for _,damage_model in pairs( damage_models ) do
+                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+                local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+                local new_hp = math.min( max_hp, hp + recoverable_mana * blood_to_mana_ratio / 60 * recovery_rate_adjustment );
+                ComponentSetValue( damage_model, "hp", tostring( new_hp ) );
+                -- TODO when we can deal damage we won't need this
+                if new_hp <= 0 then
+                    EntityKill( player_entity );
+                end
+            end
         end
     end
 end
@@ -467,21 +510,22 @@ end
 
 if now % 10 == 0 then
     local nearby_enemies = EntityGetWithTag( "enemy" );
+    --GamePrint( #nearby_enemies.." enemies nearby" );
     --[[ Champions ]]
     if GameHasFlagRun( MISC.ChampionEnemies.Enabled ) then
         for _,nearby in pairs( nearby_enemies ) do
             SetRandomSeed( now, x + y + nearby );
 
             --SetRandomSeed( x, y );
-            if EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and ( EntityHasTag( nearby, "gkbrkn_force_champion" ) == true or EntityHasTag( nearby, "gkbrkn_champions" ) == false ) and does_entity_drop_gold( nearby ) == true then
+            if ( EntityHasTag( nearby, "gkbrkn_champions" ) == false or EntityHasTag( nearby, "gkbrkn_force_champion" ) == true ) and EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and does_entity_drop_gold( nearby ) == true then
                 EntityAddTag( nearby, "gkbrkn_champions" );
                 if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                     EntityRemoveTag( nearby, "gkbrkn_force_champion" );
                     local is_mini_boss = false;
-                    local kills = StatsGetValue("enemies_killed");
+                    local kills = tonumber( StatsGetValue("enemies_killed") ) or 0;
                     if GameHasFlagRun( MISC.ChampionEnemies.MiniBossesEnabled ) then
-                        local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) );
-                        if kills >= GlobalsGetValue( "gkbrkn_next_miniboss" ) then
+                        local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) ) or 0;
+                        if kills >= next_mini_boss then
                             is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
                             if is_mini_boss == true then
                                 GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
@@ -582,7 +626,7 @@ if now % 10 == 0 then
                             local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
                             local new_max = max_hp * 1.25;
                             if is_mini_boss then
-                                new_max = max_hp * 6;
+                                new_max = math.max( 50, math.pow( max_hp, 0.75 ) * 10 );
                             end
                             local regained = new_max - current_hp;
                             ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
@@ -652,6 +696,11 @@ if now % 10 == 0 then
                             end
                         end
 
+                        --[[ Mini-Boss Health Bar ]]
+                        if EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                            add_entity_mini_health_bar( nearby );
+                        end
+
                         --[[ Sprite Particle Emitter ]]
                         local sprite_particle_sprite_file = champion_data.sprite_particle_sprite_file;
                         if sprite_particle_sprite_file ~= nil then
@@ -696,24 +745,7 @@ if now % 10 == 0 then
     if HasFlagPersistent( MISC.HealthBars.Enabled ) then
         for _,nearby in pairs( nearby_enemies ) do
             if EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
-                EntityAddComponent( nearby, "HealthBarComponent" );
-                EntityAddComponent( nearby, "SpriteComponent", { 
-                    _tags="health_bar,ui,no_hitbox",
-                    alpha="1",
-                    has_special_scale="1",
-                    image_file="mods/gkbrkn_noita/files/gkbrkn/misc/health_bar.png",
-                    is_text_sprite="0",
-                    next_rect_animation="",
-                    offset_x="11",
-                    offset_y="-4",
-                    rect_animation="",
-                    special_scale_x="0.2",
-                    special_scale_y="0.6",
-                    ui_is_parent="0",
-                    update_transform="1",
-                    visible="1",
-                    z_index="-9000",
-                });
+                add_entity_mini_health_bar( nearby );
             end
         end
     end
@@ -721,7 +753,12 @@ if now % 10 == 0 then
     --[[ Hero Mode Scaling ]]
     -- TODO find a better way to target enemies and bosses (dragon, pyramid, centipede)
     if GameHasFlagRun( MISC.HeroMode.Enabled ) then
-        local speed_multiplier = 1.25; 
+        local is_carnage_mode = GameHasFlagRun( MISC.HeroMode.CarnageDifficultyEnabled );
+        local speed_multiplier = 1.25;
+
+        if is_carnage_mode then
+            speed_multiplier = 2.0;
+        end
 
         local distance = EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode_distance", 0.0 );
         local distance_multiplier = math.pow( 0.9, tonumber( StatsGetValue("places_visited") ) - 1 );
@@ -780,6 +817,12 @@ if now % 10 == 0 then
                         end
                     end
 
+                    local attack_speed_divisor = 1.25;
+
+                    if is_carnage_mode then
+                        attack_speed_divisor = 2.00;
+                    end
+
                     local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
                     if #animal_ais > 0 then
                         for _,ai in pairs( animal_ais ) do
@@ -796,10 +839,56 @@ if now % 10 == 0 then
                                 creature_detection_angular_range_deg="180",
                             });
                             ComponentAdjustValues( ai, {
-                                attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
-                                attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
-                                attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.25 ) end,
+                                attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / attack_speed_divisor ) end,
+                                attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / attack_speed_divisor ) end,
+                                attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / attack_speed_divisor ) end,
                             });
+                            if is_carnage_mode then
+                                local carnage_effects = { "PROTECTION_FIRE" };
+                                for _,game_effect in pairs( carnage_effects ) do
+                                    local effect = GetGameEffectLoadTo( nearby, game_effect, true );
+                                    if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
+                                end
+                                ComponentSetValues( ai, {
+                                    attack_dash_enabled="1",
+                                    can_fly="1",
+                                });
+                                ComponentAdjustValues( ai, {
+                                    attack_dash_distance=function(value) return math.max( tonumber( value ), 50 ) end,
+                                });
+                                local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
+                                for _,ai in pairs( animal_ais ) do
+                                    ComponentSetValues( ai, {} );
+                                end
+                                local path_finding = EntityGetFirstComponent( nearby, "PathFindingComponent" );
+                                if path_finding ~= nil then
+                                    ComponentSetValues( path_finding, {
+                                        can_fly="1"
+                                    } );
+                                end
+                                
+                                local jetpack_particles = EntityAddComponent( nearby, "ParticleEmitterComponent", {
+                                    _tags="jetpack",
+                                    emitted_material_name="rocket_particles",
+                                    x_pos_offset_min="-1",
+                                    x_pos_offset_max="1",
+                                    y_pos_offset_min="",
+                                    y_pos_offset_max="0",
+                                    x_vel_min="-7",
+                                    x_vel_max="7",
+                                    y_vel_min="80",
+                                    y_vel_max="180",
+                                    count_min="3",
+                                    count_max="7",
+                                    lifetime_min="0.1",
+                                    lifetime_max="0.2",
+                                    create_real_particles="0",
+                                    emit_cosmetic_particles="1",
+                                    emission_interval_min_frames="0",
+                                    emission_interval_max_frames="1",
+                                    is_emitting="1",
+                                } );
+                            end
                         end
                     end
                 end
@@ -810,10 +899,10 @@ if now % 10 == 0 then
                         jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
                         jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
                         fly_smooth_y = function(value) return "0" end,
-                        fly_speed_mult = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
-                        fly_speed_max_up = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
-                        fly_speed_max_down = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
-                        fly_speed_change_spd = function(value) return tonumber( fly_velocity_x )  * speed_multiplier end,
+                        fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier end,
+                        fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * speed_multiplier end,
+                        fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * speed_multiplier end,
+                        fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier end,
                     });
                     ComponentAdjustMetaCustoms( character_platforming, {
                         run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
@@ -822,16 +911,18 @@ if now % 10 == 0 then
                     });
                 end
 
-                EntityAddComponent( nearby, "LuaComponent", {
-                    script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
-                });
+                if is_carnage_mode == false then
+                    EntityAddComponent( nearby, "LuaComponent", {
+                        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
+                    });
+                end
             end
             --[[
             -- only do it twice a second to reduce performance hit
             ]]
             if now % 30 == 0 and EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 1 then
                 local charmed = GameGetGameEffectCount( nearby, "CHARM" );
-                if charmed < 1 then
+                if charmed < 1 or is_carnage_mode then
                     local nearby_genome = EntityGetFirstComponent( nearby, "GenomeDataComponent" );
                     local nearby_herd = -1;
                     if nearby_genome ~= nil then
@@ -840,7 +931,7 @@ if now % 10 == 0 then
                             local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
                             for _,ai in pairs( animal_ais ) do
                                 if ComponentGetValue( ai, "tries_to_ranged_attack_friends" ) ~= "1" then
-                                    ComponentSetValue( ai, "mGreatestPrey", tostring( player_entity ) );
+                                    ComponentSetValue( ai, "mGreatestPrey", player_entity );
                                 end
                             end
                         end
@@ -848,31 +939,32 @@ if now % 10 == 0 then
                 end
             end
         end
-
-        local nearby_wands = EntityGetInRadiusWithTag( x, y, 256, "wand" );
-        for _,wand in pairs( nearby_wands ) do
-            if EntityGetVariableNumber( wand, "gkbrkn_hero_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_duplicate_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_loadout_wand", 0 ) == 0 then
-                --local ability = EntityGetFirstComponent( wand, "AbilityComponent", false );
-                local x, y = EntityGetTransform( wand );
-                SetRandomSeed( now, x + y + wand );
-                local ability = FindFirstComponentByType( wand, "AbilityComponent" );
-                if ability ~= nil then
-                    EntitySetVariableNumber( wand, "gkbrkn_hero_wand", 1 );
-                    local kills = StatsGetValue("enemies_killed");
-                    local kills_divisor = 100;
-                    local mana_multiplier = rand( 1.10, trend_towards_range( kills, kills_divisor, 1.25, 2.00 ) );
-                    ability_component_adjust_stats( ability, {
-                        --shuffle_deck_when_empty = function(value) end,
-                        --actions_per_round = function(value) end,
-                        --speed_multiplier = function(value) end,
-                        mana_max = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
-                        mana = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
-                        deck_capacity = function(value) return math.min( 25, tonumber( value ) + Random( 1, 2 ) ); end,
-                        reload_time = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
-                        fire_rate_wait = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
-                        spread_degrees = function(value) return tonumber( value ) - Random( 0, 4 ); end,
-                        mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 10, trend_towards_range( kills, kills_divisor, 20, 50 ) ) ) * rand( 1.10, trend_towards_range( kills, kills_divisor, 1.20, 1.50 ) ) ); end,
-                    } );
+        
+        if is_carnage_mode == false then
+            for _,wand in pairs( wands ) do
+                if EntityGetVariableNumber( wand, "gkbrkn_hero_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_duplicate_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_loadout_wand", 0 ) == 0 then
+                    --local ability = EntityGetFirstComponent( wand, "AbilityComponent", false );
+                    local x, y = EntityGetTransform( wand );
+                    SetRandomSeed( now, x + y + wand );
+                    local ability = FindFirstComponentByType( wand, "AbilityComponent" );
+                    if ability ~= nil then
+                        EntitySetVariableNumber( wand, "gkbrkn_hero_wand", 1 );
+                        local kills = StatsGetValue("enemies_killed");
+                        local kills_divisor = 100;
+                        local mana_multiplier = rand( 1.10, trend_towards_range( kills, kills_divisor, 1.25, 2.00 ) );
+                        ability_component_adjust_stats( ability, {
+                            --shuffle_deck_when_empty = function(value) end,
+                            --actions_per_round = function(value) end,
+                            --speed_multiplier = function(value) end,
+                            mana_max = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
+                            mana = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
+                            deck_capacity = function(value) return math.min( 25, tonumber( value ) + Random( 1, 2 ) ); end,
+                            reload_time = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
+                            fire_rate_wait = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
+                            spread_degrees = function(value) return tonumber( value ) - Random( 0, 4 ); end,
+                            mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 10, trend_towards_range( kills, kills_divisor, 20, 50 ) ) ) * rand( 1.10, trend_towards_range( kills, kills_divisor, 1.20, 1.50 ) ) ); end,
+                        } );
+                    end
                 end
             end
         end

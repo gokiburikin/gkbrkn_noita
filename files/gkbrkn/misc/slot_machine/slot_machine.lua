@@ -2,7 +2,7 @@ function item_pickup( entity_item, entity_who_picked, item_name )
 	local x, y = EntityGetTransform( entity_item );
     SetRandomSeed( GameGetFrameNum(), x + y + entity_item );
 
-    local chosen_action = GetRandomAction( x, y, Random( 0, 6 ), 0 );
+    local chosen_action = GetRandomAction( x, y, Random( 0, 6 ), Random( 1, 9999999 ) );
     local action = CreateItemActionEntity( chosen_action, x, y );
     EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", true );
     EntitySetComponentsWithTagEnabled( action,  "item_unidentified", false );

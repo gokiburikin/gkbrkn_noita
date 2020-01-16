@@ -280,3 +280,24 @@ function adjust_all_entity_damage( entity, callback )
         function( current_damage ) return callback( current_damage ); end
     );
 end
+
+function add_entity_mini_health_bar( entity )
+    EntityAddComponent( nearby, "HealthBarComponent" );
+    EntityAddComponent( nearby, "SpriteComponent", { 
+        _tags="health_bar,ui,no_hitbox",
+        alpha="1",
+        has_special_scale="1",
+        image_file="mods/gkbrkn_noita/files/gkbrkn/misc/health_bar.png",
+        is_text_sprite="0",
+        next_rect_animation="",
+        offset_x="11",
+        offset_y="-4",
+        rect_animation="",
+        special_scale_x="0.2",
+        special_scale_y="0.6",
+        ui_is_parent="0",
+        update_transform="1",
+        visible="1",
+        z_index="-9000",
+    });
+end

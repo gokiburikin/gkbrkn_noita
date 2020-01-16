@@ -1,35 +1,28 @@
 --[[
 changelog
-    -m "Add Action: Duplicast"
-    -m "Add Action: Follow Shot"
-    -m "Add Action: Lock Shot"
-    -m "Add Action: Persistent Shot"
-    -m "Add Loadout: Zoning"
-    -m "Add Loadouts: Selectable Classes Integration (use with Selectable Classes to choose classes at the start of runs)"
-    -m "Add Tweak: Explosion of Thunder (fixes Protective Enchantment not working with it)"
-    -m "Change Action: Barrier Trail (barrier lifetime 400 -> 60)"
-    -m "Change Action: Copy Spell (mana cost 30 -> 20 + copied spells mana cost)"
-    -m "Change Action: Feather Shot (lifetime +0 -> +21)"
-    -m "Change Action: Glittering Trail (explode every 5 -> 11 frames)"
-    -m "Change Action: Order Deck (mana cost 1 -> 7)"
-    -m "Change Action: Protective Enchantment (blocks direct damage -> blocks (almost) all damage)"
-    -m "Change Action: Spell Duplicator (no longer collides with world)
-    -m "Change Action: Zap (lifetime 3 -> 4)
-    -m "Change Item: Spell Bag (spawns by your feet instead of in your inventory)"
-    -m "Change Loadout: Charge (unlocked the first wand's spells)"
-    -m "Change Loadout: Spark (redesigned)"
-    -m "Change Loadout: Treasure Hunter (rebalance digging wand for more Always Cast potential)"
-    -m "Fix Action: Spell Duplicator and Action: Stored Shot having unset explosion values"
-    -m "Fix Action: Spell Duplicator and Action: Stored Shot not ticking damage with damage modifiers"
-    -m "Fix Misc: Chests Can Contain Perks perks removing other perks when picked up"
-    -m "Fix Misc: Slot Machine not setting the rng properly (fixes repetitive spells)"
-    -m "Remove blood from Misc: Target Dummy"
+    -m "Add a health bar to Mini-Bosses"
+    -m "Add Carnage Mode (unfair difficulty)"
+    -m "Add Loadout: Blood"
+    -m "Add Perk: Blood Magic"
+    -m "Add Tweak: Spiral Shot (reimplemented to be much more performant)"
+    -m "Change Action: Persistent (decreased angle easing, mana cost 9 -> 17, weighting 0.7 -> 0.4)"
+    -m "Change Legendary Wand particles"
+    -m "Change Loadout: Kamikaze (remove pointless trigger - death)"
+    -m "Change Loadout: Speedrunning (add damage plus to teleport projectile)"
+    -m "Change Mini-Boss bonus health calculation (weaker mini-bosses have more, stronger mini-bosses have less)"
+    -m "Change some graphics here and there"
+    -m "Deprecate Champion: Healthy (basically a worse Armoured that was confused for healing)"
+    -m "Fix Action: Magic Light's description"
+    -m "Fix Misc: Slot Machine randomness actually this time"
+    -m "Fix Selectable Classes Integration (fixes Selectable Classes loadouts failing to load)"
+    -m "Optimize some scripts a bit (more to come)"
+    -m "Rename Action: Duplicast -> Arcane Bouquet"
 
 TODO
     make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
     nest tweak (1 gold for things spawned from nests)
     check why some enemies weren't getting health bars
-    store c.extra_entities in projectiles that are created so that they can be applied outside of spell casts
+    add treasure sense options
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)

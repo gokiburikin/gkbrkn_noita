@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c84"
+    Version = "c85"
 }
 
 CONTENT_TYPE = {
@@ -154,6 +154,7 @@ PERKS = {
     MagicLight = register_perk( "magic_light", nil, true, true ),
     QueueCasting = register_perk( "queue_casting" ),
     DisenchantSpell = register_perk( "disenchant_spell" ),
+    BloodMagic = register_perk( "blood_magic", { BloodToManaRatio = 1 } ),
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
@@ -230,7 +231,7 @@ ACTIONS = {
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
     if disabled_by_default == nil then disabled_by_default = true; end
     if inverted == nil then inverted = true; end
-    return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] ),  options, disabled_by_default, deprecated, inverted, init_function );
+    return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] or key ),  options, disabled_by_default, deprecated, inverted, init_function );
 end
 
 TWEAKS = {
@@ -239,7 +240,7 @@ TWEAKS = {
     Damage = register_tweak( "damage", { action_id="DAMAGE" } ),
     Freeze = register_tweak( "freeze", { action_id="FREEZE" } ),
     IncreaseMana = register_tweak( "increase_mana", { action_id="MANA_REDUCE" } ),
-    Blindness = register_tweak( "blindness","Shorten Blindness", nil, true, true, true ),
+    Blindness = register_tweak( "blindness", nil, true, true, true ),
     RevengeExplosion = register_tweak( "revenge_explosion", { perk_id="REVENGE_EXPLOSION" } ),
     RevengeTentacle = register_tweak( "revenge_tentacle", { perk_id="REVENGE_TENTACLE" } ),
     GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" } ),
@@ -248,6 +249,8 @@ TWEAKS = {
     StunLock = register_tweak( "stun_lock" ),
     RevengeTentacle = register_tweak( "projectile_repulsion", { perk_id="PROJECTILE_REPULSION" } ),
     ExplosionOfThunder = register_tweak( "explosion_of_thunder", { action_id="THUNDER_BLAST" } ),
+    AllSeeingEye = register_tweak( "all_seeing_eye", { action_id="X_RAY" }, true, true, true ),
+    SpiralShot = register_tweak( "spiral_shot", { action_id="SPIRAL_SHOT" } ),
 }
 
 LOADOUTS = {};
@@ -582,7 +585,7 @@ CHAMPION_TYPES = {
                 ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
             end
         end
-    }),
+    }, true, true),
     HotBlooded = register_champion_type( "hot_blooded", {
         particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/hot_blooded.xml",
@@ -1026,6 +1029,7 @@ MISC = {
         Enabled = "gkbrkn_hero_mode",
         OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
         DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
+        CarnageDifficultyEnabled = "gkbrkn_hero_mode_carnage",
     },
     NoPregenWands = {
         Enabled = "gkbrkn_no_pregen_wands",
@@ -1187,12 +1191,34 @@ OPTIONS = {
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_orb_scale",
         RequiresRestart = true,
+        ToggleCallback = function( enabled )
+            if not enabled then
+                RemoveFlagPersistent( MISC.HeroMode.CarnageDifficultyEnabled );
+            end
+        end
     },
     {
         Name = gkbrkn_localization.sub_option_hero_mode_distance_difficulty,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_distance_scale",
         RequiresRestart = true,
+        ToggleCallback = function( enabled )
+            if not enabled then
+                RemoveFlagPersistent( MISC.HeroMode.CarnageDifficultyEnabled );
+            end
+        end
+    },
+    {
+        Name = gkbrkn_localization.sub_option_hero_mode_carnage_difficulty,
+        SubOption = true,
+        PersistentFlag = "gkbrkn_hero_mode_carnage",
+        RequiresRestart = true,
+        ToggleCallback = function( enabled )
+            if enabled then
+                AddFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled );
+                AddFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled );
+            end
+        end
     },
     {
         Name = gkbrkn_localization.option_loadouts,

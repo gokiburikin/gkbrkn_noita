@@ -80,6 +80,8 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
     end
 
+    --EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.xml", x + 200, y - 40 );
+
     --[[ Hero Mode ]]
     if HasFlagPersistent( MISC.HeroMode.Enabled ) then
         GameAddFlagRun( MISC.HeroMode.Enabled );
@@ -89,33 +91,72 @@ if GameHasFlagRun( init_check_flag ) == false then
         if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
             GameAddFlagRun( MISC.HeroMode.DistanceDifficultyEnabled );
         end
+        if HasFlagPersistent( MISC.HeroMode.CarnageDifficultyEnabled ) then
+            GameAddFlagRun( MISC.HeroMode.CarnageDifficultyEnabled );
+        end
         if HasFlagPersistent( MISC.Badges.Enabled ) then
             local badge = load_dynamic_badge( "hero_mode", {
                 {_distance=GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled )},
                 {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled )},
+                {_carnage=GameHasFlagRun( MISC.HeroMode.CarnageDifficultyEnabled )},
             }, gkbrkn_localization );
             EntityAddChild( player_entity, badge );
 
-            local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
-            if character_platforming ~= nil then
-                local speed_multiplier = 1.25;
-                local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
-                ComponentAdjustValues( character_platforming, {
-                    jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                    jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
-                    fly_smooth_y = function(value) return "0"; end,
-                    fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
-                    fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
-                    fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
-                    fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
-                });
-                ComponentAdjustMetaCustoms( character_platforming, {
-                    fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
-                    run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
-                    --velocity_min_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                    velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                    velocity_max_y = function(value) return tonumber( value ) * speed_multiplier; end,
-                });
+            if GameHasFlagRun( MISC.HeroMode.CarnageDifficultyEnabled ) == false then
+                local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
+                if character_platforming ~= nil then
+                    local speed_multiplier = 1.25;
+                    local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
+                    ComponentAdjustValues( character_platforming, {
+                        jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                        jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
+                        fly_smooth_y = function(value) return "0"; end,
+                        fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+                        fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
+                        fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
+                        fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
+                    });
+                    ComponentAdjustMetaCustoms( character_platforming, {
+                        fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
+                        run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
+                        --velocity_min_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                        velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
+                        velocity_max_y = function(value) return tonumber( value ) * speed_multiplier; end,
+                    });
+                end
+            else
+                GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", 1 );
+                GlobalsSetValue( "TEMPLE_PERK_COUNT", 2 );
+                GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", 3 );
+                GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/sampo_pick/create", x, y );
+                GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/orb_distant_monster/create", x, y );
+                GameScreenshake( 500 );
+		        EntityAddChild( player_entity, child_id );
+		        GamePrintImportant( gkbrkn_localization.ui_carnage_warning, gkbrkn_localization.ui_carnage_warning_note );
+                local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
+                if damage_models ~= nil then
+                    local resistances = {
+                        ice = 2.0,
+                        electricity = 2.0,
+                        radioactive = 2.0,
+                        slice = 2.0,
+                        projectile = 2.0,
+                        healing = 0.5,
+                        physics_hit = 2.0,
+                        explosion = 2.0,
+                        poison = 2.0,
+                        melee = 3.0,
+                        drill = 2.0,
+                        fire = 2.0,
+                    };
+                    for index,damage_model in pairs( damage_models ) do
+                        for damage_type,multiplier in pairs( resistances ) do
+                            local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                            resistance = resistance * multiplier;
+                            ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                        end
+                    end
+                end
             end
         end
     end

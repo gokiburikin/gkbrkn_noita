@@ -35,3 +35,33 @@ if projectile ~= nil then
     end
 end
 ]]
+
+--[[
+
+local wrap_distance = 128;
+local inner_wrap_distance = 96;
+local entity = GetUpdatedEntityID();
+local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+if projectile ~= nil then
+    local shooter = ComponentGetValue( projectile, "mWhoShot" );
+    if shooter ~= nil then
+        local sx, sy = EntityGetTransform( shooter );
+        local x, y = EntityGetTransform( entity );
+        --local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+        --if velocity ~= nil then
+            local distance = math.sqrt( ( sy - y ) ^ 2 + ( sx - x ) ^ 2 );
+            if distance > wrap_distance then
+                local dx, dy = x - sx, y - sy;
+
+                --local angle = math.atan2( sy - y, sx - x );
+                --local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+                --local leftover = wrap_distance % distance;
+                --local nx, ny = sx - math.sin( (math.pi * 0.5) % angle ) * ( inner_wrap_distance ), sy - math.cos( angle - math.pi * 0.5 ) * ( inner_wrap_distance );
+                --GamePrint( dx.."/"..dy );
+                --EntityKill( entity );
+                EntitySetTransform( entity, x - dx * 1.9, y - dy * 1.9 );
+            end
+        --end
+    end
+end
+]]
