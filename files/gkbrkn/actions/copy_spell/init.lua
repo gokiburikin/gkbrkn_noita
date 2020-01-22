@@ -5,7 +5,7 @@ table.insert( actions, generate_action_entry(
     nil,
     function()
         local drawn = false;
-        for index,action in pairs(deck) do
+        for index,action in pairs( deck ) do
             if action.id ~= "GKBRKN_COPY_SPELL" and ( action.uses_remaining == nil or action.uses_remaining < 0 ) then
                 temporary_deck( 
                     function( deck, hand, discarded )

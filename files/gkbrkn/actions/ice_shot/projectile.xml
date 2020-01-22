@@ -1,0 +1,60 @@
+<Entity name="$projectile_default" tags="gkbrkn_ice_shot,projectile_player">
+
+	<Base file="data/entities/base_projectile.xml" >
+        <VelocityComponent
+            gravity_y="50"
+            air_friction="0" 
+            mass="0.2"
+            >
+        </VelocityComponent>
+	</Base>
+
+  <ProjectileComponent 
+    _enabled="1" 
+    friendly_fire="0"
+    lob_min="0.8"
+    lob_max="1.1"
+    speed_min="500"
+    speed_max="600"
+    damage_scaled_by_speed="0"
+    direction_random_rad="0.003"
+    on_death_explode="0"
+    on_death_gfx_leave_sprite="0" 
+    on_lifetime_out_explode="0"
+    explosion_dont_damage_shooter="1"
+    on_collision_die="1"
+    on_collision_remove_projectile="1"
+    ragdoll_force_multiplier="0.1"
+    lifetime="120"
+    ground_penetration_coeff="1"
+    velocity_sets_scale="1"
+    camera_shake_when_shot="0.1"
+    shoot_light_flash_radius="16"
+    hit_particle_force_multiplier="0.2"
+    create_shell_casing="0"
+    bounces_left="1"
+    bounce_always="1"
+    bounce_energy="1"
+    bounce_at_any_angle="1"
+    bounce_fx_file="mods/gkbrkn_noita/files/gkbrkn/actions/ice_shot/bounce_fx.xml"
+    damage="0.4"  
+    muzzle_flash_file="data/entities/particles/muzzle_flashes/muzzle_flash_large.xml"
+    knockback_force="2.0"
+	>
+    <config_explosion
+      damage="0.0"
+      explosion_radius="0" 
+    >
+    </config_explosion>
+  </ProjectileComponent>
+  
+  <SpriteComponent 
+    _enabled="1" 
+    alpha="1" 
+    image_file="mods/gkbrkn_noita/files/gkbrkn/actions/ice_shot/projectile_sprite.xml" 
+    next_rect_animation="default"
+    rect_animation="default" 
+     >
+  </SpriteComponent>
+
+</Entity>

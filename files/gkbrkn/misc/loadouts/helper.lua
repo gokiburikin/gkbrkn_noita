@@ -103,6 +103,18 @@ function handle_loadout( player_entity, loadout_data )
             end
         end
 
+        if loadout_data.items ~= nil then
+            for _,item in pairs( other_items ) do
+                GameKillInventoryItem( player_entity, item );
+            end
+            other_items = {};
+            for _,item_choice in pairs( loadout_data.items or {} ) do
+                local random_item = item_choice[ Random( 1, #item_choice ) ];
+                local item = EntityLoad( random_item, x, y );
+                EntityAddChild( inventory, item );
+            end
+        end
+
         if loadout_data.wands ~= nil then
             for _,wand in pairs(default_wands) do
                 GameKillInventoryItem( player_entity, wand );
@@ -206,18 +218,6 @@ function handle_loadout( player_entity, loadout_data )
                     EntitySetComponentsWithTagEnabled( potion, "enabled_in_world", false );
                     EntityAddChild( inventory, potion );
                 end
-            end
-        end
-
-        if loadout_data.items ~= nil then
-            for _,item in pairs( other_items ) do
-                GameKillInventoryItem( player_entity, item );
-            end
-            other_items = {};
-            for _,item_choice in pairs( loadout_data.items or {} ) do
-                local random_item = item_choice[ Random( 1, #item_choice ) ];
-                local item = EntityLoad( random_item, x, y );
-                EntityAddChild( inventory, item );
             end
         end
     end

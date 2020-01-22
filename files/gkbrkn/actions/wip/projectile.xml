@@ -1,5 +1,4 @@
 <Entity name="$projectile_default" tags="projectile_player" >
-
   	<ParticleEmitterComponent 
 		emitted_material_name="void_liquid"
 		create_real_particles="1"
@@ -36,6 +35,5 @@
       file="data/audio/Desktop/projectiles.snd"
       event_root="player_projectiles/circle_of">
     </AudioComponent>
-
 </Entity>
 

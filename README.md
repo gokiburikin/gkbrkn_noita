@@ -73,7 +73,24 @@ Hero mode is a challenge mode intended for players familiar with Noita. The inte
 
 When activated by Misc > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Misc > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Misc > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
 
-Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all costs.
+Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all cost.
+
+Carnage Mode is an extra unfair difficulty intended to be a challenge for those who have cleared Ultimate Hero Ultimate Champions mode. It removes the positive side effects of Hero Mode (wand buffs, extra movement speed) and increases the negative effects. Enemies can dash short distances, fly, are fire immune, ignore charm, and attack more quickly. You get less perk options, less shop items, and the gods are angered from the start.
+
+## Legendary Wands
+Legendary wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
+
+- **Wormhole**: A two-way teleport with a short delay between them. Useful for peeking around corners, getting into otherwise blocked spaces checking through thin walls, or temporarily escaping a dangerous situation.
+
+## Random Start
+Options to start runs with random changes. All of these can be used separately or together.
+
+- **Random Wands**: Start with two randomly generated wands.
+- **Alternative Wand Generation**: Use my custom wand generation logic. Less predictable, potentially less usable wands.
+- **Random Cape Colour**: Start with a randomly coloured cape.
+- **Random Starting Health**: Start with a random amount of health from 50 to 150.
+- **Random Flasks**: Start with a random assortment of flasks.
+- **Random Perk**: Start with a random perk.
 
 ## Utility
 These options have an impact on general gameplay and are meant to be picked and chosen based on your preferred play style.
@@ -99,7 +116,6 @@ These options have an impact on general gameplay and are meant to be picked and 
 - **Passive Recharge**: Wands recharge while holstered.
 - **Persistent Gold**: Gold nuggets no longer despawn.
 - **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
-- **Random Start**: Options to start runs with random wands, perks, flasks, cape colours, and health.
 - **Show Badges**: Show selected game mode options as UI icons.
 - **Show FPS**: Add an FPS counter.
 - **Spell Slot Machine**: Add a slot machine that you can buy spells from in the Holy Mountain.
@@ -121,13 +137,15 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Glass Cannon**: You deal 3x damage, but take 3x damage.
 - **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across spells that can crit.
 - **Increase Mana**: Disable.
+- **Projectile Repulsion**: No longer rejects self projectiles, performance improvements.
 - **Reduce Stun Lock**: Reduces the time the player can't fly for when taking a knockback hit.
 - **Revenge Explosion**: No longer activates on environmental / self damage, fixes the explosions not proccing when taking rapid tick (fire) damage.
 - **Revenge Tentacle**: No longer activates on environmental / self damage, fixes the tentacle not proccing when taking rapid tick (fire) damage.
-- **Projectile Repulsion**: No longer rejects self projectiles, performance improvements.
+- **Spiral Shot**: Complete rewrite to fix the extremely heavy performance cost.
 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
+- **Blood Magic**: Your life force is used in place of mana.
 - **Chain Casting**: Your spells now chain cast (all spells gain Trigger - Death.)
 - **Demolitionist**: Your spells cause larger, more powerful explosions.
 - **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
@@ -137,16 +155,18 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
 - **Knockback Immunity**: Immunity to knockback.
 - **Lost Treasure**: Any gold nuggets that despawned will reappear near you for collection (the counter then resets back to 0 and picking up the perk later will work again on any newly despawned gold nuggets.)
+- **Mana Manipulator**: From now on wands you find will have their mana and mana charge speed stats swapped.
 - **Mana Recovery**: Your wands charge more quickly.
 - **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
 - **Multicast**: You cast 2 additional spells per cast.
 - **Passive Recharge**: Your wands recharge even when holstered.
 - **Protagonist**: Your damage increases the more damaged you are.
 - **Rapid Fire**: Cast spells more rapidly, but less accurately.
-- **Resilience**: Take reduced damage from status ailments.
+- **Resilience**: Take reduced damage from status ailments (reduces damage taken from fire, radioactive, poison, and electricity by 67%.)
 - **Short Temper**: Become Berserk for a short time after taking damage.
-- **Thrifty Shopper**: Holy Mountain shops carry two additional items.
 - **Swapper**: Switch places with your attacker upon taking damage.
+- **Thrifty Shopper**: Holy Mountain shops carry two additional items.
+- **Wandsmith**: From now on wands you find will have slightly better stats.
 
 ### Projectile Spells
 - **Chaotic Burst**: Cast an uncontrolled burst of projectiles.

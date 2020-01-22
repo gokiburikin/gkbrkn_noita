@@ -5,6 +5,7 @@ table.insert( actions, generate_action_entry(
     nil,
     function()
         c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/clinging_shot/projectile_extra_entity.xml,";
+        c.speed_multiplier = 0;
         draw_actions( 1, true );
     end
 ) );

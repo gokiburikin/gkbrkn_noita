@@ -6,6 +6,6 @@ table.insert( actions, generate_action_entry(
     function()
         c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/projectile_extra_entity.xml,";
         c.speed_multiplier = c.speed_multiplier * 0.75;
-        draw_actions( 2, true );
+        draw_actions( 3, true );
     end
 ) );

@@ -17,6 +17,19 @@ local WAND_STAT_SETTERS = {
     mana = WAND_STAT_SETTER.Direct,
 }
 
+function ability_component_get_stat( ability, stat, value )
+    local setter = WAND_STAT_SETTERS[stat];
+    if setter ~= nil then
+        if setter == WAND_STAT_SETTER.Direct then
+            return ComponentGetValue( ability, stat );
+        elseif setter == WAND_STAT_SETTER.Gun then
+            return ComponentObjectGetValue( ability, "gun_config", stat );
+        elseif setter == WAND_STAT_SETTER.GunAction then
+            return ComponentObjectGetValue( ability, "gunaction_config", stat );
+        end
+    end
+end
+
 function ability_component_set_stat( ability, stat, value )
     local setter = WAND_STAT_SETTERS[stat];
     if setter ~= nil then

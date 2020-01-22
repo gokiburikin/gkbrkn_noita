@@ -24,7 +24,7 @@
     explosion_dont_damage_shooter="1" 
     on_collision_die="0"
 	die_on_liquid_collision="0"
-    lifetime="60"
+    lifetime="46"
     damage="0"
     ragdoll_force_multiplier="0.0"
     hit_particle_force_multiplier="0.0"

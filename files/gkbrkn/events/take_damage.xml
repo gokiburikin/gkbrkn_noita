@@ -1,0 +1,14 @@
+<Entity>
+    <AreaDamageComponent
+        aabb_min.x="-96" 
+        aabb_min.y="-96" 
+        aabb_max.x="96" 
+        aabb_max.y="96" 
+        damage_per_frame="1"
+        update_every_n_frame="1"
+        damage_type="DAMAGE_CURSE">
+    </AreaDamageComponent>
+    <LifetimeComponent
+        lifetime="1">
+    </LifetimeComponent>
+</Entity>

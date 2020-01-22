@@ -14,7 +14,7 @@ gkbrkn_localization = {
 
     ui_tab_name_options = "Options",
     ui_carnage_warning = "The gods are against you",
-    ui_carnage_warning_note = nil,
+    ui_carnage_warning_note = "",
 
     config_content_type_name_action = "Actions",
     config_content_type_name_perk = "Perks",
@@ -25,6 +25,7 @@ gkbrkn_localization = {
     config_content_type_name_loadout = "Loadouts",
     config_content_type_name_starting_perk = "Starting Perks",
     config_content_type_name_legendary_wand = "Legendary Wands",
+    config_content_type_name_event = "Events",
 
     --[[ Options ]]
     option_gold_tracking = "Gold Tracking",
@@ -88,6 +89,7 @@ gkbrkn_localization = {
     option_show_badges = "Show Badges",
     option_fixed_camera = "Fixed Camera",
     option_auto_hide = "Auto-hide Config Button",
+    option_events = "Random Events",
     option_debug_mode = "Development Mode",
 
     --[[ Champions ]]
@@ -171,11 +173,11 @@ gkbrkn_localization = {
     perk_name_always_cast = "Always Cast",
     perk_description_always_cast = "A random spell on your wand has been promoted to always cast.",
     perk_name_demolitionist = "Demolition",
-    perk_description_demolitionist = "Your spells cause larger, more destructive explosions.",
+    perk_description_demolitionist = "Your projectiles cause larger, more destructive explosions.",
     perk_name_duplicate_wand = "Duplicate Wand",
     perk_description_duplicate_wand = "Your wand has been copied.",
     perk_name_extra_projectile = "Extra Projectile",
-    perk_description_extra_projectile = "Your spells gain an additional projectile, but are cast less quickly.",
+    perk_description_extra_projectile = "You fire an additional projectile with each spell cast, but cast spells less quickly.",
     perk_name_fragile_ego = "Fragile Ego",
     perk_description_fragile_ego = "Receive 75% less damage, but damage is permanent.",
     perk_name_golden_blood = "Golden Blood",
@@ -200,6 +202,8 @@ gkbrkn_localization = {
     perk_description_material_compression = "Your flasks can now hold twice as much.",
     perk_name_multicast = "Multicast",
     perk_description_multicast = "You cast 2 additional spells per cast.",
+    perk_name_megacast = "Megacast",
+    perk_description_megacast = "You cast all of your wand's spells at once.",
     perk_name_passive_recharge = "Passive Recharge",
     perk_description_passive_recharge = "Your wands recharge even when holstered.",
     perk_name_protagonist = "Protagonist",
@@ -213,7 +217,7 @@ gkbrkn_localization = {
     perk_name_spell_efficiency = "Spell Efficiency",
     perk_description_spell_efficiency = "Some spell casts are free.",
     perk_name_swapper = "Swapper",
-    perk_description_swapper = "Swap places with your attacker.",
+    perk_description_swapper = "Confuse your enemies by swapping places with your attacker.",
     perk_name_thrifty_shopper = "Thrifty Shopper",
     perk_description_thrifty_shopper = "From now on Holy Mountain shops will carry two additional items.",
     perk_name_queue_casting = "Queue Casting",
@@ -221,7 +225,15 @@ gkbrkn_localization = {
     perk_name_disenchant_spell = "Demote Always Cast",
     perk_description_disenchant_spell = "A random always cast spell on your wand has been demoted.",
     perk_name_blood_magic = "Blood Magic",
-    perk_description_blood_magic = "Your life force is used in place of mana, but you take 3x damage.",
+    perk_description_blood_magic = "Your life force is used in place of mana, but you take 5x damage.",
+    perk_name_mana_mastery = "Mana Manipulation",
+    perk_description_mana_mastery = "From now on wands you find will have their mana and mana recharge stats swapped.",
+    perk_name_wandsmith = "Wandsmith",
+    perk_description_wandsmith = "From now on wands you find will have slightly better stats.",
+    perk_name_hyper_casting = "Hyper Casting",
+    perk_description_hyper_casting = "Your projectiles move at hyper speed.",
+    perk_name_lead_boots = "Lead Boots",
+    perk_description_lead_boots = "You experience no recoil as long as you are grounded.",
     perk_name_null = "Unnamed Perk",
     perk_description_null = "This perk is missing it's localization data!",
     perk_name_wip = "WIP Perk",
@@ -327,7 +339,7 @@ gkbrkn_localization = {
     action_name_multi_death_trigger = "Queued Cast",
     action_description_multi_death_trigger = "Cast 3 spells, each triggering the next when it expires",
     action_name_spell_duplicator = "Spell Duplicator",
-    action_description_spell_duplicator = "Summon a magical phenomenon that casts a spell in a random direction every second",
+    action_description_spell_duplicator = "Summon a magical phenomenon that casts a spell in a random direction 5 times",
     action_name_feather_shot = "Feather Shot",
     action_description_feather_shot = "Cast a slow spell with reduced knockback, gravity, and terminal velocity",
     action_name_follow_shot = "Follow Shot",
@@ -342,6 +354,10 @@ gkbrkn_localization = {
     action_description_carpet_bomb = "Cast 2 spells the first of which drops multiples of the second over time",
     action_name_persistent_shot = "Persistent Shot",
     action_description_persistent_shot = "Cast 2 spells that keep moving in the direction they were cast",
+    action_name_ice_shot = "Ice Shot",
+    action_description_ice_shot = "A large chunk of magical ice or something",
+    action_name_destructive_shot = "Destructive Shot",
+    action_description_destructive_shot = "Projectiles cause larger, more destructive explosions",
     action_name_wip = "WIP Action",
     action_description_wip = "A work in progress action",
 
@@ -366,6 +382,18 @@ gkbrkn_localization = {
     --[[ Items ]]
     item_name_spell_bag = "Spell Bag",
     item_description_spell_bag = "A bag in which to hold your spells",
+
+    --[[ Random Events ]]
+    event_name_take_damage = "Take Damage",
+    event_name_circle_of_x = "Circle of X",
+    event_name_random_perk = "Random Perk",
+    event_name_blindness = "Random Perk",
+    event_name_enemy_shields = "Random Perk",
+    event_name_event_horizon = "Event Horizon",
+    event_name_gift_spell = "Gift: Spell",
+    event_name_homing_black_hole = "Homing Black Hole",
+    event_name_rainy_day = "Rainy Day",
+    event_name_take_flight = "Take Flight",
     
     --[[ Loadouts ]]
     loadout_message_format = "%s",
@@ -386,5 +414,8 @@ gkbrkn_localization = {
     loadout_zoning = "Zoning TYPE",
     loadout_seeker = "Seeker TYPE",
     loadout_blood = "Blood TYPE",
+    loadout_goo_mode = "Goo Mode",
+    loadout_wandsmith = "Wandsmith",
+    loadout_duplicator = "Duplicator",
     loadout_debug = "Development TYPE",
 }

@@ -13,5 +13,6 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
         ComponentSetValueVector2( attacker_velocity, "mVelocity", vx, vy );
         EntityLoad( "data/entities/particles/teleportation_target.xml", x, y );
         EntityLoad( "data/entities/particles/teleportation_source.xml", ax, ay );
+        EntityLoad( "data/entities/misc/invisibility_last_known_player_position.xml", x, y );
     end
 end

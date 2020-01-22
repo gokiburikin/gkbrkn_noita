@@ -28,9 +28,14 @@ if projectile ~= nil then
             local parent_velocity = EntityGetFirstComponent( soft_parent, "VelocityComponent" );
             local parent_vx, parent_vy = 0, 0;
             if parent_velocity ~= nil then
-                ComponentGetValueVector2( parent_velocity, "mVelocity" )
+                parent_vx, parent_vy = ComponentGetValueVector2( parent_velocity, "mVelocity" );
             end
-            ComponentSetValueVector2( velocity, "mVelocity", ( px - x ) * 60 + parent_vx, ( py - y ) * 60 + parent_vy );
+            local distance = math.sqrt( math.pow( px - x, 2 ) + math.pow( py - y, 2 ) );
+            if distance > 1 then
+                ComponentSetValueVector2( velocity, "mVelocity", ( px - x ) * 60 + parent_vx, ( py - y ) * 60 + parent_vy );
+            else
+                ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+            end
         end
     end
 end

@@ -28,24 +28,25 @@ local x, y = EntityGetTransform( entity_id );
 
 local ability_component = EntityGetFirstComponent( entity_id, "AbilityComponent" );
 
-local time_ratio = 50;
-local gun = { }
-gun.name = {"Bolt Staff"}
-gun.deck_capacity = {3,6};
-gun.actions_per_round = {1,2,3};
-gun.reload_time = { 0.1  * time_ratio, 1.5 * time_ratio };
-gun.shuffle_deck_when_empty = {0,1};
-gun.cast_delay = { 0.0  * time_ratio, 0.5 * time_ratio };
-gun.spread_degrees = {-10,10};
-gun.speed_multiplier = 1;
-gun.mana_charge_speed = {10,50};
-gun.mana_max = {100,350};
-gun.projectile_actions = {};
-gun.limited_projectile_actions = {};
-gun.cost_actions = {};
-gun.modifier_actions = {};
-gun.utility_actions = {};
-gun.all_actions = {};
+local time_ratio = 60;
+local gun = {
+    name = {"Bolt Staff"},
+    deck_capacity = {3,6},
+    actions_per_round = {1,2,3},
+    reload_time = { 0.07  * time_ratio, 0.7 * time_ratio },
+    shuffle_deck_when_empty = {0,1},
+    cast_delay = { 0.0  * time_ratio, 0.5 * time_ratio },
+    spread_degrees = {-2,6},
+    speed_multiplier = 1,
+    mana_charge_speed = {10,60},
+    mana_max = {100,350},
+    projectile_actions = {},
+    limited_projectile_actions = {},
+    cost_actions = {},
+    modifier_actions = {},
+    utility_actions = {},
+    all_actions = {},
+}
 
 local blacklist = {
     projectile_actions = { TELEPORT_PROJECTILE=false, PIPE_BOMB_DETONATOR },

@@ -1,28 +1,36 @@
 --[[
 changelog
-    -m "Add a health bar to Mini-Bosses"
-    -m "Add Carnage Mode (unfair difficulty)"
-    -m "Add Loadout: Blood"
-    -m "Add Perk: Blood Magic"
-    -m "Add Tweak: Spiral Shot (reimplemented to be much more performant)"
-    -m "Change Action: Persistent (decreased angle easing, mana cost 9 -> 17, weighting 0.7 -> 0.4)"
-    -m "Change Legendary Wand particles"
-    -m "Change Loadout: Kamikaze (remove pointless trigger - death)"
-    -m "Change Loadout: Speedrunning (add damage plus to teleport projectile)"
-    -m "Change Mini-Boss bonus health calculation (weaker mini-bosses have more, stronger mini-bosses have less)"
-    -m "Change some graphics here and there"
-    -m "Deprecate Champion: Healthy (basically a worse Armoured that was confused for healing)"
-    -m "Fix Action: Magic Light's description"
-    -m "Fix Misc: Slot Machine randomness actually this time"
-    -m "Fix Selectable Classes Integration (fixes Selectable Classes loadouts failing to load)"
-    -m "Optimize some scripts a bit (more to come)"
-    -m "Rename Action: Duplicast -> Arcane Bouquet"
+    -m "Add a health bar to mini-bosses"
+    -m "Add Loadout: Goo Mode"
+    -m "Add Loadout: Wandsmith"
+    -m "Add Loadout: Duplicator"
+    -m "Add Perk: Hyper Casting"
+    -m "Add Perk: Lead Boots"
+    -m "Add Perk: Mana Manipulation"
+    -m "Add Perk: Megacast"
+    -m "Add Perk: Wandsmith"
+    -m "Chance Action: Glittering Trail (delay spell for 11 -> 3 frames, removing homing chance, change to random logic)"
+    -m "Change Action: Chaotic Burst (spread 666 -> 13, chaotic pathing ramps up over the course of 5 frames and is more random) (this change might be reverted next patch)"
+    -m "Change Action: Lock Shot (projectile speed multiplier 100% -> 0%, may be removed next update)"
+    -m "Change Action: Nugget Shot to Other so it doesn't show up so many times on wands"
+    -m "Change Carnage Mode (enemy resistances 50% -> 67%)"
+    -m "Change loadout initialization (add items before wands and potions)"
+    -m "Change Loadout: Speedrunner (remove Teleportitis, add Faster Movement)"
+    -m "Change Perk: Resilience (remove ice resistance)"
+    -m "Change random starting wand stat allocation"
+    -m "Change Perk: Swapper (enemies take some time to realize what happened)"
+    -m "Deprecate Perk: Multicast"
+    -m "Fix Misc: Chaotic Wand Generation and Misc: Extended Wand Generation overwriting always casts without retaining always cast status"
+    -m "Fix Misc: Health Bars not working at all"
+    -m "Update README"
+    -m "Change more spell spawn probabilities"
 
 TODO
     make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
     nest tweak (1 gold for things spawned from nests)
     check why some enemies weren't getting health bars
     add treasure sense options
+    try to make an ice based projectile that turns into static ice when it hits the world
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)
@@ -85,6 +93,7 @@ ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "mods/gkbrkn_noita/fil
 ModLuaFileAppend( "data/scripts/biomes/boss_arena.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_arena.lua" );
 ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );
 ModLuaFileAppend( "data/scripts/items/chest_random_super.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random_super.lua" );
+ModLuaFileAppend( "data/scripts/biomes/temple_altar_left.lua", "mods/gkbrkn_noita/files/gkbrkn/append/goo_mode_temple_altar_left.lua" );
 
 if HasFlagPersistent( MISC.NoPregenWands.Enabled ) then
     local pregen_wand_biomes = {

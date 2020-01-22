@@ -1,0 +1,8 @@
+<Entity>
+    <LuaComponent
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/bound_shot/projectile_init.lua"
+        execute_on_added="1"
+        remove_after_executed="1"
+        >
+    </LuaComponent>
+</Entity>

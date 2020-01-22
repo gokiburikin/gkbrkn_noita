@@ -25,7 +25,7 @@ if inventory2 ~= nil then
         end
     end
     if active_item ~= nil and EntityHasTag( active_item, "wand" ) then
-        active_wand = active_item;
+        active_wand = tonumber( active_item );
     end
 end
 local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
@@ -231,46 +231,6 @@ if HasFlagPersistent( MISC.AutoPickupGold.Enabled ) then
         if EntityHasTag( gold_nugget, "gkbrkn_special_goldnugget" ) == false then
             EntitySetTransform( gold_nugget, x, y );
             break;
-        end
-    end
-end
-
---[[ Blood Magic ]]
-local blood_magic_stacks = EntityGetVariableNumber( player_entity, "gkbrkn_blood_magic_stacks", 0 );
-local blood_to_mana_ratio = CONTENT[PERKS.BloodMagic].options.BloodToManaRatio * blood_magic_stacks;
-if blood_magic_stacks ~= 0 then
-    if #wands > 0 then
-        local recoverable_mana = 0;
-        for _,wand in pairs( wands ) do
-            if tonumber( wand ) ~= tonumber( active_wand ) then
-                local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
-                if ability ~= nil then
-                    ComponentSetValue( ability, "mana", "0" );
-                end
-            end
-        end
-        if active_wand ~= nil then
-            local ability = WandGetAbilityComponent( active_wand, "AbilityComponent" );
-            if ability ~= nil then
-                local mana = tonumber( ComponentGetValue( ability, "mana" ) );
-                if mana > 0 then
-                    recoverable_mana = recoverable_mana + mana;
-                    ComponentSetValue( ability, "mana", "0" );
-                end
-            end
-        end
-        if recoverable_mana ~= 0 then
-            local recovery_rate_adjustment = math.min( 1, ( GameGetFrameNum() - EntityGetVariableNumber( player_entity, "gkbrkn_last_frame_damaged", 0 ) ) / 180 );
-            for _,damage_model in pairs( damage_models ) do
-                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-                local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
-                local new_hp = math.min( max_hp, hp + recoverable_mana * blood_to_mana_ratio / 60 * recovery_rate_adjustment );
-                ComponentSetValue( damage_model, "hp", tostring( new_hp ) );
-                -- TODO when we can deal damage we won't need this
-                if new_hp <= 0 then
-                    EntityKill( player_entity );
-                end
-            end
         end
     end
 end
@@ -697,7 +657,7 @@ if now % 10 == 0 then
                         end
 
                         --[[ Mini-Boss Health Bar ]]
-                        if EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                        if is_mini_boss and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
                             add_entity_mini_health_bar( nearby );
                         end
 
@@ -794,19 +754,24 @@ if now % 10 == 0 then
                 local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
                 if damage_models ~= nil then
 
+                    local general_resistances = 0.50;
+                    if is_carnage_mode then
+                        general_resistances = 0.33;
+                    end
+
                     local resistances = {
-                        ice = 0.50,
-                        electricity = 0.50,
-                        radioactive = 0.50,
-                        slice = 0.50,
-                        projectile = 0.50,
-                        healing = 0.50,
-                        physics_hit = 0.50,
-                        explosion = 0.50,
-                        poison = 0.50,
-                        melee = 0.50,
-                        drill = 0.50,
-                        fire = 0.50,
+                        ice = general_resistances,
+                        electricity = general_resistances,
+                        radioactive = general_resistances,
+                        slice = general_resistances,
+                        projectile = general_resistances,
+                        healing = general_resistances,
+                        physics_hit = general_resistances,
+                        explosion = general_resistances,
+                        poison = general_resistances,
+                        melee = general_resistances,
+                        drill = general_resistances,
+                        fire = general_resistances,
                     };
                     local resistance_multiplier = orb_multiplier * distance_multiplier;
                     for index,damage_model in pairs( damage_models ) do
@@ -974,6 +939,59 @@ if now % 10 == 0 then
                 EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );
                 local health_bonus = math.pow( tonumber( StatsGetValue("enemies_killed") ) * 100, 1.1 ) / 25;
                 TryAdjustMaxHealth( boss, function( max, current ) return tonumber( max ) + health_bonus; end );
+            end
+        end
+    end
+end
+
+--[[ Blood Magic ]]
+local blood_magic_stacks = EntityGetVariableNumber( player_entity, "gkbrkn_blood_magic_stacks", 0 );
+local blood_to_mana_ratio = CONTENT[PERKS.BloodMagic].options.BloodToManaRatio * blood_magic_stacks;
+if blood_magic_stacks ~= 0 then
+    if #wands > 0 then
+        local recoverable_mana = 0;
+        for _,wand in pairs( wands ) do
+            if tonumber( wand ) ~= tonumber( active_wand ) then
+                local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
+                if ability ~= nil then
+                    ComponentSetValue( ability, "mana", "0" );
+                end
+            end
+        end
+        local mana = 0;
+        local adjusted_mana_max = 0;
+        local last_mana_health_pool = tonumber( EntityGetVariableNumber( player_entity, "gkbrkn_mana_health_pool", nil ) );
+        local last_mana_health_pool_amount = tonumber( EntityGetVariableNumber( player_entity, "gkbrkn_mana_health_pool_amount", 0 ) );
+        if active_wand ~= nil then
+            local ability = WandGetAbilityComponent( active_wand, "AbilityComponent" );
+            if ability ~= nil then
+                mana = tonumber( ComponentGetValue( ability, "mana" ) );
+                adjusted_mana_max = tonumber( ComponentGetValue( ability, "mana_max" ) ) / 25;
+                if mana > 0 then
+                    recoverable_mana = recoverable_mana + mana;
+                    ComponentSetValue( ability, "mana", "0" );
+                end
+            end
+        end
+        if last_mana_health_pool ~= active_wand then
+            EntitySetVariableNumber( player_entity, "gkbrkn_mana_health_pool", active_wand );
+            EntitySetVariableNumber( player_entity, "gkbrkn_mana_health_pool_amount", adjusted_mana_max );
+            entity_adjust_health( player_entity, function( max_hp, hp )
+                local new_max_hp = max_hp - last_mana_health_pool_amount + adjusted_mana_max;
+                return new_max_hp, math.min( hp, new_max_hp );
+            end );
+        end
+        if recoverable_mana ~= 0 then
+            local recovery_rate_adjustment = math.min( 1, ( GameGetFrameNum() - EntityGetVariableNumber( player_entity, "gkbrkn_last_frame_damaged", 0 ) ) / 180 ) ^ 2;
+            for _,damage_model in pairs( damage_models ) do
+                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+                local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+                local new_hp = math.min( max_hp, hp + recoverable_mana * blood_to_mana_ratio / 25 * recovery_rate_adjustment );
+                ComponentSetValue( damage_model, "hp", tostring( new_hp ) );
+                -- TODO when we can deal damage we won't need this
+                if new_hp <= 0 then
+                    EntityKill( player_entity );
+                end
             end
         end
     end

@@ -47,8 +47,8 @@ register_loadout(
     { -- items
     },
     { -- perks
-        {"TELEPORTITIS"},
         {"REPELLING_CAPE"},
+        {"MOVEMENT_FASTER"},
     }
 );
 
@@ -956,6 +956,180 @@ register_loadout(
     }
 );
 
+-- Wandsmith
+register_loadout(
+    "gkbrkn_wandsmith", -- unique identifier
+    gkbrkn_localization.loadout_wandsmith, -- displayed loadout name
+    "goki",
+    0xFF666666, -- cape color (ABGR)
+    0xFF333333, -- cape edge color (ABGR)
+    { -- wands
+    },
+    { -- potions
+        { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+        { "data/entities/items/starting_wand.xml" },
+        { "data/entities/items/starting_bomb_wand.xml" },
+    },
+    { -- perks
+        { "EDIT_WANDS_EVERYWHERE" }
+    },
+    -- actions
+    nil,
+    -- sprites
+    nil,
+    -- custom message
+    nil,
+    -- callback
+    function( player_entity )
+        local x, y = EntityGetTransform( player_entity );
+        local full_inventory = nil;
+        local player_child_entities = EntityGetAllChildren( player_entity );
+        if player_child_entities ~= nil then
+            for i,child_entity in ipairs( player_child_entities ) do
+                local child_entity_name = EntityGetName( child_entity );
+                
+                if child_entity_name == "inventory_full" then
+                    full_inventory = child_entity;
+                end
+            end
+        end
+
+        -- set inventory contents
+        if full_inventory ~= nil then
+            for i=1,8 do
+                local action = GetRandomAction( x, y, Random( 0, 6 ), Random( 1, 9999999 ) );
+                local action_card = CreateItemActionEntity( action, x, y );
+                EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
+                EntityAddChild( full_inventory, action_card );
+            end
+        end
+    end
+);
+
+-- Goo Mode
+register_loadout(
+    "gkbrkn_goo_mode", -- unique identifier
+    gkbrkn_localization.loadout_goo_mode, -- displayed loadout name
+    "goki",
+    0xFF2F3249, -- cape color (ABGR)
+    0xFF7D53B0, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {1,1}, -- capacity
+                reload_time = {10,10}, -- recharge time in frames
+                fire_rate_wait = {10,10}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {60,60}, -- mana charge speed
+                mana_max = {120,120}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "TELEPORT_PROJECTILE" },
+            }
+        }
+    },
+    { -- potions
+        { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+        { "data/entities/items/starting_wand.xml" },
+        { "data/entities/items/starting_bomb_wand.xml" },
+    },
+    { -- perks
+        { "MOVEMENT_FASTER" }
+    },
+    -- actions
+    nil,
+    -- sprites
+    nil,
+    -- custom message
+    nil,
+    -- callback
+    function( player_entity )
+        local x, y = EntityGetTransform( player_entity );
+        GameCreateParticle( "creepy_liquid", x, y -100, 1, 0, 0, false, false );
+        GameAddFlagRun( "gkbrkn_goo_mode" );
+    end
+);
+
+-- Duplicator
+register_loadout(
+    "gkbrkn_duplicator", -- unique identifier
+    gkbrkn_localization.loadout_duplicator, -- displayed loadout name
+    "goki",
+    0xFF333333, -- cape color (ABGR)
+    0xFF666666, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {6,6}, -- capacity
+                reload_time = {20,20}, -- recharge time in frames
+                fire_rate_wait = {20,20}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {60,60}, -- mana charge speed
+                mana_max = {150,150}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "LIFETIME_DOWN" },
+                { "GKBRKN_SPELL_DUPLICATOR" },
+                { "HORIZONTAL_ARC" },
+                { "LIGHT_BULLET" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 2, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {4,4}, -- capacity
+                reload_time = {60,60}, -- recharge time in frames
+                fire_rate_wait = {60,60}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {40,40}, -- mana charge speed
+                mana_max = {180,180}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "GKBRKN_SPELL_DUPLICATOR" },
+                { "GRAVITY" },
+                { "SLOW_BULLET" },
+            }
+        },
+    },
+    { -- potions
+        { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+        { "GKBRKN_EXTRA_PROJECTILE" },
+    }
+);
 
 --[[ reference this example of bringing the base starting loadouts into the new method
     -- Nolla Summoner

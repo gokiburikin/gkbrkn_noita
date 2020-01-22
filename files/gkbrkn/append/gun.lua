@@ -174,7 +174,7 @@ function play_action( action )
         gkbrkn.reset_on_draw = false;
         reset_per_casts();
     end
-    if playing_permanent_card then
+    if playing_permanent_card and CONTENT[PERKS.BloodMagic].options.FreeAlwaysCasts == false then
         local player = GetUpdatedEntityID();
         local blood_magic_stacks = EntityGetVariableNumber( player, "gkbrkn_blood_magic_stacks", 0 );
         if blood_magic_stacks > 0 then
@@ -187,7 +187,7 @@ function play_action( action )
             end
         end
     end
-    gkbrkn._play_action(action);
+    gkbrkn._play_action( action );
 end
 
 function draw_actions( how_many, instant_reload_if_empty )
@@ -195,7 +195,11 @@ function draw_actions( how_many, instant_reload_if_empty )
     local actions_to_draw = how_many;
     local player = GetUpdatedEntityID();
     local extra_actions = EntityGetVariableNumber( player, "gkbrkn_draw_actions_bonus", 0 );
+    local draw_remaining = EntityGetVariableNumber( player, "gkbrkn_draw_remaining", 0 );
     actions_to_draw = extra_actions + actions_to_draw;
+    if draw_remaining > 0 then
+        actions_to_draw = math.max( actions_to_draw, #deck );
+    end
     gkbrkn._draw_actions( actions_to_draw, instant_reload_if_empty );
 end
 
@@ -211,7 +215,6 @@ function draw_action( instant_reload_if_empty )
 
     local result = false;
     local player = GetUpdatedEntityID();
-    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
     local blood_magic_stacks = EntityGetVariableNumber( player, "gkbrkn_blood_magic_stacks", 0 );
     local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
 
@@ -260,11 +263,25 @@ function draw_action( instant_reload_if_empty )
     
     if gkbrkn.draw_action_stack_size == 0 then
         state_per_cast( c );
+        local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+        local hyper_casting = EntityGetVariableNumber( player, "gkbrkn_hyper_casting", 0 );
+        local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
         if #deck == 0 then
             current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
         end
         c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
+        if lead_boots > 0 then
+            local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );
+            if character_data ~= nil then
+                if ComponentGetValue( character_data, "is_on_ground" ) == "1" then
+                    shot_effects.recoil_knockback = shot_effects.recoil_knockback - 10000;
+                end
+            end
+        end
+        if hyper_casting > 0 then
+            c.speed_multiplier = 100;
+        end
     end
     return result;
 end

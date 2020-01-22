@@ -282,8 +282,8 @@ function adjust_all_entity_damage( entity, callback )
 end
 
 function add_entity_mini_health_bar( entity )
-    EntityAddComponent( nearby, "HealthBarComponent" );
-    EntityAddComponent( nearby, "SpriteComponent", { 
+    EntityAddComponent( entity, "HealthBarComponent" );
+    EntityAddComponent( entity, "SpriteComponent", { 
         _tags="health_bar,ui,no_hitbox",
         alpha="1",
         has_special_scale="1",
@@ -297,7 +297,21 @@ function add_entity_mini_health_bar( entity )
         special_scale_y="0.6",
         ui_is_parent="0",
         update_transform="1",
+        update_transform_rotation="0",
         visible="1",
         z_index="-9000",
     });
+end
+
+function entity_adjust_health( entity, callback )
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+    if damage_models ~= nil then
+        for _,damage_model in pairs( damage_models ) do
+            local hp = ComponentGetValue( damage_model, "hp" );
+            local max_hp = ComponentGetValue( damage_model, "max_hp" );
+            local new_max_hp, new_hp = callback( max_hp, hp );
+            ComponentSetValue( damage_model, "hp", new_hp or hp );
+            ComponentSetValue( damage_model, "max_hp", new_max_hp or max_hp );
+        end
+    end
 end

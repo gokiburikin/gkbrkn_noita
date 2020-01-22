@@ -1,0 +1,7 @@
+<Entity>
+    <LuaComponent
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/glittering_trail/trail.lua"
+        execute_every_n_frame="3"
+	>
+	</LuaComponent>
+</Entity>

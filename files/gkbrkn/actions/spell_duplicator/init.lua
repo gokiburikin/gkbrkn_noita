@@ -50,6 +50,7 @@ table.insert( actions, generate_action_entry(
                     BeginTriggerDeath();
                         c = {};
                         reset_modifiers( c );
+                        c.spread_degrees = c.spread_degrees + 360;
                         gkbrkn.capture_draw_actions = true;
                         deck_snapshot = capture_draw_actions( 1, true );
                         gkbrkn.capture_draw_actions = false;
@@ -76,6 +77,7 @@ table.insert( actions, generate_action_entry(
                         BeginTriggerDeath();
                             c = {};
                             reset_modifiers( c );
+                        c.spread_degrees = c.spread_degrees + 360;
                             deck = deck_from_drawn_actions( deck_snapshot, 1 );
                             gkbrkn.capture_draw_actions = false;
                             draw_actions( 1, true );

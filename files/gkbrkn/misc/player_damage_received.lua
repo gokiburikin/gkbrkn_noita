@@ -5,7 +5,9 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     local entity = GetUpdatedEntityID();
 
     -- TODO utilizing this for Blood Magic will be problematic when Blood Magic deals proper damage to self
-    EntitySetVariableNumber( entity, "gkbrkn_last_frame_damaged", GameGetFrameNum() );
+    if damage > 0 then
+        EntitySetVariableNumber( entity, "gkbrkn_last_frame_damaged", GameGetFrameNum() );
+    end
 
     local invincibility_duration = EntityGetVariableNumber(entity, "gkbrkn_invincibility_frames", 0 );
     if HasFlagPersistent( MISC.InvincibilityFrames.Enabled ) and invincibility_duration < MISC.InvincibilityFrames.Duration then

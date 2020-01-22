@@ -82,6 +82,14 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     --EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.xml", x + 200, y - 40 );
 
+    EntityAddComponent( player_entity, "LuaComponent", {
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/events/event_loop.lua",
+        enable_coroutines="1",
+        execute_on_added="1",
+        execute_times="1",
+        execute_every_n_frame="-1",
+    });
+
     --[[ Hero Mode ]]
     if HasFlagPersistent( MISC.HeroMode.Enabled ) then
         GameAddFlagRun( MISC.HeroMode.Enabled );
