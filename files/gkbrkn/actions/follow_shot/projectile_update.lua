@@ -8,7 +8,10 @@ if shooter ~= nil then
     local shooter_velocity = EntityGetFirstComponent( shooter, "VelocityComponent" );
     local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
     if shooter_velocity ~= nil and velocity ~= nil then
+        local multiplier = EntityGetVariableNumber( entity, "gkbrkn_follow_shot_multiplier", 0 );
         local svx, svy = ComponentGetValueVector2( shooter_velocity, "mVelocity" );
+        svx = multiplier * svx;
+        svy = multiplier * svy;
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
         --local angle = math.atan2( vy, vx );
         --local magnitude = math.sqrt( vx * vx + vy * vy );

@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c86"
+    Version = "c87"
 }
 
 CONTENT_TYPE = {
@@ -166,6 +166,8 @@ PERKS = {
     Wandsmith = register_perk( "wandsmith" ),
     HyperCasting = register_perk( "hyper_casting" ),
     LeadBoots = register_perk( "lead_boots" ),
+    DiplomaticImmunity = register_perk( "diplomatic_immunity" ),
+    TreasureRadar = register_perk( "treasure_radar" ),
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
@@ -223,7 +225,7 @@ ACTIONS = {
     Zap = register_action( "zap" ),
     StoredShot = register_action( "stored_shot" ),
     CarryShot = register_action( "carry_shot" ),
-    TreasureSense = register_action( "treasure_sense" ),
+    TreasureSense = register_action( "treasure_sense", nil, true, true ),
     NuggetShot = register_action( "nugget_shot", { callback=function() ModMaterialsFileAdd("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/materials.xml") end } ),
     ProtectiveEnchantment = register_action( "protective_enchantment" ),
     ChainCast = register_action( "chain_cast" ),
@@ -239,6 +241,7 @@ ACTIONS = {
     IceShot = register_action( "ice_shot", nil, true, true ),
     DestructiveShot = register_action( "destructive_shot" ),
     BoundShot = register_action( "bound_shot" ),
+    GuidedShot = register_action( "guided_shot" ),
     WIP = register_action( "wip", nil, true, not SETTINGS.Debug ),
 }
 

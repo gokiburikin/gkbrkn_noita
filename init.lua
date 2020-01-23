@@ -1,36 +1,26 @@
 --[[
 changelog
-    -m "Add a health bar to mini-bosses"
-    -m "Add Loadout: Goo Mode"
-    -m "Add Loadout: Wandsmith"
-    -m "Add Loadout: Duplicator"
-    -m "Add Perk: Hyper Casting"
-    -m "Add Perk: Lead Boots"
-    -m "Add Perk: Mana Manipulation"
-    -m "Add Perk: Megacast"
-    -m "Add Perk: Wandsmith"
-    -m "Chance Action: Glittering Trail (delay spell for 11 -> 3 frames, removing homing chance, change to random logic)"
-    -m "Change Action: Chaotic Burst (spread 666 -> 13, chaotic pathing ramps up over the course of 5 frames and is more random) (this change might be reverted next patch)"
-    -m "Change Action: Lock Shot (projectile speed multiplier 100% -> 0%, may be removed next update)"
-    -m "Change Action: Nugget Shot to Other so it doesn't show up so many times on wands"
-    -m "Change Carnage Mode (enemy resistances 50% -> 67%)"
-    -m "Change loadout initialization (add items before wands and potions)"
-    -m "Change Loadout: Speedrunner (remove Teleportitis, add Faster Movement)"
-    -m "Change Perk: Resilience (remove ice resistance)"
-    -m "Change random starting wand stat allocation"
-    -m "Change Perk: Swapper (enemies take some time to realize what happened)"
-    -m "Deprecate Perk: Multicast"
-    -m "Fix Misc: Chaotic Wand Generation and Misc: Extended Wand Generation overwriting always casts without retaining always cast status"
-    -m "Fix Misc: Health Bars not working at all"
+    -m "The update update"
+    -m "Add a dark overlay to the config menu"
+    -m "Add Action: Guided Shot"
+    -m "Add Loadout: Conjurer"
+    -m "Add Perk: Diplomatic Immunity"
+    -m "Add Perk: Treasure Radar"
+    -m "Change Action: Bound Shot (finish implementation, projectile damage 0 -> 2)"
+    -m "Change Action: Damage Plus - Bounce (limit bonus to 10 bounces)"
+    -m "Change Action: Damage Plus - Lifetime (limit bonus to 5 seconds)"
+    -m "Change Action: Lock Shot (fix not locking onto another target after the first died, give up moving towards target if it gets too far away)"
+    -m "Change Loadout: Treasure Hunter (remove Treasure Sense, add Wand Radar, add Treasure Radar, more digging power)"
+    -m "Change Perk: Blood Magic (max health is now adjusted by the held wand's max mana) (undocumented change from c86)"
+    -m "Change some descriptions to be more similar to the official descriptions"
+    -m "Deprecate Action: Treasure Sense"
     -m "Update README"
-    -m "Change more spell spawn probabilities"
 
 TODO
     make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
     nest tweak (1 gold for things spawned from nests)
     check why some enemies weren't getting health bars
     add treasure sense options
-    try to make an ice based projectile that turns into static ice when it hits the world
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)
@@ -44,7 +34,6 @@ PERKS
     Wand Merge (merge two wands into a new wand with the best aspects of either wand)
     Lucky Draw (reset the perk reroll cost) (too powerful)
     Gold Rush (enemies explode into more and more gold as your kill streak continues)
-    Chaos (randomize projectile stuff) (probably not useful)
     NYI
         Dual Wield would probably be an excessively difficulty task to implement, but it would be cool if you could designate a Wand to dual wield.
 
@@ -94,6 +83,7 @@ ModLuaFileAppend( "data/scripts/biomes/boss_arena.lua", "mods/gkbrkn_noita/files
 ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );
 ModLuaFileAppend( "data/scripts/items/chest_random_super.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random_super.lua" );
 ModLuaFileAppend( "data/scripts/biomes/temple_altar_left.lua", "mods/gkbrkn_noita/files/gkbrkn/append/goo_mode_temple_altar_left.lua" );
+ModLuaFileAppend( "data/scripts/buildings/temple_check_for_leaks.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_check_for_leaks.lua" );
 
 if HasFlagPersistent( MISC.NoPregenWands.Enabled ) then
     local pregen_wand_biomes = {

@@ -45,7 +45,7 @@ table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 for k,v in pairs( CONTENT_TYPE ) do
     local name = CONTENT_TYPE_DISPLAY_NAME[v];
     if SETTINGS.Debug then
-        name = (content_counts[v] or 0).." "..name;
+        name = ( content_counts[v] or 0 ).." "..name;
     end
     table.insert( content_type_selection, { name = name, type = v } );
     table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );
@@ -87,7 +87,7 @@ end
 
 function do_gui()
     id_offset = 0;
-    GuiStartFrame(gui);
+    GuiStartFrame( gui );
     GuiLayoutBeginVertical( gui, 86, 0 ); -- fold vertical
     local main_text = "["..gkbrkn_localization.ui_mod_name.." "..SETTINGS.Version.."]";
     if gui_require_restart == true then
@@ -111,6 +111,11 @@ function do_gui()
 
     GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
     if screen ~= 0 then
+        local player = EntityGetWithTag("player_unit")[1];
+        if player ~= nil then
+            local px, py = EntityGetTransform( player );
+            GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", px, py );
+        end
         hide_menu_frame = GameGetFrameNum() + 300;
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
         for index,tab_data in pairs( tabs ) do

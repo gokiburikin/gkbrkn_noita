@@ -4,4 +4,10 @@
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/follow_shot/projectile_update.lua"
 		>
 	</LuaComponent>
+    <LuaComponent
+        execute_on_added="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/follow_shot/projectile_init.lua"
+        remove_after_executed="1"
+		>
+	</LuaComponent>
 </Entity>

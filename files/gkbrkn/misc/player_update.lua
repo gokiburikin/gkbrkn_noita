@@ -30,30 +30,6 @@ if inventory2 ~= nil then
 end
 local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
 
---[[
-if now % 30 == 0 then
-    local game_effect = GetGameEffectLoadTo( player_entity, "POLYMORPH_RANDOM", true );
-    if game_effect ~= nil then
-        ComponentSetValue( game_effect, "polymorph_target", "data/entities/animals/longleg.xml" );
-        ComponentSetValue( game_effect, "frames", "30" );
-    end
-    local children = EntityGetAllChildren( player_entity ) or {};
-	for i,child_entity in ipairs( children ) do
-		if EntityGetName( child_entity ) == "cape" then
-            local cx, cy = EntityGetTransform( child_entity );
-            local verlet = EntityGetFirstComponent( child_entity, "VerletPhysicsComponent" );
-            if ComponentGetValue( verlet, "m_is_culled_previous" ) == "1" then
-                EntityRemoveFromParent( child_entity );
-                EntitySetTransform( child_entity, x+cx, y+cy );
-                EntityAddChild( player_entity, child_entity );
-            end
-            GamePrint( "is cape culled: ".. ComponentGetValue( verlet, "m_is_culled_previous", "0" ) );
-			break;
-		end
-	end
-end
-]]
-
 --[[ material immunities
 TODO still can't really make use of this without polymorphing
 if true then
@@ -470,7 +446,6 @@ end
 
 if now % 10 == 0 then
     local nearby_enemies = EntityGetWithTag( "enemy" );
-    --GamePrint( #nearby_enemies.." enemies nearby" );
     --[[ Champions ]]
     if GameHasFlagRun( MISC.ChampionEnemies.Enabled ) then
         for _,nearby in pairs( nearby_enemies ) do

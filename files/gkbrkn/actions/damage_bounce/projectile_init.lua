@@ -5,6 +5,7 @@ local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
     EntitySetVariableNumber( entity, "gkbrkn_bounces_last", ComponentGetValue( projectile, "bounces_left" ) );
     EntitySetVariableNumber( entity, "gkbrkn_bounce_damage_initial", ComponentGetValue( projectile, "damage" ) );
+    EntitySetVariableNumber( entity, "gkbrkn_bounce_damage_remaining", 10 );
     local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
     for type,_ in pairs(damage_by_types) do
         local amount = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );

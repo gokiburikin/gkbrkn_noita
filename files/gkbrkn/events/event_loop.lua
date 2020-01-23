@@ -73,6 +73,6 @@ async_loop(
         else
             next_event = nil;
         end
-        wait(30);
+        wait( 3600 );
     end
 );

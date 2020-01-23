@@ -8,6 +8,7 @@
     <LuaComponent
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/damage_lifetime/projectile_update.lua"
 		execute_every_n_frame="5"
+        execute_times="60"
 		>
 	</LuaComponent>
 </Entity>

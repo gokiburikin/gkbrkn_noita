@@ -110,7 +110,6 @@ function set_lost_treasure( gold_nugget_entity )
         script_item_picked_up = "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/gold_pickup.lua",
     });
     local removal_lua = EntityAddComponent( gold_nugget_entity, "LuaComponent", {
-        _enabled="1",
         _tags="gkbrkn_lost_treasure",
         execute_on_removed="1",
         execute_every_n_frame="-1",

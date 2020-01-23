@@ -14,11 +14,15 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 
 ### Loadouts
 - **Alchemist**: Chaotic Transmutation Acid Ball, Water, Potions, Material Compression.
+- **Blood**: Magic Arrow, Magic Missile, Blood Magic.
 - **Bubble**: Gravity Bubble Spark, Bouncy Dropper Shot, Fast Swimmer.
 - **Charge**: Magic Hand, Stored Shot, Sparkbolt, Critical Hit +.
+- **Conjurer**: Living Death Cross, Boomerang Spells.
 - **Default**: The standard loadout.
-- **Demolitionist**: Dormant Crystal, Dormant Crystal Detonator, Demolitionist.
+- **Demolition**: Dormant Crystal, Dormant Crystal Detonator, Demolition.
+- **Duplication**: Spell Duplicated Sparkbolt Field, Spell Duplicated Energy Orb, Extra Projectile.
 - **Glitter**: Long Distance Glittering Trail Stored Shot, Glitter Bomb.
+- **Goo Mode**: Challenge Mode. Creates Creepy Liquid that floods the world at each Holy Mountain.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
 - **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
 - **Seeker**: Double Persistent Avoiding Drilling Bolts, TNT.
@@ -27,6 +31,7 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 - **Treasure Hunter**: Treasure Sense, Nugget Shot, Digging Bolt, Attract Gold.
 - **Trickster**: Long Distance Cast Magicbolt / Sparkbolt split cast, Forward and Back Teleport, Passive Recharge.
 - **Unstable**: Chaotic Burst, Unstable Crystal, Fragile Ego.
+- **Wandsmith**: Default wands. Starts with 8 random spells and Edit Wands Everywhere.
 - **Zoning**: Energy Sphere Mines, Giga Death Cross.
 
 ### Loadout Mod Support
@@ -146,20 +151,24 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
 - **Blood Magic**: Your life force is used in place of mana.
-- **Chain Casting**: Your spells now chain cast (all spells gain Trigger - Death.)
-- **Demolitionist**: Your spells cause larger, more powerful explosions.
+- **Demolition**: Your spells cause larger, more powerful explosions.
+- **Demote Always Cast**: Demote a random always cast spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to a standard cast.
+- **Diplomatic Immunity**: You can no longer anger the gods.
 - **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
-- **Extra Projectile**: Your spells gain an additional projectile, but are less accurate and cast less quickly (their other effects aren't applied.)
+- **Extra Projectile**: You fire an additional projectile when casting spells, but you cast them less quickly. Spell stats are not applied twice!
 - **Fragile Ego**: Receive 75% less damage, but damage is dealt to maximum health.
 - **Healthier Heart**: You heal for the amount gained when gaining maximum health.
 - **Invincibility Frames**: You become immune to enemy damage for a short time after taking enemy damage.
-- **Knockback Immunity**: Immunity to knockback.
+- **Knockback Immunity**: Immunity to knockback and stunlock.
+- **Lead Boots**: Immunity to recoil if you're on the ground.
 - **Lost Treasure**: Any gold nuggets that despawned will reappear near you for collection (the counter then resets back to 0 and picking up the perk later will work again on any newly despawned gold nuggets.)
-- **Mana Manipulator**: From now on wands you find will have their mana and mana charge speed stats swapped.
+- **Mana Manipulation**: From now on wands you find will have their mana and mana charge speed stats swapped.
 - **Mana Recovery**: Your wands charge more quickly.
 - **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
+- **Megacast**: You cast all of your wand's spells at once.
 - **Multicast**: You cast 2 additional spells per cast.
 - **Passive Recharge**: Your wands recharge even when holstered.
+- **Queue Casting**: Your spells now chain cast (all spells gain Trigger - Death.)
 - **Protagonist**: Your damage increases the more damaged you are.
 - **Rapid Fire**: Cast spells more rapidly, but less accurately.
 - **Resilience**: Take reduced damage from status ailments (reduces damage taken from fire, radioactive, poison, and electricity by 67%.)
@@ -168,76 +177,70 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Thrifty Shopper**: Holy Mountain shops carry two additional items.
 - **Wandsmith**: From now on wands you find will have slightly better stats.
 
-### Projectile Spells
-- **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
-- **Zap**: A short lived bolt of electricity.
-- **Nugget Shot**: Hurl your hard earned gold at the enemy. Requires 10 gold.
-
-### Modifier Spells
-- **Barrier Trail**: Projectiles gain a trail of barriers.
-- **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce.
-- **Damage Plus: Time**: Cast a spell that gains damage over time.
-- **Follow Shot**: Cast a spell that is influenced by your movements.
-- **Glittering Trail**: Projectiles gain a trail of explosions.
-- **Lock Shot**: Cast a spell that locks onto a nearby target.
-- **Path Correction**: Projectiles redirect towards nearby enemies.
-- **Perfect Critical**: Cast a spell that is guaranteed to deal critical damage.
-- **Power Shot**: Cast a spell with increased damage, mass, and material penetration.
-- **Projectile Burst**: Duplicate a projectile multiple times.
-- **Time Split**: Equalize current cast delay and recharge time.
-- **Trigger: Death**: Cast another spell after the spell expires.
-- **Trigger: Hit**: Cast another spell upon collision.
-- **Trigger: Time**: Cast another spell after a short duration.
-
-### Static Projectile Spells
-- **Circle of Divine Blessing**: A field of modification magic. (Concept by curry_murmurs, name by Gastogh)
-- **Spell Duplicator**: Summon a magical phenomenon that casts a spell in a random direction every second.
-- **Stored Spell**: Summon a magical phenomenon that casts a spell when you stop casting.
-
-### Passive Spells
-- **Magic Light**: Control a magic light that cuts through darkness.
-- **Mana Recharge**: Your wand charges mana slightly faster.
-- **Order Deck**: Your wand casts spells in order.
-- **Passive Recharge**: Your wand recharges even when holstered.
-
-### Utility Spells
-- **Break Cast**: Ignore all remaining spells. (Inspired by Kaizer0002)
-- **Magic Hand**: Cast a spell that is held in place a set distance from the tip of your wand.
-- **Protective Enchantment**: Cast a spell with greatly reduced damage that can not directly damage you.
-- **Treasure Sense**: Treasure (wands, hearts, chests, potions, etc.) cast a visible trail towards themselves.
-
-### Multicast Spells
-- **Chain Cast**: Chain cast 4 spells.
-- **Formation - Stack**: Cast 3 spells in parallel.
-- **Persistent Shot**: Cast 2 spells that keep moving in the direction they were cast.
-- **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
-- **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
-- **Spell Merge**: Cast 2 spells of which the first is merged with the second.
-
-### Other Spells
+### Spells
 - **Arcane Bouquet**: Cast 2 spells the first of which bursts into multiples of the second after a timer runs out.
+- **Barrier Trail**: Projectiles gain a trail of barriers.
+- **Bound Shot**: Cast a spell with unlimited duration. Casting another bound spell kills any other bound spells.
+- **Break Cast**: Ignore all remaining spells. (Inspired by Kaizer0002)
+- **Chain Cast**: Chain cast 4 spells.
+- **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
+- **Circle of Divine Blessing**: A field of modification magic. (Concept by curry_murmurs, name by Gastogh)
 - **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
+- **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce (+50% initial damage per bounce up to 10 bounces.)
+- **Damage Plus: Critical**: Cast a spell that gains critical damage (+100% initial critical damage.)
+- **Damage Plus: Time**: Cast a spell that gains damage over time (+100% initial per half second up to 5 seconds.)
+- **Destructive Shot**: The projectile causes larger, more destructive explosions.
 - **Double Cast**: Cast the next spell and a copy of the next spell.
 - **Extra Projectile**: Duplicate a projectile.
+- **Feather Shot**: Cast a spell with reduced knockback, gravity, and terminal velocity.
+- **Follow Shot**: Cast a spell that is influenced by your movements.
+- **Formation - Stack**: Cast 3 spells in parallel.
+- **Glittering Trail**: The projectile gains a trail of explosions.
+- **Guided Shot**: The projectile is influenced by your aim.
+- **Lock Shot**: The projectile locks onto a nearby target.
+- **Magic Hand**: The projectile is held in place a set distance from the tip of your wand.
+- **Magic Light**: Control a magic light that cuts through darkness.
+- **Mana Recharge**: Your wand charges mana slightly faster.
+- **Nugget Shot**: Hurl your hard earned gold at the enemy. Requires 10 gold.
+- **Order Deck**: Your wand casts spells in order.
+- **Passive Recharge**: Your wand recharges even when holstered.
+- **Path Correction**: Projectiles redirect towards nearby enemies.
+- **Persistent Shot**: Cast 2 spells that keep moving in the direction they were cast.
+- **Power Shot**: The projectile has increased damage, mass, and material penetration.
+- **Projectile Burst**: Duplicate a projectile multiple times.
+- **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
+- **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
+- **Protective Enchantment**: Cast a spell with greatly reduced damage that can not directly damage you.
+- **Queued Cast**: Cast 3 spells, each triggering the next when it expires.
+- **Spell Duplicator**: Summon a magical phenomenon that casts the next spell in a random direction 5 times.
+- **Spell Merge**: Cast 2 spells of which the first is merged with the second.
+- **Stored Cast**: Summon a magical phenomenon that casts the next spell when you stop casting.
+- **Time Split**: Equalize current cast delay and recharge time.
+- **Treasure Sense**: Treasure (wands, hearts, chests, potions, etc.) cast a visible trail towards themselves.
+- **Trigger: Death**: Cast a spell that casts the next spell after it expires.
+- **Trigger: Hit**: Cast a spell that casts the next spell upon collision.
+- **Trigger: Time**: Cast a spell that casts the next spell after a short duration.
+- **Zap**: A short lived bolt of electricity.
 
 ## Deprecated
 These features were disabled or removed from the mod for one reason or another. Most can still be found in the code or enabled if config.lua is changed locally to show deprecated content.
 
 - **Action: Arcane Buckshot**: A small volley of arcane energy. *(Official spell will probably exist)*
 - **Action: Arcane Shot**: A fast bolt of arcane energy. *(Superceded officially by Triplicate Bolt)*
+- **Action: Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*
+- **Action: Draw Deck**: Simultaneously cast all remaining spells. *(Multiple multicasts can achieve this)*
+- **Action: Formation - N-gon**: Simultaneously cast all remaining spells in a circular pattern. *(Formation - Behind your back can achieve this)*
+- **Action: Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold. *(Lots of issues I don't care to fix)*
 - **Action: Micro Shield**: Projectiles reflect projectiles. *(Kinda janky, messes with self projectiles)*
+- **Action: Perfect Critical**: Cast a spell that is guaranteed to deal critical damage. *(Superceded by Damage Plus - Critical)*
+- **Action: Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
+- **Action: Revelation**: Cast a spell that reveals the area around the enemy it hits. *(Not very fun or interesting)*
+- **Action: Shimmering Treasure**: Treasure (wands, gold nuggets, hearts, chests, potions, etc.) is revealed in the darkness. *(Superceded by Treasure Sense)*
+- **Action: Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
+- **Action: Super Bounce**: Cast a spell that bounces more energetically. *(Not unique enough)*
+- **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*
+- **Perk: Golden Blood**: You bleed gold. *(Not very good or interesting)*
+- **Perk: Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
 - **Perk/Action: Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*
 - **Perk/Action: Spell Efficiency**: Most spell casts are free. *(Abandoned until a better solution is found)*
-- **Perk: Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
 - **Tweak: Shorten Blindness**: When affected by Blindness, limit that application to 10 seconds instead of 30 seconds. *(Official patched this)*
-- **Perk: Golden Blood**: You bleed gold. *(Not very good or interesting)*
-- **Action: Golden Blessing**: Cast a spell that blesses enemies causing them to bleed gold. *(Lots of issues I don't care to fix)*
-- **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*
-- **Formation - N-gon**: Simultaneously cast all remaining spells in a circular pattern. *(Formation - Behind your back can achieve this)*
-- **Draw Deck**: Simultaneously cast all remaining spells. *(Multiple multicasts can achieve this)*
-- **Piercing Shot**: Cast a spell that penetrates entities. *(Superceded officially by Piercing Shot)*
-- **Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
-- **Collision Detection**: Cast a spell that attempts to avoid world collisions. (Concept by Wanwan) *(Superceded officially by Avoding Arc)*
-- **Shimmering Treasure**: Treasure (wands, gold nuggets, hearts, chests, potions, etc.) is revealed in the darkness. *(Superceded by Treasure Sense)*
-- **Revelation**: Cast a spell that reveals the area around the enemy it hits. *(Not very fun or interesting)*
-- **Super Bounce**: Cast a spell that bounces more energetically. *(Not unique enough)*
