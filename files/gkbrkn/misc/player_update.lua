@@ -5,7 +5,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "data/scripts/lib/utilities.lua" );
 
---TODO a lot of this stuff should be done in a world update rather than a player update
+--TODO a lot of this stuff should be done in a world update rather than a player update since it doesn't need to happen per player
+--TODO in fact much of this could (and should) be done based on the camera position since the player won't always be here (polymorph)
 
 local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
@@ -29,6 +30,12 @@ if inventory2 ~= nil then
     end
 end
 local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
+
+--for _,entity in pairs( EntityGetInRadius( x, y, 64 ) or {} ) do
+--    if EntityGetComponent( entity, "PhysicsBodyComponent" ) ~= nil then
+--        PhysicsApplyForce( entity, 0, -10 );
+--    end
+--end
 
 --[[ material immunities
 TODO still can't really make use of this without polymorphing
@@ -677,10 +684,35 @@ if now % 10 == 0 then
     end
 
     --[[ Health Bars ]]
+    local nearby_mortal = EntityGetWithTag( "mortal" );
     if HasFlagPersistent( MISC.HealthBars.Enabled ) then
-        for _,nearby in pairs( nearby_enemies ) do
-            if EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
-                add_entity_mini_health_bar( nearby );
+        for _,nearby in pairs( nearby_mortal ) do
+            if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                local is_damaged = false;
+                local damage_models = EntityGetComponent( nearby, "DamageModelComponent" ) or {};
+                for _,damage_model in pairs( damage_models ) do
+                    local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+                    local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+                    if current_hp < max_hp then
+                        is_damaged = true;
+                        break;
+                    end
+                end
+                if is_damaged then
+                    add_entity_mini_health_bar( nearby );
+                end
+            end
+        end
+    end
+
+    --[[ Entity Names ]]
+    local nearby_mortal = EntityGetWithTag( "mortal" );
+    if HasFlagPersistent( MISC.ShowEntityNames.Enabled ) then
+        for _,nearby in pairs( nearby_mortal ) do
+            if EntityGetFirstComponent( nearby, "UIInfoComponent" ) == nil then
+                EntityAddComponent( nearby, "UIInfoComponent", {
+                    name=EntityGetName( nearby );
+                });
             end
         end
     end
@@ -695,11 +727,13 @@ if now % 10 == 0 then
             speed_multiplier = 2.0;
         end
 
-        local distance = EntityGetVariableNumber( player_entity, "gkbrkn_hero_mode_distance", 0.0 );
-        local distance_multiplier = math.pow( 0.9, tonumber( StatsGetValue("places_visited") ) - 1 );
+        local distance_multiplier = 1;
+        if GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled ) then
+            distance_multiplier = math.pow( 0.9, tonumber( StatsGetValue("places_visited") ) - 1 );
+        end
 
         local orb_multiplier =  1;
-        if GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
+        if GameHasFlagRun( MISC.HeroMode.OrbsDifficultyEnabled ) then
             orb_multiplier =  1 / math.pow( 1.1, GameGetOrbCountThisRun() );
         end
 
@@ -752,7 +786,7 @@ if now % 10 == 0 then
                     for index,damage_model in pairs( damage_models ) do
                         for damage_type,multiplier in pairs( resistances ) do
                             local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
-                            resistance = resistance * multiplier * orb_multiplier * distance_multiplier;
+                            resistance = resistance * multiplier * resistance_multiplier;
                             ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
                         end
                     end
@@ -848,12 +882,6 @@ if now % 10 == 0 then
                         run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
                         fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
                         velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                    });
-                end
-
-                if is_carnage_mode == false then
-                    EntityAddComponent( nearby, "LuaComponent", {
-                        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/hero_mode/damage_received.lua"
                     });
                 end
             end

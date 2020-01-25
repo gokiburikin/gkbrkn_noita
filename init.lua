@@ -1,26 +1,18 @@
 --[[
 changelog
-    -m "The update update"
-    -m "Add a dark overlay to the config menu"
-    -m "Add Action: Guided Shot"
-    -m "Add Loadout: Conjurer"
-    -m "Add Perk: Diplomatic Immunity"
-    -m "Add Perk: Treasure Radar"
-    -m "Change Action: Bound Shot (finish implementation, projectile damage 0 -> 2)"
-    -m "Change Action: Damage Plus - Bounce (limit bonus to 10 bounces)"
-    -m "Change Action: Damage Plus - Lifetime (limit bonus to 5 seconds)"
-    -m "Change Action: Lock Shot (fix not locking onto another target after the first died, give up moving towards target if it gets too far away)"
-    -m "Change Loadout: Treasure Hunter (remove Treasure Sense, add Wand Radar, add Treasure Radar, more digging power)"
-    -m "Change Perk: Blood Magic (max health is now adjusted by the held wand's max mana) (undocumented change from c86)"
-    -m "Change some descriptions to be more similar to the official descriptions"
-    -m "Deprecate Action: Treasure Sense"
-    -m "Update README"
+    -m "The Small but Important Update"
+    -m "Add Misc: Show Hovered Entity Names"
+    -m "Change config menu dark overlay to use camera position instead of player position (fixes no darkening when dead)"
+    -m "Change config menu tabs to cover multiple lines"
+    -m "Change Misc: Health Bars (include more entities, improve visibility, only show if damaged)"
+    -m "Change Misc: Hero Mode (remove additional gold reward)"
+    -m "Fix Misc: Champion Mode badge localizations"
+    -m "Fix Misc: Hero Mode > Exploration Increases Difficulty being active even when disabled as long as Hero Mode was enabled"
+    -m "Fix Misc: Random Events localizations"
 
 TODO
-    make material compression fill all flasks you pick up for the first time (don't know if this is possible right now)
+    make material compression fill all flasks you pick up for the first time (not possible right now)
     nest tweak (1 gold for things spawned from nests)
-    check why some enemies weren't getting health bars
-    add treasure sense options
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)

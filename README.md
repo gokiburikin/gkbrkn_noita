@@ -46,13 +46,13 @@ Champions Mode is a challenge mode intended for players familiar with Noita. The
 Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded with special attributes. Misc > Champions > Super Champions allows the chance for additional special attributes to be applied to champion enemies, resulting in multiple attributes. The chance increases the more champions are encountered. Misc > Champions > Champions Only ensures all enemies that can be champions are champions. Misc > Champions > Mini-Bosses gives any champion a chance to gain a preset choice of champion types to make it more diffiult as well as a substantial health boost. Mini-Bosses drop a chest upon defeat.
 
 ### Champion Types
-- **Armoured**: 50% damage resistance and knockback immunity.
+- **Armoured**: 50% damage resistance, melee and knockback immunity.
 - **Burning**: Fire immunity, set nearby things on fire. Projectiles set things they hit on fire.
 - **Counter/Reflect**: Counter attack with a white projectile that explodes after some time.
 - **Damage Buff**: Melee, projectile, and dash damage increased.
-- **Digging Projectile**: Projectiles gain material penetration.
+- **Matter Eater**: Projectiles dig through the world.
 - **Eldritch**: Gain a mid-range tentacle attack.
-- **Electric**: Electrocute nearby materials. Projectile electrocute things they hit.
+- **Electric**: Electrocute nearby materials. Projectiles electrocute things they hit.
 - **Energy Shield**: Gain a weak energy shield.
 - **Faster Movement**: 200% additional walking speed, 100% additional flying and jumping speed.
 - **Freezing**: Freeze nearby entities and materials. Projectiles freeze things they hit.
@@ -78,7 +78,7 @@ Hero mode is a challenge mode intended for players familiar with Noita. The inte
 
 When activated by Misc > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Misc > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Misc > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
 
-Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all cost.
+Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all cost. Invisibility has no power here.
 
 Carnage Mode is an extra unfair difficulty intended to be a challenge for those who have cleared Ultimate Hero Ultimate Champions mode. It removes the positive side effects of Hero Mode (wand buffs, extra movement speed) and increases the negative effects. Enemies can dash short distances, fly, are fire immune, ignore charm, and attack more quickly. You get less perk options, less shop items, and the gods are angered from the start.
 

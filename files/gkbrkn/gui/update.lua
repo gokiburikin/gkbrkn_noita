@@ -44,9 +44,9 @@ table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 
 for k,v in pairs( CONTENT_TYPE ) do
     local name = CONTENT_TYPE_DISPLAY_NAME[v];
-    if SETTINGS.Debug then
-        name = ( content_counts[v] or 0 ).." "..name;
-    end
+    --if SETTINGS.Debug then
+    --    name = ( content_counts[v] or 0 ).." "..name;
+    --end
     table.insert( content_type_selection, { name = name, type = v } );
     table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );
 end
@@ -85,22 +85,33 @@ function next_id()
     return gui_id + id_offset;
 end
 
+function get_tab_name()
+    for _,tab_data in pairs( tabs ) do
+        if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
+            return tab_data.name;
+        end
+    end
+end
+
 function do_gui()
     id_offset = 0;
     GuiStartFrame( gui );
+
+    -- Config Menu Bitton
     GuiLayoutBeginVertical( gui, 86, 0 ); -- fold vertical
-    local main_text = "["..gkbrkn_localization.ui_mod_name.." "..SETTINGS.Version.."]";
-    if gui_require_restart == true then
-        main_text = main_text.."*"
-    end
-    if GuiButton( gui, 0, 0, main_text, gui_id ) then
-        if screen == SCREEN.Options then
-            change_screen( 0 );
-        else
-            change_screen( SCREEN.Options );
+        local main_text = "["..gkbrkn_localization.ui_mod_name.." "..SETTINGS.Version.."]";
+        if gui_require_restart == true then
+            main_text = main_text.."*"
         end
-    end
+        if GuiButton( gui, 0, 0, main_text, gui_id ) then
+            if screen ~= 0 then
+                change_screen( 0 );
+            else
+                change_screen( SCREEN.Options );
+            end
+        end
     GuiLayoutEnd( gui ); -- fold vertical
+
     if SETTINGS ~= nil and SETTINGS.Debug then
         GuiLayoutBeginVertical( gui, 92, 93 );
         local update_time = get_update_time();
@@ -111,18 +122,22 @@ function do_gui()
 
     GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
     if screen ~= 0 then
-        local player = EntityGetWithTag("player_unit")[1];
-        if player ~= nil then
-            local px, py = EntityGetTransform( player );
-            GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", px, py );
+        -- TODO needed until stable gets this
+        if GameCreateSpriteForXFrames ~= nil then
+            local cx, cy = GameGetCameraPos();
+            GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", cx, cy );
         end
         hide_menu_frame = GameGetFrameNum() + 300;
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
+        local tab_index = 1;
         for index,tab_data in pairs( tabs ) do
             local tab_title = tab_data.name;
             local is_current_tab = false;
             if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
                 is_current_tab = true;
+            end
+            if DEBUG then
+                tab_title = ( content_counts[index] or 0 ).." "..tab_title
             end
             if is_current_tab then
                 tab_title = ">"..tab_title.."<";
@@ -135,6 +150,11 @@ function do_gui()
                     content_type = tab_data.content_type;
                 end
             end
+            if tab_index % 7 == 0 then
+                GuiLayoutEnd( gui ); -- tabs horizontal
+                GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
+            end
+            tab_index = tab_index + 1;
         end
         GuiLayoutEnd( gui ); -- tabs horizontal
     end
@@ -142,11 +162,6 @@ function do_gui()
     if screen == SCREEN.Options then
         local wrap_threshold = 12;
         GuiText( gui, 0, 0, " ");
-        GuiLayoutBeginHorizontal( gui, 0, 0 );
-            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
-                change_screen( 0 );
-            end
-        GuiLayoutEnd( gui );
         do_pagination( options, wrap_threshold * wrap_limit );
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginVertical( gui, 0, 0 );
@@ -171,9 +186,6 @@ function do_gui()
     elseif screen == SCREEN.ContentTypeSelection then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-        if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
-            change_screen( 0 );
-        end
         GuiLayoutEnd( gui );
         GuiText( gui, 0, 0, " ");
         for k,content_type_data in pairs(content_type_selection) do
@@ -186,11 +198,8 @@ function do_gui()
         local filtered_content = filter_content( sorted_content, content_type );
         --for index,action_id in pairs( sorted_actions ) do
         GuiText( gui, 0, 0, " ");
+        do_pagination( filtered_content, wrap_threshold * wrap_limit );
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
-            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_close_menu.."]", next_id() ) then
-                change_screen( 0 );
-            end
-            GuiText( gui, 0, 0, "  " );
             if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_enable_all.."]", next_id() ) then
                 for index,content_mapping in pairs( filtered_content ) do
                     CONTENT[ content_mapping.id ].toggle( true );
@@ -210,7 +219,6 @@ function do_gui()
                 gui_require_restart = true;
             end
         GuiLayoutEnd( gui ); -- quick bar horizontal
-        do_pagination( filtered_content, wrap_threshold * wrap_limit );
         GuiText( gui, 0, 0, " " );
         GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
         local wrap_index = 1;
@@ -303,7 +311,7 @@ end
 
 function do_pagination( list, per_page )
     GuiLayoutBeginHorizontal( gui, 0, 0 );
-    GuiText( gui, 0, 0, gkbrkn_localization.ui_page.." " );
+    GuiText( gui, 0, 0, get_tab_name().." "..gkbrkn_localization.ui_page.." " );
     for i=1,math.ceil( #list / per_page ) do
         local text = "";
         if page == i-1 then

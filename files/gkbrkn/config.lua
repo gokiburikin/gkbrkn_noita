@@ -6,7 +6,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c87"
+    Version = "c88"
 }
 
 CONTENT_TYPE = {
@@ -167,7 +167,7 @@ PERKS = {
     HyperCasting = register_perk( "hyper_casting" ),
     LeadBoots = register_perk( "lead_boots" ),
     DiplomaticImmunity = register_perk( "diplomatic_immunity" ),
-    TreasureRadar = register_perk( "treasure_radar" ),
+    TreasureRadar = register_perk( "treasure_radar", nil, GameCreateSpriteForXFrames == nil, GameCreateSpriteForXFrames == nil ),
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
@@ -1134,7 +1134,7 @@ EVENTS = {
         return "Blindness", "", callback;
     end, nil, 1
     ),
-    HomingBlackhole = register_dynamic_event( "homing_blackhole", function( player_entity )
+    HomingBlackhole = register_dynamic_event( "homing_black_hole", function( player_entity )
         local callback = function( player_entity )
             local x, y = EntityGetTransform( player_entity );
             local black_hole = EntityLoad( "data/entities/projectiles/deck/black_hole.xml", x, y );
@@ -1266,7 +1266,7 @@ MISC = {
     },
     HeroMode = {
         Enabled = "gkbrkn_hero_mode",
-        OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
+        OrbsDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
         DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
         CarnageDifficultyEnabled = "gkbrkn_hero_mode_carnage",
     },
@@ -1282,6 +1282,9 @@ MISC = {
     },
     Badges = {
         Enabled = "gkbrkn_show_badges",
+    },
+    ShowEntityNames = {
+        Enabled = "gkbrkn_show_entity_names",
     },
     FixedCamera = {
         Enabled = "gkbrkn_fixed_camera",
@@ -1457,7 +1460,7 @@ OPTIONS = {
         RequiresRestart = true,
         ToggleCallback = function( enabled )
             if enabled then
-                AddFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled );
+                AddFlagPersistent( MISC.HeroMode.OrbsDifficultyEnabled );
                 AddFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled );
             end
         end
@@ -1603,6 +1606,10 @@ OPTIONS = {
         PersistentFlag = "gkbrkn_show_badges",
         RequiresRestart = true,
         EnabledByDefault = true,
+    },
+    {
+        Name = gkbrkn_localization.option_show_entity_names,
+        PersistentFlag = MISC.ShowEntityNames.Enabled,
     },
     {
         Name = gkbrkn_localization.option_fixed_camera,

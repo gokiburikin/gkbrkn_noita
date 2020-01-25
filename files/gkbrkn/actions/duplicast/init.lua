@@ -5,6 +5,11 @@ table.insert( actions, generate_action_entry(
     nil,
     function()
         current_reload_time = current_reload_time + 30;
+        --[[
+        c.pattern_degrees = c.pattern_degrees + 180;
+        extra_projectiles( 7 );
+        draw_actions( 1, true );
+        ]]
         local _current_reload_time = current_reload_time;
         if reflecting then 
             return;

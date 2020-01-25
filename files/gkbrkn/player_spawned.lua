@@ -93,8 +93,8 @@ if GameHasFlagRun( init_check_flag ) == false then
     --[[ Hero Mode ]]
     if HasFlagPersistent( MISC.HeroMode.Enabled ) then
         GameAddFlagRun( MISC.HeroMode.Enabled );
-        if HasFlagPersistent( MISC.HeroMode.OrbsIncreaseDifficultyEnabled ) then
-            GameAddFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled );
+        if HasFlagPersistent( MISC.HeroMode.OrbsDifficultyEnabled ) then
+            GameAddFlagRun( MISC.HeroMode.OrbsDifficultyEnabled );
         end
         if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
             GameAddFlagRun( MISC.HeroMode.DistanceDifficultyEnabled );
@@ -105,7 +105,7 @@ if GameHasFlagRun( init_check_flag ) == false then
         if HasFlagPersistent( MISC.Badges.Enabled ) then
             local badge = load_dynamic_badge( "hero_mode", {
                 {_distance=GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled )},
-                {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsIncreaseDifficultyEnabled )},
+                {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsDifficultyEnabled )},
                 {_carnage=GameHasFlagRun( MISC.HeroMode.CarnageDifficultyEnabled )},
             }, gkbrkn_localization );
             EntityAddChild( player_entity, badge );

@@ -15,11 +15,20 @@ local extended_types = {
 local chance_to_replace = 0.03;
 function generate_gun( cost, level, force_unshuffle )
     _generate_gun( cost, level, force_unshuffle );
-    if HasFlagPersistent( MISC.ChaoticWandGeneration.Enabled ) then
-        local entity = GetUpdatedEntityID();
-        local x,y = EntityGetTransform( entity );
-        local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};
-        for _,wand in pairs( local_wands ) do
+    local entity = GetUpdatedEntityID();
+    local x,y = EntityGetTransform( entity );
+    local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};
+    local players = EntityGetWithTag("player_unit") or {};
+    local wandsmith_stacks = 0;
+    local mana_mastery_stacks = 0;
+    for _,player in pairs( players ) do
+        wandsmith_stacks = wandsmith_stacks + EntityGetVariableNumber( player, "gkbrkn_wandsmith_stacks", 0 );
+        mana_mastery_stacks = mana_mastery_stacks + EntityGetVariableNumber( player, "gkbrkn_mana_mastery", 0 );
+    end
+
+    for _,wand in pairs( local_wands ) do
+        local ability = FindFirstComponentByType( wand, "AbilityComponent" );
+        if HasFlagPersistent( MISC.ChaoticWandGeneration.Enabled ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
                 local item = FindFirstComponentByType( child, "ItemComponent" );
@@ -52,12 +61,7 @@ function generate_gun( cost, level, force_unshuffle )
                 end
                 EntityAddChild( wand, child_to_return );
             end
-        end
-    elseif HasFlagPersistent( MISC.ExtendedWandGeneration.Enabled ) then
-        local entity = GetUpdatedEntityID();
-        local x,y = EntityGetTransform( entity );
-        local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};
-        for _,wand in pairs( local_wands ) do
+        elseif HasFlagPersistent( MISC.ExtendedWandGeneration.Enabled ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
                 local item = FindFirstComponentByType( child, "ItemComponent" );
@@ -91,21 +95,9 @@ function generate_gun( cost, level, force_unshuffle )
                 EntityAddChild( wand, child_to_return );
             end
         end
-    end
-    
-    local players = EntityGetWithTag("player_unit") or {};
 
-    local wandsmith_stacks = 0;
-    for _,player in pairs( players ) do
-        wandsmith_stacks = wandsmith_stacks + EntityGetVariableNumber( player, "gkbrkn_wandsmith_stacks", 0 );
-    end
-    if wandsmith_stacks > 0 then
-        local entity = GetUpdatedEntityID();
-        local x,y = EntityGetTransform( entity );
-        local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};
-        for _,wand in pairs( local_wands ) do
-            local ability = FindFirstComponentByType( wand, "AbilityComponent" );
-            if ability ~= nil then
+        if ability ~= nil then
+            if wandsmith_stacks > 0 then
                 ability_component_adjust_stats( ability, {
                     mana_max=function(value) return tonumber( value ) * ( 1.1 ^ wandsmith_stacks ); end,
                     mana_charge_speed=function(value) return ( tonumber( value ) + Random( 10, 20 ) ) * ( 1.1 ^ wandsmith_stacks ); end,
@@ -115,20 +107,8 @@ function generate_gun( cost, level, force_unshuffle )
                     spread_degrees=function(value) return tonumber( value ) - 2 * wandsmith_stacks; end,
                 } );
             end
-        end
-    end
 
-    local mana_mastery_stacks = 0;
-    for _,player in pairs( players ) do
-        mana_mastery_stacks = mana_mastery_stacks + EntityGetVariableNumber( player, "gkbrkn_mana_mastery", 0 );
-    end
-    if mana_mastery_stacks > 0 then
-        local entity = GetUpdatedEntityID();
-        local x,y = EntityGetTransform( entity );
-        local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};
-        for _,wand in pairs( local_wands ) do
-            local ability = FindFirstComponentByType( wand, "AbilityComponent" );
-            if ability ~= nil then
+            if mana_mastery_stacks > 0 then
                 local mana_max = ability_component_get_stat( ability, "mana_max" );
                 local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
                 ability_component_set_stat( ability, "mana_max", mana_charge_speed );
@@ -136,5 +116,4 @@ function generate_gun( cost, level, force_unshuffle )
             end
         end
     end
-    
 end

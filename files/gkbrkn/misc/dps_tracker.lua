@@ -14,6 +14,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         local max_hp = ComponentGetValue( damage_model, "max_hp" );
         ComponentSetValue( damage_model, "hp", max_hp );
     end
+    --GamePrint( "Target Dummy took "..(damage * 25).." damage from "..EntityGetName( entity_thats_responsible ) );
     
     if now >= reset_frame then
         total_damage = 0;

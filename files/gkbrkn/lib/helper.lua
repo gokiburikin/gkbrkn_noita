@@ -290,7 +290,7 @@ function add_entity_mini_health_bar( entity )
         is_text_sprite="0",
         next_rect_animation="",
         offset_x="11",
-        offset_y="-4",
+        offset_y="-8",
         rect_animation="",
         special_scale_x="0.2",
         special_scale_y="0.6",
@@ -299,7 +299,7 @@ function add_entity_mini_health_bar( entity )
         update_transform_rotation="0",
         visible="1",
         z_index="-9000",
-    });
+    } );
 end
 
 function entity_adjust_health( entity, callback )
