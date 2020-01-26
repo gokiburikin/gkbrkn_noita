@@ -1,4 +1,5 @@
-dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
+dofile( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
 if HasFlagPersistent( MISC.Loadouts.Enabled ) and MISC.Loadouts.Skip ~= true then
     local loadouts = {};
     for id,loadout in pairs( LOADOUTS ) do

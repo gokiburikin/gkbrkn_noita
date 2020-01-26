@@ -86,12 +86,13 @@ Carnage Mode is an extra unfair difficulty intended to be a challenge for those 
 Legendary wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
 
 - **Wormhole**: A two-way teleport with a short delay between them. Useful for peeking around corners, getting into otherwise blocked spaces checking through thin walls, or temporarily escaping a dangerous situation.
+- **Telefragger**: A triggered triple cast teleport casted damage buffed teleport projectile. Shoot it near enemies to telefrag them.
 
 ## Random Start
 Options to start runs with random changes. All of these can be used separately or together.
 
 - **Random Wands**: Start with two randomly generated wands.
-- **Alternative Wand Generation**: Use my custom wand generation logic. Less predictable, potentially less usable wands.
+- **Alternative Wand Generation**: Generate random starting wands using less repetitive custom wand generation logic.
 - **Random Cape Colour**: Start with a randomly coloured cape.
 - **Random Starting Health**: Start with a random amount of health from 50 to 150.
 - **Random Flasks**: Start with a random assortment of flasks.
@@ -133,8 +134,8 @@ These options have an impact on general gameplay and are meant to be picked and 
 All content can be toggled on or off. Pick and choose what you like, or disable it all if you're only interested in the utility of Goki's Things.
 
 ### Tweaks
-- **Chainsaw**: Now costs mana, reduces cast delay to 0.08 instead of 0 (unless it is already lower.)
 - **Chain Bolt**: Fix targeting issues.
+- **Chainsaw**: Now costs mana, reduces cast delay to 0.08 instead of 0 (unless it is already lower.)
 - **Damage Field**: Reduce damage tick rate (tick rate 1 -> 5 frames.)
 - **Damage Plus**: Costs more mana, doubled recharge time.
 - **Explosion of Thunder**: Fixes the interaction with Protective Enchantment.
@@ -147,6 +148,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Revenge Explosion**: No longer activates on environmental / self damage, fixes the explosions not proccing when taking rapid tick (fire) damage.
 - **Revenge Tentacle**: No longer activates on environmental / self damage, fixes the tentacle not proccing when taking rapid tick (fire) damage.
 - **Spiral Shot**: Complete rewrite to fix the extremely heavy performance cost.
+- **Teleport Cast**: Cast on hitbox centre instead of entity origin.
 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
@@ -185,18 +187,18 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Chain Cast**: Chain cast 4 spells.
 - **Chaotic Burst**: Cast an uncontrolled burst of projectiles.
 - **Circle of Divine Blessing**: A field of modification magic. (Concept by curry_murmurs, name by Gastogh)
-- **Copy Spell**: Cast a copy of the next unlimited use, non-copy spell.
 - **Damage Plus: Bounce**: Cast a spell that gains damage after each bounce (+50% initial damage per bounce up to 10 bounces.)
 - **Damage Plus: Critical**: Cast a spell that gains critical damage (+100% initial critical damage.)
 - **Damage Plus: Time**: Cast a spell that gains damage over time (+100% initial per half second up to 5 seconds.)
 - **Destructive Shot**: The projectile causes larger, more destructive explosions.
-- **Double Cast**: Cast the next spell and a copy of the next spell.
+- **Double Cast**: The next spell cast is doubled.
 - **Extra Projectile**: Duplicate a projectile.
 - **Feather Shot**: Cast a spell with reduced knockback, gravity, and terminal velocity.
 - **Follow Shot**: Cast a spell that is influenced by your movements.
 - **Formation - Stack**: Cast 3 spells in parallel.
 - **Glittering Trail**: The projectile gains a trail of explosions.
 - **Guided Shot**: The projectile is influenced by your aim.
+- **Imitation**: Cast a copy of the next unlimited use spell (or cast the next spell if no valid spell exists.)
 - **Lock Shot**: The projectile locks onto a nearby target.
 - **Magic Hand**: The projectile is held in place a set distance from the tip of your wand.
 - **Magic Light**: Control a magic light that cuts through darkness.
@@ -220,6 +222,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Trigger: Death**: Cast a spell that casts the next spell after it expires.
 - **Trigger: Hit**: Cast a spell that casts the next spell upon collision.
 - **Trigger: Time**: Cast a spell that casts the next spell after a short duration.
+- **Triple Cast**: The next spell cast is tripled.
 - **Zap**: A short lived bolt of electricity.
 
 ## Deprecated

@@ -1,54 +1,12 @@
-dofile( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 dofile_once( "data/scripts/perks/perk.lua" );
-dofile_once("data/scripts/lib/utilities.lua");
-dofile_once("data/scripts/gun/procedural/gun_action_utils.lua");
-
-function get_random_from( target )
-    return tostring( Random( 1, #target ) );
-end
-
-function get_random_between_range( target )
-    local min = target[1];
-    local max = target[2];
-    return Random( min, max );
-end
-
-local WAND_STAT_SETTER = {
-    Direct = 1,
-    Gun = 2,
-    GunAction = 3
-}
-
-local WAND_STAT_SETTERS = {
-    shuffle_deck_when_empty = WAND_STAT_SETTER.Gun,
-    actions_per_round = WAND_STAT_SETTER.Gun,
-    speed_multiplier = WAND_STAT_SETTER.GunAction,
-    deck_capacity = WAND_STAT_SETTER.Gun,
-    reload_time = WAND_STAT_SETTER.Gun,
-    fire_rate_wait = WAND_STAT_SETTER.GunAction,
-    spread_degrees = WAND_STAT_SETTER.GunAction,
-    mana_charge_speed = WAND_STAT_SETTER.Direct,
-    mana_max = WAND_STAT_SETTER.Direct,
-}
-
-function ability_component_set_stat( ability, stat, value )
-    local setter = WAND_STAT_SETTERS[stat];
-    if setter ~= nil then
-        if setter == WAND_STAT_SETTER.Direct then
-            ComponentSetValue( ability, stat, tostring( value ) );
-            if stat == "mana_max" then
-                ComponentSetValue( ability, "mana", tostring( value ) );
-            end
-        elseif setter == WAND_STAT_SETTER.Gun then
-            ComponentObjectSetValue( ability, "gun_config", stat, tostring( value ) );
-        elseif setter == WAND_STAT_SETTER.GunAction then
-            ComponentObjectSetValue( ability, "gunaction_config", stat, tostring( value ) );
-        end
-    end
-end
+dofile_once( "data/scripts/lib/utilities.lua" );
+dofile_once( "data/scripts/gun/procedural/gun_action_utils.lua" );
+dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" );
+dofile_once( "data/scripts/gun/procedural/wands.lua" );
 
 function handle_loadout( player_entity, loadout_data )
     local x, y = EntityGetTransform( player_entity );
@@ -125,73 +83,7 @@ function handle_loadout( player_entity, loadout_data )
                 SetRandomSeed( x, y );
 
                 EntitySetVariableNumber( wand, "gkbrkn_loadout_wand", 1 );
-
-                local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
-                ComponentSetValue( ability, "ui_name", wand_data.name );
-                if wand_data.sprite ~= nil then
-                    if wand_data.sprite.file ~= nil then
-                        ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
-                        -- TODO this takes a second to apply, probably work fixing, but for now just prefer using custom file
-                        local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
-                        if sprite ~= nil then
-                            ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
-                        end
-                    end
-                    if wand_data.sprite.hotspot ~= nil then
-                        local hotspot = EntityGetFirstComponent( wand, "HotspotComponent", "shoot_pos" );
-                        if hotspot ~= nil then
-                            ComponentSetValueVector2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
-                        end
-                    end
-                end
-
-                local item = EntityGetFirstComponent( wand, "ItemComponent" );
-                if item ~= nil then
-                    ComponentSetValue( item, "item_name", wand_data.name );
-                end
-
-                for stat,value in pairs( wand_data.stats or {} ) do
-                    ability_component_set_stat( ability, stat, value );
-                end
-
-                for stat,range in pairs( wand_data.stat_ranges or {} ) do
-                    ability_component_set_stat( ability, stat, Random( range[1], range[2] ) );
-                end
-
-                for stat,random_values in pairs( wand_data.stat_randoms or {} ) do
-                    ability_component_set_stat( ability, stat, random_values[ Random( 1, #random_values ) ] );
-                end
-
-                for _,actions in pairs( wand_data.permanent_actions or {} ) do
-                    local random_action = actions[ Random( 1, #actions ) ];
-                    if random_action ~= nil then
-                        AddGunActionPermanent( wand, random_action );
-                    end
-                end
-
-                for _,actions in pairs( wand_data.actions or {} ) do
-                    local random_action = actions[ Random( 1, #actions ) ];
-                    if random_action ~= nil then
-                        if type(random_action) == "table" then
-                            local action_entity = CreateItemActionEntity( random_action.action );
-                            local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
-                            if random_action.locked then
-                                ComponentSetValue( component, "is_frozen", "1" );
-                            end
-                            if random_action.permanent then
-                                ComponentSetValue( component, "permanently_attached", "1" );
-                            end
-                            EntityAddChild( wand, action_entity );
-                        else
-                            AddGunAction( wand, random_action );
-                        end
-                    end
-                end
-
-                if wand_data.callback ~= nil then
-                    wand_data.callback( wand, ability );
-                end
-
+                initialize_wand( wand, wand_data );
                 EntitySetComponentsWithTagEnabled( wand, "enabled_in_world", false );
                 EntityAddChild( inventory, wand );
             end

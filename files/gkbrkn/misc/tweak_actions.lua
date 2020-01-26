@@ -77,6 +77,13 @@ local edit_callbacks = {
 			add_projectile( "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/spiral_shot/spiral_shot.xml" );
 			c.fire_rate_wait = c.fire_rate_wait + 20;
 		end
+    end,
+    TELEPORT_CAST = function ( action, index )
+        action.action = function()
+			add_projectile_trigger_death( "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/teleport_cast.xml", 1 );
+			c.fire_rate_wait = c.fire_rate_wait + 20;
+			c.spread_degrees = c.spread_degrees + 12;
+		end
     end
 }
 

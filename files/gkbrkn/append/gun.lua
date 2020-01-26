@@ -197,7 +197,7 @@ function draw_actions( how_many, instant_reload_if_empty )
     local extra_actions = EntityGetVariableNumber( player, "gkbrkn_draw_actions_bonus", 0 );
     local draw_remaining = EntityGetVariableNumber( player, "gkbrkn_draw_remaining", 0 );
     actions_to_draw = extra_actions + actions_to_draw;
-    if draw_remaining > 0 then
+    if draw_remaining > 0 and gkbrkn.draw_action_stack_size == 0 then
         actions_to_draw = math.max( actions_to_draw, #deck );
     end
     gkbrkn._draw_actions( actions_to_draw, instant_reload_if_empty );
@@ -411,9 +411,35 @@ function delete_cloned_actions()
     end
 end
 
+function deck_from_actions( actions, start_index )
+    local deck = {};
+    if start_index == nil then start_index = 1; end
+    for i=start_index,#actions,1 do
+        table.insert( deck, actions[i] );
+    end
+    return deck;
+end
+
+function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty )
+    local old_c = c;
+    local captured = capture_draw_actions( amount, instant_reload_if_empty );
+    for i=1,repeat_n_times do 
+        temporary_deck( function( deck, hand, discarded )
+            c = {};
+            reset_modifiers(c);
+            draw_actions( 1 );
+        end,
+        deck_from_actions( captured ), {}, {} );
+    end
+    c = old_c;
+    register_action( c );
+    SetProjectileConfigs();
+end
+
+
 -- TODO this should not set variables on actions and instead keep a local table of which
 -- actions have been cloned and which actions are clones to avoid potential issues
-function duplicate_draw_action( amount, instant_reload_if_empty )
+function duplicate_draw_action_old( amount, instant_reload_if_empty )
     if #deck >= 1 then
         local original_amount = amount;
         local drawn_before = state_cards_drawn;

@@ -1,12 +1,14 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
 local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c88"
+    Version = "c89"
 }
 
 CONTENT_TYPE = {
@@ -113,9 +115,24 @@ function get_content_flag( content_id )
 end
 
 local register_perk = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted, function()
+    if options == nil then
+        options = {};
+    end
+    local content_id = register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted, function()
         ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/init.lua" );
     end );
+    options.preview_callback = function( player_entity )
+        local starting_perk = CONTENT[content_id];
+        if starting_perk ~= nil then
+            if starting_perk.enabled() then
+                local perk_entity = perk_spawn( x, y, string.upper( "gkbrkn_"..starting_perk.key ) );
+                if perk_entity ~= nil then
+                    perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+                end
+            end
+        end
+    end
+    return content_id;
 end
 
 PERKS = {
@@ -192,6 +209,7 @@ ACTIONS = {
     ArcaneBuckshot = register_action( "arcane_buckshot", nil, true, true ),
     ArcaneShot = register_action( "arcane_shot", nil, true, true ),
     DoubleCast = register_action( "double_cast" ),
+    TripleCast = register_action( "triple_cast" ),
     SpellMerge = register_action( "spell_merge" ),
     ExtraProjectile = register_action( "extra_projectile" ),
     OrderDeck = register_action( "order_deck" ),
@@ -242,12 +260,20 @@ ACTIONS = {
     DestructiveShot = register_action( "destructive_shot" ),
     BoundShot = register_action( "bound_shot" ),
     GuidedShot = register_action( "guided_shot" ),
+    TimeCompression = register_action( "time_compression" ),
     WIP = register_action( "wip", nil, true, not SETTINGS.Debug ),
 }
 
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
     if disabled_by_default == nil then disabled_by_default = true; end
     if inverted == nil then inverted = true; end
+    if options == nil then
+        options = {};
+    end
+    local description = gkbrkn_localization["tweak_name_"..key.."_description"];
+    if description ~= nil then
+        options.description = description;
+    end
     return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] or key ),  options, disabled_by_default, deprecated, inverted, init_function );
 end
 
@@ -268,6 +294,7 @@ TWEAKS = {
     ExplosionOfThunder = register_tweak( "explosion_of_thunder", { action_id="THUNDER_BLAST" } ),
     AllSeeingEye = register_tweak( "all_seeing_eye", { action_id="X_RAY" }, true, true, true ),
     SpiralShot = register_tweak( "spiral_shot", { action_id="SPIRAL_SHOT" } ),
+    TeleportCast = register_tweak( "teleport_cast", { action_id="TELEPORT_CAST" } ),
 }
 
 LOADOUTS = {};
@@ -925,6 +952,13 @@ CHAMPION_TYPES = {
 }
 
 local register_item = function( key, options, disabled_by_default, deprecated, inverted )
+    if options == nil then
+        options = {};
+    end
+    local description = gkbrkn_localization["item_"..key.."_description"];
+    if description ~= nil then
+        options.description = description;
+    end
     return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options, disabled_by_default, deprecated, inverted );
 end
 
@@ -932,10 +966,10 @@ ITEMS = {
     SpellBag = register_item( "spell_bag", nil, true, nil, true ),
 }
 
-local register_event = function( key, name, description, callback, condition, weight, disabled_by_default, deprecated, inverted )
+local register_event = function( key, name, message, callback, condition, weight, disabled_by_default, deprecated, inverted )
     return register_content( CONTENT_TYPE.Event, key, gkbrkn_localization["event_name_"..key], {
         name=name,
-        description=description,
+        message=message,
         callback=callback,
         condition=condition,
         weight=weight,
@@ -1218,6 +1252,7 @@ MISC = {
     },
     LegendaryWands = {
         Enabled = "gkbrkn_legendary_wands",
+        AppearanceChange = 0.01,
     },
     WandShopsOnly = {
         Enabled = "gkbrkn_wand_shops_only",
@@ -1277,7 +1312,7 @@ MISC = {
         Enabled = "gkbrkn_chests_contain_perks",
         Chance=0.12,
         SuperChance=0.25,
-        RemovePerkTag=true, -- this makes it so that picking up other perks doesn't kill this perk. might have side effects!!!
+        RemovePerkTag=false, -- this makes it so that picking up other perks doesn't kill this perk. might have side effects!!!
         DontKillOtherPerks=true,
     },
     Badges = {
@@ -1300,139 +1335,167 @@ MISC = {
 OPTIONS = {
     {
         Name = gkbrkn_localization.option_gold_tracking,
+        Description = gkbrkn_localization.option_gold_tracking_description,
     },
     {
         Name = gkbrkn_localization.sub_option_gold_tracking_show_log_message,
+        Description = gkbrkn_localization.sub_option_gold_tracking_show_log_message_description,
         PersistentFlag = "gkbrkn_gold_tracking_message",
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_gold_tracking_show_in_world,
+        Description = gkbrkn_localization.sub_option_gold_tracking_show_in_world_description,
         PersistentFlag = "gkbrkn_gold_tracking_in_world",
         SubOption = true,
         EnabledByDefault = true,
     },
     {
         Name = gkbrkn_localization.option_invincibility_frames,
+        Description = gkbrkn_localization.option_invincibility_frames_description,
     },
     {
         Name = gkbrkn_localization.sub_option_invincibility_frames_enabled,
+        Description = gkbrkn_localization.sub_option_invincibility_frames_enabled_description,
         PersistentFlag = "gkbrkn_invincibility_frames",
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_invincibility_frames_show_flashing,
+        Description = gkbrkn_localization.sub_option_invincibility_frames_show_flashing_description,
         PersistentFlag = "gkbrkn_invincibility_frames_flashing",
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.option_heal_new_health,
+        Description = gkbrkn_localization.option_heal_new_health_description,
     },
     {
         Name = gkbrkn_localization.sub_option_heal_new_health_enabled,
+        Description = gkbrkn_localization.sub_option_heal_new_health_enabled_description,
         PersistentFlag = "gkbrkn_max_health_heal",
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_heal_new_health_heal_to_full,
+        Description = gkbrkn_localization.sub_option_heal_new_health_heal_to_full_description,
         PersistentFlag = "gkbrkn_max_health_heal_full",
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.option_less_particles,
+        Description = gkbrkn_localization.option_less_particles_description,
     },
     {
         Name = gkbrkn_localization.sub_option_less_particles_player_projectiles_enabled,
+        Description = gkbrkn_localization.sub_option_less_particles_player_projectiles_enabled_description,
         PersistentFlag = MISC.LessParticles.PlayerProjectilesEnabled,
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_less_particles_other_stuff_enabled,
+        Description = gkbrkn_localization.sub_option_less_particles_other_stuff_enabled_description,
         PersistentFlag = MISC.LessParticles.OtherStuffEnabled,
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_less_particles_disable_cosmetic_particles,
+        Description = gkbrkn_localization.sub_option_less_particles_disable_cosmetic_particles_description,
         PersistentFlag =  MISC.LessParticles.DisableEnabled,
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.option_random_start,
+        Description = gkbrkn_localization.option_random_start_description,
     },
     {
         Name = gkbrkn_localization.sub_option_random_start_random_wands,
+        Description = gkbrkn_localization.sub_option_random_start_random_wands_description,
         PersistentFlag = "gkbrkn_random_start_random_wand",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_random_start_custom_wand_generation,
+        Description = gkbrkn_localization.sub_option_random_start_custom_wand_generation_description,
         PersistentFlag = "gkbrkn_random_start_custom_wands",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_random_start_random_cape_colour,
+        Description = gkbrkn_localization.sub_option_random_start_random_cape_colour_description,
         PersistentFlag = "gkbrkn_random_start_random_cape",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_random_start_random_health,
+        Description = gkbrkn_localization.sub_option_random_start_random_health_description,
         PersistentFlag = "gkbrkn_random_start_random_health",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_random_start_random_flask,
+        Description = gkbrkn_localization.sub_option_random_start_random_flask_description,
         PersistentFlag = "gkbrkn_random_start_random_flask",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_random_start_random_perk,
+        Description = gkbrkn_localization.sub_option_random_start_random_perk_description,
         PersistentFlag = "gkbrkn_random_start_random_perk",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_champion_enemies,
+        Description = gkbrkn_localization.option_champion_enemies_description,
     },
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_enabled,
+        Description = gkbrkn_localization.sub_option_champion_enemies_enabled_description,
         SubOption = true,
         PersistentFlag = MISC.ChampionEnemies.Enabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_mini_bosses,
+        Description = gkbrkn_localization.sub_option_champion_enemies_mini_bosses_description,
         SubOption = true,
         PersistentFlag = MISC.ChampionEnemies.MiniBossesEnabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_super_champions,
+        Description = gkbrkn_localization.sub_option_champion_enemies_super_champions_description,
         SubOption = true,
         PersistentFlag = MISC.ChampionEnemies.SuperChampionsEnabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_champion_enemies_champions_only,
+        Description = gkbrkn_localization.sub_option_champion_enemies_champions_only_description,
         SubOption = true,
         PersistentFlag = MISC.ChampionEnemies.AlwaysChampionsEnabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_hero_mode,
+        Description = gkbrkn_localization.option_hero_mode_description,
     },
     {
         Name = gkbrkn_localization.sub_option_hero_mode_enabled,
+        Description = gkbrkn_localization.sub_option_hero_mode_enabled_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode",
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_hero_mode_orbs_difficulty,
+        Description = gkbrkn_localization.sub_option_hero_mode_orbs_difficulty_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_orb_scale",
         RequiresRestart = true,
@@ -1444,6 +1507,7 @@ OPTIONS = {
     },
     {
         Name = gkbrkn_localization.sub_option_hero_mode_distance_difficulty,
+        Description = gkbrkn_localization.sub_option_hero_mode_distance_difficulty_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_distance_scale",
         RequiresRestart = true,
@@ -1455,6 +1519,7 @@ OPTIONS = {
     },
     {
         Name = gkbrkn_localization.sub_option_hero_mode_carnage_difficulty,
+        Description = gkbrkn_localization.sub_option_hero_mode_carnage_difficulty_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_hero_mode_carnage",
         RequiresRestart = true,
@@ -1467,161 +1532,196 @@ OPTIONS = {
     },
     {
         Name = gkbrkn_localization.option_loadouts,
+        Description = gkbrkn_localization.option_loadouts_description,
     },
     {
         Name = gkbrkn_localization.sub_option_loadouts_manage,
+        Description = gkbrkn_localization.sub_option_loadouts_manage_description,
         PersistentFlag = "gkbrkn_loadouts_manage",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_loadouts_enabled,
+        Description = gkbrkn_localization.sub_option_loadouts_enabled_description,
         PersistentFlag = "gkbrkn_loadouts_enabled",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_selectable_classes_integration,
+        Description = gkbrkn_localization.sub_option_selectable_classes_integration_description,
         PersistentFlag = MISC.Loadouts.SelectableClassesIntegration,
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_loadouts_custom_cape_color,
+        Description = gkbrkn_localization.sub_option_loadouts_custom_cape_color_description,
         PersistentFlag = "gkbrkn_loadouts_cape_color",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_loadouts_custom_player_sprites,
+        Description = gkbrkn_localization.sub_option_loadouts_custom_player_sprites_description,
         PersistentFlag = "gkbrkn_loadouts_player_sprites",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_wands,
+        Description = gkbrkn_localization.option_wands_description,
     },
     {
         Name = gkbrkn_localization.sub_option_legendary_wands,
+        Description = gkbrkn_localization.sub_option_legendary_wands_description,
         PersistentFlag = MISC.LegendaryWands.Enabled,
         RequiresRestart = true,
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_wand_shops_only,
+        Description = gkbrkn_localization.sub_option_wand_shops_only_description,
         PersistentFlag = "gkbrkn_wand_shops_only",
         SubOption = true,
     },
     {
         Name = gkbrkn_localization.sub_option_loose_spell_generation,
+        Description = gkbrkn_localization.sub_option_loose_spell_generation_description,
         PersistentFlag = "gkbrkn_loose_spell_generation",
         SubOption = true,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.sub_option_extended_wand_generation,
+        Description = gkbrkn_localization.sub_option_extended_wand_generation_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_extended_wand_generation",
     },
     {
         Name = gkbrkn_localization.sub_option_chaotic_wand_generation,
+        Description = gkbrkn_localization.sub_option_chaotic_wand_generation_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_chaotic_wand_generation",
     },
     {
         Name = gkbrkn_localization.sub_option_no_pregen_wands,
+        Description = gkbrkn_localization.sub_option_no_pregen_wands_description,
         SubOption = true,
         PersistentFlag = "gkbrkn_no_pregen_wands",
         RequiresRestart = true,
     },
     {
+        Name = gkbrkn_localization.sub_option_passive_recharge,
+        Description = gkbrkn_localization.sub_option_passive_recharge_description,
+        PersistentFlag = "gkbrkn_passive_recharge",
+        SubOption = true,
+    },
+    {
         Name = gkbrkn_localization.option_disable_random_spells,
+        Description = gkbrkn_localization.option_disable_random_spells_description,
         PersistentFlag = "gkbrkn_disable_spells",
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_charm_nerf,
+        Description = gkbrkn_localization.option_charm_nerf_description,
         PersistentFlag = "gkbrkn_charm_nerf",
     },
     {
         Name = gkbrkn_localization.option_limited_ammo,
+        Description = gkbrkn_localization.option_limited_ammo_description,
         PersistentFlag = "gkbrkn_limited_ammo",
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_unlimited_ammo,
+        Description = gkbrkn_localization.option_unlimited_ammo_description,
         PersistentFlag = "gkbrkn_unlimited_ammo",
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_quick_swap,
+        Description = gkbrkn_localization.option_quick_swap_description,
         PersistentFlag = "gkbrkn_quick_swap",
     },
     {
-        Name = gkbrkn_localization.option_passive_recharge,
-        PersistentFlag = "gkbrkn_passive_recharge",
-    },
-    {
         Name = gkbrkn_localization.option_chests_contain_perks,
+        Description = gkbrkn_localization.option_chests_contain_perks_description,
         PersistentFlag = MISC.ChestsContainPerks.Enabled,
     },
     {
         Name = gkbrkn_localization.option_gold_decay,
+        Description = gkbrkn_localization.option_gold_decay_description,
         PersistentFlag = "gkbrkn_gold_decay",
     },
     {
         Name = gkbrkn_localization.option_persistent_gold,
+        Description = gkbrkn_localization.option_persistent_gold_description,
         PersistentFlag = "gkbrkn_persistent_gold",
     },
     {
         Name = gkbrkn_localization.option_auto_pickup_gold,
+        Description = gkbrkn_localization.option_auto_pickup_gold_description,
         PersistentFlag = "gkbrkn_auto_pickup_gold",
     },
     {
         Name = gkbrkn_localization.option_combine_gold,
+        Description = gkbrkn_localization.option_combine_gold_description,
         PersistentFlag = "gkbrkn_combine_gold",
     },
     {
         Name = gkbrkn_localization.option_target_dummy,
+        Description = gkbrkn_localization.option_target_dummy_description,
         PersistentFlag = "gkbrkn_target_dummy",
     },
     {
         Name = gkbrkn_localization.option_slot_machine,
+        Description = gkbrkn_localization.option_slot_machine_description,
         PersistentFlag = MISC.SlotMachine.Enabled,
     },
     {
         Name = gkbrkn_localization.option_events,
+        Description = gkbrkn_localization.option_events_description,
         PersistentFlag = MISC.Events.Enabled,
     },
     {
         Name = gkbrkn_localization.option_health_bars,
+        Description = gkbrkn_localization.option_health_bars_description,
         PersistentFlag = "gkbrkn_health_bars",
     },
     {
         Name = gkbrkn_localization.option_show_fps,
+        Description = gkbrkn_localization.option_show_fps_description,
         PersistentFlag = "gkbrkn_show_fps",
     },
     {
         Name = gkbrkn_localization.option_show_badges,
+        Description = gkbrkn_localization.option_show_badges_description,
         PersistentFlag = "gkbrkn_show_badges",
         RequiresRestart = true,
         EnabledByDefault = true,
     },
     {
         Name = gkbrkn_localization.option_show_entity_names,
+        Description = gkbrkn_localization.option_show_entity_names_description,
         PersistentFlag = MISC.ShowEntityNames.Enabled,
     },
     {
         Name = gkbrkn_localization.option_fixed_camera,
+        Description = gkbrkn_localization.option_fixed_camera_description,
         PersistentFlag = MISC.FixedCamera.Enabled,
         RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_auto_hide,
+        Description = gkbrkn_localization.option_auto_hide_description,
         PersistentFlag = "gkbrkn_auto_hide",
     },
     {
         Name = gkbrkn_localization.option_debug_mode,
+        Description = gkbrkn_localization.option_debug_mode_description,
         PersistentFlag = DEBUG_MODE_FLAG,
     }
 }
@@ -1632,7 +1732,11 @@ function trim(s)
 end
 
 function register_legendary_wand( id, name, author, wand_data, min_level, max_level, weight, custom_message, callback )
-    local content_id = register_content( CONTENT_TYPE.LegendaryWand, id, name, {
+    local display_name = name;
+    if author ~= nil then
+        display_name = display_name .. " ("..author..")";
+    end
+    local content_id = register_content( CONTENT_TYPE.LegendaryWand, id, display_name, {
         name = name,
         author = author,
         wand_data = wand_data,
@@ -1640,138 +1744,36 @@ function register_legendary_wand( id, name, author, wand_data, min_level, max_le
         max_level = max_level,
         weight = weight,
         custom_message = custom_message,
-        callback = callback,
+        callback = callback
     } );
+    CONTENT[content_id].options.preview_callback = function( player_entity )
+        local x, y = EntityGetTransform( player_entity );
+        local wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.xml", x, y );
+        initialize_legendary_wand( wand, x, y, nil, content_id );
+    end
     LEGENDARY_WANDS[id] = content_id;
 end
 
-local get_random_from = function( target )
-    return tostring( Random( 1, #target ) );
-end
-
-local get_random_between_range = function( target )
-    local min = target[1];
-    local max = target[2];
-    return Random( min, max );
-end
-
-local WAND_STAT_SETTER = {
-    Direct = 1,
-    Gun = 2,
-    GunAction = 3
-}
-
-local WAND_STAT_SETTERS = {
-    shuffle_deck_when_empty = WAND_STAT_SETTER.Gun,
-    actions_per_round = WAND_STAT_SETTER.Gun,
-    speed_multiplier = WAND_STAT_SETTER.GunAction,
-    deck_capacity = WAND_STAT_SETTER.Gun,
-    reload_time = WAND_STAT_SETTER.Gun,
-    fire_rate_wait = WAND_STAT_SETTER.GunAction,
-    spread_degrees = WAND_STAT_SETTER.GunAction,
-    mana_charge_speed = WAND_STAT_SETTER.Direct,
-    mana_max = WAND_STAT_SETTER.Direct,
-}
-
-local ability_component_set_stat = function( ability, stat, value )
-    local setter = WAND_STAT_SETTERS[stat];
-    if setter ~= nil then
-        if setter == WAND_STAT_SETTER.Direct then
-            ComponentSetValue( ability, stat, tostring( value ) );
-            if stat == "mana_max" then
-                ComponentSetValue( ability, "mana", tostring( value ) );
-            end
-        elseif setter == WAND_STAT_SETTER.Gun then
-            ComponentObjectSetValue( ability, "gun_config", stat, tostring( value ) );
-        elseif setter == WAND_STAT_SETTER.GunAction then
-            ComponentObjectSetValue( ability, "gunaction_config", stat, tostring( value ) );
-        end
+function initialize_legendary_wand( base_wand, x, y, level, force )
+    for _,child in pairs( EntityGetAllChildren( base_wand ) ) do
+        EntityRemoveFromParent( child );
     end
-end
-
-function initialize_legendary_wand( base_wand, x, y, level )
     SetRandomSeed( GameGetFrameNum(), x + y );
     local valid_wands = {};
-    for _,content_id in pairs( LEGENDARY_WANDS ) do
-        local content = CONTENT[content_id];
-        if level == nil or ( level >= content.options.min_level and level <= content.options.max_level ) then
-            table.insert( valid_wands, content_id );
+    local chosen_wand = force;
+    if chosen_wand == nil then
+        for _,content_id in pairs( LEGENDARY_WANDS ) do
+            local content = CONTENT[content_id];
+            if level == nil or ( level >= content.options.min_level and level <= content.options.max_level ) then
+                table.insert( valid_wands, content_id );
+            end
         end
+        chosen_wand = valid_wands[Random( 1, #valid_wands )];
     end
-    local chosen_wand = valid_wands[Random( 1, #valid_wands )];
     local content_data = CONTENT[chosen_wand];
     if content_data == nil then print("legendary wand error: no wand data found"); return; end
-    local wand_data = content_data.options.wand_data;
-    local wand = base_wand;
-
-    local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
-    ComponentSetValue( ability, "ui_name", wand_data.name );
-    if wand_data.sprite ~= nil then
-        if wand_data.sprite.file ~= nil then
-            ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
-            -- TODO this takes a second to apply, probably work fixing, but for now just prefer using custom file
-            local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
-            if sprite ~= nil then
-                ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
-            end
-        end
-        if wand_data.sprite.hotspot ~= nil then
-            local hotspot = EntityGetFirstComponent( wand, "HotspotComponent", "shoot_pos" );
-            if hotspot ~= nil then
-                ComponentSetValueVector2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
-            end
-        end
-    end
-
-    local item = EntityGetFirstComponent( wand, "ItemComponent" );
-    if item ~= nil then
-        ComponentSetValue( item, "item_name", wand_data.name );
-    end
-
-    for stat,value in pairs( wand_data.stats or {} ) do
-        ability_component_set_stat( ability, stat, value );
-    end
-
-    for stat,range in pairs( wand_data.stat_ranges or {} ) do
-        ability_component_set_stat( ability, stat, Random( range[1], range[2] ) );
-    end
-
-    for stat,random_values in pairs( wand_data.stat_randoms or {} ) do
-        ability_component_set_stat( ability, stat, random_values[ Random( 1, #random_values ) ] );
-    end
-
-    for _,actions in pairs( wand_data.permanent_actions or {} ) do
-        local random_action = actions[ Random( 1, #actions ) ];
-        if random_action ~= nil then
-            AddGunActionPermanent( wand, random_action );
-        end
-    end
-
-    for _,actions in pairs( wand_data.actions or {} ) do
-        local random_action = actions[ Random( 1, #actions ) ];
-        if random_action ~= nil then
-            if type(random_action) == "table" then
-                local action_entity = CreateItemActionEntity( random_action.action );
-                local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
-                if random_action.locked then
-                    ComponentSetValue( component, "is_frozen", "1" );
-                end
-                if random_action.permanent then
-                    ComponentSetValue( component, "permanently_attached", "1" );
-                end
-                EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
-                EntityAddChild( wand, action_entity );
-            else
-                AddGunAction( wand, random_action );
-            end
-        end
-    end
-
-    if wand_data.callback ~= nil then
-        wand_data.callback( wand, ability );
-    end
-
-    return wand;
+    initialize_wand( base_wand, content_data.options.wand_data );
+    return base_wand;
 end
 
 function register_loadout( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
@@ -1794,6 +1796,12 @@ function register_loadout( id, name, author, cape_color, cape_color_edge, wands,
         custom_message = custom_message,
         callback = callback,
     } );
+    CONTENT[content_id].options.preview_callback = function( player_entity )
+        --local x, y = EntityGetTransform( player_entity );
+        --local new_player = EntityLoad( "data/entities/player.xml", x, y );
+        handle_loadout( player_entity, CONTENT[content_id].options );
+        --EntityKill( player_entity );
+    end
     LOADOUTS[id] = content_id;
 end
 
@@ -1882,29 +1890,33 @@ if SETTINGS.Debug then
                 }
             },
             {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {15,15}, -- capacity
-                    reload_time = {40,40}, -- recharge time in frames
-                    fire_rate_wait = {20,20}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {200,200}, -- mana charge speed
-                    mana_max = {1000,1000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {
-                },
-                actions = {
-                    { "LIFETIME_DOWN" },
-                    { "LIFETIME_DOWN" },
-                    { "LIFETIME_DOWN" },
-                    { "BLACK_HOLE" },
-                }
+                name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 2, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {8,8}, -- capacity
+                reload_time = {120,120}, -- recharge time in frames
+                fire_rate_wait = {30,30}, -- cast delay in frames
+                spread_degrees = {-1,-1}, -- spread
+                mana_charge_speed = {200,200}, -- mana charge speed
+                mana_max = {200,200}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { { action="LONG_DISTANCE_CAST", locked=false } },
+                { { action="LIFETIME_DOWN", locked=false } },
+                { { action="LIFETIME_DOWN", locked=false } },
+                { { action="TELEPORT_PROJECTILE", locked=false } },
+                { { action="DELAYED_SPELL", locked=false } },
+                { { action="LIFETIME_DOWN", locked=false } },
+                { { action="LIFETIME_DOWN", locked=false } },
+                { { action="TELEPORT_PROJECTILE", locked=false } },
+            }
             }
         },
         { -- potions

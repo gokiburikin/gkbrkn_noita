@@ -1,14 +1,19 @@
 --[[
 changelog
-    -m "The Small but Important Update"
-    -m "Add Misc: Show Hovered Entity Names"
-    -m "Change config menu dark overlay to use camera position instead of player position (fixes no darkening when dead)"
-    -m "Change config menu tabs to cover multiple lines"
-    -m "Change Misc: Health Bars (include more entities, improve visibility, only show if damaged)"
-    -m "Change Misc: Hero Mode (remove additional gold reward)"
-    -m "Fix Misc: Champion Mode badge localizations"
-    -m "Fix Misc: Hero Mode > Exploration Increases Difficulty being active even when disabled as long as Hero Mode was enabled"
-    -m "Fix Misc: Random Events localizations"
+    -m "The Legendary Multicast QoL Update"
+    -m "Add Action: Triple Cast"
+    -m "Add Action: Time Compression"
+    -m "Add Legendary Wand: Alchemic Lance"
+    -m "Add Legendary Wand: Telefragger"
+    -m "Add Legendary Wand: Pocket Black Hole"
+    -m "Add Legendary Wand: Endless Alchemy"
+    -m "Change config menu to include buttons for descriptions and previews for some content"
+    -m "Change Action: Copy Spell (rename to Imitation, revert to previous functionality, clarify description)"
+    -m "Change Action: Double Cast (now repeats an entire spell sequence instead of the next immediate spell, base cost 500 -> 400, mana cost 50 -> 30)"
+    -m "Change Misc: Loadouts to utilize the dynamic wand sprite system instead of preset wand graphics"
+    -m "Fix Misc: Less Particle > Disable Cosmetic Particles not disabling sparks"
+    -m "Fix Misc: Slot Machine not appearing in the final Holy Mountain"
+    -m "Fix Perk: Megacast's unintuitive draw behaviour (now draws all remaining cards only once at the start of the cast instead of every multicast)"
 
 TODO
     make material compression fill all flasks you pick up for the first time (not possible right now)

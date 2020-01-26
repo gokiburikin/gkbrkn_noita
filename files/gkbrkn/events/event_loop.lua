@@ -42,19 +42,19 @@ async_loop(
             local chosen_event = weighted_random( valid_events, valid_weights );
             if chosen_event ~= nil then
                 local event_name = "Event Name";
-                local event_description = "Event Description";
+                local event_message = "Event Message";
                 local event_callback = nil;
                 if chosen_event.options.generator then
-                    event_name, event_description, event_callback = chosen_event.options.generator( player_entity );
+                    event_name, event_message, event_callback = chosen_event.options.generator( player_entity );
                 else
                     event_name = chosen_event.options.name;
-                    event_description = chosen_event.options.description;
+                    event_message = chosen_event.options.message;
                     event_callback = chosen_event.options.callback;
                 end
                 GamePrint( "Next Event: "..event_name );
                 next_event = {
                     name = event_name,
-                    description = event_description,
+                    message = event_message,
                     callback = event_callback
                 };
             end

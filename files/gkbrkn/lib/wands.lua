@@ -76,3 +76,89 @@ function ability_component_adjust_stats( ability, stat_callback_table )
         ability_component_adjust_stat( ability, stat, callback );
     end
 end
+
+function initialize_wand( wand, wand_data )
+    local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
+    if wand_data.name ~= nil then
+        ComponentSetValue( ability, "ui_name", wand_data.name );
+    end
+
+    local item = EntityGetFirstComponent( wand, "ItemComponent" );
+    if item ~= nil then
+        ComponentSetValue( item, "item_name", wand_data.name );
+    end
+
+    for stat,value in pairs( wand_data.stats or {} ) do
+        ability_component_set_stat( ability, stat, value );
+    end
+
+    for stat,range in pairs( wand_data.stat_ranges or {} ) do
+        ability_component_set_stat( ability, stat, Random( range[1], range[2] ) );
+    end
+
+    for stat,random_values in pairs( wand_data.stat_randoms or {} ) do
+        ability_component_set_stat( ability, stat, random_values[ Random( 1, #random_values ) ] );
+    end
+
+    for _,actions in pairs( wand_data.permanent_actions or {} ) do
+        local random_action = actions[ Random( 1, #actions ) ];
+        if random_action ~= nil then
+            AddGunActionPermanent( wand, random_action );
+        end
+    end
+
+    for _,actions in pairs( wand_data.actions or {} ) do
+        local random_action = actions[ Random( 1, #actions ) ];
+        if random_action ~= nil then
+            if type( random_action ) == "table" then
+                local action_entity = CreateItemActionEntity( random_action.action );
+                local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
+                if random_action.locked then
+                    ComponentSetValue( component, "is_frozen", "1" );
+                end
+                if random_action.permanent then
+                    ComponentSetValue( component, "permanently_attached", "1" );
+                end
+                EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                EntityAddChild( wand, action_entity );
+            else
+                AddGunAction( wand, random_action );
+            end
+        end
+    end
+    
+    if wand_data.sprite ~= nil then
+        if wand_data.sprite.file ~= nil then
+            ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
+            -- TODO this takes a second to apply, probably work fixing, but for now just prefer using custom file
+            local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
+            if sprite ~= nil then
+                ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
+            end
+        end
+        if wand_data.sprite.hotspot ~= nil then
+            local hotspot = EntityGetFirstComponent( wand, "HotspotComponent", "shoot_pos" );
+            if hotspot ~= nil then
+                ComponentSetValueVector2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
+            end
+        end
+    else
+        local gun = {
+            deck_capacity = ability_component_get_stat( ability, "deck_capacity" ),
+            actions_per_round = ability_component_get_stat( ability,"actions_per_round" ),
+            reload_time = ability_component_get_stat( ability,"reload_time" ),
+            shuffle_deck_when_empty = ability_component_get_stat( ability,"shuffle_deck_when_empty" ),
+            fire_rate_wait = ability_component_get_stat( ability,"fire_rate_wait" ),
+            spread_degrees = ability_component_get_stat( ability,"spread_degrees" ),
+            speed_multiplier = ability_component_get_stat( ability,"speed_multiplier" ),
+            mana_charge_speed = ability_component_get_stat( ability,"mana_charge_speed" ),
+            mana_max = ability_component_get_stat( ability,"mana_max" ),
+        };
+        local dynamic_wand = GetWand( gun );
+        SetWandSprite( wand, ability, dynamic_wand.file, dynamic_wand.grip_x, dynamic_wand.grip_y, ( dynamic_wand.tip_x - dynamic_wand.grip_x ), ( dynamic_wand.tip_y - dynamic_wand.grip_y ) );
+    end
+
+    if wand_data.callback ~= nil then
+        wand_data.callback( wand, ability );
+    end
+end

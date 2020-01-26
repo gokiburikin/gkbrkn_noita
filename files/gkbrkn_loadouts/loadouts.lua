@@ -1202,3 +1202,71 @@ register_loadout(
         { "PROJECTILE_HOMING_SHOOTER" },
     }
 );
+
+-- Convergent
+register_loadout(
+    "gkbrkn_convergent", -- unique identifier
+    gkbrkn_localization.loadout_convergent, -- displayed loadout name
+    "goki",
+    0xFF333333, -- cape color (ABGR)
+    0xFF666666, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {10,10}, -- capacity
+                reload_time = {40,40}, -- recharge time in frames
+                fire_rate_wait = {40,40}, -- cast delay in frames
+                spread_degrees = {-3,-3}, -- spread
+                mana_charge_speed = {60,60}, -- mana charge speed
+                mana_max = {140,140}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "LIGHT_BULLET_TRIGGER" },
+                { "HEAVY_SPREAD" },
+                { "GKBRKN_TRIPLE_CAST" },
+                { "LONG_DISTANCE_CAST" },
+                { "I_SHAPE" },
+                { "LIGHT_BULLET" },
+                { "DIGGER" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 2, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {3,3}, -- capacity
+                reload_time = {15,15}, -- recharge time in frames
+                fire_rate_wait = {15,15}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {20,20}, -- mana charge speed
+                mana_max = {80,80}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "BOMB" },
+            }
+        },
+    },
+    { -- potions
+        { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+    }
+);

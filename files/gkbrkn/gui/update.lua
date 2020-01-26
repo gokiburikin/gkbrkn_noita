@@ -64,7 +64,7 @@ end
 
 local pagination_list = nil;
 
-function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback, require_new_game )
+function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback, require_new_game, description )
     table.insert( options, {
         name = name,
         flag = flag,
@@ -73,11 +73,12 @@ function RegisterFlagOption( name, flag, require_restart, sub_option, required_f
         required_flags = required_flags,
         toggle_callback = toggle_callback,
         require_new_game = require_new_game,
+        description = description,
     } );
 end
 
 for _,option in pairs( OPTIONS ) do
-    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.RequiredFlags, option.ToggleCallback, option.RequiresNewGame );
+    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.RequiredFlags, option.ToggleCallback, option.RequiresNewGame, option.Description );
 end
 
 function next_id()
@@ -243,11 +244,23 @@ function do_gui()
             end
             
             GuiLayoutBeginHorizontal( gui, 0, 0 );
-            if GuiButton( gui, 0, 0, text, next_id() ) then
-                gui_require_restart = true;
-                content.toggle();
-            end
-            GuiLayoutEnd( gui ); -- content wrapping vertical
+                if content.options ~= nil and content.options.description ~= nil then
+                    if GuiButton( gui, 0, 0, "[?]", next_id() ) then
+                        for word in string.gmatch( content.options.description, '([^\n]+)' ) do
+                            GamePrint( word );
+                        end
+                    end
+                end
+                if content.options ~= nil and content.options.preview_callback ~= nil then
+                    if GuiButton( gui, 0, 0, "[P]", next_id() ) then
+                        content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
+                    end
+                end
+                if GuiButton( gui, 0, 0, text, next_id() ) then
+                    gui_require_restart = true;
+                    content.toggle();
+                end
+            GuiLayoutEnd( gui );
             option_index = option_index + 1;
         end
         if gui_require_restart == true then
@@ -281,7 +294,7 @@ function do_option( option, index )
     if option.flag ~= nil then
         local text = "";
         if option.sub_option then
-            text = text.. "    ";
+            GuiText( gui, 0, 0, "  " );
         end
         local option_enabled = HasFlagPersistent( option.flag );
         if option_enabled then
@@ -290,6 +303,13 @@ function do_option( option, index )
             text = text .. gkbrkn_localization.ui_uncheck_mark;
         end
         text = text .. " ".. option.name;
+        if option ~= nil and option.description ~= nil then
+            if GuiButton( gui, 0, 0, "[?]", next_id() ) then
+                for word in string.gmatch( option.description, '([^\n]+)' ) do
+                    GamePrint( word );
+                end
+            end
+        end
         if GuiButton( gui, 0, 0, text, next_id() ) then
             if option.require_restart == true then
                 gui_require_restart = true;

@@ -1,3 +1,5 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+
 local entity = GetUpdatedEntityID();
 local particle_emitters = EntityGetComponent( entity, "ParticleEmitterComponent" ) or {};
 for _,emitter in pairs( particle_emitters ) do

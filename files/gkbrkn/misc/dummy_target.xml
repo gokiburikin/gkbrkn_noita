@@ -38,9 +38,16 @@
 		physics_objects_damage="1"
 		ragdoll_offset_y="-6" >
         <damage_multipliers
-            fire="0.0"
-            poison="0.0"
-            radioactive="0.0"
+            ice="1.00"
+            electricity="1.00"
+            slice="1.00"
+            projectile="1.00"
+            healing="1.00"
+            physics_hit="1.00"
+            explosion="1.00"
+            melee="1.00"
+            drill="1.00"
+            fire="0"
         >
         </damage_multipliers>
 	</DamageModelComponent>
