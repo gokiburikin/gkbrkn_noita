@@ -1,18 +1,6 @@
 --[[
 changelog
-    -m "The Extra's Update"
-    -m "Add Legendary Wand: Magic Popcorn"
-    -m "Add Legendary Wand: Matra Magic"
-    -m "Add Legendary Wand: Noitius"
-    -m "Add Legendary Wand: Spirit Familiar"
-    -m "Add Legendary Wand: Tabula Rasa"
-    -m "Add missing preview and description options to the config menu"
-    -m "Add support for Goki's Extra Things and other extension type mods (expose GKBRKN_CONFIG in config.lua)"
-    -m "Change Action: Destructive Shot (mana cost 50 -> 30, demolition bonus 0.5 -> 0.7)"
-    -m "Change legendary wand shine to be more apparent"
-    -m "Change legendary wand spawn weighting (0.01 -> 0.03)"
-    -m "Change Misc: Slot Machine (deterministic based on seed, position, and number of pulls on the machine, spells move to the right)"
-    -m "Fix legendary wand shine being left behind when picking up legendary wands"
+    -m "Hotfix Item: Spell Bag not spawning"
 
 TODO
     make material compression fill all flasks you pick up for the first time (not possible right now)
