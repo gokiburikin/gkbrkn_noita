@@ -233,7 +233,7 @@ function do_gui()
                 GuiLayoutBeginVertical( gui, wrap_size * math.floor( option_index / wrap_threshold ), 0 ); -- content wrapping vertical
             end
             local text = "";
-            local flag = get_content_flag( content.id );
+            local flag = GKBRKN_CONFIG.get_content_flag( content.id );
             if flag ~= nil then
                 if content.enabled() == true then
                     text = text .. gkbrkn_localization.ui_check_mark;

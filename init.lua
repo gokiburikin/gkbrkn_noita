@@ -1,19 +1,18 @@
 --[[
 changelog
-    -m "The Legendary Multicast QoL Update"
-    -m "Add Action: Triple Cast"
-    -m "Add Action: Time Compression"
-    -m "Add Legendary Wand: Alchemic Lance"
-    -m "Add Legendary Wand: Telefragger"
-    -m "Add Legendary Wand: Pocket Black Hole"
-    -m "Add Legendary Wand: Endless Alchemy"
-    -m "Change config menu to include buttons for descriptions and previews for some content"
-    -m "Change Action: Copy Spell (rename to Imitation, revert to previous functionality, clarify description)"
-    -m "Change Action: Double Cast (now repeats an entire spell sequence instead of the next immediate spell, base cost 500 -> 400, mana cost 50 -> 30)"
-    -m "Change Misc: Loadouts to utilize the dynamic wand sprite system instead of preset wand graphics"
-    -m "Fix Misc: Less Particle > Disable Cosmetic Particles not disabling sparks"
-    -m "Fix Misc: Slot Machine not appearing in the final Holy Mountain"
-    -m "Fix Perk: Megacast's unintuitive draw behaviour (now draws all remaining cards only once at the start of the cast instead of every multicast)"
+    -m "The Extra's Update"
+    -m "Add Legendary Wand: Magic Popcorn"
+    -m "Add Legendary Wand: Matra Magic"
+    -m "Add Legendary Wand: Noitius"
+    -m "Add Legendary Wand: Spirit Familiar"
+    -m "Add Legendary Wand: Tabula Rasa"
+    -m "Add missing preview and description options to the config menu"
+    -m "Add support for Goki's Extra Things and other extension type mods (expose GKBRKN_CONFIG in config.lua)"
+    -m "Change Action: Destructive Shot (mana cost 50 -> 30, demolition bonus 0.5 -> 0.7)"
+    -m "Change legendary wand shine to be more apparent"
+    -m "Change legendary wand spawn weighting (0.01 -> 0.03)"
+    -m "Change Misc: Slot Machine (deterministic based on seed, position, and number of pulls on the machine, spells move to the right)"
+    -m "Fix legendary wand shine being left behind when picking up legendary wands"
 
 TODO
     make material compression fill all flasks you pick up for the first time (not possible right now)
@@ -50,7 +49,7 @@ if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
     for _,content in pairs(CONTENT) do
         if content.disabled_by_default == true and content.inverted == true then
-            AddFlagPersistent( get_content_flag( content.id ) );
+            AddFlagPersistent( GKBRKN_CONFIG.get_content_flag( content.id ) );
         end
     end
     for _,option in pairs(OPTIONS) do

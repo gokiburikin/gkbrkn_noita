@@ -8,7 +8,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c89"
+    Version = "c90"
 }
 
 CONTENT_TYPE = {
@@ -50,8 +50,15 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.Event] = gkbrkn_localization.config_content_type_name_event,
 }
 
+local get_content_flag = function( content_id )
+    local content = CONTENT[content_id];
+    if content ~= nil then
+        return string.lower("GKBRKN_"..CONTENT_TYPE_PREFIX[content.type]..content.key);
+    end
+end
+
 CONTENT = {};
-function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
+local register_content = function( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
     local content_id = #CONTENT + 1;
     local content = {
         id = content_id,
@@ -103,15 +110,8 @@ function register_content( type, key, display_name, options, disabled_by_default
     return content.id;
 end
 
-function get_content( content_id )
+local get_content = function( content_id )
     return CONTENT[content_id];
-end
-
-function get_content_flag( content_id )
-    local content = CONTENT[content_id];
-    if content ~= nil then
-        return string.lower("GKBRKN_"..CONTENT_TYPE_PREFIX[content.type]..content.key);
-    end
 end
 
 local register_perk = function( key, options, disabled_by_default, deprecated, inverted )
@@ -122,14 +122,9 @@ local register_perk = function( key, options, disabled_by_default, deprecated, i
         ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/init.lua" );
     end );
     options.preview_callback = function( player_entity )
-        local starting_perk = CONTENT[content_id];
-        if starting_perk ~= nil then
-            if starting_perk.enabled() then
-                local perk_entity = perk_spawn( x, y, string.upper( "gkbrkn_"..starting_perk.key ) );
-                if perk_entity ~= nil then
-                    perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
-                end
-            end
+        local perk_entity = perk_spawn( x, y, string.upper( "gkbrkn_"..key ) );
+        if perk_entity ~= nil then
+            perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
         end
     end
     return content_id;
@@ -188,80 +183,88 @@ PERKS = {
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
-local register_action = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key] or key, options, disabled_by_default, deprecated, inverted, function()
-        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
+local register_action = function( key, init_path, options, disabled_by_default, deprecated, inverted )
+    if options == nil then
+        options = {};
+    end
+    local content_id = register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key] or key, options, disabled_by_default, deprecated, inverted, function()
+        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", init_path or "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
         if options ~= nil and options.callback ~= nil then
             options.callback();
         end
     end );
+    options.preview_callback = function( player_entity )
+        local x, y = EntityGetTransform( player_entity );
+        local action_entity = CreateItemActionEntity( string.upper( "gkbrkn_"..key ), x, y );
+    end
+    return content_id;
 end
 
 ACTIONS = {
-    ManaEfficiency = register_action( "mana_efficiency", nil, true, true ),
-    SpellEfficiency =  register_action( "spell_efficiency", nil, true, true ),
-    GoldenBlessing = register_action( "golden_blessing", nil, true, true ),
+    ManaEfficiency = register_action( "mana_efficiency", nil, nil, true, true ),
+    SpellEfficiency =  register_action( "spell_efficiency", nil, nil, true, true ),
+    GoldenBlessing = register_action( "golden_blessing", nil, nil, true, true ),
     MagicLight = register_action( "magic_light" ),
-    Revelation = register_action( "revelation", nil,true, true ),
-    MicroShield = register_action( "micro_shield", nil, true, true ),
+    Revelation = register_action( "revelation", nil, nil,true, true ),
+    MicroShield = register_action( "micro_shield", nil, nil, true, true ),
     ModificationField = register_action( "modification_field" ),
-    SpectralShot = register_action( "spectral_shot", nil, true, true ),
-    ArcaneBuckshot = register_action( "arcane_buckshot", nil, true, true ),
-    ArcaneShot = register_action( "arcane_shot", nil, true, true ),
+    SpectralShot = register_action( "spectral_shot", nil, nil, true, true ),
+    ArcaneBuckshot = register_action( "arcane_buckshot", nil, nil, true, true ),
+    ArcaneShot = register_action( "arcane_shot", nil, nil, true, true ),
     DoubleCast = register_action( "double_cast" ),
     TripleCast = register_action( "triple_cast" ),
     SpellMerge = register_action( "spell_merge" ),
     ExtraProjectile = register_action( "extra_projectile" ),
     OrderDeck = register_action( "order_deck" ),
     PerfectCritical = register_action( "perfect_critical" ),
-    ProjectileBurst = register_action( "projectile_burst", nil, true, true ),
+    ProjectileBurst = register_action( "projectile_burst", nil, nil, true, true ),
     TriggerHit = register_action( "trigger_hit" ),
     TriggerTimer = register_action( "trigger_timer" ),
     TriggerDeath = register_action( "trigger_death" ),
-    DrawDeck = register_action( "draw_deck", nil, true, true ),
+    DrawDeck = register_action( "draw_deck", nil, nil, true, true ),
     ProjectileGravityWell = register_action( "projectile_gravity_well" ),
     DamageLifetime = register_action( "damage_lifetime" ),
     DamageBounce = register_action( "damage_bounce" ),
     PathCorrection = register_action( "path_correction" ),
-    CollisionDetection = register_action( "collision_detection", nil, true, true ),
+    CollisionDetection = register_action( "collision_detection", nil, nil, true, true ),
     PowerShot = register_action( "power_shot" ),
-    ShimmeringTreasure = register_action( "shimmering_treasure", nil, true, true ),
-    NgonShape = register_action( "ngon_shape", nil, true, true ),
-    ShuffleDeck = register_action( "shuffle_deck", nil, true, true ),
+    ShimmeringTreasure = register_action( "shimmering_treasure", nil, nil, true, true ),
+    NgonShape = register_action( "ngon_shape", nil, nil, true, true ),
+    ShuffleDeck = register_action( "shuffle_deck", nil, nil, true, true ),
     BreakCast = register_action( "break_cast" ),
     ProjectileOrbit = register_action( "projectile_orbit" ),
     PassiveRecharge = register_action( "passive_recharge" ),
     ManaRecharge = register_action( "mana_recharge" ),
-    SuperBounce = register_action( "super_bounce", nil, true, true ),
+    SuperBounce = register_action( "super_bounce", nil, nil, true, true ),
     CopySpell = register_action( "copy_spell" ),
     TimeSplit = register_action( "time_split" ),
     FormationStack = register_action( "formation_stack" ),
-    PiercingShot = register_action( "piercing_shot", nil, true, true ),
+    PiercingShot = register_action( "piercing_shot", nil, nil, true, true ),
     BarrierTrail = register_action( "barrier_trail" ),
     GlitteringTrail = register_action( "glittering_trail" ),
     ChaoticBurst = register_action( "chaotic_burst" ),
     Zap = register_action( "zap" ),
     StoredShot = register_action( "stored_shot" ),
     CarryShot = register_action( "carry_shot" ),
-    TreasureSense = register_action( "treasure_sense", nil, true, true ),
-    NuggetShot = register_action( "nugget_shot", { callback=function() ModMaterialsFileAdd("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/materials.xml") end } ),
+    TreasureSense = register_action( "treasure_sense", nil, nil, true, true ),
+    NuggetShot = register_action( "nugget_shot", nil, { callback=function() ModMaterialsFileAdd("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/materials.xml") end } ),
     ProtectiveEnchantment = register_action( "protective_enchantment" ),
     ChainCast = register_action( "chain_cast" ),
     MultiDeathTrigger = register_action( "multi_death_trigger" ),
     SpellDuplicator = register_action( "spell_duplicator" ),
     FeatherShot = register_action( "feather_shot" ),
     FollowShot = register_action( "follow_shot" ),
-    StickyShot = register_action( "sticky_shot", nil, true, true ),
+    StickyShot = register_action( "sticky_shot", nil, nil, true, true ),
     ClingingShot = register_action( "clinging_shot" ),
     Duplicast = register_action( "duplicast" ),
-    CarpetBomb = register_action( "carpet_bomb", nil, true, true ),
+    CarpetBomb = register_action( "carpet_bomb", nil, nil, true, true ),
     PersistentShot = register_action( "persistent_shot" ),
-    IceShot = register_action( "ice_shot", nil, true, true ),
+    IceShot = register_action( "ice_shot", nil, nil, true, true ),
     DestructiveShot = register_action( "destructive_shot" ),
     BoundShot = register_action( "bound_shot" ),
     GuidedShot = register_action( "guided_shot" ),
     TimeCompression = register_action( "time_compression" ),
-    WIP = register_action( "wip", nil, true, not SETTINGS.Debug ),
+    WIP = register_action( "wip", nil, nil, true, not SETTINGS.Debug ),
 }
 
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
@@ -301,7 +304,15 @@ LOADOUTS = {};
 LEGENDARY_WANDS = {};
 
 local register_champion_type = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options, disabled_by_default, deprecated, inverted );
+    if options == nil then
+        options = {};
+    end
+    local content_id = register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options, disabled_by_default, deprecated, inverted );
+    local description = gkbrkn_localization["champion_type_"..key.."_description"];
+    if description ~= nil then
+        options.description = description;
+    end
+    return content_id;
 end
 
 CHAMPION_TYPES = {
@@ -959,11 +970,17 @@ local register_item = function( key, options, disabled_by_default, deprecated, i
     if description ~= nil then
         options.description = description;
     end
+    if options.item_path ~= nil then
+        options.preview_callback = function( player_entity )
+            local x, y = EntityGetTransform( player_entity );
+            EntityLoad( options.item_path, x, y );
+        end
+    end
     return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options, disabled_by_default, deprecated, inverted );
 end
 
 ITEMS = {
-    SpellBag = register_item( "spell_bag", nil, true, nil, true ),
+    SpellBag = register_item( "spell_bag", { item_path="mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/item.xml" }, true, nil, true ),
 }
 
 local register_event = function( key, name, message, callback, condition, weight, disabled_by_default, deprecated, inverted )
@@ -1252,7 +1269,7 @@ MISC = {
     },
     LegendaryWands = {
         Enabled = "gkbrkn_legendary_wands",
-        AppearanceChange = 0.01,
+        SpawnWeighting = 0.025,
     },
     WandShopsOnly = {
         Enabled = "gkbrkn_wand_shops_only",
@@ -1726,12 +1743,38 @@ OPTIONS = {
     }
 }
 
-function trim(s)
+local trim = function(s)
    local from = s:match"^%s*()"
    return from > #s and "" or s:match(".*%S", from)
 end
 
-function register_legendary_wand( id, name, author, wand_data, min_level, max_level, weight, custom_message, callback )
+local initialize_legendary_wand = function ( base_wand, x, y, level, force )
+    for _,child in pairs( EntityGetAllChildren( base_wand ) or {} ) do
+        EntityRemoveFromParent( child );
+    end
+    local shine = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand_shine.xml" );
+    if shine ~= nil then
+        EntityAddChild( base_wand, shine );
+    end
+    SetRandomSeed( GameGetFrameNum(), x + y );
+    local valid_wands = {};
+    local chosen_wand = force;
+    if chosen_wand == nil then
+        for _,content_id in pairs( LEGENDARY_WANDS ) do
+            local content = CONTENT[content_id];
+            if level == nil or ( level >= content.options.min_level and level <= content.options.max_level ) then
+                table.insert( valid_wands, content_id );
+            end
+        end
+        chosen_wand = valid_wands[Random( 1, #valid_wands )];
+    end
+    local content_data = CONTENT[chosen_wand];
+    if content_data == nil then print("legendary wand error: no wand data found"); return; end
+    initialize_wand( base_wand, content_data.options.wand_data );
+    return base_wand;
+end
+
+local register_legendary_wand = function( id, name, author, wand_data, min_level, max_level, weight, custom_message, callback )
     local display_name = name;
     if author ~= nil then
         display_name = display_name .. " ("..author..")";
@@ -1754,29 +1797,7 @@ function register_legendary_wand( id, name, author, wand_data, min_level, max_le
     LEGENDARY_WANDS[id] = content_id;
 end
 
-function initialize_legendary_wand( base_wand, x, y, level, force )
-    for _,child in pairs( EntityGetAllChildren( base_wand ) ) do
-        EntityRemoveFromParent( child );
-    end
-    SetRandomSeed( GameGetFrameNum(), x + y );
-    local valid_wands = {};
-    local chosen_wand = force;
-    if chosen_wand == nil then
-        for _,content_id in pairs( LEGENDARY_WANDS ) do
-            local content = CONTENT[content_id];
-            if level == nil or ( level >= content.options.min_level and level <= content.options.max_level ) then
-                table.insert( valid_wands, content_id );
-            end
-        end
-        chosen_wand = valid_wands[Random( 1, #valid_wands )];
-    end
-    local content_data = CONTENT[chosen_wand];
-    if content_data == nil then print("legendary wand error: no wand data found"); return; end
-    initialize_wand( base_wand, content_data.options.wand_data );
-    return base_wand;
-end
-
-function register_loadout( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
+local register_loadout = function( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
     name = name or id;
     local display_name = trim(string.gsub( name, "TYPE", "" ));
     if author ~= nil then
@@ -1998,3 +2019,19 @@ if SETTINGS.Debug then
 
     );
 end
+
+GKBRKN_CONFIG = {
+    register_content = register_content,
+    get_content = get_content,
+    get_content_flag = get_content_flag,
+    register_perk = register_perk,
+    register_action = register_action,
+    register_tweak = register_tweak,
+    register_champion_type = register_champion_type,
+    register_item = register_item,
+    register_event = register_event,
+    register_dynamic_event = register_dynamic_event,
+    register_legendary_wand = register_legendary_wand,
+    initialize_legendary_wand = initialize_legendary_wand,
+    register_loadout = register_loadout,
+};

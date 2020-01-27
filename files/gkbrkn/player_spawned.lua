@@ -76,7 +76,7 @@ if GameHasFlagRun( init_check_flag ) == false then
     if inventory ~= nil then
         --[[ Spell Bag ]]
         if CONTENT[ITEMS.SpellBag].enabled() then
-            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/spell_bag.xml", x + 20, y - 10 );
+            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/item.xml", x + 20, y - 10 );
         end
     end
 

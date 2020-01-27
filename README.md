@@ -60,7 +60,7 @@ Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded
 - **Hot Blooded**: Bleed lava.
 - **Ice Burst**: Shoot a burst of freezing projectile upon taking damage.
 - **Infested**: Spawn rats, spiders, and blobs upon death.
-- **Invisible**: Invisible.
+- **Invisible**: Gain invisibility.
 - **Jetpack**: Gain flight.
 - **Leaping**: Gain a long-range dash attack.
 - **Projectile Bounce**: Projectiles gain additional bounces (4 or 2x existing bounces, whichever is higher.)
@@ -70,8 +70,8 @@ Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded
 - **Regenerating**: If damage hasn't been taken in the last second, rapidly recover missing health.
 - **Revenge Explosion**: Explode upon death.
 - **Reward**: Spawn a chest on death (used for mini-bosses.)
-- **Teleporting**: Teleport around.
-- **Toxic Trail**: Projectiles gain a trail of toxic slude.
+- **Teleporting**: Teleport randomly or when taking damage (must be near the player.)
+- **Toxic Trail**: Projectiles gain a trail of toxic sludge.
 
 ## Hero Mode
 Hero mode is a challenge mode intended for players familiar with Noita. The intention is to speed up the gameplay by giving a bonus to both the player and the enemies. It is faster paced and little unfair. Combined with Champions Mode it is my attempt to create a more interesting Nightmare Mode.
@@ -85,8 +85,16 @@ Carnage Mode is an extra unfair difficulty intended to be a challenge for those 
 ## Legendary Wands
 Legendary wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
 
-- **Wormhole**: A two-way teleport with a short delay between them. Useful for peeking around corners, getting into otherwise blocked spaces checking through thin walls, or temporarily escaping a dangerous situation.
+- **Alchemic Lance**: Convert local materials at a cost.
+- **Endless Alchemy**: Free chaotic transmutation. Maybe you'll strike gold?
+- **Magic Popcorn**: Magical gravity-defying popcorn.
+- **Matra Magic**: Rapid-fire enemy seeking lasers.
+- **Noitius**: A powerful volley of basic spells in a pleasing formation.
+- **Pocket Black Hole**: A black hole that goes wherever you do.
+- **Spirit Familiar**: Summon a powerful explosive familiar that seeks out your enemies and latches onto them.
+- **Tabula Rasa**: A powerful wand with no natural mana recharge speed. Make your wildest dreams come true.
 - **Telefragger**: A triggered triple cast teleport casted damage buffed teleport projectile. Shoot it near enemies to telefrag them.
+- **Wormhole**: A two-way teleport with a short delay between them. Useful for peeking around corners, getting into otherwise blocked spaces checking through thin walls, or temporarily escaping a dangerous situation.
 
 ## Random Start
 Options to start runs with random changes. All of these can be used separately or together.

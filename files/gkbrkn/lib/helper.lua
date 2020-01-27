@@ -52,13 +52,13 @@ function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function )
     };
 end
 
-function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function )
+function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, icon_path )
     return {
         id = action_id,
         name 		        = gkbrkn_localization["action_name_"..key] or ("missing name "..key),
         description         = gkbrkn_localization["action_description_"..key] or ( "missing description "..key),
-        sprite 		        = "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
-        sprite_unidentified = "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
+        sprite 		        = icon_path or "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
+        sprite_unidentified = icon_path or "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
         type 		        = action_type,
         spawn_level         = spawn_level,
         spawn_probability   = spawn_probability,

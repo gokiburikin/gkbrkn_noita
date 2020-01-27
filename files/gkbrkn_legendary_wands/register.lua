@@ -1,3 +1,5 @@
+local register_legendary_wand = GKBRKN_CONFIG.register_legendary_wand;
+
 register_legendary_wand( "blink_back", "Wormhole", "goki", {
     name = "Wand",
     stats = {
@@ -100,7 +102,7 @@ register_legendary_wand( "endless_alchemy", "Endless Alchemy", "goki", {
     stats = {
         shuffle_deck_when_empty = 0, -- shuffle
         actions_per_round = 1, -- spells per cast
-        speed_multiplier = 2.0 -- projectile speed multiplier (hidden)
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
     },
     stat_ranges = {
         deck_capacity = {3,3}, -- capacity
@@ -124,7 +126,7 @@ register_legendary_wand( "pocket_black_hole", "Pocket Black Hole", "goki", {
     stats = {
         shuffle_deck_when_empty = 0, -- shuffle
         actions_per_round = 1, -- spells per cast
-        speed_multiplier = 2.0 -- projectile speed multiplier (hidden)
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
     },
     stat_ranges = {
         deck_capacity = {3,3}, -- capacity
@@ -138,6 +140,147 @@ register_legendary_wand( "pocket_black_hole", "Pocket Black Hole", "goki", {
     permanent_actions = {
         { "GKBRKN_CARRY_SHOT" },
         { "BLACK_HOLE" },
+    },
+    actions = {
+    }
+} );
+
+register_legendary_wand( "magic_popcorn", "Magic Popcorn", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {7,7}, -- capacity
+        reload_time = {14,14}, -- recharge time in frames
+        fire_rate_wait = {14,14}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {100,100}, -- mana charge speed
+        mana_max = {300,300}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { "KNOCKBACK" },
+        { "GRAVITY" },
+        { "BUBBLESHOT_TRIGGER" },
+        { "HEAVY_SPREAD" },
+        { "GRAVITY_ANTI" },
+        { "BUBBLESHOT" },
+    },
+} );
+
+register_legendary_wand( "spirit_familiar", "Spirit Familiar", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {9,9}, -- capacity
+        reload_time = {180,180}, -- recharge time in frames
+        fire_rate_wait = {120,120}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {30,30}, -- mana charge speed
+        mana_max = {150,150}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+        { "GKBRKN_BOUND_SHOT" },
+    },
+    actions = {
+        { "LIGHT" },
+        { "CHAOTIC_ARC" },
+        { "SINEWAVE" },
+        { "GKBRKN_GUIDED_SHOT" },
+        { "GKBRKN_CLINGING_SHOT" },
+        { "AVOIDING_ARC" },
+        { "HOMING_SHOOTER" },
+        { "DEATH_CROSS" },
+    }
+} );
+
+register_legendary_wand( "noitius", "Noitius", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {9,9}, -- capacity
+        reload_time = {15,15}, -- recharge time in frames
+        fire_rate_wait = {15,15}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {300,300}, -- mana charge speed
+        mana_max = {102,102}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
+        { { action="GKBRKN_FORMATION_STACK", locked=true } },
+        { { action="BURST_4", locked=true } },
+        { { action="RUBBER_BALL", locked=true } },
+        { { action="LIGHT_BULLET", locked=true } },
+        { { action="BULLET", locked=true } },
+        { { action="BULLET", locked=true } },
+        { { action="LIGHT_BULLET", locked=true } },
+        { { action="RUBBER_BALL", locked=true } },
+    }
+} );
+
+register_legendary_wand( "matra_magic", "Matra Magic", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {8,8}, -- capacity
+        reload_time = {15,15}, -- recharge time in frames
+        fire_rate_wait = {15,15}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {1000,1000}, -- mana charge speed
+        mana_max = {300,300}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
+        { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
+        { { action="CHAOTIC_ARC", locked=true } },
+        { { action="GKBRKN_CHAIN_CAST", locked=true } },
+        { { action="HEAVY_SPREAD", locked=true } },
+        { { action="LASER", locked=true } },
+    }
+} );
+
+register_legendary_wand( "tabula_rasa", "Tabula Rasa", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {25,25}, -- capacity
+        reload_time = {4,4}, -- recharge time in frames
+        fire_rate_wait = {4,4}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {0,0}, -- mana charge speed
+        mana_max = {25000,25000}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
     },
     actions = {
     }

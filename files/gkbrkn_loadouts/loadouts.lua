@@ -1,5 +1,6 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 loadouts_to_parse = {};
+local register_loadout = GKBRKN_CONFIG.register_loadout;
 
 -- this works because the register_loadout function falls back to whatever the player has equipped when there are no wands or items defined
 register_loadout(

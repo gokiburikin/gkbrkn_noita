@@ -99,6 +99,8 @@ function initialize_wand( wand, wand_data )
     for stat,random_values in pairs( wand_data.stat_randoms or {} ) do
         ability_component_set_stat( ability, stat, random_values[ Random( 1, #random_values ) ] );
     end
+    
+    ability_component_set_stat( ability, "mana", ability_component_get_stat( ability, "mana_max" ) );
 
     for _,actions in pairs( wand_data.permanent_actions or {} ) do
         local random_action = actions[ Random( 1, #actions ) ];
