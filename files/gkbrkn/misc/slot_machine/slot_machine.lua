@@ -10,7 +10,7 @@ function item_pickup( entity_item, entity_who_picked, item_name )
     EntitySetComponentsWithTagEnabled( action,  "item_unidentified", false );
     local velocity = EntityGetFirstComponent( action, "VelocityComponent" );
     if velocity ~= nil then
-        ComponentSetValueVector2( velocity, "mVelocity", math.random() * 150 + 50, math.random() * -100  - 100 );
+        ComponentSetValueVector2( velocity, "mVelocity", math.random() * 90 + 35, math.random() * -75  - 25 );
     end
 
 	EntityKill( entity_item );
