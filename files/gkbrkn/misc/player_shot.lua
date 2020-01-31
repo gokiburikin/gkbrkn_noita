@@ -50,7 +50,7 @@ function shot( projectile_entity )
                 gravity_y=function( value ) return 0; end,
                 mass=function( value ) return 0; end,
                 apply_terminal_velocity=function( value ) return 1; end,
-                terminal_velocity=function( value ) return 2500; end,
+                terminal_velocity=function( value ) return 2000; end,
             } );
         end
         if projectile ~= nil then
@@ -62,4 +62,27 @@ function shot( projectile_entity )
             } );
         end
     end
+
+    if projectile ~= nil then
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_bounces_last", ComponentGetValue( projectile, "bounces_left" ) );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_bounce_damage_remaining", 10 );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_initial_damage", ComponentGetValue( projectile, "damage" ) );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_damage_plus_lifetime_limit", GameGetFrameNum() + 300 );
+        local active_types = {};
+        local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
+        for type,_ in pairs( damage_by_types ) do
+            local amount = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
+            if amount == amount and amount ~= 0 then
+                table.insert( active_types, type.."="..amount );
+            end
+        end
+        if #active_types > 0 then
+            EntitySetVariableString( projectile_entity, "gkbrkn_initial_damage_types", table.concat( active_types, "," ) );
+        end
+    end
+
+    EntityAddComponent( projectile_entity, "LuaComponent", {
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/player_projectile_update.lua",
+        execute_every_n_frame="1",
+    } );
 end

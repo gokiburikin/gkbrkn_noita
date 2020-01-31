@@ -956,7 +956,19 @@ register_loadout(
     },
     { -- perks
         { "GKBRKN_BLOOD_MAGIC" }
-    }
+    },
+    -- actions
+    nil,
+    -- sprites
+    nil,
+    -- custom_message
+    nil, 
+    -- callback
+    nil,
+    --condition_callback
+    function( player )
+        return CONTENT[PERKS.BloodMagic].enabled();
+    end
 );
 
 -- Wandsmith

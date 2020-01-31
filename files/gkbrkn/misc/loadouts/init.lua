@@ -4,7 +4,9 @@ if HasFlagPersistent( MISC.Loadouts.Enabled ) and MISC.Loadouts.Skip ~= true the
     local loadouts = {};
     for id,loadout in pairs( LOADOUTS ) do
         if CONTENT[loadout].enabled() then
-            table.insert( loadouts, loadout );
+            if CONTENT[loadout].options.condition_callback == nil or CONTENT[loadout].options.condition_callback( player_entity ) == true then
+                table.insert( loadouts, loadout );
+            end
         end
     end
     if #loadouts > 0 then

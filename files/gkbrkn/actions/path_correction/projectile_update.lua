@@ -4,11 +4,6 @@ local correction_distance = 36;
 
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
---[[
-for word in string.gmatch(str, '([^,]+)') do
-end
-]]
-
 -- relatively performance impacting
 function is_in_line_of_sight( x, y, tx, ty )
     return true;

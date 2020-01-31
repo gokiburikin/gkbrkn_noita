@@ -1,10 +1,32 @@
 --[[
 changelog
-    -m "Hotfix Item: Spell Bag not spawning"
+    -m "The More Legendary Than The Last Update"
+    -m "Add Legendary Wand: Bubble Burst"
+    -m "Add Legendary Wand: Meat Grinder"
+    -m "Add Legendary Wand: Slime Rocket"
+    -m "Add Legendary Wand: Soulshot"
+    -m "Add Legendary Wand: Spark Swarm"
+    -m "Add Legendary Wand: Trash Bazooka"
+    -m "Add Legendary Wand: Wavecast Whip"
+    -m "Add loadout conditions (for example, disabling loadouts if certain perks are disabled)"
+    -m "Add Misc: Health Bars -> Pretty Health Bars"
+    -m "Change Legendary Wand: Telefragger (unlock damage modifiers)"
+    -m "Change Perk: Hyper Casting (terminal velocity 2500 -> 2000)"
+    -m "Deprecate Perk: Blood Magic (might be revisited in the future)"
+    -m "Fix some general code organization issues (fixes things more properly than the last hotfix hopefully)"
+    -m "Fix Tweak: Revenge Tentacle and Tweak: Projectile Repulsion being handled in place of each other"
+    -m "Optimization pass on Action: Damage Plus - Lifetime and Action: Damage Plus - Bounce"
 
 TODO
     make material compression fill all flasks you pick up for the first time (not possible right now)
     nest tweak (1 gold for things spawned from nests)
+
+EXTRA THINGS
+    lily pikku (big scarf?)
+    mimic perks
+        Strong Leviathan
+        Prague Rats
+        Invisibility Frames
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)
@@ -32,7 +54,6 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once( "data/scripts/lib/utilities.lua");
 
-
 if HasFlagPersistent("gkbrkn_first_launch") == false then
     AddFlagPersistent("gkbrkn_first_launch")
     for _,content in pairs(CONTENT) do
@@ -47,6 +68,7 @@ if HasFlagPersistent("gkbrkn_first_launch") == false then
     end
 end
 
+--[[ Gun System Extension ]]
 ModLuaFileAppend( "data/scripts/gun/gun.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun.lua" );
 ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_extra_modifiers.lua" );
 
@@ -60,14 +82,19 @@ end
 
 --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/action_info.lua" );
 
+-- [[ Tweaks ]]
 ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_actions.lua" );
 ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
+
+--[[ Biomes ]]
 ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_altar.lua" );
 ModLuaFileAppend( "data/scripts/biomes/boss_arena.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_arena.lua" );
-ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );
-ModLuaFileAppend( "data/scripts/items/chest_random_super.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random_super.lua" );
 ModLuaFileAppend( "data/scripts/biomes/temple_altar_left.lua", "mods/gkbrkn_noita/files/gkbrkn/append/goo_mode_temple_altar_left.lua" );
 ModLuaFileAppend( "data/scripts/buildings/temple_check_for_leaks.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_check_for_leaks.lua" );
+
+--[[ Chest Extensions ]]
+ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );
+ModLuaFileAppend( "data/scripts/items/chest_random_super.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random_super.lua" );
 
 if HasFlagPersistent( MISC.NoPregenWands.Enabled ) then
     local pregen_wand_biomes = {
@@ -87,6 +114,7 @@ end
 ModLuaFileAppend( "data/scripts/items/drop_money.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/charm_nerf.lua" );
 ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_procedural.lua" );
 ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/wand_shops_only.lua" );
+ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn/starting_perks_config_append.lua" );
 
 function OnPlayerSpawned( player_entity )
     if HasFlagPersistent( MISC.DisableSpells.Enabled ) then
@@ -150,6 +178,4 @@ function OnModPostInit()
     if HasFlagPersistent( MISC.UnlimitedAmmo.Enabled ) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/unlimited_ammo.lua" );
     end
-
-    ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn/starting_perks_config_append.lua" );
 end

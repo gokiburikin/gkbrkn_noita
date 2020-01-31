@@ -314,3 +314,47 @@ function entity_adjust_health( entity, callback )
         end
     end
 end
+
+function entity_get_health_ratio( entity )
+    local current_hp = 0;
+    local current_max_hp = 0;
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+    for _,damage_model in pairs( damage_models ) do
+        local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+        if hp > current_hp then
+            current_hp = hp;
+        end
+        local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+        if max_hp > current_max_hp then
+            current_max_hp = max_hp;
+        end
+    end
+    local ratio = current_hp / current_max_hp;
+    if ratio ~= ratio then
+        return 0;
+    end
+    return ratio;
+end
+
+function entity_draw_health_bar( entity, frames )
+    local health_ratio = entity_get_health_ratio( entity );
+    if health_ratio < 1 then
+        local x, y = EntityGetTransform( entity );
+        local health_bar_image = 11 - math.ceil( health_ratio * 10 );
+        local sprite = "mods/gkbrkn_noita/files/gkbrkn/misc/health_bars/health_bar"..health_bar_image..".png";
+        GameCreateSpriteForXFrames( sprite, x, y + 8, true, 0, 0, frames );
+    end
+end
+
+function string_trim( s )
+   local from = s:match"^%s*()"
+   return from > #s and "" or s:match(".*%S", from)
+end
+
+function string_split( s, splitter )
+    local words = {};
+    for word in string.gmatch(str, '([^'..splitter..']+)') do
+        table.insert( words );
+    end
+    return words;
+end

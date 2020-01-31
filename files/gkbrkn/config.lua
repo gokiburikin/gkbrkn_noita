@@ -1,5 +1,6 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
+--dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
@@ -8,7 +9,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c90"
+    Version = "c91"
 }
 
 CONTENT_TYPE = {
@@ -173,7 +174,7 @@ PERKS = {
         BloodToManaRatio = 1,
         FreeAlwaysCasts = true,
         DamageMultiplier = 5,
-    } ),
+    }, nil, true, true ),
     ManaMastery = register_perk( "mana_mastery" ),
     Wandsmith = register_perk( "wandsmith" ),
     HyperCasting = register_perk( "hyper_casting" ),
@@ -293,7 +294,7 @@ TWEAKS = {
     AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" } ),
     ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" } ),
     StunLock = register_tweak( "stun_lock" ),
-    RevengeTentacle = register_tweak( "projectile_repulsion", { perk_id="PROJECTILE_REPULSION" } ),
+    ProjectileRepulsion = register_tweak( "projectile_repulsion", { perk_id="PROJECTILE_REPULSION" } ),
     ExplosionOfThunder = register_tweak( "explosion_of_thunder", { action_id="THUNDER_BLAST" } ),
     AllSeeingEye = register_tweak( "all_seeing_eye", { action_id="X_RAY" }, true, true, true ),
     SpiralShot = register_tweak( "spiral_shot", { action_id="SPIRAL_SHOT" } ),
@@ -1285,6 +1286,7 @@ MISC = {
     },
     HealthBars = {
         Enabled = "gkbrkn_health_bars",
+        PrettyHealthBarsEnabled = "gkbrkn_health_bars_pretty",
     },
     GoldDecay = {
         Enabled = "gkbrkn_gold_decay",
@@ -1636,6 +1638,22 @@ OPTIONS = {
         SubOption = true,
     },
     {
+        Name = gkbrkn_localization.option_health_bars,
+        Description = gkbrkn_localization.option_health_bars_description,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_health_bars_enabled,
+        Description = gkbrkn_localization.sub_option_health_bars_enabled_description,
+        PersistentFlag = MISC.HealthBars.Enabled,
+        SubOption = true,
+    },
+    {
+        Name = gkbrkn_localization.sub_option_health_bars_pretty_enabled,
+        Description = gkbrkn_localization.sub_option_health_bars_pretty_enabled_description,
+        PersistentFlag = MISC.HealthBars.PrettyHealthBarsEnabled,
+        SubOption = true,
+    },
+    {
         Name = gkbrkn_localization.option_disable_random_spells,
         Description = gkbrkn_localization.option_disable_random_spells_description,
         PersistentFlag = "gkbrkn_disable_spells",
@@ -1704,11 +1722,6 @@ OPTIONS = {
         PersistentFlag = MISC.Events.Enabled,
     },
     {
-        Name = gkbrkn_localization.option_health_bars,
-        Description = gkbrkn_localization.option_health_bars_description,
-        PersistentFlag = "gkbrkn_health_bars",
-    },
-    {
         Name = gkbrkn_localization.option_show_fps,
         Description = gkbrkn_localization.option_show_fps_description,
         PersistentFlag = "gkbrkn_show_fps",
@@ -1742,11 +1755,6 @@ OPTIONS = {
         PersistentFlag = DEBUG_MODE_FLAG,
     }
 }
-
-local trim = function(s)
-   local from = s:match"^%s*()"
-   return from > #s and "" or s:match(".*%S", from)
-end
 
 local initialize_legendary_wand = function ( base_wand, x, y, level, force )
     for _,child in pairs( EntityGetAllChildren( base_wand ) or {} ) do
@@ -1797,9 +1805,9 @@ local register_legendary_wand = function( id, name, author, wand_data, min_level
     LEGENDARY_WANDS[id] = content_id;
 end
 
-local register_loadout = function( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
+local register_loadout = function( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback, condition_callback )
     name = name or id;
-    local display_name = trim(string.gsub( name, "TYPE", "" ));
+    local display_name = string_trim(string.gsub( name, "TYPE", "" ));
     if author ~= nil then
         display_name = display_name .. " ("..author..")";
     end
@@ -1816,12 +1824,11 @@ local register_loadout = function( id, name, author, cape_color, cape_color_edge
         sprites = sprites,
         custom_message = custom_message,
         callback = callback,
+        condition_callback = condition_callback
     } );
     CONTENT[content_id].options.preview_callback = function( player_entity )
-        --local x, y = EntityGetTransform( player_entity );
-        --local new_player = EntityLoad( "data/entities/player.xml", x, y );
+        dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
         handle_loadout( player_entity, CONTENT[content_id].options );
-        --EntityKill( player_entity );
     end
     LOADOUTS[id] = content_id;
 end
@@ -2012,6 +2019,7 @@ if SETTINGS.Debug then
             if inventory2 ~= nil then
                 ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
             end
+            EntityLoad( "data/entities/items/pickup/goldnugget_10000.xml", x + 50, y - 30 );
             --EntityAddComponent( player, "LuaComponent", {
             --    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/regen.lua"
             --});

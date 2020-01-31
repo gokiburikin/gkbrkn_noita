@@ -1,4 +1,6 @@
 # Goki's Things
+**Do not click the Clone or download button. Check the Releases tab (https://github.com/gokiburikin/gkbrkn_noita/releases).**
+
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. **To install just download the latest release zip (not the Source code) from https://github.com/gokiburikin/gkbrkn_noita/releases and extract the gkbrkn_noita folder to your Noita mods folder.**
 
 **I highly recommend taking the time to tailor the mod to your liking.** My intention is to offer a selection of options for the player to choose from, not for every option to be enabled. Every change this mod makes can be toggled on or off in the config menu.
@@ -91,9 +93,13 @@ Legendary wands can rarely be found in place of normal altar wands. These wands 
 - **Matra Magic**: Rapid-fire enemy seeking lasers.
 - **Noitius**: A powerful volley of basic spells in a pleasing formation.
 - **Pocket Black Hole**: A black hole that goes wherever you do.
+- **Soulshot**: Summon a guardian to deal with enemies that close the distance.
+- **Spark Swarm**: Let loose a swarm of angry electric flies.
 - **Spirit Familiar**: Summon a powerful explosive familiar that seeks out your enemies and latches onto them.
 - **Tabula Rasa**: A powerful wand with no natural mana recharge speed. Make your wildest dreams come true.
 - **Telefragger**: A triggered triple cast teleport casted damage buffed teleport projectile. Shoot it near enemies to telefrag them.
+- **Trash Bazooka**: shoot a bunch of weak spells with high spread.
+- **Wavecast Whip**: A wavy, destructive stream of projectiles.
 - **Wormhole**: A two-way teleport with a short delay between them. Useful for peeking around corners, getting into otherwise blocked spaces checking through thin walls, or temporarily escaping a dangerous situation.
 
 ## Random Start
@@ -160,7 +166,6 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
-- **Blood Magic**: Your life force is used in place of mana.
 - **Demolition**: Your spells cause larger, more powerful explosions.
 - **Demote Always Cast**: Demote a random always cast spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to a standard cast.
 - **Diplomatic Immunity**: You can no longer anger the gods.
@@ -250,6 +255,7 @@ These features were disabled or removed from the mod for one reason or another. 
 - **Action: Spectral Shot**: Cast a spell that passes through terrain. *(Superceded officially by Drilling Shot)*
 - **Action: Super Bounce**: Cast a spell that bounces more energetically. *(Not unique enough)*
 - **Other: Shuffle Deck**: Randomize the order of all remaining spells. *(Has no real uses)*
+- **Perk: Blood Magic**: Your life force is used in place of mana. *(Too buggy of an implementation)*
 - **Perk: Golden Blood**: You bleed gold. *(Not very good or interesting)*
 - **Perk: Living Wand**: Turn a random wand in your inventory into a permanent familiar. *(Superceded by another mod)*
 - **Perk/Action: Mana Efficiency**: Spells drain much less mana. *(Superceded by Mana Recharge)*

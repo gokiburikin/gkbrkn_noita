@@ -435,7 +435,6 @@ if succ_bonus ~= nil then
 end
 
 --[[ Free Inventory
-
     TODO nothing seemed to work, put it off for now
 
     local children = EntityGetAllChildren( entity );
@@ -450,6 +449,30 @@ end
         end
     end
 ]]
+
+--[[ Health Bars ]]
+if HasFlagPersistent( MISC.HealthBars.Enabled ) then
+    if HasFlagPersistent( MISC.HealthBars.PrettyHealthBarsEnabled ) then
+        local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
+        local t = GameGetRealWorldTimeSinceStarted();
+        for _,nearby in pairs( nearby_mortal ) do
+            if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                entity_draw_health_bar( nearby, 1 );
+            end
+        end
+    else
+        if now % 10 == 0 then
+            local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
+            for _,nearby in pairs( nearby_mortal ) do
+                if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                    if entity_get_health_ratio( nearby ) < 1 then
+                        add_entity_mini_health_bar( nearby );
+                    end
+                end
+            end
+        end
+    end
+end
 
 if now % 10 == 0 then
     local nearby_enemies = EntityGetWithTag( "enemy" );
@@ -683,30 +706,8 @@ if now % 10 == 0 then
         end
     end
 
-    --[[ Health Bars ]]
-    local nearby_mortal = EntityGetWithTag( "mortal" );
-    if HasFlagPersistent( MISC.HealthBars.Enabled ) then
-        for _,nearby in pairs( nearby_mortal ) do
-            if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
-                local is_damaged = false;
-                local damage_models = EntityGetComponent( nearby, "DamageModelComponent" ) or {};
-                for _,damage_model in pairs( damage_models ) do
-                    local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-                    local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
-                    if current_hp < max_hp then
-                        is_damaged = true;
-                        break;
-                    end
-                end
-                if is_damaged then
-                    add_entity_mini_health_bar( nearby );
-                end
-            end
-        end
-    end
-
     --[[ Entity Names ]]
-    local nearby_mortal = EntityGetWithTag( "mortal" );
+    local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
     if HasFlagPersistent( MISC.ShowEntityNames.Enabled ) then
         for _,nearby in pairs( nearby_mortal ) do
             if EntityGetFirstComponent( nearby, "UIInfoComponent" ) == nil then

@@ -73,7 +73,7 @@ local edit_callbacks = {
 }
 
 local apply_tweaks = {};
-for _,content_id in pairs(TWEAKS) do
+for _,content_id in pairs( TWEAKS ) do
     local tweak = CONTENT[content_id];
     if tweak.enabled() and tweak.options ~= nil and tweak.options.perk_id ~= nil then
         apply_tweaks[ tweak.options.perk_id ] = true

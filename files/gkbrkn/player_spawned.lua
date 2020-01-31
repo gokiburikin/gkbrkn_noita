@@ -1,5 +1,5 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 local x, y = EntityGetTransform( player_entity );
 
 --[[

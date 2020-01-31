@@ -1,3 +1,6 @@
+dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+
 local WAND_STAT_SETTER = {
     Direct = 1,
     Gun = 2,
@@ -99,7 +102,7 @@ function initialize_wand( wand, wand_data )
     for stat,random_values in pairs( wand_data.stat_randoms or {} ) do
         ability_component_set_stat( ability, stat, random_values[ Random( 1, #random_values ) ] );
     end
-    
+
     ability_component_set_stat( ability, "mana", ability_component_get_stat( ability, "mana_max" ) );
 
     for _,actions in pairs( wand_data.permanent_actions or {} ) do
@@ -113,16 +116,19 @@ function initialize_wand( wand, wand_data )
         local random_action = actions[ Random( 1, #actions ) ];
         if random_action ~= nil then
             if type( random_action ) == "table" then
-                local action_entity = CreateItemActionEntity( random_action.action );
-                local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
-                if random_action.locked then
-                    ComponentSetValue( component, "is_frozen", "1" );
+                local amount = random_action.amount or 1;
+                for i=1,amount do
+                    local action_entity = CreateItemActionEntity( random_action.action );
+                    local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
+                    if random_action.locked then
+                        ComponentSetValue( component, "is_frozen", "1" );
+                    end
+                    if random_action.permanent then
+                        ComponentSetValue( component, "permanently_attached", "1" );
+                    end
+                    EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                    EntityAddChild( wand, action_entity );
                 end
-                if random_action.permanent then
-                    ComponentSetValue( component, "permanently_attached", "1" );
-                end
-                EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
-                EntityAddChild( wand, action_entity );
             else
                 AddGunAction( wand, random_action );
             end
