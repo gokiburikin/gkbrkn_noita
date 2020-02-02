@@ -17,23 +17,24 @@ function EntitiesAverageMemberList( entities, component_type, member_list, round
         for _,member in pairs(member_list) do
             averages[member] = averages[member] + members[member];
         end
-        for member,value in pairs(overrides or {}) do
+        -- iterate through all members in overrides, if any entities in the list have the value in the overrides, apply it to all entities
+        for member,value in pairs( overrides or {} ) do
             if overridden[member] == nil and members[member] == value then
-                overridden[member] = members[member];
+                overridden[member] = value;
             end
         end
     end
     for _,member in pairs(member_list) do
         averages[member] = averages[member] / #entities;
-        if (rounded or {})[member] ~= nil then
+        if ( rounded or {} )[member] ~= nil then
             averages[member] = math.floor( averages[member] + 0.5 );
         end
     end
     for _,component in pairs( components ) do
-        for _,member in pairs(member_list) do
+        for _,member in pairs( member_list ) do
             ComponentSetValue( component, member, averages[member] );
         end
-        for member,value in pairs(overridden) do
+        for member,value in pairs( overridden ) do
             ComponentSetValue( component, member, value );
         end
     end
@@ -57,17 +58,39 @@ function mean_angle ( angles, magnitudes )
     return math.atan2( sum_sin, sum_cos );
 end
 
-local projectile_entities = EntityGetWithTag("gkbrkn_formation_stack") or {};
-if #projectile_entities > 0 then
+local spell_merge_projectiles = {};
+local projectile_gravity_well_projectiles = {};
+local projectile_orbit_projectiles = {};
+local link_shot_projectiles = {};
+local formation_stack_projectiles = {};
+local trailing_shot_projectiles = {};
+
+for _,player_projectile in pairs( EntityGetWithTag( "player_projectile" ) or {} ) do
+    if EntityGetVariableNumber( player_projectile, "gkbrkn_spell_merge", 0 ) == 1 then
+        table.insert( spell_merge_projectiles, player_projectile );
+    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_projectile_gravity_well", 0 ) == 1 then
+        table.insert( projectile_gravity_well_projectiles, player_projectile );
+    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_projectile_orbit", 0 ) == 1 then
+        table.insert( projectile_orbit_projectiles, player_projectile );
+    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_link_shot", 0 ) == 1 then
+        table.insert( link_shot_projectiles, player_projectile );
+    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_formation_stack", 0 ) == 1 then
+        table.insert( formation_stack_projectiles, player_projectile );
+    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_trailing_shot", 0 ) == 1 then
+        table.insert( trailing_shot_projectiles, player_projectile );
+    end
+end
+
+if #formation_stack_projectiles > 0 then
     local stack_distance = 5;
     local captured_projectiles = "";
-    for i,projectile in pairs(projectile_entities) do
-    end
-        local angles = {};
+    --for i,projectile in pairs(formation_stack_projectiles) do
+    --end
+    local angles = {};
     local magnitudes = {};
     local velocities = {};
-    for i,projectile in pairs(projectile_entities) do
-        EntityRemoveTag( projectile, "gkbrkn_formation_stack" );
+    for i,projectile in pairs(formation_stack_projectiles) do
+        EntitySetVariableNumber( projectile, "gkbrkn_formation_stack", 0 );
 
         local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
         if velocity ~= nil then
@@ -80,7 +103,7 @@ if #projectile_entities > 0 then
         end
     end
     local average_angle = mean_angle( angles, magnitudes );
-    for i,projectile in pairs( projectile_entities ) do
+    for i,projectile in pairs( formation_stack_projectiles ) do
         local velocity = velocities[i];
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
@@ -88,30 +111,30 @@ if #projectile_entities > 0 then
         local x, y = EntityGetTransform( projectile );
         --x = x - math.cos( angle ) * math.sqrt(magnitude) / 60;
         --y = y - math.sin( angle ) * math.sqrt(magnitude) / 60;
-        local offset = (stack_distance * #projectile_entities) - stack_distance * i - stack_distance * (#projectile_entities-1) / 2;
+        local offset = (stack_distance * #formation_stack_projectiles) - stack_distance * i - stack_distance * (#formation_stack_projectiles-1) / 2;
         EntitySetTransform( projectile, x + math.cos( average_angle - math.pi / 2 ) * offset, y + math.sin( average_angle - math.pi / 2 ) * offset );
         --ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * magnitude, math.sin( average_angle ) * magnitude );
     end
 end
 
-projectile_entities = EntityGetWithTag("gkbrkn_spell_merge");
-if #projectile_entities > 0 then
-    local leader = projectile_entities[1];
-    EntitiesAverageMemberList( projectile_entities, "ProjectileComponent", {
+if #spell_merge_projectiles > 0 then
+    local leader = spell_merge_projectiles[1];
+    
+    EntitiesAverageMemberList( spell_merge_projectiles, "ProjectileComponent", {
         "lifetime", "bounces_left", "bounce_energy",
-        "ground_penetration_coeff", "knockback_force", "ragdoll_force_multiplier", "camera_shake_when_shot",
-        "angular_velocity", "friction"
+        "knockback_force", "ragdoll_force_multiplier", "camera_shake_when_shot",
+        "angular_velocity", "friction", "die_on_low_velocity_limit"
     },
     { bounces_left = true },
-    { bounce_at_any_angle="1", bounce_always="1" } );
-    EntitiesAverageMemberList( projectile_entities, "VelocityComponent", { 
+    { bounce_at_any_angle="1", bounce_always="1", on_collision_die="0", die_on_low_velocity="0" } );
+    EntitiesAverageMemberList( spell_merge_projectiles, "VelocityComponent", { 
         "gravity_x", "gravity_y", "mass", "air_friction", "terminal_velocity"
     } );
     local average_velocity_magnitude = 0;
     local angles = {};
     local magnitudes = {};
-    for i,projectile_entity in pairs( projectile_entities ) do
-        EntityRemoveTag( projectile_entity, "gkbrkn_spell_merge" );
+    for i,projectile_entity in pairs( spell_merge_projectiles ) do
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
@@ -124,8 +147,8 @@ if #projectile_entities > 0 then
 
     end
     local average_angle = mean_angle( angles, magnitudes );
-    average_velocity_magnitude = average_velocity_magnitude / #projectile_entities;
-    for i,projectile_entity in pairs( projectile_entities ) do
+    average_velocity_magnitude = average_velocity_magnitude / #spell_merge_projectiles;
+    for i,projectile_entity in pairs( spell_merge_projectiles ) do
         if projectile_entity == leader then
             local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
@@ -142,22 +165,21 @@ if #projectile_entities > 0 then
     end
 end
 
-projectile_entities = EntityGetWithTag("gkbrkn_projectile_orbit");
-if #projectile_entities > 0 then
-    local leader = projectile_entities[1];
+if #projectile_orbit_projectiles > 0 then
+    local leader = projectile_orbit_projectiles[1];
     local velocity = EntityGetFirstComponent( leader, "VelocityComponent" );
     if velocity ~= nil then
         local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
         local previous_projectile = nil;
         local leader = nil;
-        for i,projectile in pairs(projectile_entities) do
-            EntityRemoveTag( projectile, "gkbrkn_projectile_orbit" );
+        for i,projectile in pairs( projectile_orbit_projectiles ) do
+            EntitySetVariableNumber( projectile, "gkbrkn_projectile_orbit", 0 );
             if previous_projectile ~= nil then
                 EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
                 EntityAddComponent( projectile, "VariableStorageComponent", {
                     _tags="gkbrkn_orbit",
                     name="gkbrkn_orbit",
-                    value_string=tostring(#projectile_entities);
+                    value_string=tostring(#projectile_orbit_projectiles);
                     value_int=tostring(i-1);
                 } );
                 EntityAddComponent( projectile, "LuaComponent", {
@@ -186,14 +208,13 @@ if #projectile_entities > 0 then
     end
 end
 
-projectile_entities = EntityGetWithTag("gkbrkn_projectile_gravity_well");
-if #projectile_entities > 0 then
+if #projectile_gravity_well_projectiles > 0 then
     local previous_projectile = nil;
     local leader = nil;
-    for i,projectile in pairs(projectile_entities) do
-        EntityRemoveTag( projectile, "gkbrkn_projectile_gravity_well" );
+    for i,projectile in pairs( projectile_gravity_well_projectiles ) do
+        EntitySetVariableNumber( projectile, "gkbrkn_projectile_gravity_well", 0 );
         if previous_projectile ~= nil then
-            EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
+            EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( leader ) );
             local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
             local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
             if projectile ~= nil and leader_projectile ~= nil then
@@ -209,6 +230,49 @@ if #projectile_entities > 0 then
                 ComponentSetValue( velocity, "air_friction", "0" )
             end
         end
+        previous_projectile = projectile;
+    end
+end
+
+if #link_shot_projectiles > 0 then
+    local leader = link_shot_projectiles[1];
+    local previous_projectile = nil;
+    local leader = nil;
+    for i,projectile in pairs( link_shot_projectiles ) do
+        EntitySetVariableNumber( projectile, "gkbrkn_link_shot", 0 );
+
+        if previous_projectile ~= nil then
+            EntitySetVariableNumber( projectile, "gkbrkn_soft_parent", tonumber( leader ) );
+            EntityAddComponent( projectile, "LuaComponent", {
+                execute_on_added="1",
+                execute_every_n_frame="1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/projectile_update.lua",
+            });
+            EntityAddComponent( projectile, "LuaComponent", {
+                execute_on_added="1",
+                execute_every_n_frame="-1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/child_projectile_init.lua",
+            });
+        else
+            leader = projectile;
+        end
+        previous_projectile = projectile;
+    end
+end
+
+if #trailing_shot_projectiles > 0 then
+    local previous_projectile = nil;
+    for i,projectile in pairs( trailing_shot_projectiles ) do
+        EntitySetVariableNumber( projectile, "gkbrkn_trailing_shot", 0 );
+
+        if previous_projectile ~= nil then
+            EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( previous_projectile ) );
+        end
+        EntityAddComponent( projectile, "LuaComponent", {
+            execute_on_added="1",
+            execute_every_n_frame="1",
+            script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/trailing_shot/projectile_update.lua",
+        });
         previous_projectile = projectile;
     end
 end

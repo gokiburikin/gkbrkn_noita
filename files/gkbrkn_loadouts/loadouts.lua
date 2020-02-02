@@ -714,18 +714,20 @@ register_loadout(
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
             stat_ranges = {
-                deck_capacity = {5,5}, -- capacity
-                reload_time = {90,90}, -- recharge time in frames
-                fire_rate_wait = {30,30}, -- cast delay in frames
+                deck_capacity = {8,8}, -- capacity
+                reload_time = {20,20}, -- recharge time in frames
+                fire_rate_wait = {20,20}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
-                mana_charge_speed = {50,50}, -- mana charge speed
-                mana_max = {160,160}, -- mana max
+                mana_charge_speed = {300,300}, -- mana charge speed
+                mana_max = {100,100}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
+                { "GKBRKN_PERSISTENT_SHOT" },
                 { "GKBRKN_PROTECTIVE_ENCHANTMENT" },
+                { "GKBRKN_DESTRUCTIVE_SHOT" },
                 { "GKBRKN_GLITTERING_TRAIL" },
                 { "GKBRKN_STORED_SHOT" },
             }
@@ -1283,3 +1285,24 @@ register_loadout(
     { -- perks
     }
 );
+
+-- Legendary
+register_loadout(
+    "gkbrkn_legendary", -- unique identifier
+    gkbrkn_localization.loadout_legendary, -- displayed loadout name
+    "goki",
+    0xFF333333, -- cape color (ABGR)
+    0xFF666666, -- cape edge color (ABGR)
+    { -- wands
+    },
+    { -- potions
+        { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+        { "data/entities/items/starting_wand.xml" },
+        { "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.xml" },
+    },
+    { -- perks
+    }
+);
+

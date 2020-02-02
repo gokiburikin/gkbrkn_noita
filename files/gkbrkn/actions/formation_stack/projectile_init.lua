@@ -1,3 +1,3 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 local entity = GetUpdatedEntityID();
-GlobalsSetValue( "gkbrkn_fired_projectiles", GlobalsGetValue( "gkbrkn_fired_projectiles", "" )..entity.."," );
-EntityAddTag( entity, "gkbrkn_formation_stack" );
+EntitySetVariableNumber( entity, "gkbrkn_formation_stack", 1 );

@@ -303,7 +303,7 @@ register_legendary_wand( "meat_grinder", "Meat Grinder", "Ivylistar", {
     },
     stat_randoms = {},
     permanent_actions = {
-        { action="DISC_BULLET_BIG" },
+        { "DISC_BULLET_BIG" },
     },
     actions = {
         { { action="GKBRKN_CARRY_SHOT", locked=true } },
@@ -491,5 +491,137 @@ register_legendary_wand( "spark_swarm", "Spark Swarm", "Aster Castell", {
         { { action="GKBRKN_FEATHER_SHOT", locked=true } },
         { { action="AVOIDING_ARC", locked=true } },
         { { action="GKBRKN_ZAP", locked=true } },
+    }
+} );
+
+register_legendary_wand( "the_atomizer", "The Atomizer", "Ivylistar", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {12,12}, -- capacity
+        reload_time = {30,30}, -- recharge time in frames
+        fire_rate_wait = {30,30}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {900,900}, -- mana charge speed
+        mana_max = {4300,4300}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="LONG_DISTANCE_CAST", locked=true } },
+        { { action="PIERCING_SHOT", locked=true } },
+        { { action="GKBRKN_PROJECTILE_GRAVITY_WELL", locked=true } },
+        { { action="LIFETIME", locked=true } },
+        { { action="LIFETIME", locked=true } },
+        { { action="DEATH_CROSS", locked=false } },
+        { { action="GKBRKN_TRIPLE_CAST", locked=true } },
+        { { action="GKBRKN_DOUBLE_CAST", locked=true } },
+        { { action="GKBRKN_DOUBLE_CAST", locked=true } },
+        { { action="LIGHT_BULLET", locked=false } },
+    }
+} );
+
+register_legendary_wand( "twin_spiral", "Twin Spiral", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {12,12}, -- capacity
+        reload_time = {30,30}, -- recharge time in frames
+        fire_rate_wait = {30,30}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {200,200}, -- mana charge speed
+        mana_max = {400,400}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+        { "LIFETIME_DOWN" },
+        { "SPEED" },
+        { "SPIRAL_SHOT" },
+    },
+    actions = {
+        { { action="GKBRKN_LINK_SHOT", locked=true } },
+        { { action="GKBRKN_PROJECTILE_ORBIT", locked=true } },
+        { { action="DEATH_CROSS", locked=true } },
+        { { action="DEATH_CROSS", locked=true } },
+        { { action="DEATH_CROSS", locked=true } },
+        { { action="DEATH_CROSS", locked=true } },
+    }
+} );
+
+register_legendary_wand( "wormy", "Wormy", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {18,18}, -- capacity
+        reload_time = {30,30}, -- recharge time in frames
+        fire_rate_wait = {30,30}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {500,500}, -- mana charge speed
+        mana_max = {1000,1000}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+        { "MATTER_EATER" },
+    },
+    actions = {
+        { { action="PIERCING_SHOT", locked=true } },
+        { { action="CLIPPING_SHOT", locked=true } },
+        { { action="GKBRKN_PATH_CORRECTION", locked=true } },
+        { { action="GKBRKN_LINK_SHOT", locked=true } },
+        { { action="GKBRKN_TRAILING_SHOT", locked=true } },
+        { { action="BURST_4", locked=false } },
+        { { action="BOUNCY_ORB", locked=false } },
+        { { action="BOUNCY_ORB", locked=false } },
+        { { action="BOUNCY_ORB", locked=false } },
+        { { action="BOUNCY_ORB", locked=false } },
+        { { action="BOUNCY_ORB", locked=false } },
+        { { action="BOUNCY_ORB", locked=false } },
+    }
+} );
+
+register_legendary_wand( "emerald_splash", "Emerald Splash", "WITO", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {15,15}, -- capacity
+        reload_time = {12,12}, -- recharge time in frames
+        fire_rate_wait = {12,12}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {600,600}, -- mana charge speed
+        mana_max = {600,600}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="HEAVY_SPREAD", locked=true } },
+        { { action="GKBRKN_STORED_SHOT", locked=true } },
+        { { action="BOUNCE", locked=true } },
+        { { action="BOUNCE", locked=true } },
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="RECOIL_DAMPER", locked=false } },
+        { { action="BURST_3", locked=false } },
+        { { action="RUBBER_BALL", locked=false } },
+        { { action="RUBBER_BALL", locked=false } },
+        { { action="RUBBER_BALL", locked=false } },
     }
 } );

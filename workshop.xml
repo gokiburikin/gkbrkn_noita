@@ -1,0 +1,14 @@
+<Mod
+name="Goki's Things"
+description="A collection of changes and additions to Noita.
+
+This mod contains an in-game config menu. Click the button found at the top right of the screen while in-game to open the configuration menu and use it to toggle options and custom content.
+
+I highly recommend taking the time to tailor the mod to your liking. My intention is to offer a selection of options for the player to choose from, not for every option to be enabled. Every change this mod makes can be toggled on or off in the config menu.
+
+There is too much content to fit in the steam description box, so if you're interested in learning about the content Goki's Things has to offer in detail, you can read the full description [url=https://github.com/gokiburikin/gkbrkn_noita/tree/beta#gokis-things]on the mod's GitHub page.[/url]"
+tags="gameplay,quality of life,perk,spell,loadout,game mode"
+dont_upload_folders=".assets"
+dont_upload_files=""
+>
+</Mod>

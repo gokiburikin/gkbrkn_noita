@@ -1,5 +1,5 @@
 <Entity >
-<LuaComponent
+    <LuaComponent
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/chain_cast/projectile_init.lua"
         remove_after_executed="1"
 		>

@@ -564,21 +564,21 @@ if now % 10 == 0 then
                     local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
                     if damage_models ~= nil then
                         local resistances = {
-                            ice = 0.67,
-                            electricity = 0.67,
-                            radioactive = 0.67,
-                            slice = 0.67,
-                            projectile = 0.67,
-                            healing = 0.67,
-                            physics_hit = 0.67,
-                            explosion = 0.67,
-                            poison = 0.67,
-                            melee = 0.67,
-                            drill = 0.67,
-                            fire = 0.67,
+                            ice = 1.00,
+                            electricity = 1.00,
+                            radioactive = 1.00,
+                            slice = 1.00,
+                            projectile = 1.00,
+                            healing = 1.00,
+                            physics_hit = 1.00,
+                            explosion = 1.00,
+                            poison = 1.00,
+                            melee = 1.00,
+                            drill = 1.00,
+                            fire = 1.00,
                         };
                         if is_mini_boss then
-                            resistances.physics_hit = 0.10;
+                            resistances.physics_hit = 0.25;
                         end
                         for index,damage_model in pairs( damage_models ) do
                             for damage_type,multiplier in pairs( resistances ) do
@@ -591,7 +591,7 @@ if now % 10 == 0 then
                             local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
                             local new_max = max_hp * 1.25;
                             if is_mini_boss then
-                                new_max = math.max( 50, math.pow( max_hp, 0.75 ) * 10 );
+                                new_max = math.max( 50, math.pow( max_hp, 0.75 ) * 8 );
                             end
                             local regained = new_max - current_hp;
                             ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );

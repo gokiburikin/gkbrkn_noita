@@ -9,7 +9,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c91"
+    Version = "c92"
 }
 
 CONTENT_TYPE = {
@@ -122,7 +122,12 @@ local register_perk = function( key, options, disabled_by_default, deprecated, i
     local content_id = register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted, function()
         ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/init.lua" );
     end );
+    local description = gkbrkn_localization["perk_description_"..key];
+    if description ~= nil then
+        options.description = description;
+    end
     options.preview_callback = function( player_entity )
+        dofile_once( "data/scripts/perks/perk.lua" );
         local perk_entity = perk_spawn( x, y, string.upper( "gkbrkn_"..key ) );
         if perk_entity ~= nil then
             perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
@@ -194,6 +199,10 @@ local register_action = function( key, init_path, options, disabled_by_default, 
             options.callback();
         end
     end );
+    local description = gkbrkn_localization["action_description_"..key];
+    if description ~= nil then
+        options.description = description;
+    end
     options.preview_callback = function( player_entity )
         local x, y = EntityGetTransform( player_entity );
         local action_entity = CreateItemActionEntity( string.upper( "gkbrkn_"..key ), x, y );
@@ -265,6 +274,8 @@ ACTIONS = {
     BoundShot = register_action( "bound_shot" ),
     GuidedShot = register_action( "guided_shot" ),
     TimeCompression = register_action( "time_compression" ),
+    LinkShot = register_action( "link_shot" ),
+    TrailingShot = register_action( "trailing_shot" ),
     WIP = register_action( "wip", nil, nil, true, not SETTINGS.Debug ),
 }
 

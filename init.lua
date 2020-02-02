@@ -1,23 +1,23 @@
 --[[
 changelog
-    -m "The More Legendary Than The Last Update"
-    -m "Add Legendary Wand: Bubble Burst"
-    -m "Add Legendary Wand: Meat Grinder"
-    -m "Add Legendary Wand: Slime Rocket"
-    -m "Add Legendary Wand: Soulshot"
-    -m "Add Legendary Wand: Spark Swarm"
-    -m "Add Legendary Wand: Trash Bazooka"
-    -m "Add Legendary Wand: Wavecast Whip"
-    -m "Add loadout conditions (for example, disabling loadouts if certain perks are disabled)"
-    -m "Add Misc: Health Bars -> Pretty Health Bars"
-    -m "Change Legendary Wand: Telefragger (unlock damage modifiers)"
-    -m "Change Perk: Hyper Casting (terminal velocity 2500 -> 2000)"
-    -m "Deprecate Perk: Blood Magic (might be revisited in the future)"
-    -m "Fix some general code organization issues (fixes things more properly than the last hotfix hopefully)"
-    -m "Fix Tweak: Revenge Tentacle and Tweak: Projectile Repulsion being handled in place of each other"
-    -m "Optimization pass on Action: Damage Plus - Lifetime and Action: Damage Plus - Bounce"
+    -m "Add Action: Link Shot"
+    -m "Add Action: Trailing Shot"
+    -m "Add Legendary Wand: Emerald Splash"
+    -m "Add Legendary Wand: Twin Spiral"
+    -m "Add Legendary Wand: Wormy"
+    -m "Add missing config menu descriptions for perks and actions"
+    -m "Add Steam Workshop assets"
+    -m "Change Action: Projectile Gravity Well (draw 2 -> 3 spells, mana cost 3 -> 5) (undocumented change from c91)"
+    -m "Change Action: Projectile Orbit (draw 2 -> 5 spells, mana cost 3 -> 12)"
+    -m "Change Action: Spell Merge (don't average ground_penetration_coeff [fixes bouncing burst + glowing lance], override on_collision_die, override die_on_low_velocity)"
+    -m "Change Loadout: Glittering (rebalanced to be less obnoxious to use)"
+    -m "Change Options: Champions -> Mini Bosses (physics hit resistance 90% -> 75%, health reduced)"
+    -m "Change Options: Champions (damage resistance 33% -> 0%)"
+    -m "Fix Legendary Wand: Meat Grinder"
+    -m "Fix loadouts not cleaning up loose items if loadouts were delayed for any reason"
 
 TODO
+    wand eater concept (picking up wands in slots 2-4 merge with slot 1)
     make material compression fill all flasks you pick up for the first time (not possible right now)
     nest tweak (1 gold for things spawned from nests)
 

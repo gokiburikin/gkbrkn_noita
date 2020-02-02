@@ -1,18 +1,18 @@
 # Goki's Things
 **Do not click the Clone or download button. Check the Releases tab (https://github.com/gokiburikin/gkbrkn_noita/releases).**
 
-A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. **To install just download the latest release zip (not the Source code) from https://github.com/gokiburikin/gkbrkn_noita/releases and extract the gkbrkn_noita folder to your Noita mods folder.**
+A collection of changes and additions to Noita. **This mod contains an in-game config menu. Click the button found at the top right of the screen in-game to open the configuration menu** and use it to toggle options and custom content. **To install just download the latest release zip (not the Source code) from https://github.com/gokiburikin/gkbrkn_noita/releases and extract the gkbrkn_noita folder to your Noita mods folder.**
 
 **I highly recommend taking the time to tailor the mod to your liking.** My intention is to offer a selection of options for the player to choose from, not for every option to be enabled. Every change this mod makes can be toggled on or off in the config menu.
 
 ## Loadouts
 This mod includes a loadout manager. Enable it to control loadouts, loadout skins (for player skin support) and the toggling of individual loadouts. Goki's Things must be loaded before (higher in the list than) other loadout mods!
 
-In the config menu you can enable loadout management under Misc > Loadouts > Manage. This will overwrite the loadout logic of supported mods and let Goki's Things handle loadouts in place of all of them, allowing compatibility between multiple loadout mods at once. Modders can also look at the loadouts file in this mod as an example of how to add new loadouts to Goki's Things.
+In the config menu you can enable loadout management under Options > Loadouts > Manage. This will overwrite the loadout logic of supported mods and let Goki's Things handle loadouts in place of all of them, allowing compatibility between multiple loadout mods at once. Modders can also look at the loadouts file in this mod as an example of how to add new loadouts to Goki's Things.
 
-Aside from management, you can also easily disable loadouts with the Misc > Loadouts > Enabled option, and you can choose if you want to use the custom player sprites and capes that loadouts use. This is for player character skin compatibility.
+Aside from management, you can also easily disable loadouts with the Options > Loadouts > Enabled option, and you can choose if you want to use the custom player sprites and capes that loadouts use. This is for player character skin compatibility.
 
-There is another mod called Selectable Classes by Ruri (https://modworkshop.net/mod/26171) that spawns class pickups at the start of the run so you can choose the loadout you want instead of rerolling for it. If Misc > Loadouts > Selectable Classes Integration is enabled alongside Selectable Classes then Goki's Things will take all managed and enabled loadouts and add them as class pickups to the starting room.
+There is another mod called Selectable Classes by Ruri (https://modworkshop.net/mod/26171) that spawns class pickups at the start of the run so you can choose the loadout you want instead of rerolling for it. If Options > Loadouts > Selectable Classes Integration is enabled alongside Selectable Classes then Goki's Things will take all managed and enabled loadouts and add them as class pickups to the starting room.
 
 ### Loadouts
 - **Alchemist**: Chaotic Transmutation Acid Ball, Water, Potions, Material Compression.
@@ -27,6 +27,7 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 - **Goo Mode**: Challenge Mode. Creates Creepy Liquid that floods the world at each Holy Mountain.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
 - **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
+- **Legendary**: Starts with a random Legendary Wand.
 - **Seeker**: Double Persistent Avoiding Drilling Bolts, TNT.
 - **Spark**: Electric Charge Sparkbolt Timer Zap, Thunder Charge.
 - **Speedrunning**: Teleport, Black Hole, Teleportitis.
@@ -45,7 +46,7 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 ## Champions
 Champions Mode is a challenge mode intended for players familiar with Noita. The intention is to push the player into more difficult combat scenarios that even veteran players can find difficult.
 
-Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded with special attributes. Misc > Champions > Super Champions allows the chance for additional special attributes to be applied to champion enemies, resulting in multiple attributes. The chance increases the more champions are encountered. Misc > Champions > Champions Only ensures all enemies that can be champions are champions. Misc > Champions > Mini-Bosses gives any champion a chance to gain a preset choice of champion types to make it more diffiult as well as a substantial health boost. Mini-Bosses drop a chest upon defeat.
+Activating Options > Champions > Enabled will allow enemies to randomly be upgraded with special attributes. Options > Champions > Super Champions allows the chance for additional special attributes to be applied to champion enemies, resulting in multiple attributes. The chance increases the more champions are encountered. Options > Champions > Champions Only ensures all enemies that can be champions are champions. Options > Champions > Mini-Bosses gives any champion a chance to gain a preset choice of champion types to make it more diffiult as well as a substantial health boost. Mini-Bosses drop a chest upon defeat.
 
 ### Champion Types
 - **Armoured**: 50% damage resistance, melee and knockback immunity.
@@ -78,7 +79,7 @@ Activating Misc > Champions > Enabled will allow enemies to randomly be upgraded
 ## Hero Mode
 Hero mode is a challenge mode intended for players familiar with Noita. The intention is to speed up the gameplay by giving a bonus to both the player and the enemies. It is faster paced and little unfair. Combined with Champions Mode it is my attempt to create a more interesting Nightmare Mode.
 
-When activated by Misc > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Misc > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Misc > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
+When activated by Options > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Options > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Options > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
 
 Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all cost. Invisibility has no power here.
 
@@ -88,19 +89,25 @@ Carnage Mode is an extra unfair difficulty intended to be a challenge for those 
 Legendary wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
 
 - **Alchemic Lance**: Convert local materials at a cost.
+- **Bubble Burst**: Bubbles orbiting bubbles.
+- **Emerald Splash**: A sudden release of many bouncing bursts.
 - **Endless Alchemy**: Free chaotic transmutation. Maybe you'll strike gold?
 - **Magic Popcorn**: Magical gravity-defying popcorn.
 - **Matra Magic**: Rapid-fire enemy seeking lasers.
 - **Noitius**: A powerful volley of basic spells in a pleasing formation.
 - **Pocket Black Hole**: A black hole that goes wherever you do.
+- **Slime Rocket**: A player-guided, explosive slime ball.
 - **Soulshot**: Summon a guardian to deal with enemies that close the distance.
 - **Spark Swarm**: Let loose a swarm of angry electric flies.
 - **Spirit Familiar**: Summon a powerful explosive familiar that seeks out your enemies and latches onto them.
 - **Tabula Rasa**: A powerful wand with no natural mana recharge speed. Make your wildest dreams come true.
 - **Telefragger**: A triggered triple cast teleport casted damage buffed teleport projectile. Shoot it near enemies to telefrag them.
-- **Trash Bazooka**: shoot a bunch of weak spells with high spread.
+- **The Atomizer**: A powerful bloom of piercing Sparkbolts gravitating around a Death Cross.
+- **Trash Bazooka**: Shoot a bunch of weak spells with high spread.
+- **Twin Spiral**: Spiral Shot and an orbit of Death Crosses.
 - **Wavecast Whip**: A wavy, destructive stream of projectiles.
 - **Wormhole**: A two-way teleport with a short delay between them. Useful for peeking around corners, getting into otherwise blocked spaces checking through thin walls, or temporarily escaping a dangerous situation.
+- **Wormy**: A trail of matter eating, piercing, path correcting Energy Spheres.
 
 ## Random Start
 Options to start runs with random changes. All of these can be used separately or together.
@@ -212,6 +219,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Glittering Trail**: The projectile gains a trail of explosions.
 - **Guided Shot**: The projectile is influenced by your aim.
 - **Imitation**: Cast a copy of the next unlimited use spell (or cast the next spell if no valid spell exists.)
+- **Link Shot**: Cast 2 spells the second of which will expire when the first expires.
 - **Lock Shot**: The projectile locks onto a nearby target.
 - **Magic Hand**: The projectile is held in place a set distance from the tip of your wand.
 - **Magic Light**: Control a magic light that cuts through darkness.
@@ -223,14 +231,15 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Persistent Shot**: Cast 2 spells that keep moving in the direction they were cast.
 - **Power Shot**: The projectile has increased damage, mass, and material penetration.
 - **Projectile Burst**: Duplicate a projectile multiple times.
-- **Projectile Gravity Well**: Cast 2 spells of which the first attracts the second.
-- **Projectile Orbit**: Cast 2 spells of which the second will orbit the first.
+- **Projectile Gravity Well**: Cast 3 spells of which the first has the others orbit around it.
+- **Projectile Orbit**: Cast 4 spells of which the first will have the others orbit it.
 - **Protective Enchantment**: Cast a spell with greatly reduced damage that can not directly damage you.
 - **Queued Cast**: Cast 3 spells, each triggering the next when it expires.
 - **Spell Duplicator**: Summon a magical phenomenon that casts the next spell in a random direction 5 times.
 - **Spell Merge**: Cast 2 spells of which the first is merged with the second.
 - **Stored Cast**: Summon a magical phenomenon that casts the next spell when you stop casting.
 - **Time Split**: Equalize current cast delay and recharge time.
+- **Trailing Shot**: Cast 4 spells, each one following the previous.
 - **Treasure Sense**: Treasure (wands, hearts, chests, potions, etc.) cast a visible trail towards themselves.
 - **Trigger: Death**: Cast a spell that casts the next spell after it expires.
 - **Trigger: Hit**: Cast a spell that casts the next spell upon collision.

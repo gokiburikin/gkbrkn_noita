@@ -45,6 +45,7 @@ function handle_loadout( player_entity, loadout_data )
         end
     end
 
+    local removed_items = {};
     -- set inventory contents
     if inventory ~= nil then
         local inventory_items = EntityGetAllChildren( inventory );
@@ -64,8 +65,37 @@ function handle_loadout( player_entity, loadout_data )
         if loadout_data.items ~= nil then
             for _,item in pairs( other_items ) do
                 GameKillInventoryItem( player_entity, item );
+                -- this prevents potion breaking sounds
+                EntitySetTransform( item, -9999, -9999 );
+                EntityRemoveFromParent( item );
+                table.insert( removed_items, item );
             end
             other_items = {};
+        end
+
+        if loadout_data.wands ~= nil then
+            for _,wand in pairs( default_wands ) do
+                GameKillInventoryItem( player_entity, wand );
+                -- this prevents potion breaking sounds
+                EntitySetTransform( item, -9999, -9999 );
+                EntityRemoveFromParent( wand );
+                table.insert( removed_items, wand );
+            end
+            default_wands = {};
+        end
+
+        if loadout_data.potions ~= nil then
+            for _,item in pairs( other_items ) do
+                GameKillInventoryItem( player_entity, item );
+                -- this prevents potion breaking sounds
+                EntitySetTransform( item, -9999, -9999 );
+                EntityRemoveFromParent( item );
+                table.insert( removed_items, item );
+            end
+            other_items = {};
+        end
+
+        if loadout_data.items ~= nil then
             for _,item_choice in pairs( loadout_data.items or {} ) do
                 local random_item = item_choice[ Random( 1, #item_choice ) ];
                 local item = EntityLoad( random_item, x, y );
@@ -74,26 +104,18 @@ function handle_loadout( player_entity, loadout_data )
         end
 
         if loadout_data.wands ~= nil then
-            for _,wand in pairs(default_wands) do
-                GameKillInventoryItem( player_entity, wand );
-            end
-            default_wands = {};
             for wand_index,wand_data in pairs( loadout_data.wands ) do
                 local wand = EntityLoad( wand_data.custom_file or "mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml", x, y );
                 SetRandomSeed( x, y );
 
                 EntitySetVariableNumber( wand, "gkbrkn_loadout_wand", 1 );
                 initialize_wand( wand, wand_data );
-                EntitySetComponentsWithTagEnabled( wand, "enabled_in_world", false );
                 EntityAddChild( inventory, wand );
+                EntitySetComponentsWithTagEnabled( wand, "enabled_in_world", false );
             end
         end
 
         if loadout_data.potions ~= nil then
-            for _,item in pairs( other_items ) do
-                GameKillInventoryItem( player_entity, item );
-            end
-            other_items = {};
             -- add loadout items
             for _,potion_data in pairs( loadout_data.potions or {} ) do
                 local choice = potion_data[ Random( 1, #potion_data ) ];
@@ -107,23 +129,28 @@ function handle_loadout( player_entity, loadout_data )
                             AddMaterialInventoryMaterial( potion, material, amount );
                         end
                     end
-                    EntitySetComponentsWithTagEnabled( potion, "enabled_in_world", false );
                     EntityAddChild( inventory, potion );
+                    EntitySetComponentsWithTagEnabled( potion, "enabled_in_world", false );
                 end
             end
         end
     end
 
-    -- set inventory contents
     if full_inventory ~= nil then
         if loadout_data.actions ~= nil then
             for _,actions in pairs( loadout_data.actions ) do
                 local action = actions[ Random( 1, #actions ) ];
                 local action_card = CreateItemActionEntity( action, x, y );
-                EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
                 EntityAddChild( full_inventory, action_card );
+                EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
             end
         end
+    end
+
+    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
+    if inventory2 ~= nil then
+        ComponentSetValue( inventory2, "mInitialized", 0 );
+        ComponentSetValue( inventory2, "mForceRefresh", 1 );
     end
 
     -- spawn perks
