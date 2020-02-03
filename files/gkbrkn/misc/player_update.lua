@@ -587,11 +587,11 @@ if now % 10 == 0 then
                                 ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
                             end
 
-                            local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
-                            local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+                            local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+                            local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
                             local new_max = max_hp * 1.25;
                             if is_mini_boss then
-                                new_max = math.max( 50, math.pow( max_hp, 0.75 ) * 8 );
+                                new_max = math.max( 2, math.pow( max_hp, 0.75 ) * 8 );
                             end
                             local regained = new_max - current_hp;
                             ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
