@@ -9,10 +9,10 @@ if projectile ~= nil then
     for _,component in pairs( components ) do
         if ComponentGetTypeName( component ) == "ControlsComponent" then
         local shooter = tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) or 0;
-            local handle = false;
-            if ComponentGetValue( component, "mButtonDownFire" ) == "1" then
-                handle = true;
-            end
+            local handle = true;
+            --if ComponentGetValue( component, "mButtonDownFire" ) == "1" then
+            --    handle = true;
+            --end
             if handle then
                 local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
                 local angle = math.atan2( ay, ax );

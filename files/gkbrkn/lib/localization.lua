@@ -212,6 +212,10 @@ gkbrkn_localization = {
     champion_type_teleporting_description = "Teleport randomly or when taking damage (must be near the player)",
     champion_type_name_toxic_trail = "Toxic Trail",
     champion_type_toxic_trail_description = "Projectiles gain a trail of toxic sludge",
+    champion_type_name_gunpowder_blood = "Gunpowder Blood",
+    champion_type_gunpowder_blood_description = "Bleed unstable gunpowder",
+    champion_type_name_frozen_blood = "Frozen Blood",
+    champion_type_frozen_blood_description = "Bleed freezing vapour",
     champion_type_name_worm_bait = "Worm Bait",
     champion_type_worm_bait_description = "Not Implemented",
 
@@ -546,5 +550,7 @@ gkbrkn_localization = {
     loadout_conjurer = "Conjuration TYPE",
     loadout_convergent = "Convergent TYPE",
     loadout_legendary = "Legendary TYPE",
+    loadout_knockback = "Knockback TYPE",
+    loadout_sniper = "Sniper TYPE",
     loadout_debug = "Development TYPE",
 }

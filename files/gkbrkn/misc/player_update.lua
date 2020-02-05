@@ -483,8 +483,8 @@ if now % 10 == 0 then
 
             --SetRandomSeed( x, y );
             if ( EntityHasTag( nearby, "gkbrkn_champions" ) == false or EntityHasTag( nearby, "gkbrkn_force_champion" ) == true ) and EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and does_entity_drop_gold( nearby ) == true then
-                EntityAddTag( nearby, "gkbrkn_champions" );
                 if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+                    EntityAddTag( nearby, "gkbrkn_champions" );
                     EntityRemoveTag( nearby, "gkbrkn_force_champion" );
                     local is_mini_boss = false;
                     local kills = tonumber( StatsGetValue("enemies_killed") ) or 0;
@@ -493,6 +493,7 @@ if now % 10 == 0 then
                         if kills >= next_mini_boss then
                             is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
                             if is_mini_boss == true then
+                                EntityAddTag( nearby, "gkbrkn_mini_boss" );
                                 GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
                             end
                         end

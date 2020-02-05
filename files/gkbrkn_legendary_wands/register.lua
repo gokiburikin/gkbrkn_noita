@@ -150,26 +150,26 @@ register_legendary_wand( "magic_popcorn", "Magic Popcorn", "goki", {
     stats = {
         shuffle_deck_when_empty = 0, -- shuffle
         actions_per_round = 1, -- spells per cast
-        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+        speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
     },
     stat_ranges = {
-        deck_capacity = {7,7}, -- capacity
-        reload_time = {14,14}, -- recharge time in frames
-        fire_rate_wait = {14,14}, -- cast delay in frames
+        deck_capacity = {11,11}, -- capacity
+        reload_time = {6,6}, -- recharge time in frames
+        fire_rate_wait = {6,6}, -- cast delay in frames
         spread_degrees = {0,0}, -- spread
-        mana_charge_speed = {100,100}, -- mana charge speed
+        mana_charge_speed = {200,200}, -- mana charge speed
         mana_max = {300,300}, -- mana max
     },
     stat_randoms = {},
     permanent_actions = {
     },
     actions = {
-        { "KNOCKBACK" },
-        { "GRAVITY" },
-        { "BUBBLESHOT_TRIGGER" },
-        { "HEAVY_SPREAD" },
-        { "GRAVITY_ANTI" },
-        { "BUBBLESHOT" },
+        { { action="KNOCKBACK", locked=true } },
+        { { action="GRAVITY", locked=true } },
+        { { action="GKBRKN_TRIGGER_TIMER", locked=true } },
+        { { action="BUBBLESHOT", locked=true } },
+        { { action="GRAVITY_ANTI", locked=true } },
+        { { action="BUBBLESHOT", locked=false } },
     },
 } );
 

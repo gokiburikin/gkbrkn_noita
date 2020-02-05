@@ -48,7 +48,6 @@ function shot( projectile_entity )
             ComponentAdjustValues( velocity, {
                 air_friction=function( value ) return math.min( tonumber( value ), 0 ); end,
                 gravity_y=function( value ) return 0; end,
-                mass=function( value ) return 0; end,
                 apply_terminal_velocity=function( value ) return 1; end,
                 terminal_velocity=function( value ) return 2000; end,
             } );

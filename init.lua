@@ -1,20 +1,15 @@
 --[[
 changelog
-    -m "Add Action: Link Shot"
-    -m "Add Action: Trailing Shot"
-    -m "Add Legendary Wand: Emerald Splash"
-    -m "Add Legendary Wand: Twin Spiral"
-    -m "Add Legendary Wand: Wormy"
-    -m "Add missing config menu descriptions for perks and actions"
-    -m "Add Steam Workshop assets"
-    -m "Change Action: Projectile Gravity Well (draw 2 -> 3 spells, mana cost 3 -> 5) (undocumented change from c91)"
-    -m "Change Action: Projectile Orbit (draw 2 -> 5 spells, mana cost 3 -> 12)"
-    -m "Change Action: Spell Merge (don't average ground_penetration_coeff [fixes bouncing burst + glowing lance], override on_collision_die, override die_on_low_velocity)"
-    -m "Change Loadout: Glittering (rebalanced to be less obnoxious to use)"
-    -m "Change Options: Champions -> Mini Bosses (physics hit resistance 90% -> 75%, health reduced)"
-    -m "Change Options: Champions (damage resistance 33% -> 0%)"
-    -m "Fix Legendary Wand: Meat Grinder"
-    -m "Fix loadouts not cleaning up loose items if loadouts were delayed for any reason"
+    -m "Add a tag for mini bosses (gkbrkn_mini_boss)"
+    -m "Add Champion: Frozen Blood"
+    -m "Add Champion: Gunpowder Blood"
+    -m "Add Loadout: Knockback"
+    -m "Add Loadout: Sniper"
+    -m "Change Legendary Wand: Magic Popcorn to be more legendary"
+    -m "Change Loadout: Sniper (rework)"
+    -m "Fix enemies having the gkbrkn_champions even if they don't successfully roll champion"
+    -m "Fix Perk: Hyper Casting breaking digging projectiles"
+    -m "Revert unintended Action: Magic Hand change"
 
 TODO
     wand eater concept (picking up wands in slots 2-4 merge with slot 1)
@@ -23,7 +18,7 @@ TODO
 
 EXTRA THINGS
     lily pikku (big scarf?)
-    mimic perks
+mimic perkshy
         Strong Leviathan
         Prague Rats
         Invisibility Frames

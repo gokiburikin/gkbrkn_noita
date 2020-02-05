@@ -9,7 +9,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c92"
+    Version = "c93"
 }
 
 CONTENT_TYPE = {
@@ -665,6 +665,34 @@ CHAMPION_TYPES = {
                 ComponentSetValue( damage_model, "blood_material", "lava" );
                 ComponentSetValue( damage_model, "blood_spray_material", "lava" );
                 ComponentSetValue( damage_model, "blood_multiplier", "2" );
+            end
+        end
+    }),
+    GunpowderBlood = register_champion_type( "gunpowder_blood", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/gunpowder_blood.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {"PROTECTION_FIRE"},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue( damage_model, "blood_material", "gunpowder_unstable" );
+                ComponentSetValue( damage_model, "blood_spray_material", "gunpowder_unstable" );
+            end
+        end
+    }),
+    FrozenBlood = register_champion_type( "frozen_blood", {
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/frozen_blood.xml",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue( damage_model, "blood_material", "blood_cold" );
+                ComponentSetValue( damage_model, "blood_spray_material", "blood_cold" );
             end
         end
     }),
