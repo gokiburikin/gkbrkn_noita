@@ -1,15 +1,7 @@
 --[[
 changelog
-    -m "Add a tag for mini bosses (gkbrkn_mini_boss)"
-    -m "Add Champion: Frozen Blood"
-    -m "Add Champion: Gunpowder Blood"
-    -m "Add Loadout: Knockback"
-    -m "Add Loadout: Sniper"
-    -m "Change Legendary Wand: Magic Popcorn to be more legendary"
-    -m "Change Loadout: Sniper (rework)"
-    -m "Fix enemies having the gkbrkn_champions even if they don't successfully roll champion"
-    -m "Fix Perk: Hyper Casting breaking digging projectiles"
-    -m "Revert unintended Action: Magic Hand change"
+    -m "Add Champion: Sparkbolt"
+    -m "Fix constant champion spawning"
 
 TODO
     wand eater concept (picking up wands in slots 2-4 merge with slot 1)

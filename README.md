@@ -53,12 +53,13 @@ Activating Options > Champions > Enabled will allow enemies to randomly be upgra
 - **Burning**: Fire immunity, set nearby things on fire. Projectiles set things they hit on fire.
 - **Counter/Reflect**: Counter attack with a white projectile that explodes after some time.
 - **Damage Buff**: Melee, projectile, and dash damage increased.
-- **Matter Eater**: Projectiles dig through the world.
 - **Eldritch**: Gain a mid-range tentacle attack.
 - **Electric**: Electrocute nearby materials. Projectiles electrocute things they hit.
 - **Energy Shield**: Gain a weak energy shield.
 - **Faster Movement**: 200% additional walking speed, 100% additional flying and jumping speed.
 - **Freezing**: Freeze nearby entities and materials. Projectiles freeze things they hit.
+- **Frozen Bloodd**: Bleed freezing vapour.
+- **Gunpowder Blooded**: Bleed unstable gunpowder.
 - **Healthy**: 50% additional health.
 - **Hot Blooded**: Bleed lava.
 - **Ice Burst**: Shoot a burst of freezing projectile upon taking damage.
@@ -66,6 +67,7 @@ Activating Options > Champions > Enabled will allow enemies to randomly be upgra
 - **Invisible**: Gain invisibility.
 - **Jetpack**: Gain flight.
 - **Leaping**: Gain a long-range dash attack.
+- **Matter Eater**: Projectiles dig through the world.
 - **Projectile Bounce**: Projectiles gain additional bounces (4 or 2x existing bounces, whichever is higher.)
 - **Projectile Buff**: Additional projectiles, additional projectile range, predicts ranged attacks.
 - **Projectile Repulsion Field**: Push projectiles away.

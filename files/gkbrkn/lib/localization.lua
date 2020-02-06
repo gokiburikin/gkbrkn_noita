@@ -218,6 +218,8 @@ gkbrkn_localization = {
     champion_type_frozen_blood_description = "Bleed freezing vapour",
     champion_type_name_worm_bait = "Worm Bait",
     champion_type_worm_bait_description = "Not Implemented",
+    champion_type_name_sparkbolt = "Sparkbolt",
+    champion_type_sparkbolt_description = "Gain a Sparkbolt attack",
 
     --[[ Badges ]]
     ui_icon_name_champion_mode = "Champions Mode",

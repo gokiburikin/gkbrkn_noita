@@ -702,6 +702,8 @@ if now % 10 == 0 then
                             EntityAddChild( badges, badge );
                         end
                     end
+                else
+                    EntityAddTag( nearby, "gkbrkn_no_champion" );
                 end
             end
         end
