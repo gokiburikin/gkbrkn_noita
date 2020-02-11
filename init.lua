@@ -1,21 +1,22 @@
 --[[
 changelog
     -m "Add Champion: Sparkbolt"
+    -m "Add Legendary Wand: Frost Wall"
     -m "Add Loadout: Bomb"
     -m "Add Loadout: First"
     -m "Add Loadout: Grease"
     -m "Add Loadout: Melting"
     -m "Add Loadout: Toxic"
     -m "Add Loadout: Vampire"
-    -m "Add Legendary Wand: Frost Wall"
-    -m "Change Loadout: Sniper (unlock some spells)"
-    -m "Change Legendary Wand: Wormhole (replace reduce duration with time compression)"
+    -m "Change Action: Double Cast and Action: Triple Cast logic (copy the cast 2 or 3 times instead of repeating the cast 2 or 3 times; fixes trigger spells not triggering each other)"
     -m "Change Legendary Wand: Meat Gringder (add energy shield sector)"
+    -m "Change Legendary Wand: Wormhole (replace reduce duration with time compression)"
+    -m "Change Loadout: Sniper (unlock some spells)"
+    -m "Change Perk: Diplomatic Immunity (workshop will no longer collapse)"
     -m "Change Tweak: Freeze Charge (restore material conversion)"
     -m "Fix constant champion spawning"
     -m "Fix Perk: Wandsmith increasing recharge and cast delay instead of reducing them"
     -m "Remove Hero Mode wand buffing"
-    -m "Change Action: Double Cast and Action: Triple Cast logic (copy the cast 2 or 3 times instead of repeating the cast 2 or 3 times; fixes trigger spells not triggering each other)"
 
 TODO
     make the damn blood amount tweak

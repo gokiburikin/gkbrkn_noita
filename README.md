@@ -85,15 +85,16 @@ When activated by Options > Hero Mode > Enabled the player will move more quickl
 
 Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all cost. Invisibility has no power here.
 
-Carnage Mode is an extra unfair difficulty intended to be a challenge for those who have cleared Ultimate Hero Ultimate Champions mode. It removes the positive side effects of Hero Mode (wand buffs, extra movement speed) and increases the negative effects. Enemies can dash short distances, fly, are fire immune, ignore charm, and attack more quickly. You get less perk options, less shop items, and the gods are angered from the start.
+Carnage Mode is an extra unfair difficulty intended to be a challenge for those who have cleared Ultimate Hero Ultimate Champions mode. It removes the positive side effects of Hero Mode (extra movement speed) and increases the negative effects. Enemies can dash short distances, fly, are fire immune, ignore charm, and attack more quickly. You get less perk options, less shop items, and the gods are angered from the start.
 
-## Legendary Wands
-Legendary wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
+## Unique Wands
+Unique wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
 
 - **Alchemic Lance**: Convert local materials at a cost.
 - **Bubble Burst**: Bubbles orbiting bubbles.
 - **Emerald Splash**: A sudden release of many bouncing bursts.
 - **Endless Alchemy**: Free chaotic transmutation. Maybe you'll strike gold?
+- **Frost Wall**: Create an (inconsistent) wall of frost in an instant!
 - **Magic Popcorn**: Magical gravity-defying popcorn.
 - **Matra Magic**: Rapid-fire enemy seeking lasers.
 - **Noitius**: A powerful volley of basic spells in a pleasing formation.
@@ -178,7 +179,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Demolition**: Your spells cause larger, more powerful explosions.
 - **Demote Always Cast**: Demote a random always cast spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to a standard cast.
 - **Diplomatic Immunity**: You can no longer anger the gods.
-- **Duplicate**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
+- **Duplicate Wand**: Duplicate the wand you're holding (or a random wand in your inventory if you're not holding one.)
 - **Extra Projectile**: You fire an additional projectile when casting spells, but you cast them less quickly. Spell stats are not applied twice!
 - **Fragile Ego**: Receive 75% less damage, but damage is dealt to maximum health.
 - **Healthier Heart**: You heal for the amount gained when gaining maximum health.
