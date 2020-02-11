@@ -20,12 +20,10 @@ register_legendary_wand( "blink_back", "Wormhole", "goki", {
     },
     actions = {
         { { action="LONG_DISTANCE_CAST", locked=true } },
-        { { action="LIFETIME_DOWN", locked=true } },
-        { { action="LIFETIME_DOWN", locked=true } },
+        { { action="GKBRKN_TIME_COMPRESSION", locked=true } },
         { { action="TELEPORT_PROJECTILE", locked=true } },
         { { action="DELAYED_SPELL", locked=true } },
-        { { action="LIFETIME_DOWN", locked=true } },
-        { { action="LIFETIME_DOWN", locked=true } },
+        { { action="GKBRKN_TIME_COMPRESSION", locked=true } },
         { { action="TELEPORT_PROJECTILE", locked=true } },
     }
 } );
@@ -304,6 +302,7 @@ register_legendary_wand( "meat_grinder", "Meat Grinder", "Ivylistar", {
     stat_randoms = {},
     permanent_actions = {
         { "DISC_BULLET_BIG" },
+        { "ENERGY_SHIELD_SECTOR" },
     },
     actions = {
         { { action="GKBRKN_CARRY_SHOT", locked=true } },
@@ -623,5 +622,39 @@ register_legendary_wand( "emerald_splash", "Emerald Splash", "WITO", {
         { { action="RUBBER_BALL", locked=false } },
         { { action="RUBBER_BALL", locked=false } },
         { { action="RUBBER_BALL", locked=false } },
+    }
+} );
+
+register_legendary_wand( "frost_wall", "Frost Wall", "goki + Ivylistar", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {15,15}, -- capacity
+        reload_time = {15,15}, -- recharge time in frames
+        fire_rate_wait = {15,15}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {200,200}, -- mana charge speed
+        mana_max = {320,320}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="LIGHT_BULLET_TRIGGER", locked=true } },
+        { { action="WATER_TRAIL", locked=true } },
+        { { action="CLIPPING_SHOT", locked=true } },
+        { { action="GRAVITY_ANTI", locked=true } },
+        { { action="GRAVITY_ANTI", locked=true } },
+        { { action="GRAVITY_ANTI", locked=true } },
+        { { action="FREEZE", locked=true } },
+        { { action="LIFETIME_DOWN", locked=false } },
+        { { action="LIFETIME_DOWN", locked=false } },
+        { { action="ACCELERATING_SHOT", locked=false } },
+        { { action="GKBRKN_FEATHER_SHOT", locked=false } },
+        { { action="DELAYED_SPELL", locked=false } },
     }
 } );

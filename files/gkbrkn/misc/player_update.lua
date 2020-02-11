@@ -912,35 +912,6 @@ if now % 10 == 0 then
             end
         end
         
-        if is_carnage_mode == false then
-            for _,wand in pairs( wands ) do
-                if EntityGetVariableNumber( wand, "gkbrkn_hero_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_duplicate_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_loadout_wand", 0 ) == 0 then
-                    --local ability = EntityGetFirstComponent( wand, "AbilityComponent", false );
-                    local x, y = EntityGetTransform( wand );
-                    SetRandomSeed( now, x + y + wand );
-                    local ability = FindFirstComponentByType( wand, "AbilityComponent" );
-                    if ability ~= nil then
-                        EntitySetVariableNumber( wand, "gkbrkn_hero_wand", 1 );
-                        local kills = StatsGetValue("enemies_killed");
-                        local kills_divisor = 100;
-                        local mana_multiplier = rand( 1.10, trend_towards_range( kills, kills_divisor, 1.25, 2.00 ) );
-                        ability_component_adjust_stats( ability, {
-                            --shuffle_deck_when_empty = function(value) end,
-                            --actions_per_round = function(value) end,
-                            --speed_multiplier = function(value) end,
-                            mana_max = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
-                            mana = function(value) return math.floor( tonumber( value ) * mana_multiplier ); end,
-                            deck_capacity = function(value) return math.min( 25, tonumber( value ) + Random( 1, 2 ) ); end,
-                            reload_time = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
-                            fire_rate_wait = function(value) return math.min( tonumber( value ), tonumber( value ) * rand( trend_towards_range( kills, kills_divisor, 0.9, 0.6 ), 1.00 ) ); end,
-                            spread_degrees = function(value) return tonumber( value ) - Random( 0, 4 ); end,
-                            mana_charge_speed = function(value) return math.ceil( ( tonumber( value ) + Random( 10, trend_towards_range( kills, kills_divisor, 20, 50 ) ) ) * rand( 1.10, trend_towards_range( kills, kills_divisor, 1.20, 1.50 ) ) ); end,
-                        } );
-                    end
-                end
-            end
-        end
-
         for _,boss in pairs( EntityGetWithTag( "boss_centipede" ) or {} ) do
             if EntityGetVariableNumber( boss, "gkbrkn_hero_mode_boss", 0 ) == 0 then
                 EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );

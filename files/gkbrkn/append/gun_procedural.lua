@@ -1,6 +1,7 @@
 dofile_once( "data/scripts/gun/gun_enums.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 _generate_gun = _generate_gun or generate_gun;
@@ -102,8 +103,8 @@ function generate_gun( cost, level, force_unshuffle )
                     mana_max=function(value) return tonumber( value ) * ( 1.1 ^ wandsmith_stacks ); end,
                     mana_charge_speed=function(value) return ( tonumber( value ) + Random( 10, 20 ) ) * ( 1.1 ^ wandsmith_stacks ); end,
                     deck_capacity=function(value) return math.min( 26, math.floor( tonumber( value ) + wandsmith_stacks * 2 ) ); end,
-                    reload_time=function(value) return tonumber( value ) - Random( -20, -8 ) * wandsmith_stacks; end,
-                    fire_rate_wait=function(value) return tonumber( value ) - Random( -8, -4 ) * wandsmith_stacks; end,
+                    reload_time=function(value) return tonumber( value ) - Random( 8, 20 ) * wandsmith_stacks; end,
+                    fire_rate_wait=function(value) return tonumber( value ) - Random( 4, 8 ) * wandsmith_stacks; end,
                     spread_degrees=function(value) return tonumber( value ) - 2 * wandsmith_stacks; end,
                 } );
             end

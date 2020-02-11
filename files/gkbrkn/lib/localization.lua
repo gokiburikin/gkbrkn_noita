@@ -24,7 +24,7 @@ gkbrkn_localization = {
     config_content_type_name_item = "Items",
     config_content_type_name_loadout = "Loadouts",
     config_content_type_name_starting_perk = "Starting Perks",
-    config_content_type_name_legendary_wand = "Legendary Wands",
+    config_content_type_name_legendary_wand = "Unique Wands",
     config_content_type_name_event = "Events",
 
     --[[ Options ]]
@@ -554,5 +554,11 @@ gkbrkn_localization = {
     loadout_legendary = "Legendary TYPE",
     loadout_knockback = "Knockback TYPE",
     loadout_sniper = "Sniper TYPE",
+    loadout_grease = "Grease TYPE",
+    loadout_toxic = "Toxic TYPE",
+    loadout_vampire = "Vampiric TYPE",
+    loadout_frost = "Frost TYPE",
+    loadout_bomb = "Bomb TYPE",
+    loadout_melting = "Melting TYPE",
     loadout_debug = "Development TYPE",
 }

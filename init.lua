@@ -1,9 +1,24 @@
 --[[
 changelog
     -m "Add Champion: Sparkbolt"
+    -m "Add Loadout: Bomb"
+    -m "Add Loadout: First"
+    -m "Add Loadout: Grease"
+    -m "Add Loadout: Melting"
+    -m "Add Loadout: Toxic"
+    -m "Add Loadout: Vampire"
+    -m "Add Legendary Wand: Frost Wall"
+    -m "Change Loadout: Sniper (unlock some spells)"
+    -m "Change Legendary Wand: Wormhole (replace reduce duration with time compression)"
+    -m "Change Legendary Wand: Meat Gringder (add energy shield sector)"
+    -m "Change Tweak: Freeze Charge (restore material conversion)"
     -m "Fix constant champion spawning"
+    -m "Fix Perk: Wandsmith increasing recharge and cast delay instead of reducing them"
+    -m "Remove Hero Mode wand buffing"
+    -m "Change Action: Double Cast and Action: Triple Cast logic (copy the cast 2 or 3 times instead of repeating the cast 2 or 3 times; fixes trigger spells not triggering each other)"
 
 TODO
+    make the damn blood amount tweak
     wand eater concept (picking up wands in slots 2-4 merge with slot 1)
     make material compression fill all flasks you pick up for the first time (not possible right now)
     nest tweak (1 gold for things spawned from nests)
@@ -77,7 +92,10 @@ ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/g
 ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_altar.lua" );
 ModLuaFileAppend( "data/scripts/biomes/boss_arena.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_arena.lua" );
 ModLuaFileAppend( "data/scripts/biomes/temple_altar_left.lua", "mods/gkbrkn_noita/files/gkbrkn/append/goo_mode_temple_altar_left.lua" );
+
+--[[ Workshop ]]
 ModLuaFileAppend( "data/scripts/buildings/temple_check_for_leaks.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_check_for_leaks.lua" );
+ModLuaFileAppend( "data/scripts/buildings/workshop_exit.lua", "mods/gkbrkn_noita/files/gkbrkn/append/workshop_exit.lua" );
 
 --[[ Chest Extensions ]]
 ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );

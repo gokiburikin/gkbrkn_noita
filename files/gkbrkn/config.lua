@@ -1926,10 +1926,8 @@ if SETTINGS.Debug then
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { { action="GKBRKN_COPY_SPELL",locked=true } },
-                    { { action="SLOW_BULLET",permanent=true } },
-                    { { action="SLOW_BULLET",permanent=true,locked=true } },
-                    { "SLOW_BULLET" },
+                    { "GKBRKN_TRIPLE_CAST" },
+                    { "BUBBLESHOT" },
                 }
             },
             {

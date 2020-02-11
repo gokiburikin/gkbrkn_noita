@@ -43,6 +43,7 @@ local edit_callbacks = {
         action.action = function()
             c.damage_projectile_add = c.damage_projectile_add + 0.2;
             c.game_effect_entities = c.game_effect_entities .. "data/entities/misc/effect_frozen.xml,";
+			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/freeze_charge.xml,"
             draw_actions( 1, true );
         end
     end,

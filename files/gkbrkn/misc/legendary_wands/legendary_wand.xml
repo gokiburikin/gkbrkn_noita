@@ -1,4 +1,4 @@
-<Entity tags="wand">
+<Entity tags="wand,gkbrkn_legendary_wand">
 
 	<AbilityComponent
 		_enabled="1" 

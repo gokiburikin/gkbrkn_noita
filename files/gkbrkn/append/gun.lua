@@ -132,18 +132,96 @@ function peek_draw_action( instant_reload_if_empty )
 	return true
 end
 
-function peek_draw_actions( how_many, instant_reload_if_empty )
-    local _draw_action = gkbrkn._draw_action;
-    gkbrkn._draw_action = function()
+function peek_draw_action( shot, instant_reload_if_empty )
+    local action = nil;
+
+    state_cards_drawn = state_cards_drawn + 1;
+
+    if reflecting then return end;
+
+    if #deck <= 0 then
+        if instant_reload_if_empty then
+            move_discarded_to_deck();
+            order_deck();
+            start_reload = true;
+        else
+            reloading = true;
+            return true;
+        end
     end
+
+    if #deck > 0 then
+        -- draw from the start of the deck
+        action = deck[ 1 ];
+
+        table.remove( deck, 1 );
+
+        -- update mana
+        local action_mana_required = action.mana;
+        if action.mana == nil then
+            action_mana_required = ACTION_MANA_DRAIN_DEFAULT;
+        end
+
+        mana = mana - action_mana_required;
+    end
+
+    --- add the action to hand and execute it ---
+    if action ~= nil then
+        play_action( action );
+    end
+
+    return true;
 end
 
-function capture_draw_actions( amount, instant_reload )
+function peek_draw_actions( how_many, instant_reload_if_empty, discard_peeked )
+    if gkbrkn.peeking == true then
+        return draw_actions( how_many, instant_reload_if_empty );
+    end
+    gkbrkn.peeking = true;
+    --local _deck = deck;
+    --local _hand = hand;
+    --local _discarded = discarded;
+    --deck = deck_from_actions( deck );
+    --hand = {};
+    --discarded = {};
+    
+    local _draw_action = gkbrkn._draw_action;
+    gkbrkn._draw_action = peek_draw_action;
+
+    local _add_projectile = gkbrkn._add_projectile;
+    gkbrkn._add_projectile = function()  end
+    
     local old_capture = gkbrkn.draw_actions_capture;
     local capture = {};
     local drawn_actions = {};
     gkbrkn.draw_actions_capture = capture;
-    draw_actions( amount, instant_reload );
+    draw_actions( how_many, instant_reload_if_empty );
+    for _,action in pairs( capture ) do
+        table.insert( drawn_actions, action );
+    end
+    if old_capture ~= nil then
+        for _,action in pairs( capture ) do
+            table.insert( old_capture, action );
+        end
+    end
+    gkbrkn.draw_actions_capture = old_capture;
+
+    gkbrkn._draw_action = _draw_action;
+    gkbrkn._add_projectile = _add_projectile;
+    --deck = _deck;
+    --hand = _hand;
+    --discarded = _discarded;
+    gkbrkn.peeking = nil;
+
+    return drawn_actions;
+end
+
+function capture_draw_actions( how_many, instant_reload_if_empty )
+    local old_capture = gkbrkn.draw_actions_capture;
+    local capture = {};
+    local drawn_actions = {};
+    gkbrkn.draw_actions_capture = capture;
+    draw_actions( how_many, instant_reload_if_empty );
     for _,action in pairs( capture ) do
         table.insert( drawn_actions, action );
     end
@@ -482,6 +560,25 @@ end
 
 function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty )
     local old_c = c;
+    local captured = peek_draw_actions( amount, instant_reload_if_empty );
+    local capture_set = {};
+    for i=1,repeat_n_times do
+        for _,action in pairs( captured ) do
+            table.insert( capture_set, action );
+        end
+    end
+    temporary_deck( function( deck, hand, discarded )
+        c = {};
+        reset_modifiers( c );
+        draw_actions( amount * repeat_n_times );
+    end,
+    deck_from_actions( capture_set ), {}, {} );
+    c = old_c;
+    register_action( c );
+    SetProjectileConfigs();
+
+    --[[
+    local old_c = c;
     local captured = capture_draw_actions( amount, instant_reload_if_empty );
     for i=1,repeat_n_times do 
         temporary_deck( function( deck, hand, discarded )
@@ -494,6 +591,7 @@ function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty 
     c = old_c;
     register_action( c );
     SetProjectileConfigs();
+    ]]
 end
 
 

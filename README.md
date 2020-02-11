@@ -58,7 +58,7 @@ Activating Options > Champions > Enabled will allow enemies to randomly be upgra
 - **Energy Shield**: Gain a weak energy shield.
 - **Faster Movement**: 200% additional walking speed, 100% additional flying and jumping speed.
 - **Freezing**: Freeze nearby entities and materials. Projectiles freeze things they hit.
-- **Frozen Bloodd**: Bleed freezing vapour.
+- **Frozen Blood**: Bleed freezing vapour.
 - **Gunpowder Blooded**: Bleed unstable gunpowder.
 - **Healthy**: 50% additional health.
 - **Hot Blooded**: Bleed lava.

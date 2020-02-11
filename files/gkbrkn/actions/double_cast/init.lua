@@ -5,6 +5,6 @@ table.insert( actions, generate_action_entry(
     nil,
     function()
         if reflecting then return; end
-		duplicate_draw_action( 1, 1, true );
+		duplicate_draw_action( 1, 2, true );
     end
 ));
