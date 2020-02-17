@@ -1,3 +1,4 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 function shot( projectile_entity )
@@ -84,4 +85,10 @@ function shot( projectile_entity )
         script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/player_projectile_update.lua",
         execute_every_n_frame="1",
     } );
+
+
+    if CONTENT[TWEAKS.BloodAmount].enabled() then
+        local add = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/blood_tweak/projectile_extra_entity.xml" );
+        EntityAddChild( projectile_entity, add );
+    end
 end

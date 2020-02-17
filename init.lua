@@ -1,32 +1,52 @@
 --[[
 changelog
-    -m "Add Champion: Sparkbolt"
-    -m "Add Legendary Wand: Frost Wall"
-    -m "Add Loadout: Bomb"
-    -m "Add Loadout: First"
-    -m "Add Loadout: Grease"
-    -m "Add Loadout: Melting"
-    -m "Add Loadout: Toxic"
-    -m "Add Loadout: Vampire"
-    -m "Change Action: Double Cast and Action: Triple Cast logic (copy the cast 2 or 3 times instead of repeating the cast 2 or 3 times; fixes trigger spells not triggering each other)"
-    -m "Change Legendary Wand: Meat Gringder (add energy shield sector)"
-    -m "Change Legendary Wand: Wormhole (replace reduce duration with time compression)"
-    -m "Change Loadout: Sniper (unlock some spells)"
-    -m "Change Perk: Diplomatic Immunity (workshop will no longer collapse)"
-    -m "Change Tweak: Freeze Charge (restore material conversion)"
-    -m "Fix constant champion spawning"
-    -m "Fix Perk: Wandsmith increasing recharge and cast delay instead of reducing them"
-    -m "Remove Hero Mode wand buffing"
+    -m "Add Challenge: Goo Mode"
+    -m "Add Challenge: Hard Mode"
+    -m "Add Challenge: Hot Goo Mode"
+    -m "Add Challenge: Limited Mana"
+    -m "Add Challenge: No-edit"
+    -m "Add Challenge: Taikasauva Terror"
+    -m "Add Perk: Merge Wands"
+    -m "Change Action: Chain Cast (spread 0 -> 7, cast delay 0.25 -> 0.75, mana cost 60 -> 120, teleport radius 48 -> 24, jump distance 30 -> 15)"
+    -m "Change Challenge: Goo Mode and Challenge: Hot Goo Mode (more consistent goo spawning)"
+    -m "Change Loadout: Duplication (swap reduce lifetime with time compression)"
+    -m "Change Loadout: Goo Mode (separate goo logic into Challenge: Goo Mode)"
+    -m "Change Perk: Duplicate Wand (update icon)"
+    -m "Fix Action: Triple Cast and Action: Double Cast not working correctly when repeated"
+    -m "Fix Legendary Wand: Meat Grinder not having enough slots to show all spells"
+    -m "Fix Perk: Fragile Ego reducing to a minimum of 25 health instead of 0 health (Extra Life no longer works with Fragile Ego at all as there is no max hp to recover)"
 
 TODO
-    make the damn blood amount tweak
-    wand eater concept (picking up wands in slots 2-4 merge with slot 1)
+    Hard Mode
+        enemies gain damage resistance every time they are damaged by the player (excluding bosses)
+            this reduces the effectiveness of spray and pray / tick damage weaponry
+    Challenge Modes
+        Spider Mage
+            Lukki Mutation, Vampirism, More Blood x3, Enemy Radar, Slime Blood, Chainsaw Only, Immunities Forbidden
+        Space Wizard
+            Teleportitus, Freeze Field, every wand you build must have a Teleport spell (consider: bleed teleportitus, make every spawned wand always cast teleport.)
+        Super Singularity Bros.
+            Wand with always cast long-distance Giga Black Holes, can't use anything else.
+        Use What You See
+            You must use every wand you come across. Spells are allowed to be edited, but you can't change the base wand unless you find a replacement. Shop wands only.
+    Alternative Enemies
+        palette swapped enemies with new behaviours
+    Nest Tweak
+        Add gold drops for things spawned from nests
+    Adds Tweak
+        Create new projectile / adds logic so that adds don't spawn champions
+    Perk: Thunder Thighs
+        Kicks carry an electric charge
+    Pot of Greed
+        suck up items you don't want, turn them into gold
+
+TODO EVENTUALLY
     make material compression fill all flasks you pick up for the first time (not possible right now)
-    nest tweak (1 gold for things spawned from nests)
+    fix spell duplicator to use the new peek actions functions instead of the inaccurate extremely complicated system it uses right now
 
 EXTRA THINGS
     lily pikku (big scarf?)
-mimic perkshy
+mimic perks
         Strong Leviathan
         Prague Rats
         Invisibility Frames
@@ -40,7 +60,6 @@ ACTIONS
 PERKS
     Double Cast (all spells cast twice) (probably too powerful)
     Lucky Dodge (small chance to evade damage) (can't be implemented how i want it yet)
-    Wand Merge (merge two wands into a new wand with the best aspects of either wand)
     Lucky Draw (reset the perk reroll cost) (too powerful)
     Gold Rush (enemies explode into more and more gold as your kill streak continues)
     NYI
@@ -121,6 +140,7 @@ ModLuaFileAppend( "data/scripts/items/drop_money.lua", "mods/gkbrkn_noita/files/
 ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_procedural.lua" );
 ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/wand_shops_only.lua" );
 ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn/starting_perks_config_append.lua" );
+ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/creepy_lava.xml" );
 
 function OnPlayerSpawned( player_entity )
     if HasFlagPersistent( MISC.DisableSpells.Enabled ) then

@@ -292,7 +292,7 @@ register_legendary_wand( "meat_grinder", "Meat Grinder", "Ivylistar", {
         speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
     },
     stat_ranges = {
-        deck_capacity = {4,4}, -- capacity
+        deck_capacity = {7,7}, -- capacity
         reload_time = {240,240}, -- recharge time in frames
         fire_rate_wait = {15,15}, -- cast delay in frames
         spread_degrees = {0,0}, -- spread
@@ -656,5 +656,34 @@ register_legendary_wand( "frost_wall", "Frost Wall", "goki + Ivylistar", {
         { { action="ACCELERATING_SHOT", locked=false } },
         { { action="GKBRKN_FEATHER_SHOT", locked=false } },
         { { action="DELAYED_SPELL", locked=false } },
+    }
+} );
+
+register_legendary_wand( "sparkler", "Sparkler", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {9,9}, -- capacity
+        reload_time = {20,20}, -- recharge time in frames
+        fire_rate_wait = {20,20}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {1200,1200}, -- mana charge speed
+        mana_max = {1200,1200}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="GKBRKN_DOUBLE_CAST", locked=true } },
+        { { action="GKBRKN_TRIPLE_CAST", locked=true } },
+        { { action="GKBRKN_CARRY_SHOT", locked=true } },
+        { { action="LIGHT_BULLET_TIMER", locked=false } },
+        { { action="BURST_2", locked=false } },
+        { { action="GKBRKN_GLITTERING_TRAIL", locked=false } },
+        { { action="DEATH_CROSS", locked=false } },
     }
 } );

@@ -1,3 +1,10 @@
+function EntityClearVariable( entity, variable_tag, value )
+    local variable = EntityGetFirstComponent( entity, "VariableStorageComponent", variable_tag );
+    if variable ~= nil then
+        EntityRemoveComponent( entity, variable );
+    end
+end
+
 function EntityGetVariableString( entity, variable_tag, default )
     local variable = EntityGetFirstComponent( entity, "VariableStorageComponent", variable_tag );
     if variable ~= nil then

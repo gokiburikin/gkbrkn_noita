@@ -81,7 +81,7 @@ Activating Options > Champions > Enabled will allow enemies to randomly be upgra
 ## Hero Mode
 Hero mode is a challenge mode intended for players familiar with Noita. The intention is to speed up the gameplay by giving a bonus to both the player and the enemies. It is faster paced and little unfair. Combined with Champions Mode it is my attempt to create a more interesting Nightmare Mode.
 
-When activated by Options > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Options > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Options > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on total horizontal distance travelled, so backtracking and exploring results in healthier enemies.
+When activated by Options > Hero Mode > Enabled the player will move more quickly, all wands gain a small stat buff, and enemies become more challenging. Options > Hero Mode > Orbs Increase Difficulty adds enemy health scaling based on the amount of orbs you've collected in the current session. Options > Hero Mode > Distance Increases Difficulty adds enemy health scaling based on the zones encountered, so backtracking and exploring results in healthier enemies.
 
 Enemies in Hero Mode are more aggressive, don't run when attacked, don't fight their friends, have increased creature detection, attack more rapidly, move more quickly, and consider the player the greatest threat, focusing on kill them at all cost. Invisibility has no power here.
 
@@ -102,6 +102,7 @@ Unique wands can rarely be found in place of normal altar wands. These wands are
 - **Slime Rocket**: A player-guided, explosive slime ball.
 - **Soulshot**: Summon a guardian to deal with enemies that close the distance.
 - **Spark Swarm**: Let loose a swarm of angry electric flies.
+- **Sparkler**: An explosive sparkler. Don't hurt yourself!
 - **Spirit Familiar**: Summon a powerful explosive familiar that seeks out your enemies and latches onto them.
 - **Tabula Rasa**: A powerful wand with no natural mana recharge speed. Make your wildest dreams come true.
 - **Telefragger**: A triggered triple cast teleport casted damage buffed teleport projectile. Shoot it near enemies to telefrag them.
@@ -191,6 +192,7 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Mana Recovery**: Your wands charge more quickly.
 - **Material Compression**: Your flasks can now hold twice as much. (Concept by curry_murmurs)
 - **Megacast**: You cast all of your wand's spells at once.
+- **Wand Fusion**: Fuse all of your wands into one.
 - **Multicast**: You cast 2 additional spells per cast.
 - **Passive Recharge**: Your wands recharge even when holstered.
 - **Queue Casting**: Your spells now chain cast (all spells gain Trigger - Death.)
@@ -249,6 +251,10 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Trigger: Time**: Cast a spell that casts the next spell after a short duration.
 - **Triple Cast**: The next spell cast is tripled.
 - **Zap**: A short lived bolt of electricity.
+
+## Development Mode Options
+- **Infinite Mana**: Rapidly recover wand mana.
+- **recover Health**: Rapidly recover health.
 
 ## Deprecated
 These features were disabled or removed from the mod for one reason or another. Most can still be found in the code or enabled if config.lua is changed locally to show deprecated content.

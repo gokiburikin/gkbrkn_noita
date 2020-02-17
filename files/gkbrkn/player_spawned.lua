@@ -1,3 +1,4 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 local x, y = EntityGetTransform( player_entity );
@@ -70,6 +71,10 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     EntityAddComponent( player_entity, "LuaComponent", {
         script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/player_shot.lua"
+    });
+
+    EntityAddComponent( player_entity, "LuaComponent", {
+        script_kick="mods/gkbrkn_noita/files/gkbrkn/misc/player_kick.lua"
     });
 
     local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
@@ -211,4 +216,48 @@ if GameHasFlagRun( init_check_flag ) == false then
             ComponentSetValue( character_platforming, "precision_jumping_max_duration_frames", "10" );
         end
     end
+
+    --[[ Content Callbacks ]]
+    for _,content in pairs( CONTENT ) do
+        if content.enabled() and content.options ~= nil and content.options.player_spawned_callback ~= nil then
+            content.options.player_spawned_callback( player_entity );
+        end
+    end
+
+    --[[ Challenge Handling]]
+
+    --[[ Challenge - Taikasauva Terror ]]
+    if CONTENT[CHALLENGES.TaikasauvaTerror].enabled() then
+        local loadout = {
+            name = "Taikaaauva Terror",
+            author = "goki",
+            wands = {
+                {
+                    name = "Wand",
+                    stats = {
+                        shuffle_deck_when_empty = 0, -- shuffle
+                        actions_per_round = 1, -- spells per cast
+                        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+                    },
+                    stat_ranges = {
+                        deck_capacity = {1,1}, -- capacity
+                        reload_time = {120,120}, -- recharge time in frames
+                        fire_rate_wait = {120,120}, -- cast delay in frames
+                        spread_degrees = {0,0}, -- spread
+                        mana_charge_speed = {0,0}, -- mana charge speed
+                        mana_max = {300,300}, -- mana max
+                    },
+                    stat_randoms = {},
+                    permanent_actions = {
+                        { "SUMMON_WANDGHOST" }
+                    },
+                    actions = {
+                    },
+                    callback = function( wand, ability ) EntitySetVariableNumber( wand, "gkbrkn_taikasauva_terror", 1 ); end
+                }
+            }
+        }
+        handle_loadout( player_entity, loadout );
+    end
+
 end

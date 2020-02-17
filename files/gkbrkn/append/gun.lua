@@ -21,6 +21,7 @@ gkbrkn = {
         action_draw_count = 1,
         delay_frames = 0,
     },
+    peeking = 0,
     projectiles_fired = 0,
     skip_cards = 0,
     trigger_queue = {},
@@ -78,60 +79,6 @@ function deck_snapshot()
     end
 end
 
-function peek_draw_action( instant_reload_if_empty )
-    local total_mana = 0;
-    local action = nil
-
-	state_cards_drawn = state_cards_drawn + 1
-
-	if reflecting then  return  end
-
-
-	if #deck <= 0 then
-		if instant_reload_if_empty then
-			move_discarded_to_deck();
-			order_deck();
-			start_reload = true;
-		else
-			reloading = true;
-			return true;
-		end
-	end
-
-	if #deck > 0 then
-		-- draw from the start of the deck
-		action = deck[ 1 ];
-
-		table.remove( deck, 1 );
-
-		-- update mana
-		local action_mana_required = action.mana;
-		if action.mana == nil then
-			action_mana_required = ACTION_MANA_DRAIN_DEFAULT;
-		end
-
-		if action_mana_required > mana then
-			OnNotEnoughManaForAction()
-			table.insert( discarded, action )
-			return false -- <------------------------------------------ RETURNS
-		end
-
-		if action.uses_remaining == 0 then
-			table.insert( discarded, action )
-			return false -- <------------------------------------------ RETURNS
-		end
-
-		mana = mana - action_mana_required
-	end
-
-	--- add the action to hand and execute it ---
-	if action ~= nil then
-		play_action( action )
-	end
-
-	return true
-end
-
 function peek_draw_action( shot, instant_reload_if_empty )
     local action = nil;
 
@@ -145,6 +92,7 @@ function peek_draw_action( shot, instant_reload_if_empty )
             order_deck();
             start_reload = true;
         else
+            -- NOTE we are setting reloading to true here so that peek draw actions resolves correctly, but we were not (and are now) resetting this to false. IT IS GLOBAL STATE
             reloading = true;
             return true;
         end
@@ -174,45 +122,41 @@ function peek_draw_action( shot, instant_reload_if_empty )
 end
 
 function peek_draw_actions( how_many, instant_reload_if_empty, discard_peeked )
-    if gkbrkn.peeking == true then
-        return draw_actions( how_many, instant_reload_if_empty );
-    end
-    gkbrkn.peeking = true;
-    --local _deck = deck;
-    --local _hand = hand;
-    --local _discarded = discarded;
-    --deck = deck_from_actions( deck );
-    --hand = {};
-    --discarded = {};
+    local _reloading = reloading;
+    gkbrkn.peeking = gkbrkn.peeking + 1;
     
+    -- if we're going to draw an action, peek it only, don't actually cast it
     local _draw_action = gkbrkn._draw_action;
     gkbrkn._draw_action = peek_draw_action;
 
+    -- don't shoot any projectiles during this peek
     local _add_projectile = gkbrkn._add_projectile;
-    gkbrkn._add_projectile = function()  end
-    
+    gkbrkn._add_projectile = function( filepath ) end
+
+    -- track the old capture function
     local old_capture = gkbrkn.draw_actions_capture;
+    if old_capture ~= nil then
+        table.remove( old_capture, #old_capture );
+    end
+
+    -- make a new capture
     local capture = {};
+
     local drawn_actions = {};
     gkbrkn.draw_actions_capture = capture;
     draw_actions( how_many, instant_reload_if_empty );
+
     for _,action in pairs( capture ) do
         table.insert( drawn_actions, action );
     end
-    if old_capture ~= nil then
-        for _,action in pairs( capture ) do
-            table.insert( old_capture, action );
-        end
-    end
+
     gkbrkn.draw_actions_capture = old_capture;
 
     gkbrkn._draw_action = _draw_action;
     gkbrkn._add_projectile = _add_projectile;
-    --deck = _deck;
-    --hand = _hand;
-    --discarded = _discarded;
-    gkbrkn.peeking = nil;
-
+    
+    gkbrkn.peeking = gkbrkn.peeking - 1;
+    reloading = _reloading;
     return drawn_actions;
 end
 
@@ -238,6 +182,39 @@ function capture_draw_actions( how_many, instant_reload_if_empty )
     end
     return drawn_actions;
 end
+
+function deck_from_actions( actions, start_index )
+    local deck = {};
+    if start_index == nil then start_index = 1; end
+    for i=start_index,#actions,1 do
+        table.insert( deck, actions[i] );
+    end
+    return deck;
+end
+
+function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty )
+    local old_c = c;
+    local captured = peek_draw_actions( amount, instant_reload_if_empty );
+
+    -- repeat the captured set n times
+    local capture_set = {};
+    for i=1,repeat_n_times do
+        for _,action in pairs( captured ) do
+            table.insert( capture_set, action );
+        end
+    end
+
+    -- draw all duplicated actions
+    temporary_deck( function( deck, hand, discarded )
+        c = {};
+        reset_modifiers( c );
+        draw_actions( #capture_set, instant_reload_if_empty );
+    end, capture_set, {}, {} );
+    c = old_c;
+    register_action( c );
+    SetProjectileConfigs();
+end
+
 
 function skip_cards( amount )
     if amount == nil then
@@ -427,13 +404,20 @@ end
 function add_projectile( filepath )
     local trigger_type = 0;
     local trigger_delay_frames = 0;
-    local trigger_action_draw_count = 1;
+    local trigger_action_draw_count = nil;
     if #gkbrkn.trigger_queue > 0 then
         trigger_type = gkbrkn.trigger_queue[1].type;
         trigger_delay_frames = gkbrkn.trigger_queue[1].delay_frames;
         trigger_action_draw_count = gkbrkn.trigger_queue[1].action_draw_count;
         table.remove( gkbrkn.trigger_queue, 1 );
     end
+    if gkbrkn.peeking > 0 then
+        if trigger_action_draw_count ~= nil then
+            draw_actions( trigger_action_draw_count, true );
+        end
+        return;
+    end
+
     local player = GetUpdatedEntityID();
     local projectiles_to_add = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
     if #deck == 0 then
@@ -548,52 +532,6 @@ function delete_cloned_actions()
         end
     end
 end
-
-function deck_from_actions( actions, start_index )
-    local deck = {};
-    if start_index == nil then start_index = 1; end
-    for i=start_index,#actions,1 do
-        table.insert( deck, actions[i] );
-    end
-    return deck;
-end
-
-function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty )
-    local old_c = c;
-    local captured = peek_draw_actions( amount, instant_reload_if_empty );
-    local capture_set = {};
-    for i=1,repeat_n_times do
-        for _,action in pairs( captured ) do
-            table.insert( capture_set, action );
-        end
-    end
-    temporary_deck( function( deck, hand, discarded )
-        c = {};
-        reset_modifiers( c );
-        draw_actions( amount * repeat_n_times );
-    end,
-    deck_from_actions( capture_set ), {}, {} );
-    c = old_c;
-    register_action( c );
-    SetProjectileConfigs();
-
-    --[[
-    local old_c = c;
-    local captured = capture_draw_actions( amount, instant_reload_if_empty );
-    for i=1,repeat_n_times do 
-        temporary_deck( function( deck, hand, discarded )
-            c = {};
-            reset_modifiers(c);
-            draw_actions( 1 );
-        end,
-        deck_from_actions( captured ), {}, {} );
-    end
-    c = old_c;
-    register_action( c );
-    SetProjectileConfigs();
-    ]]
-end
-
 
 -- TODO this should not set variables on actions and instead keep a local table of which
 -- actions have been cloned and which actions are clones to avoid potential issues

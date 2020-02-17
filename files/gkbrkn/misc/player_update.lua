@@ -95,8 +95,49 @@ if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
     end
 end
 
+--[[ Limited Mana ]]
+if CONTENT[CHALLENGES.LimitedMana].enabled() then
+    local nearby_wands = EntityGetWithTag( "wand" );
+    for _,wand in pairs( nearby_wands ) do
+        local ability = FindFirstComponentByType( wand, "AbilityComponent" );
+        if ability ~= nil then
+            if EntityGetVariableNumber( wand, "gkbrkn_limited_mana", 0 ) == 0 then
+                EntitySetVariableNumber( wand, "gkbrkn_limited_mana", 1 );
+                local mana_max = ability_component_get_stat( ability, "mana_max" );
+                local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
+                ability_component_set_stat( ability, "mana", mana_max * CONTENT[CHALLENGES.LimitedMana].options.MaxManaMultiplier );
+                ability_component_set_stat( ability, "mana_max", mana_max * CONTENT[CHALLENGES.LimitedMana].options.MaxManaMultiplier );
+                ability_component_set_stat( ability, "mana_charge_speed", 0 );
+            else
+                local current_mana = tonumber( ability_component_get_stat( ability, "mana" ) );
+                local mana_max = tonumber( ability_component_get_stat( ability, "mana_max" ) );
+                if current_mana < mana_max then
+                    ability_component_set_stat( ability, "mana_max", current_mana );
+                end
+            end
+        end
+    end
+end
+
+--[[ Health Recovery ]]
+local health_recovery = 0;
+if CONTENT[DEV_OPTIONS.RecoverHealth].enabled() then
+    health_recovery = 4/60;
+end
+if health_recovery ~= 0 then
+    for _,damage_model in pairs( damage_models ) do
+        local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+        local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+        local new_hp = math.min( max_hp, hp + health_recovery );
+        ComponentSetValue( damage_model, "hp", tostring( new_hp ) );
+    end
+end
+
 --[[ Mana Recovery ]]
 local mana_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_mana_recovery", 0 );
+if CONTENT[DEV_OPTIONS.InfiniteMana].enabled() then
+    mana_recovery = 9999;
+end
 if mana_recovery ~= 0 then
     if #wands > 0 then
         for _,wand in pairs( wands ) do
@@ -709,6 +750,19 @@ if now % 10 == 0 then
         end
     end
 
+    --[[ Tweak - Blood Amount ]]
+    if CONTENT[TWEAKS.BloodAmount].enabled() then
+        for _,enemy in pairs( nearby_enemies ) do
+            if EntityGetVariableNumber( enemy, "gkbrkn_blood_amount_tweak", 0 ) == 0 then
+                EntitySetVariableNumber( enemy, "gkbrkn_blood_amount_tweak", 1 );
+                EntityAddComponent( enemy, "LuaComponent", {
+                    script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/blood_tweak/projectile_damage_received.lua"
+                } );
+            end
+        end
+    end
+
+
     --[[ Entity Names ]]
     local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
     if HasFlagPersistent( MISC.ShowEntityNames.Enabled ) then
@@ -1030,4 +1084,51 @@ if CONTENT[TWEAKS.Blindness].enabled() then
     end
 end
 
+if now % 60 == 0 then
+    local world_wands = EntityGetWithTag( "wand" );
+
+    --[[ Challenge - Taikasauva Terror ]]
+    if CONTENT[CHALLENGES.TaikasauvaTerror].enabled() then
+        for _,wand in pairs( world_wands ) do
+            local wand_parent = EntityGetParent( wand )
+            local wand_holder = EntityGetParent( wand_parent );
+            if wand_parent == 0 or wand_parent == nil or wand_holder == player_entity then
+                if EntityGetVariableNumber( wand, "gkbrkn_taikasauva_terror", nil ) == nil then
+                    EntityKill( wand );
+                end
+            end
+        end
+    end
+
+    --[[ Challenge - No-edit ]]
+    if CONTENT[CHALLENGES.NoEdit].enabled() then
+        for _,wand in pairs( world_wands ) do
+            if EntityGetVariableNumber( wand, "gkbrkn_no_edit", nil ) == nil then
+                EntitySetVariableNumber( wand, "gkbrkn_no_edit", 1 )
+                local wand_children = EntityGetAllChildren( wand );
+                for _,child in pairs( wand_children ) do
+                    local component = FindFirstComponentByType( child, "ItemComponent" );
+                    if component ~= nil then
+                        ComponentSetValue( component, "is_frozen", "1" );
+                    end
+                end
+            end
+        end
+    end
+end
+
+--[[ Fragile Ego 
+local apply_fragile_ego_frame = EntityGetVariableNumber( player_entity, "gkbrkn_fragile_ego_damage", 0 );
+GamePrint( now - apply_fragile_ego_frame );
+if now - apply_fragile_ego_frame == 5 then
+    local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
+    if damage_models ~= nil then
+        for i,damage_model in ipairs( damage_models ) do
+            local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+            ComponentSetValue( damage_model, "max_hp", tostring( math.max( 0, hp ) ) );
+        end
+    end
+    EntitySetVariableNumber( player_entity, "gkbrkn_fragile_ego_damage", 0 );
+end
+]]
 add_update_time( GameGetRealWorldTimeSinceStarted() - t );

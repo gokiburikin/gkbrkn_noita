@@ -26,6 +26,13 @@ gkbrkn_localization = {
     config_content_type_name_starting_perk = "Starting Perks",
     config_content_type_name_legendary_wand = "Unique Wands",
     config_content_type_name_event = "Events",
+    config_content_type_name_challenge = "Challenges",
+    config_content_type_name_dev_option = "Dev Options",
+
+    --[[ Dev Options ]]
+    dev_option_infinite_mana_name = "Infinite Mana",
+    dev_option_infinite_spells_name = "Infinite Spells (NYI)",
+    dev_option_recover_health_name = "Recover Health",
 
     --[[ Options ]]
     option_gold_tracking = "Gold Tracking",
@@ -334,6 +341,8 @@ gkbrkn_localization = {
     perk_description_diplomatic_immunity = "You can no longer anger the gods.",
     perk_name_treasure_radar = "Treasure Radar",
     perk_description_treasure_radar = "Detects nearby treasures.",
+    perk_name_merge_wands = "Wand Fusion",
+    perk_description_merge_wands = "Your wands have fused together.",
     perk_name_null = "Unnamed Perk",
     perk_description_null = "This perk is missing it's localization data!",
     perk_name_wip = "WIP Perk",
@@ -395,7 +404,7 @@ gkbrkn_localization = {
     action_name_projectile_gravity_well = "Projectile Gravity Well",
     action_description_projectile_gravity_well = "Cast 3 spells of which the first attracts the others",
     action_name_projectile_orbit = "Projectile Orbit",
-    action_description_projectile_orbit = "Cast 4 spells of which the first has the others orbit around it",
+    action_description_projectile_orbit = "Cast 5 spells of which the first has the others orbit around it",
     action_name_revelation = "Revelation",
     action_description_revelation = "Cast a spell that reveals the area around enemies it hits",
     action_name_shimmering_treasure = "Shimmering Treasure",
@@ -508,6 +517,8 @@ gkbrkn_localization = {
     tweak_name_spiral_shot_description = "Complete spell rewrite to greatly improve performance",
     tweak_name_teleport_cast = GameTextGetTranslatedOrNot("$action_teleport_cast").." Fix",
     tweak_name_teleport_cast_description = "Fixes targeting issues",
+    tweak_name_blood_amount = "Reduce Blood Amount",
+    tweak_name_blood_amount_description = "Reduces enemy blood multiplier each time they are shot",
 
     --[[ Items ]]
     item_name_spell_bag = "Spell Bag",
@@ -560,5 +571,20 @@ gkbrkn_localization = {
     loadout_frost = "Frost TYPE",
     loadout_bomb = "Bomb TYPE",
     loadout_melting = "Melting TYPE",
+    loadout_spellsword = "Spellsword TYPE",
     loadout_debug = "Development TYPE",
+
+    -- [[ Challenges ]]
+    challenge_limited_mana_name = "Limited Mana",
+    challenge_limited_mana_description = "Wands have more mana, but do not recharge mana.",
+    challenge_goo_mode_name = "Goo Mode",
+    challenge_hot_goo_mode_description = "Outrun the hot goo!",
+    challenge_hot_goo_mode_name = "Hot Goo Mode",
+    challenge_goo_mode_description = "Outrun the goo!",
+    challenge_hard_mode_name = "Hard Mode",
+    challenge_hard_mode_description = "Rebalance aspects of the game to be more difficult.",
+    challenge_taikasauva_terror_name = "Taikasauva Terror",
+    challenge_taikasauva_terror_description = "You only have friendly wands at your disposal.",
+    challenge_no_edit_name = "No-edit",
+    challenge_no_edit_description = "You can not edit wands.",
 }

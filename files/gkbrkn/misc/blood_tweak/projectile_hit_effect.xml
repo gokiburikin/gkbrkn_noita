@@ -1,0 +1,7 @@
+<Entity >
+    <LuaComponent 
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/blood_tweak/projectile_child_init.lua"
+        remove_after_executed="1"
+        >
+   </LuaComponent>
+</Entity>

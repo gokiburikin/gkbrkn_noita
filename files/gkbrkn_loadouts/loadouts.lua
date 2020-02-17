@@ -899,6 +899,7 @@ register_loadout(
     }
 );
 
+--[[
 -- Blood
 register_loadout(
     "gkbrkn_blood", -- unique identifier
@@ -973,6 +974,7 @@ register_loadout(
         return CONTENT[PERKS.BloodMagic].enabled();
     end
 );
+]]
 
 -- Wandsmith
 register_loadout(
@@ -1066,19 +1068,7 @@ register_loadout(
     },
     { -- perks
         { "MOVEMENT_FASTER" }
-    },
-    -- actions
-    nil,
-    -- sprites
-    nil,
-    -- custom message
-    nil,
-    -- callback
-    function( player_entity )
-        local x, y = EntityGetTransform( player_entity );
-        GameCreateParticle( "creepy_liquid", x, y -100, 1, 0, 0, false, false );
-        GameAddFlagRun( "gkbrkn_goo_mode" );
-    end
+    }
 );
 
 -- Duplicator
@@ -1108,7 +1098,7 @@ register_loadout(
             permanent_actions = {
             },
             actions = {
-                { "LIFETIME_DOWN" },
+                { "GKBRKN_TIME_COMPRESSION" },
                 { "GKBRKN_SPELL_DUPLICATOR" },
                 { "HORIZONTAL_ARC" },
                 { "LIGHT_BULLET" },
@@ -1425,7 +1415,7 @@ register_loadout(
                 fire_rate_wait = {3,3}, -- cast delay in frames
                 spread_degrees = {30,30}, -- spread
                 mana_charge_speed = {60,60}, -- mana charge speed
-                mana_max = {60,60}, -- mana max
+                mana_max = {600,600}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
@@ -1443,6 +1433,71 @@ register_loadout(
     },
     { -- perks
         { "GKBRKN_HYPER_CASTING" }
+    }
+);
+
+-- Spellsword
+register_loadout(
+    "gkbrkn_spellsword", -- unique identifier
+    gkbrkn_localization.loadout_spellsword, -- displayed loadout name
+    "goki",
+    0xFF333333, -- cape color (ABGR)
+    0xFF666666, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {12,12}, -- capacity
+                reload_time = {30,30}, -- recharge time in frames
+                fire_rate_wait = {30,30}, -- cast delay in frames
+                spread_degrees = {5,5}, -- spread
+                mana_charge_speed = {140,140}, -- mana charge speed
+                mana_max = {480,480}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { { action="GKBRKN_DOUBLE_CAST", locked=true } },
+                { { action="GKBRKN_TRIPLE_CAST", locked=true } },
+                { { action="GKBRKN_CARRY_SHOT", locked=true } },
+                { { action="LIGHT_BULLET_TIMER", locked=false } },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {1,1}, -- capacity
+                reload_time = {5,5}, -- recharge time in frames
+                fire_rate_wait = {5,5}, -- cast delay in frames
+                spread_degrees = {1,1}, -- spread
+                mana_charge_speed = {20,20}, -- mana charge speed
+                mana_max = {100,100}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "BOMB" },
+            }
+        },
+    },
+    { -- potions
+        { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
     }
 );
 

@@ -9,7 +9,7 @@ local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
 SETTINGS = {
     Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
     ShowDeprecatedContent = false,
-    Version = "c94"
+    Version = "c95"
 }
 
 CONTENT_TYPE = {
@@ -23,6 +23,8 @@ CONTENT_TYPE = {
     StartingPerk = 8,
     LegendaryWand = 9,
     Event = 10,
+    Challenge = 11,
+    DevOption = 12,
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -36,6 +38,8 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.StartingPerk] = "starting_perk_",
     [CONTENT_TYPE.LegendaryWand] = "legendary_wand_",
     [CONTENT_TYPE.Event] = "event_",
+    [CONTENT_TYPE.Challenge] = "challenge_",
+    [CONTENT_TYPE.DevOption] = "dev_option_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME = {
@@ -49,6 +53,12 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.StartingPerk] = gkbrkn_localization.config_content_type_name_starting_perk,
     [CONTENT_TYPE.LegendaryWand] = gkbrkn_localization.config_content_type_name_legendary_wand,
     [CONTENT_TYPE.Event] = gkbrkn_localization.config_content_type_name_event,
+    [CONTENT_TYPE.Challenge] = gkbrkn_localization.config_content_type_name_challenge,
+    [CONTENT_TYPE.DevOption] = gkbrkn_localization.config_content_type_name_dev_option,
+}
+
+CONTENT_TYPE_DEVELOPMENT_ONLY = {
+    [CONTENT_TYPE.DevOption] = true,
 }
 
 local get_content_flag = function( content_id )
@@ -186,6 +196,7 @@ PERKS = {
     LeadBoots = register_perk( "lead_boots" ),
     DiplomaticImmunity = register_perk( "diplomatic_immunity" ),
     TreasureRadar = register_perk( "treasure_radar", nil, GameCreateSpriteForXFrames == nil, GameCreateSpriteForXFrames == nil ),
+    MergeWands = register_perk( "merge_wands" ),
     WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
 }
 
@@ -310,6 +321,9 @@ TWEAKS = {
     AllSeeingEye = register_tweak( "all_seeing_eye", { action_id="X_RAY" }, true, true, true ),
     SpiralShot = register_tweak( "spiral_shot", { action_id="SPIRAL_SHOT" } ),
     TeleportCast = register_tweak( "teleport_cast", { action_id="TELEPORT_CAST" } ),
+    BloodAmount = register_tweak( "blood_amount", {
+        Multiplier = 0.98,
+    } ),
 }
 
 LOADOUTS = {};
@@ -1048,6 +1062,66 @@ end
 
 ITEMS = {
     SpellBag = register_item( "spell_bag", { item_path="mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/item.xml" }, true, nil, true ),
+}
+
+local register_dev_option = function( key, options, disabled_by_default, deprecated, inverted )
+    if options == nil then
+        options = {};
+    end
+    local description = gkbrkn_localization["dev_option_"..key.."_description"];
+    if description ~= nil then
+        options.description = description;
+    end
+    return register_content( CONTENT_TYPE.DevOption, key, gkbrkn_localization["dev_option_"..key.."_name"], options, disabled_by_default, deprecated, inverted );
+end
+
+DEV_OPTIONS = {
+    InfiniteMana = register_dev_option( "infinite_mana" ),
+    InfiniteSpells = register_dev_option( "infinite_spells" ),
+    RecoverHealth = register_dev_option( "recover_health" ),
+}
+
+local register_challenge = function( key, options, disabled_by_default, deprecated, inverted )
+    if options == nil then
+        options = {};
+    end
+    if disabled_by_default == nil then disabled_by_default = true; end
+    if inverted == nil then inverted = true; end
+    local content_id = register_content( CONTENT_TYPE.Challenge, key, gkbrkn_localization["challenge_"..key.."_name"], options, disabled_by_default, deprecated, inverted );
+    local description = gkbrkn_localization["challenge_"..key.."_description"];
+    if description ~= nil then
+        options.description = description;
+    end
+    return content_id;
+end
+
+CHALLENGES = {
+    GooMode = register_challenge( "goo_mode", { player_spawned_callback = function( player_entity )
+        local x, y = EntityGetTransform( player_entity );
+        GameCreateParticle( "creepy_liquid", x - 20, y, 5, 0, 0, false, false );
+        GameAddFlagRun( "gkbrkn_goo_mode" );
+    end } ),
+    HotGooMode = register_challenge( "hot_goo_mode", { player_spawned_callback = function( player_entity )
+        local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
+        for _,damage_model in pairs( damage_models ) do
+            adjust_material_damage( damage_model, function( materials, damage )
+                table.insert( materials, "creepy_lava");
+                table.insert( damage, "0.003");
+                return materials, damage;
+            end);
+            EntitySetComponentIsEnabled( player_entity, damage_model, true );
+            local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
+            ComponentSetValue( polymorph, "frames", 1 );
+        end
+
+        local x, y = EntityGetTransform( player_entity );
+        GameCreateParticle( "creepy_lava", x- 20, y, 5, 0, 0, false, false );
+        GameAddFlagRun( "gkbrkn_hot_goo_mode" );
+    end } ),
+    LimitedMana = register_challenge( "limited_mana", { MaxManaMultiplier = 25 } ),
+    HardMode = register_challenge( "hard_mode", nil ),
+    TaikasauvaTerror = register_challenge( "taikasauva_terror", nil ),
+    NoEdit = register_challenge( "no_edit", nil ),
 }
 
 local register_event = function( key, name, message, callback, condition, weight, disabled_by_default, deprecated, inverted )
@@ -1919,7 +1993,7 @@ if SETTINGS.Debug then
                     deck_capacity = {25,25}, -- capacity
                     reload_time = {10,10}, -- recharge time in frames
                     fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
+                    spread_degrees = {30,30}, -- spread
                     mana_charge_speed = {1000,1000}, -- mana charge speed
                     mana_max = {5000,5000}, -- mana max
                 },
@@ -1972,13 +2046,15 @@ if SETTINGS.Debug then
                     deck_capacity = {25,25}, -- capacity
                     reload_time = {10,10}, -- recharge time in frames
                     fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
+                    spread_degrees = {22.5,22.5}, -- spread
                     mana_charge_speed = {1000,1000}, -- mana charge speed
                     mana_max = {5000,5000}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
+                    { "GKBRKN_TRIPLE_CAST" },
+                    { "GKBRKN_TRIPLE_CAST" },
                 }
             },
             {

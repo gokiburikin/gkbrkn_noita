@@ -20,7 +20,7 @@ local WAND_STAT_SETTERS = {
     mana = WAND_STAT_SETTER.Direct,
 }
 
-function ability_component_get_stat( ability, stat, value )
+function ability_component_get_stat( ability, stat )
     local setter = WAND_STAT_SETTERS[stat];
     if setter ~= nil then
         if setter == WAND_STAT_SETTER.Direct then
@@ -169,4 +169,35 @@ function initialize_wand( wand, wand_data )
     if wand_data.callback ~= nil then
         wand_data.callback( wand, ability );
     end
+end
+
+
+function wand_explode_random_action( wand )
+    local x, y = EntityGetTransform( wand );
+    local actions = {};
+    local children = EntityGetAllChildren( wand ) or {};
+    for i,v in ipairs( children ) do
+        local all_comps = EntityGetAllComponents( v );
+        local action_id = nil;
+        local permanent = false;
+        for i, c in ipairs( all_comps ) do
+            if ComponentGetValue( c, "action_id") ~= "" then
+                action_id = ComponentGetValue( c, "action_id");
+            end
+            if ComponentGetValue( c, "permanently_attached") ~= "" then
+                permanent = ComponentGetValue( c, "permanently_attached" );
+            end
+        end
+        if action_id ~= nil and permanent == "0" then
+            table.insert( actions, {action_id=action_id, permanent=permanent, entity=v} );
+        end
+    end
+    if #actions > 0 then
+        local action_to_remove = actions[ math.ceil( math.random() * #actions ) ];
+        local card = CreateItemActionEntity( action_to_remove.action_id, x, y );
+        ComponentSetValueVector2( EntityGetFirstComponent( card, "VelocityComponent" ), "mVelocity", Random( -150, 150 ), Random( -250, -100 ) );
+        EntityRemoveFromParent( action_to_remove.entity );
+        return true;
+    end
+    return false;
 end

@@ -72,6 +72,20 @@ local edit_callbacks = {
     end
 }
 
+local HARD_MODE_REMOVALS = {
+    ELECTRICITY=true,
+    PROTECTION_FIRE=true,
+    PROTECTION_RADIOACTIVITY=true,
+    PROTECTION_EXPLOSION=true,
+    PROTECTION_MELEE=true,
+    PROTECTION_ELECTRICITY=true,
+    INVISIBLITY=true,
+    TELEPORTITIS=true,
+    GENOME_MORE_LOVE=true,
+    GKBRKN_ALWAYS_CAST=true,
+    EDIT_WANDS_EVERYWHERE=true,
+};
+
 local apply_tweaks = {};
 for _,content_id in pairs( TWEAKS ) do
     local tweak = CONTENT[content_id];
@@ -82,7 +96,11 @@ end
 
 for i=#perk_list,1,-1 do
     local perk = perk_list[i];
-    if perk ~= nil and edit_callbacks[ perk.id ] ~= nil and apply_tweaks[ perk.id ] == true then
-        edit_callbacks[perk.id]( perk, i );
+    if perk ~= nil then
+        if CONTENT[CHALLENGES.HardMode].enabled() and HARD_MODE_REMOVALS[perk.id] then
+            table.remove( perk_list, i );
+        elseif edit_callbacks[ perk.id ] ~= nil and apply_tweaks[ perk.id ] == true then
+            edit_callbacks[perk.id]( perk, i );
+        end
     end
 end

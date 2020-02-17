@@ -4,8 +4,8 @@ dofile_once( "data/scripts/lib/utilities.lua" );
 
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
-local radius = 48;
-local default_teleport_radius = 30;
+local radius = 24;
+local default_teleport_radius = 15;
 
 
 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
