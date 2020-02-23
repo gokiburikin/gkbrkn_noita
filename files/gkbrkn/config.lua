@@ -4,12 +4,33 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
-local DEBUG_MODE_FLAG = "gkbrkn_debug_mode_enabled";
+FLAGS = {
+    SpellShopsOnly = "gkbrkn_spell_shops_only",
+    WandShopsOnly = "gkbrkn_wand_shops_only",
+    RemoveGenericWands = "gkbrkn_remove_generic_wands",
+    NoWandGeneration = "gkbrkn_no_wand_generation",
+    GooMode = "gkbrkn_goo_mode",
+    HotGooMode = "gkbrkn_hot_goo_mode",
+    KillerGooMode = "gkbrkn_killer_goo_mode",
+    AltKillerGooMode = "gkbrkn_alt_killer_goo_mode",
+    PolyGooMode = "gkbrkn_poly_goo_mode",
+    NoWandEditing = "gkbrkn_no_wand_editing",
+    NoHit = "gkbrkn_no_hit",
+    LimitedAmmo = "gkbrkn_limited_ammo",
+    UnlimitedAmmo = "gkbrkn_unlimited_ammo",
+    ShuffleWandsOnly = "gkbrkn_shuffle_wands_only",
+    OrderWandsOnly = "gkbrkn_order_wands_only",
+    GuaranteedAlwaysCast = "gkbrkn_guaranteed_always_cast",
+    FreeShops = "gkbrkn_free_shops",
+    InfiniteFlight = "gkbrkn_infinite_flight",
+    FloorIsLava = "gkbrkn_floor_is_lava",
+    DisintegrateCorpses = "gkbrkn_disintegrate_corpses",
+    DebugMode = "gkbrkn_debug_mode",
+    ShowDeprecatedContent = "gkbrkn_show_deprecated_content",
+}
 
 SETTINGS = {
-    Debug = HasFlagPersistent( DEBUG_MODE_FLAG ),
-    ShowDeprecatedContent = false,
-    Version = "c95"
+    Version = "c96"
 }
 
 CONTENT_TYPE = {
@@ -23,7 +44,7 @@ CONTENT_TYPE = {
     StartingPerk = 8,
     LegendaryWand = 9,
     Event = 10,
-    Challenge = 11,
+    GameModifier = 11,
     DevOption = 12,
 }
 
@@ -38,7 +59,7 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.StartingPerk] = "starting_perk_",
     [CONTENT_TYPE.LegendaryWand] = "legendary_wand_",
     [CONTENT_TYPE.Event] = "event_",
-    [CONTENT_TYPE.Challenge] = "challenge_",
+    [CONTENT_TYPE.GameModifier] = "game_modifier_",
     [CONTENT_TYPE.DevOption] = "dev_option_",
 }
 
@@ -53,7 +74,7 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.StartingPerk] = gkbrkn_localization.config_content_type_name_starting_perk,
     [CONTENT_TYPE.LegendaryWand] = gkbrkn_localization.config_content_type_name_legendary_wand,
     [CONTENT_TYPE.Event] = gkbrkn_localization.config_content_type_name_event,
-    [CONTENT_TYPE.Challenge] = gkbrkn_localization.config_content_type_name_challenge,
+    [CONTENT_TYPE.GameModifier] = gkbrkn_localization.config_content_type_name_game_modifier,
     [CONTENT_TYPE.DevOption] = gkbrkn_localization.config_content_type_name_dev_option,
 }
 
@@ -69,18 +90,26 @@ local get_content_flag = function( content_id )
 end
 
 CONTENT = {};
-local register_content = function( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
+local register_content = function( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function, development_mode_only )
     local content_id = #CONTENT + 1;
+    local complete_display_name = display_name or ("missing display name: "..key);
+    if deprecated then
+        complete_display_name = complete_display_name .. " (D)";
+    end
     local content = {
         id = content_id,
         type = type,
         key = key,
         --name = CONTENT_TYPE_DISPLAY_NAME[type]..": "..display_name,
-        name = display_name or ("missing display name: "..key),
+        name = complete_display_name,
         disabled_by_default = disabled_by_default,
         deprecated = deprecated,
+        development_mode_only = development_mode_only,
         enabled = function()
-            if SETTINGS.ShowDeprecatedContent == true or deprecated ~= true then
+            if development_mode_only == true and SETTINGS.Debug == false then
+                return false;
+            end
+            if HasFlagPersistent( FLAGS.ShowDeprecatedContent ) == true or deprecated ~= true then
                 if inverted ~= true then
                     return HasFlagPersistent( get_content_flag( content_id ) ) == false;
                 else
@@ -89,7 +118,7 @@ local register_content = function( type, key, display_name, options, disabled_by
             end
         end,
         visible = function()
-            return SETTINGS.ShowDeprecatedContent == true or deprecated ~= true
+            return HasFlagPersistent( FLAGS.ShowDeprecatedContent ) == true or deprecated ~= true;
         end,
         toggle = function( force )
             local flag = get_content_flag( content_id );
@@ -168,7 +197,7 @@ PERKS = {
         poison=0.33,
         electricity=0.33,
     }} ),
-    PassiveRecharge = register_perk( "passive_recharge" ),
+    PassiveRecharge = register_perk( "passive_recharge", nil, true, true ),
     LostTreasure = register_perk( "lost_treasure" ),
     AlwaysCast = register_perk( "always_cast" ),
     HealthierHeart = register_perk( "healthier_heart" ),
@@ -197,7 +226,7 @@ PERKS = {
     DiplomaticImmunity = register_perk( "diplomatic_immunity" ),
     TreasureRadar = register_perk( "treasure_radar", nil, GameCreateSpriteForXFrames == nil, GameCreateSpriteForXFrames == nil ),
     MergeWands = register_perk( "merge_wands" ),
-    WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
+    WIP = register_perk( "wip", nil, true, not HasFlagPersistent( FLAGS.DebugMode ) ),
 }
 
 local register_action = function( key, init_path, options, disabled_by_default, deprecated, inverted )
@@ -287,7 +316,6 @@ ACTIONS = {
     TimeCompression = register_action( "time_compression" ),
     LinkShot = register_action( "link_shot" ),
     TrailingShot = register_action( "trailing_shot" ),
-    WIP = register_action( "wip", nil, nil, true, not SETTINGS.Debug ),
 }
 
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
@@ -507,13 +535,6 @@ CHAMPION_TYPES = {
             TryAdjustDamageMultipliers( entity, { ice = 0.00 } );
         end
     }),
-    Shoot = register_champion_type( "shoot", {
-        particle_material = "spark_purple",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-    }, true, true),
     -- TODO Update this when Invisible game effect doesn't crash
     Invisible = register_champion_type( "invisible", {
         particle_material = nil,
@@ -529,13 +550,6 @@ CHAMPION_TYPES = {
             });
         end
     } ),
-    Loot =register_champion_type( "loot", {
-        particle_material = "spark_white",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-    }, true, true),
     Regeneration = register_champion_type( "regenerating", {
         particle_material = "spark_green",
         sprite_particle_sprite_file = "data/particles/heal.xml",
@@ -552,13 +566,6 @@ CHAMPION_TYPES = {
             } );
         end
     }),
-    WormBait = register_champion_type( "worm_bait", {
-        particle_material = nil,
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        game_effects = {"WORM_ATTRACTOR"},
-        validator = function( entity ) return true end,
-    }, true, true ),
     RevengeExplosion = register_champion_type( "revenge_explosion", {
         particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/revenge_explosion.xml",
@@ -1065,14 +1072,14 @@ ITEMS = {
 }
 
 local register_dev_option = function( key, options, disabled_by_default, deprecated, inverted )
-    if options == nil then
-        options = {};
-    end
+    if options == nil then options = {}; end
+    if disabled_by_default == nil then disabled_by_default = true; end
+    if inverted == nil then inverted = true; end
     local description = gkbrkn_localization["dev_option_"..key.."_description"];
     if description ~= nil then
         options.description = description;
     end
-    return register_content( CONTENT_TYPE.DevOption, key, gkbrkn_localization["dev_option_"..key.."_name"], options, disabled_by_default, deprecated, inverted );
+    return register_content( CONTENT_TYPE.DevOption, key, gkbrkn_localization["dev_option_"..key.."_name"], options, disabled_by_default, deprecated, inverted, nil, true );
 end
 
 DEV_OPTIONS = {
@@ -1081,47 +1088,142 @@ DEV_OPTIONS = {
     RecoverHealth = register_dev_option( "recover_health" ),
 }
 
-local register_challenge = function( key, options, disabled_by_default, deprecated, inverted )
+local register_game_modifier = function( key, options, disabled_by_default, deprecated, inverted )
     if options == nil then
         options = {};
     end
     if disabled_by_default == nil then disabled_by_default = true; end
     if inverted == nil then inverted = true; end
-    local content_id = register_content( CONTENT_TYPE.Challenge, key, gkbrkn_localization["challenge_"..key.."_name"], options, disabled_by_default, deprecated, inverted );
-    local description = gkbrkn_localization["challenge_"..key.."_description"];
+    local content_id = register_content( CONTENT_TYPE.GameModifier, key, gkbrkn_localization["game_modifier_"..key.."_name"], options, disabled_by_default, deprecated, inverted );
+    local description = gkbrkn_localization["game_modifier_"..key.."_description"];
     if description ~= nil then
         options.description = description;
     end
     return content_id;
 end
 
-CHALLENGES = {
-    GooMode = register_challenge( "goo_mode", { player_spawned_callback = function( player_entity )
-        local x, y = EntityGetTransform( player_entity );
-        GameCreateParticle( "creepy_liquid", x - 20, y, 5, 0, 0, false, false );
-        GameAddFlagRun( "gkbrkn_goo_mode" );
-    end } ),
-    HotGooMode = register_challenge( "hot_goo_mode", { player_spawned_callback = function( player_entity )
-        local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
-        for _,damage_model in pairs( damage_models ) do
-            adjust_material_damage( damage_model, function( materials, damage )
-                table.insert( materials, "creepy_lava");
-                table.insert( damage, "0.003");
-                return materials, damage;
-            end);
-            EntitySetComponentIsEnabled( player_entity, damage_model, true );
-            local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-            ComponentSetValue( polymorph, "frames", 1 );
-        end
+GAME_MODIFIERS = {
+    GooMode = register_game_modifier( "goo_mode", {
+        player_spawned_callback = function( player_entity )
+            dofile_once( "data/scripts/perks/perk.lua" );
+            local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
+            if perk_entity ~= nil then
+                perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+            end
+            local x, y = EntityGetTransform( player_entity );
+            GameCreateParticle( "creepy_liquid", x - 50, y, 5, 0, 0, false, false );
+        end,
+        run_flags = { FLAGS.GooMode }
+    } ),
+    PolyGooMode = register_game_modifier( "poly_goo_mode", {
+        player_spawned_callback = function( player_entity )
+            local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
+            if perk_entity ~= nil then
+                perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+            end
+            local x, y = EntityGetTransform( player_entity );
+            GameCreateParticle( "poly_goo", x - 50, y, 5, 0, 0, false, false );
+        end,
+        run_flags = { FLAGS.PolyGooMode }
+    } ),
+    HotGooMode = register_game_modifier( "hot_goo_mode", {
+        player_spawned_callback = function( player_entity )
+            local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
+            if perk_entity ~= nil then
+                perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+            end
 
-        local x, y = EntityGetTransform( player_entity );
-        GameCreateParticle( "creepy_lava", x- 20, y, 5, 0, 0, false, false );
-        GameAddFlagRun( "gkbrkn_hot_goo_mode" );
-    end } ),
-    LimitedMana = register_challenge( "limited_mana", { MaxManaMultiplier = 25 } ),
-    HardMode = register_challenge( "hard_mode", nil ),
-    TaikasauvaTerror = register_challenge( "taikasauva_terror", nil ),
-    NoEdit = register_challenge( "no_edit", nil ),
+            local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                adjust_material_damage( damage_model, function( materials, damage )
+                    table.insert( materials, "creepy_lava");
+                    table.insert( damage, "0.003");
+                    return materials, damage;
+                end);
+                EntitySetComponentIsEnabled( player_entity, damage_model, true );
+                local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
+                ComponentSetValue( polymorph, "frames", 1 );
+            end
+
+            local x, y = EntityGetTransform( player_entity );
+            GameCreateParticle( "creepy_lava", x - 50, y, 5, 0, 0, false, false );
+        end,
+        run_flags = { FLAGS.HotGooMode }
+    } ),
+    KillerGooMode = register_game_modifier( "killer_goo_mode", {
+        player_spawned_callback = function( player_entity )
+            local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
+            if perk_entity ~= nil then
+                perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+            end
+            local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                adjust_material_damage( damage_model, function( materials, damage )
+                    table.insert( materials, "killer_goo");
+                    table.insert( damage, "0.001");
+                    table.insert( materials, "corruption");
+                    table.insert( damage, "0.001");
+                    return materials, damage;
+                end);
+                EntitySetComponentIsEnabled( player_entity, damage_model, true );
+                local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
+                ComponentSetValue( polymorph, "frames", 1 );
+            end
+
+            local x, y = EntityGetTransform( player_entity );
+            GameCreateParticle( "killer_goo", x - 50, y, 5, 0, 0, false, false );
+        end,
+        run_flags = { FLAGS.KillerGooMode }
+    } ),
+    AltKillerGooMode = register_game_modifier( "alt_killer_goo_mode", {
+        player_spawned_callback = function( player_entity )
+            local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
+            if perk_entity ~= nil then
+                perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+            end
+            local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
+            for _,damage_model in pairs( damage_models ) do
+                adjust_material_damage( damage_model, function( materials, damage )
+                    table.insert( materials, "alt_killer_goo");
+                    table.insert( damage, "0.001");
+                    table.insert( materials, "corruption");
+                    table.insert( damage, "0.001");
+                    return materials, damage;
+                end);
+                EntitySetComponentIsEnabled( player_entity, damage_model, true );
+                local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
+                ComponentSetValue( polymorph, "frames", 1 );
+            end
+
+            local x, y = EntityGetTransform( player_entity );
+            GameCreateParticle( "alt_killer_goo", x - 50, y, 5, 0, 0, false, false );
+        end,
+        run_flags = { FLAGS.AltKillerGooMode }
+    } ),
+    LimitedMana = register_game_modifier( "limited_mana", { run_flags = { FLAGS.LimitedMana } } ),
+    HardMode = register_game_modifier( "hard_mode", { run_flags = { FLAGS.HardMode } } ),
+    RemoveGenericWands = register_game_modifier( "remove_generic_wands", { run_flags = { FLAGS.RemoveGenericWands } } ),
+    --NoWandGeneration = register_game_modifier( "no_wand_generation", { run_flags = { FLAGS.NoWandGeneration } } ),
+    NoEdit = register_game_modifier( "no_edit", { run_flags = { FLAGS.NoWandEditing } } ),
+    LimitedAmmo = register_game_modifier( "limited_ammo", { run_flags = { FLAGS.LimitedAmmo } } ),
+    UnlimitedAmmo = register_game_modifier( "unlimited_ammo", { run_flags = { FLAGS.UnlimitedAmmo } } ),
+    NoHit = register_game_modifier( "no_hit", {
+        player_spawned_callback = function( player_entity )
+            EntityAddComponent( player_entity, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/no_hit/player_damage_received.lua"
+            });
+        end,
+        run_flags = { FLAGS.NoHit }
+    } ),
+    OrderWandsOnly = register_game_modifier( "order_wands_only", { run_flags = { FLAGS.OrderWandsOnly } } ),
+    ShuffleWandsOnly = register_game_modifier( "shuffle_wands_only", { run_flags = { FLAGS.ShuffleWandsOnly } } ),
+    GuaranteedAlwaysCast = register_game_modifier( "guaranteed_always_cast", { run_flags = { FLAGS.GuaranteedAlwaysCast } } ),
+    SpellShopsOnly = register_game_modifier( "spell_shops_only", { run_flags = { FLAGS.SpellShopsOnly } } ),
+    WandShopsOnly = register_game_modifier( "wand_shops_only", { run_flags = { FLAGS.WandShopsOnly } } ),
+    FreeShops = register_game_modifier( "free_shops", { run_flags = { FLAGS.FreeShops } } ),
+    FloorIsLava = register_game_modifier( "floor_is_lava", { run_flags = { FLAGS.FloorIsLava } } ),
+    InfiniteFlight = register_game_modifier( "infinite_flight", { run_flags = { FLAGS.InfiniteFlight } } ),
+    DisintegrateCorpses = register_game_modifier( "disintegrate_corpses", { run_flags = { FLAGS.DisintegrateCorpses } } ),
 }
 
 local register_event = function( key, name, message, callback, condition, weight, disabled_by_default, deprecated, inverted )
@@ -1348,7 +1450,7 @@ EVENTS = {
 
 MISC = {
     DebugMode = {
-        Enabled = DEBUG_MODE_FLAG,
+        Enabled = HasFlagPersistent( FLAGS.DebugMode ),
     },
     GoldPickupTracker = {
         TrackDuration = 180, -- in game frames
@@ -1369,12 +1471,6 @@ MISC = {
     },
     LooseSpellGeneration = {
         Enabled = "gkbrkn_loose_spell_generation",
-    },
-    LimitedAmmo = {
-        Enabled = "gkbrkn_limited_ammo",
-    },
-    UnlimitedAmmo = {
-        Enabled = "gkbrkn_unlimited_ammo",
     },
     DisableSpells = {
         Enabled = "gkbrkn_disable_spells",
@@ -1411,9 +1507,6 @@ MISC = {
     LegendaryWands = {
         Enabled = "gkbrkn_legendary_wands",
         SpawnWeighting = 0.025,
-    },
-    WandShopsOnly = {
-        Enabled = "gkbrkn_wand_shops_only",
     },
     ExtendedWandGeneration = {
         Enabled = "gkbrkn_extended_wand_generation",
@@ -1740,12 +1833,6 @@ OPTIONS = {
         SubOption = true,
     },
     {
-        Name = gkbrkn_localization.sub_option_wand_shops_only,
-        Description = gkbrkn_localization.sub_option_wand_shops_only_description,
-        PersistentFlag = "gkbrkn_wand_shops_only",
-        SubOption = true,
-    },
-    {
         Name = gkbrkn_localization.sub_option_loose_spell_generation,
         Description = gkbrkn_localization.sub_option_loose_spell_generation_description,
         PersistentFlag = "gkbrkn_loose_spell_generation",
@@ -1803,18 +1890,6 @@ OPTIONS = {
         Name = gkbrkn_localization.option_charm_nerf,
         Description = gkbrkn_localization.option_charm_nerf_description,
         PersistentFlag = "gkbrkn_charm_nerf",
-    },
-    {
-        Name = gkbrkn_localization.option_limited_ammo,
-        Description = gkbrkn_localization.option_limited_ammo_description,
-        PersistentFlag = "gkbrkn_limited_ammo",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_unlimited_ammo,
-        Description = gkbrkn_localization.option_unlimited_ammo_description,
-        PersistentFlag = "gkbrkn_unlimited_ammo",
-        RequiresRestart = true,
     },
     {
         Name = gkbrkn_localization.option_quick_swap,
@@ -1892,7 +1967,12 @@ OPTIONS = {
     {
         Name = gkbrkn_localization.option_debug_mode,
         Description = gkbrkn_localization.option_debug_mode_description,
-        PersistentFlag = DEBUG_MODE_FLAG,
+        PersistentFlag = FLAGS.DebugMode,
+    },
+    {
+        Name = gkbrkn_localization.option_deprecated_content,
+        Description = gkbrkn_localization.option_deprecated_content_description,
+        PersistentFlag = FLAGS.ShowDeprecatedContent,
     }
 }
 
@@ -2046,7 +2126,7 @@ if SETTINGS.Debug then
                     deck_capacity = {25,25}, -- capacity
                     reload_time = {10,10}, -- recharge time in frames
                     fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {22.5,22.5}, -- spread
+                    spread_degrees = {0,0}, -- spread
                     mana_charge_speed = {1000,1000}, -- mana charge speed
                     mana_max = {5000,5000}, -- mana max
                 },

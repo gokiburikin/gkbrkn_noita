@@ -1,5 +1,6 @@
 <Entity >
     <LuaComponent 
+		execute_on_added="1"
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/guided_shot/projectile_update.lua" >
 	</LuaComponent>
 </Entity>

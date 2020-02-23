@@ -97,7 +97,7 @@ end
 for i=#perk_list,1,-1 do
     local perk = perk_list[i];
     if perk ~= nil then
-        if CONTENT[CHALLENGES.HardMode].enabled() and HARD_MODE_REMOVALS[perk.id] then
+        if CONTENT[GAME_MODIFIERS.HardMode].enabled() and HARD_MODE_REMOVALS[perk.id] then
             table.remove( perk_list, i );
         elseif edit_callbacks[ perk.id ] ~= nil and apply_tweaks[ perk.id ] == true then
             edit_callbacks[perk.id]( perk, i );

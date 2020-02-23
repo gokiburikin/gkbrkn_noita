@@ -96,17 +96,18 @@ if HasFlagPersistent( MISC.InvincibilityFrames.FlashEnabled ) then
 end
 
 --[[ Limited Mana ]]
-if CONTENT[CHALLENGES.LimitedMana].enabled() then
+if CONTENT[GAME_MODIFIERS.LimitedMana].enabled() then
     local nearby_wands = EntityGetWithTag( "wand" );
     for _,wand in pairs( nearby_wands ) do
         local ability = FindFirstComponentByType( wand, "AbilityComponent" );
         if ability ~= nil then
-            if EntityGetVariableNumber( wand, "gkbrkn_limited_mana", 0 ) == 0 then
+            if EntityGetVariableNumber( wand, "gkbrkn_limited_mana", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_duplicate_wand", 0 ) == 0 and EntityGetVariableNumber( wand, "gkbrkn_merge_wand", 0 ) == 0 then
                 EntitySetVariableNumber( wand, "gkbrkn_limited_mana", 1 );
                 local mana_max = ability_component_get_stat( ability, "mana_max" );
                 local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
-                ability_component_set_stat( ability, "mana", mana_max * CONTENT[CHALLENGES.LimitedMana].options.MaxManaMultiplier );
-                ability_component_set_stat( ability, "mana_max", mana_max * CONTENT[CHALLENGES.LimitedMana].options.MaxManaMultiplier );
+                local adjusted_mana_max = mana_max * math.pow( mana_charge_speed, 0.4 );
+                ability_component_set_stat( ability, "mana", adjusted_mana_max );
+                ability_component_set_stat( ability, "mana_max", adjusted_mana_max );
                 ability_component_set_stat( ability, "mana_charge_speed", 0 );
             else
                 local current_mana = tonumber( ability_component_get_stat( ability, "mana" ) );
@@ -117,6 +118,11 @@ if CONTENT[CHALLENGES.LimitedMana].enabled() then
             end
         end
     end
+end
+
+--[[ Spell Recovery ]]
+if CONTENT[DEV_OPTIONS.InfiniteSpells].enabled() then
+    GameRegenItemActionsInPlayer( player_entity );
 end
 
 --[[ Health Recovery ]]
@@ -1084,28 +1090,49 @@ if CONTENT[TWEAKS.Blindness].enabled() then
     end
 end
 
+--[[ Game Modifier - Floor is Lava ]]
+if GameHasFlagRun( FLAGS.FloorIsLava ) then
+    local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
+    if character_data ~= nil then
+        local is_on_ground = ComponentGetValue( character_data, "is_on_ground" );
+        if is_on_ground == "1" then
+            local x, y = EntityGetTransform( player_entity );
+            local take_damage = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/events/take_damage.xml", x, y );
+            ComponentSetValue( EntityGetFirstComponent( take_damage, "AreaDamageComponent" ), "damage_per_frame", 1/100 );
+        end
+    end
+end
+
+--[[ Game Modifier - Infinite Flight ]]
+if GameHasFlagRun( FLAGS.InfiniteFlight ) then
+    local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
+    if character_data ~= nil then
+        ComponentSetValue( character_data, "flying_needs_recharge", "0" );
+    end
+end
+
 if now % 60 == 0 then
     local world_wands = EntityGetWithTag( "wand" );
 
-    --[[ Challenge - Taikasauva Terror ]]
-    if CONTENT[CHALLENGES.TaikasauvaTerror].enabled() then
+    --[[ Remove wands that aren't marked as special ]]
+    if GameHasFlagRun( FLAGS.RemoveGenericWands ) then
         for _,wand in pairs( world_wands ) do
             local wand_parent = EntityGetParent( wand )
             local wand_holder = EntityGetParent( wand_parent );
             if wand_parent == 0 or wand_parent == nil or wand_holder == player_entity then
-                if EntityGetVariableNumber( wand, "gkbrkn_taikasauva_terror", nil ) == nil then
+                if not wand_is_special( wand ) then
                     EntityKill( wand );
                 end
             end
         end
     end
 
-    --[[ Challenge - No-edit ]]
-    if CONTENT[CHALLENGES.NoEdit].enabled() then
+    --[[ Game Modifier - No-edit ]]
+    if GameHasFlagRun( FLAGS.NoWandEditing ) then
         for _,wand in pairs( world_wands ) do
             if EntityGetVariableNumber( wand, "gkbrkn_no_edit", nil ) == nil then
                 EntitySetVariableNumber( wand, "gkbrkn_no_edit", 1 )
-                local wand_children = EntityGetAllChildren( wand );
+                local wand_children = EntityGetAllChildren( wand ) or {};
                 for _,child in pairs( wand_children ) do
                     local component = FindFirstComponentByType( child, "ItemComponent" );
                     if component ~= nil then
@@ -1113,22 +1140,12 @@ if now % 60 == 0 then
                     end
                 end
             end
+            local component = FindFirstComponentByType( wand, "ItemComponent" );
+            if component ~= nil then
+                ComponentSetValue( component, "is_frozen", "1" );
+            end
         end
     end
 end
 
---[[ Fragile Ego 
-local apply_fragile_ego_frame = EntityGetVariableNumber( player_entity, "gkbrkn_fragile_ego_damage", 0 );
-GamePrint( now - apply_fragile_ego_frame );
-if now - apply_fragile_ego_frame == 5 then
-    local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
-    if damage_models ~= nil then
-        for i,damage_model in ipairs( damage_models ) do
-            local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-            ComponentSetValue( damage_model, "max_hp", tostring( math.max( 0, hp ) ) );
-        end
-    end
-    EntitySetVariableNumber( player_entity, "gkbrkn_fragile_ego_damage", 0 );
-end
-]]
 add_update_time( GameGetRealWorldTimeSinceStarted() - t );

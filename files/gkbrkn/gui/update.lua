@@ -17,7 +17,7 @@ local wrap_threshold = 16;
 local wrap_limit = 3;
 local wrap_size = 28;
 local last_time = 0;
-local fps_easing = 20;
+local fps_easing = 4;
 local current_fps = 0;
 local screen = 0;
 local page = 0;
@@ -43,12 +43,12 @@ end
 table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 
 for k,v in pairs( CONTENT_TYPE ) do
-    local name = CONTENT_TYPE_DISPLAY_NAME[v];
-    --if SETTINGS.Debug then
-    --    name = ( content_counts[v] or 0 ).." "..name;
-    --end
-    table.insert( content_type_selection, { name = name, type = v } );
-    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );
+    if HasFlagPersistent( FLAGS.DebugMode ) or tonumber(v) ~= CONTENT_TYPE.DevOption then
+        local name = CONTENT_TYPE_DISPLAY_NAME[v];
+        name = ( content_counts[v] or 0 ).." "..name;
+        table.insert( content_type_selection, { name = name, type = v } );
+        table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );
+    end
 end
 table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
 
@@ -113,7 +113,10 @@ function do_gui()
         end
     GuiLayoutEnd( gui ); -- fold vertical
 
-    if SETTINGS ~= nil and SETTINGS.Debug then
+    if HasFlagPersistent( FLAGS.DebugMode ) then
+        GuiLayoutBeginVertical( gui, 89, 91 );
+        GuiText( gui, 0, 0, "Development Mode" );
+        GuiLayoutEnd( gui );
         GuiLayoutBeginVertical( gui, 92, 93 );
         local update_time = get_update_time();
         reset_update_time();
@@ -136,9 +139,6 @@ function do_gui()
             local is_current_tab = false;
             if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
                 is_current_tab = true;
-            end
-            if DEBUG then
-                tab_title = ( content_counts[index] or 0 ).." "..tab_title
             end
             if is_current_tab then
                 tab_title = ">"..tab_title.."<";

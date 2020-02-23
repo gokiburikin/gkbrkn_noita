@@ -9,67 +9,35 @@ table.insert( actions, generate_action_entry(
             return;
         end
 
-        --[[ i think this is bugged in the engine so it won't work right now, but this is a much simpler implementation 
-        BeginProjectile( "mods/gkbrkn_noita/files/gkbrkn/actions/spell_duplicator/projectile.xml" );
-            BeginTriggerTimer( 10 );
-                draw_actions( 1, true );
-            EndTrigger();
-
-            BeginTriggerTimer( 20 );
-                draw_actions( 1, true );
-            EndTrigger();
-
-            BeginTriggerTimer( 30 );
-                draw_actions( 1, true );
-            EndTrigger();
-        EndProjectile();
-        ]]
-
-        --[[
-        ]]
-        function deck_from_drawn_actions( actions, start_index )
-            local deck = {};
-            for i=start_index,#actions,1 do
-                table.insert( deck, actions[i] );
-            end
-            return deck;
-        end
-
         function recursive_death_trigger( how_many, old_c, skip_amount, depth, deck_snapshot )
-            
             if depth == nil then
                 depth = (depth or 0) + 1;
                 old_c = c;
                 skip_amount = #hand + 1;
-
-                local _deck = deck;
-                local _hand = hand;
-                local _discarded = discarded;
+                c = {};
+                reset_modifiers( c );
+                deck_snapshot = peek_draw_actions( 1, true );
 
                 BeginProjectile( "mods/gkbrkn_noita/files/gkbrkn/actions/spell_duplicator/projectile.xml" );
                     BeginTriggerDeath();
                         c = {};
                         reset_modifiers( c );
                         c.spread_degrees = c.spread_degrees + 360;
-                        gkbrkn.capture_draw_actions = true;
-                        deck_snapshot = capture_draw_actions( 1, true );
-                        gkbrkn.capture_draw_actions = false;
-                        hand = {};
-                        discarded = {};
+                        temporary_deck( function( deck, hand, discarded ) 
+                            draw_actions( 1, true );
+                        end, deck_from_actions( deck_snapshot ), {}, {} );
                         register_action( c );
                         SetProjectileConfigs();
+                        c = old_c;
                     EndTrigger();
 
                     if how_many > 1 then
                         recursive_death_trigger( how_many - 1, old_c, skip_amount, depth, deck_snapshot );
                     end
 
-                    deck = _deck;
-                    hand = _hand;
-                    discarded = _discarded;
-
                 EndProjectile();
                 register_action( old_c );
+                c = old_c;
                 SetProjectileConfigs();
             else
                 BeginTriggerDeath();
@@ -78,12 +46,12 @@ table.insert( actions, generate_action_entry(
                             c = {};
                             reset_modifiers( c );
                             c.spread_degrees = c.spread_degrees + 360;
-                            deck = deck_from_drawn_actions( deck_snapshot, 1 );
-                            gkbrkn.capture_draw_actions = false;
-                            draw_actions( 1, true );
-                            gkbrkn.capture_draw_actions = true;
+                            temporary_deck( function( deck, hand, discarded ) 
+                                draw_actions( 1, true );
+                            end, deck_from_actions( deck_snapshot ), {}, {} );
                             register_action( c );
                             SetProjectileConfigs();
+                            c = old_c;
                         EndTrigger();
 
                         if how_many > 1 then

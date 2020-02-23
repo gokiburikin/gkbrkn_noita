@@ -1,0 +1,45 @@
+<Materials>
+    <CellData
+        name="poly_goo"
+        tags="[liquid],[water],[magic_liquid],[magic_polymorph],[impure]"
+        burnable="0"
+        density="4"
+        ui_name="Poly Goo"
+        cell_type="liquid"
+        wang_color="80f18bec"
+        generates_smoke="0"
+        liquid_gravity="0.8"
+        liquid_sand="0"
+        gfx_glow="150"
+        on_fire="0"
+        requires_oxygen="0"
+        liquid_stains="1"
+        liquid_sprite_stain_shaken_drop_chance="5"
+        status_effects="POLYMORPH"
+        show_in_creative_mode="1"
+        >
+        <ParticleEffect
+            vel.y="-2.857"
+            vel_random.min_x="-6"
+            vel_random.max_x="6"
+            vel_random.min_y="-17.18"
+            vel_random.max_y="8.914"
+            lifetime.min="5"
+            lifetime.max="10"
+            gravity.y="0"
+            render_on_grid="1"
+            draw_as_long="1"
+            airflow_force="0.8314"
+            airflow_scale="0.1371"
+            friction="3.143"
+            probability="0.0857"
+            count.min="0"
+            count.max="1"
+        >
+	</ParticleEffect>
+    </CellData>
+    <Reaction probability="100"
+        input_cell1="poly_goo" input_cell2="air"
+        output_cell1="poly_goo" output_cell2="poly_goo" >
+    </Reaction>
+</Materials>

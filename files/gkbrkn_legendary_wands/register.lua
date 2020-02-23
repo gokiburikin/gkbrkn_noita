@@ -687,3 +687,40 @@ register_legendary_wand( "sparkler", "Sparkler", "goki", {
         { { action="DEATH_CROSS", locked=false } },
     }
 } );
+
+register_legendary_wand( "auto_spell", "Auto Spell", "Ivylistar", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {25,25}, -- capacity
+        reload_time = {300,300}, -- recharge time in frames
+        fire_rate_wait = {60,60}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {25000,25000}, -- mana charge speed
+        mana_max = {25000,25000}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="LONG_DISTANCE_CAST", locked=true } },
+        { { action="LIFETIME_DOWN", locked=false } },
+        { { action="GKBRKN_CLINGING_SHOT", locked=true } },
+        { { action="DELAYED_SPELL", locked=true } },
+        { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
+        { { action="LIFETIME_DOWN", locked=false } },
+        { { action="GKBRKN_FEATHER_SHOT", locked=false } },
+        { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
+        { { action="RECOIL_DAMPER", locked=true } },
+        { { action="GKBRKN_GUIDED_SHOT", locked=true } },
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="DAMAGE", locked=true } },
+        { { action="LIGHT_BULLET", locked=false } },
+
+    }
+} );

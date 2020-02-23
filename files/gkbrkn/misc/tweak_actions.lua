@@ -92,6 +92,8 @@ local HARD_MODE_REMOVALS = {
     FREEZE=true,
     MANA_REDUCE=true,
     PIERCING_SHOT=true,
+    TRANSMUTATION=true,
+    FREEZE_FIELD=true,
 };
 
 local apply_tweaks = {};
@@ -105,7 +107,7 @@ end
 for i=#actions,1,-1 do
     local action = actions[i];
     if action ~= nil then
-        if CONTENT[CHALLENGES.HardMode].enabled() and HARD_MODE_REMOVALS[action.id] then
+        if CONTENT[GAME_MODIFIERS.HardMode].enabled() and HARD_MODE_REMOVALS[action.id] then
             table.remove( actions, i );
         elseif edit_callbacks[ action.id ] ~= nil and apply_tweaks[ action.id ] == true then
             edit_callbacks[action.id]( action, i );

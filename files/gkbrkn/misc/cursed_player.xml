@@ -1,0 +1,25 @@
+<Entity>
+    <InheritTransformComponent>
+		<Transform 
+			only_position="1"
+			position.x="0" 
+			position.y="-6" >
+		</Transform>
+	</InheritTransformComponent>
+    <MagicConvertMaterialComponent
+        kill_when_finished="0"
+        from_material="rock_hard"
+        steps_per_frame="8"
+        to_material="rock_static_cursed"
+        is_circle="1"
+        radius="48" >
+    </MagicConvertMaterialComponent>
+    <MagicConvertMaterialComponent
+        kill_when_finished="0"
+        from_material="rock_hard_border"
+        steps_per_frame="8"
+        to_material="rock_static_cursed"
+        is_circle="1"
+        radius="48" >
+    </MagicConvertMaterialComponent>
+</Entity>

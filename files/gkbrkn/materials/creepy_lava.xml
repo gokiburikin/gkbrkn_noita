@@ -4,20 +4,21 @@
         tags="[fire],[liquid],[lava]"
         burnable="0"
         density="6"
+        ui_name="Hot Goo"
         cell_type="liquid"
         gfx_glow="150"
         wang_color="ffff6001"
         generates_smoke="0"
-        liquid_gravity="0.75"
+        liquid_gravity="0.1"
         liquid_sand="0"
-        liquid_viscosity="10"
+        liquid_viscosity="1"
         on_fire="0"
         danger_fire="1"
         requires_oxygen="0"
         temperature_of_fire="90">
     </CellData>
     <Reaction probability="100"
-        input_cell1="creepy_lava" 	input_cell2="air"
-        output_cell1="creepy_lava" 	output_cell2="creepy_lava" >
+        input_cell1="creepy_lava" input_cell2="air"
+        output_cell1="creepy_lava" output_cell2="creepy_lava">
     </Reaction>
 </Materials>

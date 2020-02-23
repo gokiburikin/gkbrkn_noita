@@ -1,5 +1,6 @@
 dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 local WAND_STAT_SETTER = {
     Direct = 1,
@@ -197,7 +198,45 @@ function wand_explode_random_action( wand )
         local card = CreateItemActionEntity( action_to_remove.action_id, x, y );
         ComponentSetValueVector2( EntityGetFirstComponent( card, "VelocityComponent" ), "mVelocity", Random( -150, 150 ), Random( -250, -100 ) );
         EntityRemoveFromParent( action_to_remove.entity );
+        return action_to_remove;
+    end
+end
+
+function wand_remove_first_action( wand )
+    local x, y = EntityGetTransform( wand );
+    local actions = {};
+    local children = EntityGetAllChildren( wand ) or {};
+    for _,action in pairs( children ) do
+        local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
+        if item_action ~= nil then
+            EntityRemoveFromParent( action );
+            EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", true );
+            EntitySetComponentsWithTagEnabled( action,  "enabled_in_hand", false );
+            EntitySetComponentsWithTagEnabled( action,  "enabled_in_inventory", false );
+            EntitySetComponentsWithTagEnabled( action,  "item_unidentified", false );
+            EntitySetTransform( action, x, y );
+            return action;
+        end
+    end
+end
+
+function wand_attach_action( wand, action, permanent, locked )
+    EntityAddChild( wand, action );
+    local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
+    if item_action ~= nil then
+        EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", false );
+        EntitySetComponentsWithTagEnabled( action,  "enabled_in_hand", false );
+        EntitySetComponentsWithTagEnabled( action,  "enabled_in_inventory", false );
+    end
+end
+
+function wand_is_special( wand )
+    if EntityGetVariableNumber( wand, "gkbrkn_challenge_wand", 0 ) == 1
+    or EntityGetVariableNumber( wand, "gkbrkn_duplicate_wand", 0 ) == 1
+    or EntityGetVariableNumber( wand, "gkbrkn_legendary_wand", 0 ) == 1
+    or EntityGetVariableNumber( wand, "gkbrkn_loadout_wand", 0 ) == 1
+    or EntityGetVariableNumber( wand, "gkbrkn_merge_wand", 0 ) == 1
+    then
         return true;
     end
-    return false;
 end

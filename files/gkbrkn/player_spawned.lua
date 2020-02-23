@@ -50,24 +50,24 @@ if GameHasFlagRun( init_check_flag ) == false then
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/init.lua", { player_entity = player_entity } );
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
 
---[[
-    local children = EntityGetAllChildren( player_entity ) or {};
-    local inventory = nil;
-    for _,child in pairs( children ) do
-        if EntityGetName( child ) == "inventory_quick" then
-            inventory = child;
-        end
-    end
-    
-    if inventory ~= nil then
-        local items = EntityGetAllChildren( inventory );
-        for _,child in pairs( items ) do
-            if EntityHasTag( child, "wand" ) then 
-                ComponentSetValue( child, "ItemComponent", "1" );
+    --[[
+        local children = EntityGetAllChildren( player_entity ) or {};
+        local inventory = nil;
+        for _,child in pairs( children ) do
+            if EntityGetName( child ) == "inventory_quick" then
+                inventory = child;
             end
         end
-    end
-]]
+        
+        if inventory ~= nil then
+            local items = EntityGetAllChildren( inventory );
+            for _,child in pairs( items ) do
+                if EntityHasTag( child, "wand" ) then 
+                    ComponentSetValue( child, "ItemComponent", "1" );
+                end
+            end
+        end
+    ]]
 
     EntityAddComponent( player_entity, "LuaComponent", {
         script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/player_shot.lua"
@@ -138,6 +138,8 @@ if GameHasFlagRun( init_check_flag ) == false then
                     });
                 end
             else
+                local cursed_player = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/cursed_player.xml" );
+                EntityAddChild( player_entity, cursed_player );
                 GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", 1 );
                 GlobalsSetValue( "TEMPLE_PERK_COUNT", 2 );
                 GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", 3 );
@@ -219,45 +221,24 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     --[[ Content Callbacks ]]
     for _,content in pairs( CONTENT ) do
-        if content.enabled() and content.options ~= nil and content.options.player_spawned_callback ~= nil then
-            content.options.player_spawned_callback( player_entity );
+        if content.enabled() and content.options ~= nil then
+            if content.options.player_spawned_callback ~= nil then
+                content.options.player_spawned_callback( player_entity );
+            end
+            if content.options.run_flags ~= nil then
+                for _,flag in pairs( content.options.run_flags ) do
+                    GameAddFlagRun( flag );
+                end
+            end
         end
     end
 
-    --[[ Challenge Handling]]
+end
 
-    --[[ Challenge - Taikasauva Terror ]]
-    if CONTENT[CHALLENGES.TaikasauvaTerror].enabled() then
-        local loadout = {
-            name = "Taikaaauva Terror",
-            author = "goki",
-            wands = {
-                {
-                    name = "Wand",
-                    stats = {
-                        shuffle_deck_when_empty = 0, -- shuffle
-                        actions_per_round = 1, -- spells per cast
-                        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
-                    },
-                    stat_ranges = {
-                        deck_capacity = {1,1}, -- capacity
-                        reload_time = {120,120}, -- recharge time in frames
-                        fire_rate_wait = {120,120}, -- cast delay in frames
-                        spread_degrees = {0,0}, -- spread
-                        mana_charge_speed = {0,0}, -- mana charge speed
-                        mana_max = {300,300}, -- mana max
-                    },
-                    stat_randoms = {},
-                    permanent_actions = {
-                        { "SUMMON_WANDGHOST" }
-                    },
-                    actions = {
-                    },
-                    callback = function( wand, ability ) EntitySetVariableNumber( wand, "gkbrkn_taikasauva_terror", 1 ); end
-                }
-            }
-        }
-        handle_loadout( player_entity, loadout );
+--[[ Development Options enabled warning ]]
+for k,v in pairs( DEV_OPTIONS ) do
+    if CONTENT[v].enabled() then
+        GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
+        break;
     end
-
 end

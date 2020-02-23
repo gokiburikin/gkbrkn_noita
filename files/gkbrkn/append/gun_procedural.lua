@@ -96,8 +96,35 @@ function generate_gun( cost, level, force_unshuffle )
                 EntityAddChild( wand, child_to_return );
             end
         end
+        if GameHasFlagRun( FLAGS.GuaranteedAlwaysCast ) then
+            local children = EntityGetAllChildren( wand ) or {};
+            local has_always_cast = false;
+            for _,child in pairs( children ) do
+                local item_component = FindFirstComponentByType( child, "ItemComponent" );
+                if item_component then
+                    if ComponentGetValue( item_component, "permanently_attached" ) == "1" then
+                        has_always_cast = true;
+                        break;
+                    end
+                end
+            end
+            if not has_always_cast then
+                SetRandomSeed( x, y );
+                local random_child = children[ Random( 1,#children ) ];
+                local item_component = FindFirstComponentByType( random_child, "ItemComponent" );
+                if item_component then
+                    ComponentSetValue( item_component, "permanently_attached", "1" );
+                end
+            end
+        end
 
         if ability ~= nil then
+            if GameHasFlagRun( FLAGS.OrderWandsOnly ) then
+                ability_component_set_stat( ability, "shuffle_deck_when_empty", "0" );
+            elseif GameHasFlagRun( FLAGS.ShuffleWandsOnly ) then
+                ability_component_set_stat( ability, "shuffle_deck_when_empty", "1" );
+            end
+
             if wandsmith_stacks > 0 then
                 ability_component_adjust_stats( ability, {
                     mana_max=function(value) return tonumber( value ) * ( 1.1 ^ wandsmith_stacks ); end,

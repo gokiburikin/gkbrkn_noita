@@ -1,6 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
 function kick( is_electric )
+    --[[
     local entity = GetUpdatedEntityID();
     local x,y = EntityGetTransform( entity );
     local nearby_wands = EntityGetInRadiusWithTag( x, y, 32, "wand" ) or {};
@@ -10,4 +11,5 @@ function kick( is_electric )
             wand_explode_random_action( wand );
         end
     end
+    ]]
 end

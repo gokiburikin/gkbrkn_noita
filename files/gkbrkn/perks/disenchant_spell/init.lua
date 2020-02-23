@@ -4,20 +4,14 @@ dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 function does_wand_have_an_always_cast( wand )
     local children = EntityGetAllChildren( wand ) or {};
-    for i,v in ipairs( children ) do
-        local components = EntityGetAllComponents( v );
-        local has_a_valid_spell = false;
-        for _,component in pairs(components) do
-            if ComponentGetValue( component, "permanently_attached" ) == "1" then
-                has_a_valid_spell = true;
-                break;
+    for _,action in pairs( children ) do
+        local item_component = FindFirstComponentByType( action, "ItemComponent" );
+        if item_component ~= nil then
+            if ComponentGetValue( item_component, "permanently_attached" ) == "1" then
+                return true;
             end
         end
-        if has_a_valid_spell then
-            return true;
-        end
     end
-    return false;
 end
 
 table.insert( perk_list, 
@@ -34,7 +28,7 @@ table.insert( perk_list,
         if #wands > 0 then
             local filtered_wands = {};
             for _,wand in pairs(wands) do
-                if is_wand_always_cast_valid( wand ) then
+                if does_wand_have_an_always_cast( wand ) then
                     table.insert( filtered_wands, wand );
                 end
             end

@@ -9,6 +9,7 @@ table.insert( perk_list,
         local x, y = EntityGetTransform( entity_who_picked );
 
         local held_wands = {};
+        local active_wand = nil;
         local children = EntityGetAllChildren( entity_who_picked ) or {};
         local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
         if inventory2 ~= nil then
@@ -16,6 +17,12 @@ table.insert( perk_list,
                 if EntityGetName( child ) == "inventory_quick" then
                     held_wands = EntityGetChildrenWithTag( child, "wand" ) or {};
                     break;
+                end
+            end
+            for _,wand in pairs( held_wands ) do
+                local active_item = tonumber( ComponentGetValue( inventory2, "mActiveItem" ) );
+                if wand == active_item then
+                    active_wand = wand;
                 end
             end
         end
@@ -57,8 +64,22 @@ table.insert( perk_list,
             end
         end
 
+        local held_actions = {};
         for _,wand in pairs( held_wands ) do
-            while wand_explode_random_action( wand ) do end
+            while true do
+                if wand == active_wand then
+                    local removed_spell = wand_remove_first_action( wand );
+                    if not removed_spell then
+                        break;
+                    else
+                        table.insert( held_actions, removed_spell );
+                    end
+                else
+                    if not wand_explode_random_action( wand ) then
+                        break;
+                    end
+                end
+            end
             GameKillInventoryItem( entity_who_picked, wand );
             EntitySetTransform( item, -9999, -9999 );
             EntityRemoveFromParent( wand );
@@ -76,6 +97,10 @@ table.insert( perk_list,
         EntitySetVariableNumber( copy_wand, "gkbrkn_merged_wand", 1 );
 
         initialize_wand( copy_wand, { name="merged wand", stats=best_values } );
+
+        for _,held_action in pairs( held_actions ) do
+            wand_attach_action( copy_wand, held_action );
+        end
 
         local item = EntityGetFirstComponent( copy_wand, "ItemComponent" );
         if item ~= nil then

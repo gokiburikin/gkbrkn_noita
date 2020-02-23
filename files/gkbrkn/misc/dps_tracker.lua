@@ -6,6 +6,7 @@ last_damage = last_damage or 0;
 total_damage = total_damage or 0;
 reset_frame = reset_frame or 0;
 function damage_received( damage, message, entity_thats_responsible, is_fatal )
+    if entity_thats_responsible == 0 then return; end
     local now = GameGetFrameNum();
     local entity = GetUpdatedEntityID();
 

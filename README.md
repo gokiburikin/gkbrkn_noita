@@ -24,7 +24,7 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 - **Demolition**: Dormant Crystal, Dormant Crystal Detonator, Demolition.
 - **Duplication**: Spell Duplicated Sparkbolt Field, Spell Duplicated Energy Orb, Extra Projectile.
 - **Glitter**: Long Distance Glittering Trail Stored Shot, Glitter Bomb.
-- **Goo Mode**: Challenge Mode. Creates Creepy Liquid that floods the world at each Holy Mountain.
+- **Goo Mode**: A loadout designed for the Goo Mode and Hot Goo Mode Game Modifiers.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
 - **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
 - **Legendary**: Starts with a random Legendary Wand.
@@ -122,6 +122,24 @@ Options to start runs with random changes. All of these can be used separately o
 - **Random Starting Health**: Start with a random amount of health from 50 to 150.
 - **Random Flasks**: Start with a random assortment of flasks.
 - **Random Perk**: Start with a random perk.
+
+## Game Modifiers
+Options to modify your run. They are not all compatible, but can be combined to create interesting challenge runs.
+
+- **Goo Mode**: Outrun the goo that is taking over the world!
+- **Guaranteed Always Cast**: Wands will generate with at least one always cast spell.
+- **Hard Mode**: Removes a handful of perks and spells that tend to trivialize certain gameplay mechanics (immunities, freeze, polymorph spells, etc.)
+- **Hot Goo Mode**: Outrun the hot goo that is taking over the world!
+- **Limited Ammo**: Unlimited spells become limited based on their mana cost.
+- **Limited Mana**: Wands have more mana, but do not recharge mana over time.
+- **No Hit**: Game over if you take any damage!
+- **No Wand Editing**: All wands are frozen and can not be edited!
+- **No Wand Generation**: Removes all wands from the game that weren't specifically given to the player.\nUse this with Loadouts to create challenge runs!
+- **Order Wand Only**: Wands always generate as Shuffle: No.
+- **Shuffle Wand Only**: Wands always generate as Shuffle: Yes.
+- **Spell Shops Only**: Shops will only carry spells.
+- **Unlimited Ammo**: Limited spells become unlimited.
+- **Wand Shops Only**: Shops will only carry wands.
 
 ## Utility
 These options have an impact on general gameplay and are meant to be picked and chosen based on your preferred play style.

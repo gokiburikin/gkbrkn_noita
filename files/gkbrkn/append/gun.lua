@@ -57,9 +57,9 @@ function state_per_cast( state )
     if current_protagonist_bonus ~= 0 then
         state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
     end
-	--[[ disintegrate ragdolls. could be good for hero mode or a performance settings? less physics bodies to obstruct friends and cuase physics issues
-    ]]
-    --state.game_effect_entities = state.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
+    if GameHasFlagRun( FLAGS.DisintegrateCorpses ) then
+        state.game_effect_entities = state.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
+    end
 end
 
 function create_shot( num_of_cards_to_draw )
@@ -121,7 +121,7 @@ function peek_draw_action( shot, instant_reload_if_empty )
     return true;
 end
 
-function peek_draw_actions( how_many, instant_reload_if_empty, discard_peeked )
+function peek_draw_actions( how_many, instant_reload_if_empty, remove_tail )
     local _reloading = reloading;
     gkbrkn.peeking = gkbrkn.peeking + 1;
     
@@ -131,11 +131,11 @@ function peek_draw_actions( how_many, instant_reload_if_empty, discard_peeked )
 
     -- don't shoot any projectiles during this peek
     local _add_projectile = gkbrkn._add_projectile;
-    gkbrkn._add_projectile = function( filepath ) end
+    gkbrkn._add_projectile = function( filepath )  end
 
     -- track the old capture function
     local old_capture = gkbrkn.draw_actions_capture;
-    if old_capture ~= nil then
+    if remove_tail and old_capture ~= nil then
         table.remove( old_capture, #old_capture );
     end
 
@@ -194,7 +194,7 @@ end
 
 function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty )
     local old_c = c;
-    local captured = peek_draw_actions( amount, instant_reload_if_empty );
+    local captured = peek_draw_actions( amount, instant_reload_if_empty, true );
 
     -- repeat the captured set n times
     local capture_set = {};
@@ -382,9 +382,9 @@ function draw_action( instant_reload_if_empty )
         local hyper_casting = EntityGetVariableNumber( player, "gkbrkn_hyper_casting", 0 );
         local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
         if #deck == 0 then
-            current_reload_time = current_reload_time * math.pow( 0.5, rapid_fire_level );
+            current_reload_time = math.min( current_reload_time, current_reload_time * math.pow( 0.5, rapid_fire_level ) );
         end
-        c.fire_rate_wait = c.fire_rate_wait * math.pow( 0.5, rapid_fire_level );
+        c.fire_rate_wait = math.min( c.fire_rate_wait, c.fire_rate_wait * math.pow( 0.5, rapid_fire_level ) );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
         if lead_boots > 0 then
             local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );

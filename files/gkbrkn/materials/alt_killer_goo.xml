@@ -1,0 +1,211 @@
+<Materials>
+    <CellData
+        name="alt_killer_goo"
+        tags="[impure]"
+        burnable="0"
+        density="1"
+        ui_name="Killer Goo"
+        cell_type="liquid"
+        gfx_glow="0"
+        wang_color="ff212223"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        lifetime="120"
+        danger_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0">
+        <Graphics
+		color="FF000000" 
+		></Graphics>
+        <ParticleEffect
+            vel.y="-100"
+            vel_random.min_x="-100"
+            vel_random.max_x="100"
+            vel_random.min_y="-100"
+            vel_random.max_y="100"
+            lifetime.min="0.9"
+            lifetime.max="1.6"
+            gravity.y="60"
+            render_on_grid="1"
+            airflow_force="0.5314"
+            airflow_scale="0.2371"
+            friction="0.0002"
+            probability="0.0245"
+            count.min="0"
+            count.max="1"
+        >
+        </ParticleEffect>
+    </CellData>
+    <CellData
+        name="killer_goo_solid"
+        tags="[impure]"
+        burnable="0"
+        density="1"
+        ui_name="Killer Goo Solid"
+        cell_type="liquid"
+        gfx_glow="0"
+        wang_color="ff212223"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        lifetime="15"
+        danger_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0">
+        <Graphics
+		color="FF000000" 
+		></Graphics>
+        <ParticleEffect
+            vel.y="-100"
+            vel_random.min_x="-100"
+            vel_random.max_x="100"
+            vel_random.min_y="-100"
+            vel_random.max_y="100"
+            lifetime.min="0.9"
+            lifetime.max="1.6"
+            gravity.y="60"
+            render_on_grid="1"
+            airflow_force="0.5314"
+            airflow_scale="0.2371"
+            friction="0.0002"
+            probability="0.0245"
+            count.min="0"
+            count.max="1"
+        >
+        </ParticleEffect>
+    </CellData>
+    <CellData
+        tags="[impure]"
+        name="corruption" 
+        ui_name="Corruption"
+        wang_color="ff222324"
+        hp="100000" 
+        burnable="0"
+        density="10"
+        cell_type="liquid"
+        wang_color="ff353923"
+        liquid_static="1"
+        solid_static_type="1"
+        durability="12"
+        on_fire="0"
+        platform_type="1"
+        audio_physics_material_event="rock"
+        audio_physics_material_wall="rock"
+        audio_physics_material_solid="rock"
+        show_in_creative_mode="1"
+        >
+        <Graphics
+        color="FF000000" >
+        </Graphics>
+    </CellData>
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" input_cell2="air"
+        output_cell1="alt_killer_goo" output_cell2="alt_killer_goo" >
+    </Reaction>
+    <Reaction probability="1"
+        input_cell1="killer_goo_solid" input_cell2="air"
+        output_cell1="corruption" output_cell2="alt_killer_goo" >
+    </Reaction>
+    <Reaction probability="10"
+        input_cell1="alt_killer_goo" input_cell2="alt_killer_goo"
+        output_cell1="corruption" output_cell2="alt_killer_goo" >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="corruption" input_cell2="air"
+        output_cell1="corruption" output_cell2="corruption" >
+    </Reaction>
+
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" 				input_cell2="[solid]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" 				input_cell2="[sand_ground]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" 				input_cell2="[sand_metal]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" 				input_cell2="[sand_other]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" 				input_cell2="[gas]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" 				input_cell2="[vapour]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+
+    <Reaction probability="30"
+        input_cell1="killer_goo_solid" 				input_cell2="[solid]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="30"
+        input_cell1="killer_goo_solid" 				input_cell2="[sand_ground]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="30"
+        input_cell1="killer_goo_solid" 				input_cell2="[sand_metal]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="30"
+        input_cell1="killer_goo_solid" 				input_cell2="[sand_other]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="30"
+        input_cell1="killer_goo_solid" 				input_cell2="[gas]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+    <Reaction probability="30"
+        input_cell1="killer_goo_solid" 				input_cell2="[vapour]"
+        output_cell1="corruption" 				output_cell2="killer_goo_solid"
+        blob_radius1="1"						blob_radius2="1"
+        blob_restrict_to_input_material1="1" 	blob_restrict_to_input_material1="1" 
+        >
+    </Reaction>
+
+    <Reaction probability="100"
+        input_cell1="alt_killer_goo" input_cell2="[liquid]"
+        output_cell1="corruption" output_cell2="alt_killer_goo" >
+    </Reaction>
+</Materials>
