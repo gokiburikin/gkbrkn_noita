@@ -32,6 +32,7 @@ local tabs = {
     {
         name = gkbrkn_localization.ui_tab_name_options,
         screen = SCREEN.Options,
+        development_only = false
     }
 }
 for index,content in pairs( CONTENT ) do
@@ -43,12 +44,10 @@ end
 table.sort( sorted_content, function( a, b ) return a.name < b.name end );
 
 for k,v in pairs( CONTENT_TYPE ) do
-    if HasFlagPersistent( FLAGS.DebugMode ) or tonumber(v) ~= CONTENT_TYPE.DevOption then
-        local name = CONTENT_TYPE_DISPLAY_NAME[v];
-        name = ( content_counts[v] or 0 ).." "..name;
-        table.insert( content_type_selection, { name = name, type = v } );
-        table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v } );
-    end
+    local name = CONTENT_TYPE_DISPLAY_NAME[v];
+    name = ( content_counts[v] or 0 ).." "..name;
+    table.insert( content_type_selection, { name = name, type = v } );
+    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v, development_only = tonumber(v) == CONTENT_TYPE.DevOption } );
 end
 table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
 
@@ -135,27 +134,29 @@ function do_gui()
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
         local tab_index = 1;
         for index,tab_data in pairs( tabs ) do
-            local tab_title = tab_data.name;
-            local is_current_tab = false;
-            if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
-                is_current_tab = true;
-            end
-            if is_current_tab then
-                tab_title = ">"..tab_title.."<";
-            else
-                tab_title = "["..tab_title.."]";
-            end
-            if GuiButton( gui, 0, 0, tab_title.." ", next_id() ) then
-                change_screen( tab_data.screen );
-                if tab_data.content_type ~= nil then
-                    content_type = tab_data.content_type;
+            if HasFlagPersistent( FLAGS.DebugMode ) or tab_data.development_only ~= true then
+                local tab_title = tab_data.name;
+                local is_current_tab = false;
+                if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
+                    is_current_tab = true;
                 end
+                if is_current_tab then
+                    tab_title = ">"..tab_title.."<";
+                else
+                    tab_title = "["..tab_title.."]";
+                end
+                if GuiButton( gui, 0, 0, tab_title.." ", next_id() ) then
+                    change_screen( tab_data.screen );
+                    if tab_data.content_type ~= nil then
+                        content_type = tab_data.content_type;
+                    end
+                end
+                if tab_index % 7 == 0 then
+                    GuiLayoutEnd( gui ); -- tabs horizontal
+                    GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
+                end
+                tab_index = tab_index + 1;
             end
-            if tab_index % 7 == 0 then
-                GuiLayoutEnd( gui ); -- tabs horizontal
-                GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
-            end
-            tab_index = tab_index + 1;
         end
         GuiLayoutEnd( gui ); -- tabs horizontal
     end

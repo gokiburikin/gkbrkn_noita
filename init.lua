@@ -1,52 +1,9 @@
 --[[
 changelog
-    -m "The Update Before the Break Update"
-    -m "Add an additional on-screen message when development mode is enabled"
-    -m "Add Game Modifier: Floor is Lava"
-    -m "Add Game Modifier: Guaranteed Always Cast"
-    -m "Add Game Modifier: Hot Goo Mode"
-    -m "Add Game Modifier: Killer Goo Mode"
-    -m "Add Game Modifier: No Hit"
-    -m "Add Game Modifier: Order Wands Only"
-    -m "Add Game Modifier: Poly Goo Mode"
-    -m "Add Game Modifier: Remove Generic Wands"
-    -m "Add Game Modifier: Shuffle Wands Only"
-    -m "Add Game Modifier: Spell Shops Only"
-    -m "Add Game Modifier: Unlimited Levitation"
-    -m "Add Loadout: Blood"
-    -m "Add Loadout: Combustion"
-    -m "Add Loadout: Eldritch"
-    -m "Add Loadout: Event Horizon"
-    -m "Add Loadout: Geomancer"
-    -m "Add Loadout: Hydromancy"
-    -m "Add Loadout: Light"
-    -m "Add Loadout: Rapid"
-    -m "Add Loadout: Speed"
-    -m "Add Loadout: Taikasauva Terror"
-    -m "Add Option: Show Deprecated Content for toggling of content that has been removed from Goki's Things without requiring config file editing"
-    -m "Add Unique Wand: Auto Spell"
-    -m "Change Action: Double Cast (mana cost 30 -> 8)"
-    -m "Change Action: Passive Recharge (recharge time 0 -> -0.2)"
-    -m "Change Action: Protective Enchantment (spawn weighting 0.4 -> 1)"
-    -m "Change Action: Spell Duplicator (fixes nested duplicators retaining modifiers of internal casts, still doesn't fix double/triple cast syngery)"
-    -m "Change Action: Triple Cast (mana cost 50 -> 16)"
-    -m "Change all goo mode loadouts to include All-seeing Eye"
-    -m "Change development options to be disabled by default and hidden if development mode is not enabled"
-    -m "Change Game Modifier: Limited Mana (more restrictive max mana calculation)"
-    -m "Change Option: Target Dummy (fire resistance 100% -> 0%, don't track environmental damage)"
-    -m "Change Options: Development Mode to not require a restart"
-    -m "Change Options: Hero Mode: Carnage Mode (player gains a dense / extremely dense rock -> cursed rock aura)"
-    -m "Change Perk: Wand Fusion (spells on the wand you're holding get moved to the new wand)"
-    -m "Deprecate Perk: Passive Recharge"
-    -m "Fix Action: Feather Shot (apply immediately instead of after 1 frame)"
-    -m "Fix Game Modifier: Limited Mana not correctly accounting for special wands (fixes Perk: Duplicate Wand, Perk: Wand Fusion, Loadouts wands, etc)"
-    -m "Fix kicking wands removing spells from them"
-    -m "Fix Perk: Demote Always Cast not working if the spell doesn't have a non-always cast spell on it"
-    -m "Fix Perk: Rapid Fire (no longer slow the wand down if it has negative cast delay or recharge time)"
-    -m "Move Option: Limited Ammmo and Option: Unlimited Ammo to Game Modifier: Limited Ammo and Game Modifier: Unlimited Ammo"
-    -m "Move Option: Wand Shops Only to Game Modifier: Wand Shops Only"
-    -m "Remove Game Modifier: Taikasauva Terror"
-    -m "Rename Challenges to Game Modifiers"
+    -m "Fix Options: Development Mode having strange activation logic (fixes dev options being enabled even if hidden)"
+    -m "Rename Loadout: Eldritch to Loadout: Tentacle"
+    -m "Change Action: Arcane Bouquet (mana cost 50 -> 12)"
+    -m "Remove a line of code that is causing the mod to not work on stable branch (even though this mod is marked as beta branch only)"
 
 TODO
     Hard Mode
@@ -178,7 +135,6 @@ ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" )
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
 
 function OnPlayerSpawned( player_entity )
-    print( "mod is enabled? "..tostring ( ModIsEnabled("gkbrkn_noita_extras") ) );
     if HasFlagPersistent( MISC.DisableSpells.Enabled ) then
         ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/disable_spells.lua" );
     end

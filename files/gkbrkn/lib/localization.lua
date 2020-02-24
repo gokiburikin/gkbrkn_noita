@@ -581,6 +581,7 @@ gkbrkn_localization = {
     loadout_light = "Light TYPE",
     loadout_speed = "Speed TYPE",
     loadout_rapid = "Rapid TYPE",
+    loadout_eldritch = "Tentacle TYPE",
     loadout_debug = "Development TYPE",
 
     -- [[ Game Modifiers ]]

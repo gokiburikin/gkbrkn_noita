@@ -106,7 +106,7 @@ local register_content = function( type, key, display_name, options, disabled_by
         deprecated = deprecated,
         development_mode_only = development_mode_only,
         enabled = function()
-            if development_mode_only == true and SETTINGS.Debug == false then
+            if development_mode_only == true and HasFlagPersistent( FLAGS.DebugMode ) == false then
                 return false;
             end
             if HasFlagPersistent( FLAGS.ShowDeprecatedContent ) == true or deprecated ~= true then
@@ -2053,7 +2053,7 @@ local register_loadout = function( id, name, author, cape_color, cape_color_edge
     LOADOUTS[id] = content_id;
 end
 
-if SETTINGS.Debug then
+if HasFlagPersistent( FLAGS.DebugMode ) then
     -- Debug
     register_loadout(
         "gkbrkn_debug", -- unique identifier

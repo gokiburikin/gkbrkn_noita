@@ -1,7 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 table.insert( actions, generate_action_entry(
     "GKBRKN_DUPLICAST", "duplicast", ACTION_TYPE_OTHER,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 50, -1,
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 12, -1,
     nil,
     function()
         current_reload_time = current_reload_time + 30;
