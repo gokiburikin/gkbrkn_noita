@@ -1,7 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once("data/scripts/lib/utilities.lua");
 
-_material_area_checker_failed = material_area_checker_failed;
+_material_area_checker_failed = _material_area_checker_failed or material_area_checker_failed;
 function material_area_checker_failed( x, y )
     if GameHasFlagRun( "gkbrkn_calm_gods" ) then
     	local h = math.floor( y / 512 );

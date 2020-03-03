@@ -47,22 +47,13 @@ register_legendary_wand( "telefragger", "Telefragger", "Ivylistar", {
     permanent_actions = {
     },
     actions = {
-        { { action="LIGHT_BULLET_TIMER", locked=true } },
-        { { action="TELEPORT_CAST", locked=true } },
+        { { action="LIGHT_BULLET_TIMER", locked=false } },
+        { { action="GKBRKN_TRIPLE_CAST", locked=false } },
+        { { action="TELEPORT_CAST", locked=false } },
         { { action="DAMAGE", locked=false } },
-        { { action="GKBRKN_TIME_COMPRESSION", locked=true } },
-        { { action="GKBRKN_TRIGGER_DEATH", locked=true } },
-        { { action="TELEPORT_PROJECTILE", locked=true } },
-        { { action="TELEPORT_CAST", locked=true } },
-        { { action="DAMAGE", locked=false } },
-        { { action="GKBRKN_TIME_COMPRESSION", locked=true } },
-        { { action="GKBRKN_TRIGGER_DEATH", locked=true } },
-        { { action="TELEPORT_PROJECTILE", locked=true } },
-        { { action="TELEPORT_CAST", locked=true } },
-        { { action="DAMAGE", locked=false } },
-        { { action="GKBRKN_TIME_COMPRESSION", locked=true } },
-        { { action="GKBRKN_TRIGGER_DEATH", locked=true } },
-        { { action="TELEPORT_PROJECTILE", locked=true } },
+        { { action="GKBRKN_TIME_COMPRESSION", locked=false } },
+        { { action="GKBRKN_TRIGGER_DEATH", locked=false } },
+        { { action="TELEPORT_PROJECTILE", locked=false } },
     }
 } );
 
@@ -179,7 +170,7 @@ register_legendary_wand( "spirit_familiar", "Spirit Familiar", "goki", {
         speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
     },
     stat_ranges = {
-        deck_capacity = {9,9}, -- capacity
+        deck_capacity = {12,12}, -- capacity
         reload_time = {180,180}, -- recharge time in frames
         fire_rate_wait = {120,120}, -- cast delay in frames
         spread_degrees = {0,0}, -- spread
@@ -198,7 +189,8 @@ register_legendary_wand( "spirit_familiar", "Spirit Familiar", "goki", {
         { "GKBRKN_CLINGING_SHOT" },
         { "AVOIDING_ARC" },
         { "HOMING_SHOOTER" },
-        { "DEATH_CROSS" },
+        { "GKBRKN_POWER_SHOT" },
+        { "GKBRKN_FALSE_SPELL" },
     }
 } );
 
@@ -475,20 +467,20 @@ register_legendary_wand( "spark_swarm", "Spark Swarm", "Aster Castell", {
         reload_time = {20,20}, -- recharge time in frames
         fire_rate_wait = {16,16}, -- cast delay in frames
         spread_degrees = {0,0}, -- spread
-        mana_charge_speed = {500,500}, -- mana charge speed
-        mana_max = {1000,1000}, -- mana max
+        mana_charge_speed = {200,200}, -- mana charge speed
+        mana_max = {500,500}, -- mana max
     },
     stat_randoms = {},
     permanent_actions = {
     },
     actions = {
-        { { action="LIFETIME_DOWN", locked=true } },
-        { { action="GKBRKN_DUPLICAST", locked=true } },
-        { { action="SLOW_BULLET", locked=true } },
         { { action="LIFETIME", locked=true } },
-        { { action="GKBRKN_EXTRA_PROJECTILE", locked=true } },
+        { { action="HEAVY_SPREAD", locked=true } },
         { { action="GKBRKN_FEATHER_SHOT", locked=true } },
         { { action="AVOIDING_ARC", locked=true } },
+        { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
+        { { action="GKBRKN_TRIPLE_CAST", locked=true } },
+        { { action="GKBRKN_TRIPLE_CAST", locked=true } },
         { { action="GKBRKN_ZAP", locked=true } },
     }
 } );
@@ -707,20 +699,112 @@ register_legendary_wand( "auto_spell", "Auto Spell", "Ivylistar", {
     permanent_actions = {
     },
     actions = {
-        { { action="LONG_DISTANCE_CAST", locked=true } },
+        { { action="LONG_DISTANCE_CAST", locked= false } },
         { { action="LIFETIME_DOWN", locked=false } },
-        { { action="GKBRKN_CLINGING_SHOT", locked=true } },
-        { { action="DELAYED_SPELL", locked=true } },
-        { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
+        { { action="GKBRKN_CLINGING_SHOT", locked= false } },
+        { { action="DELAYED_SPELL", locked= false } },
+        { { action="GKBRKN_SPELL_DUPLICATOR", locked= false } },
         { { action="LIFETIME_DOWN", locked=false } },
         { { action="GKBRKN_FEATHER_SHOT", locked=false } },
-        { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
-        { { action="RECOIL_DAMPER", locked=true } },
-        { { action="GKBRKN_GUIDED_SHOT", locked=true } },
-        { { action="ACCELERATING_SHOT", locked=true } },
-        { { action="ACCELERATING_SHOT", locked=true } },
-        { { action="DAMAGE", locked=true } },
+        { { action="GKBRKN_SPELL_DUPLICATOR", locked= false } },
+        { { action="RECOIL_DAMPER", locked= false } },
+        { { action="GKBRKN_GUIDED_SHOT", locked= false } },
+        { { action="DAMAGE", locked= false } },
         { { action="LIGHT_BULLET", locked=false } },
 
+    }
+} );
+
+register_legendary_wand( "arcane_volley", "Arcane Volley", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {18,18}, -- capacity
+        reload_time = {30,30}, -- recharge time in frames
+        fire_rate_wait = {30,30}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {500,500}, -- mana charge speed
+        mana_max = {500,500}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="LONG_DISTANCE_CAST", locked=true } },
+        { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
+        { { action="GKBRKN_PROJECTILE_GRAVITY_WELL", locked=true } },
+        { { action="ACCELERATING_SHOT", locked=true } },
+        { { action="LIFETIME_DOWN", locked=true } },
+        { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
+        { { action="HORIZONTAL_ARC", locked=true } },
+        { { action="LONG_DISTANCE_CAST", locked=true } },
+        { { action="GKBRKN_TRIGGER_DEATH", locked=true } },
+        { { action="DIGGER", locked=true } },
+        { { action="GKBRKN_FORMATION_STACK", locked=false } },
+        { { action="LIGHT_BULLET", locked=false } },
+        { { action="LIGHT_BULLET", locked=false } },
+        { { action="LIGHT_BULLET", locked=false } },
+    }
+} );
+
+register_legendary_wand( "spell_burst", "Spell Burst", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {15,15}, -- capacity
+        reload_time = {37,37}, -- recharge time in frames
+        fire_rate_wait = {37,37}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {200,200}, -- mana charge speed
+        mana_max = {500,500}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="GKBRKN_TRIGGER_HIT", locked=true } },
+        { { action="LIGHT_BULLET", locked=false } },
+        { { action="GKBRKN_CLINGING_SHOT", locked=true } },
+        { { action="LIFETIME_DOWN", locked=false } },
+        { { action="PINGPONG_PATH", locked=false } },
+        { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
+        { { action="GKBRKN_PERFORATING_SHOT", locked=true } },
+        { { action="BOUNCE", locked=true } },
+        { { action="RECOIL_DAMPER", locked=false } },
+        { { action="GKBRKN_SPEED_DOWN", locked=true } },
+        { { action="LIGHT_BULLET", locked=false } },
+    }
+} );
+
+register_legendary_wand( "earth_mover", "Earth Mover", "Ivylistar", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {8,8}, -- capacity
+        reload_time = {30,30}, -- recharge time in frames
+        fire_rate_wait = {1,1}, -- cast delay in frames
+        spread_degrees = {0,0}, -- spread
+        mana_charge_speed = {30,30}, -- mana charge speed
+        mana_max = {30,30}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+        { "SUMMON_ROCK" },
+    },
+    actions = {
+        { { action="SPEED", locked=true } },
+        { { action="AIR_BULLET", locked=false } },
     }
 } );

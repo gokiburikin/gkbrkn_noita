@@ -6,7 +6,7 @@ function spawn_music_trigger( x, y )
         GameCreateParticle( "creepy_liquid", x, y + 20, 5, 0, 0, false, false );
     end
     if GameHasFlagRun( FLAGS.HotGooMode ) then
-        GameCreateParticle( "creepy_lava", x, y + 20, 5, 0, 0, false, false );
+        GameCreateParticle( "hot_goo", x, y + 20, 5, 0, 0, false, false );
     end
     if GameHasFlagRun( FLAGS.PolyGooMode ) then
         GameCreateParticle( "poly_goo", x, y + 20, 5, 0, 0, false, false );

@@ -286,6 +286,11 @@ function do_fps()
 end
 
 function change_screen( new_screen )
+    if new_screen == 0 then
+        GameRemoveFlagRun( FLAGS.ConfigMenuOpen );
+    else
+        GameAddFlagRun( FLAGS.ConfigMenuOpen );
+    end
     screen = new_screen;
     page = 0;
 end

@@ -23,12 +23,11 @@
         tags="[impure]"
         name="corruption" 
         ui_name="Corruption"
-        wang_color="ff222324"
+        wang_color="ff212224"
         hp="100000" 
         burnable="0"
         density="10"
         cell_type="liquid"
-        wang_color="ff353923"
         liquid_gravity="1.2"
         liquid_sand="1"
         liquid_static="1"
@@ -42,12 +41,20 @@
         show_in_creative_mode="1"
         >
         <Graphics
-        color="FF000000" >
+        color="FF110011" >
         </Graphics>
     </CellData>
     <Reaction probability="100"
         input_cell1="killer_goo" input_cell2="air"
         output_cell1="killer_goo" output_cell2="killer_goo" >
+    </Reaction>
+    <Reaction probability="10"
+        input_cell1="killer_goo" input_cell2="air"
+        output_cell1="corruption" output_cell2="corruption" >
+    </Reaction>
+    <Reaction probability="100"
+        input_cell1="corruption" input_cell2="air"
+        output_cell1="corruption" output_cell2="corruption" >
     </Reaction>
     <Reaction probability="30"
         input_cell1="killer_goo" 				input_cell2="[solid]"

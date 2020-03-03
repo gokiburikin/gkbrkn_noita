@@ -27,10 +27,13 @@ FLAGS = {
     DisintegrateCorpses = "gkbrkn_disintegrate_corpses",
     DebugMode = "gkbrkn_debug_mode",
     ShowDeprecatedContent = "gkbrkn_show_deprecated_content",
+    AngryGods = "gkbrkn_angry_gods",
+    HitsTeleportToLastHolyMountain = "gkbrkn_no_hit_lite",
+    ConfigMenuOpen = "gkbrkn_config_menu_open",
 }
 
 SETTINGS = {
-    Version = "c96"
+    Version = "c97"
 }
 
 CONTENT_TYPE = {
@@ -196,7 +199,7 @@ PERKS = {
         radioactive=0.33,
         poison=0.33,
         electricity=0.33,
-    }} ),
+    } }, true, true ),
     PassiveRecharge = register_perk( "passive_recharge", nil, true, true ),
     LostTreasure = register_perk( "lost_treasure" ),
     AlwaysCast = register_perk( "always_cast" ),
@@ -212,7 +215,7 @@ PERKS = {
     Multicast = register_perk( "multicast", nil, true, true ),
     Megacast = register_perk( "megacast" ),
     MagicLight = register_perk( "magic_light", nil, true, true ),
-    QueueCasting = register_perk( "queue_casting" ),
+    QueueCasting = register_perk( "queue_casting", nil, true, true ),
     DisenchantSpell = register_perk( "disenchant_spell" ),
     BloodMagic = register_perk( "blood_magic", {
         BloodToManaRatio = 1,
@@ -290,6 +293,7 @@ ACTIONS = {
     TimeSplit = register_action( "time_split" ),
     FormationStack = register_action( "formation_stack" ),
     PiercingShot = register_action( "piercing_shot", nil, nil, true, true ),
+    PerforatingShot = register_action( "perforating_shot" ),
     BarrierTrail = register_action( "barrier_trail" ),
     GlitteringTrail = register_action( "glittering_trail" ),
     ChaoticBurst = register_action( "chaotic_burst" ),
@@ -300,7 +304,7 @@ ACTIONS = {
     NuggetShot = register_action( "nugget_shot", nil, { callback=function() ModMaterialsFileAdd("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/materials.xml") end } ),
     ProtectiveEnchantment = register_action( "protective_enchantment" ),
     ChainCast = register_action( "chain_cast" ),
-    MultiDeathTrigger = register_action( "multi_death_trigger" ),
+    MultiDeathTrigger = register_action( "multi_death_trigger", nil, nil, true, true ),
     SpellDuplicator = register_action( "spell_duplicator" ),
     FeatherShot = register_action( "feather_shot" ),
     FollowShot = register_action( "follow_shot" ),
@@ -316,6 +320,11 @@ ACTIONS = {
     TimeCompression = register_action( "time_compression" ),
     LinkShot = register_action( "link_shot" ),
     TrailingShot = register_action( "trailing_shot" ),
+    ZeroGravity = register_action( "zero_gravity" ),
+    ReduceKnockback = register_action( "reduce_knockback" ),
+    SpeedDown = register_action( "speed_down" ),
+    HyperBounce = register_action( "hyper_bounce" ),
+    FalseSpell = register_action( "false_spell" ),
 }
 
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
@@ -348,6 +357,8 @@ TWEAKS = {
     ExplosionOfThunder = register_tweak( "explosion_of_thunder", { action_id="THUNDER_BLAST" } ),
     AllSeeingEye = register_tweak( "all_seeing_eye", { action_id="X_RAY" }, true, true, true ),
     SpiralShot = register_tweak( "spiral_shot", { action_id="SPIRAL_SHOT" } ),
+    PiercingShot = register_tweak( "piercing_shot", { action_id="PIERCING_SHOT" } ),
+    ClippingShot = register_tweak( "clipping_shot", { action_id="CLIPPING_SHOT" } ),
     TeleportCast = register_tweak( "teleport_cast", { action_id="TELEPORT_CAST" } ),
     BloodAmount = register_tweak( "blood_amount", {
         Multiplier = 0.98,
@@ -1136,7 +1147,7 @@ GAME_MODIFIERS = {
             local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
                 adjust_material_damage( damage_model, function( materials, damage )
-                    table.insert( materials, "creepy_lava");
+                    table.insert( materials, "hot_goo");
                     table.insert( damage, "0.003");
                     return materials, damage;
                 end);
@@ -1146,7 +1157,7 @@ GAME_MODIFIERS = {
             end
 
             local x, y = EntityGetTransform( player_entity );
-            GameCreateParticle( "creepy_lava", x - 50, y, 5, 0, 0, false, false );
+            GameCreateParticle( "hot_goo", x - 50, y, 5, 0, 0, false, false );
         end,
         run_flags = { FLAGS.HotGooMode }
     } ),
@@ -1186,7 +1197,7 @@ GAME_MODIFIERS = {
                 adjust_material_damage( damage_model, function( materials, damage )
                     table.insert( materials, "alt_killer_goo");
                     table.insert( damage, "0.001");
-                    table.insert( materials, "corruption");
+                    table.insert( materials, "alt_corruption");
                     table.insert( damage, "0.001");
                     return materials, damage;
                 end);
@@ -1224,6 +1235,18 @@ GAME_MODIFIERS = {
     FloorIsLava = register_game_modifier( "floor_is_lava", { run_flags = { FLAGS.FloorIsLava } } ),
     InfiniteFlight = register_game_modifier( "infinite_flight", { run_flags = { FLAGS.InfiniteFlight } } ),
     DisintegrateCorpses = register_game_modifier( "disintegrate_corpses", { run_flags = { FLAGS.DisintegrateCorpses } } ),
+    AngryGods = register_game_modifier( "angry_gods", {
+        player_spawned_callback = function( player_entity )
+            GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", "1" );
+        end,
+        run_flags = { FLAGS.AngryGods } } ),
+    HitsTeleportToLastHolyMountain = register_game_modifier( "no_hit_lite", {
+        player_spawned_callback = function( player_entity )
+            EntityAddComponent( player_entity, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/teleport_on_hit.lua"
+            } );
+        end,
+        run_flags = { FLAGS.AngryGods } } ),
 }
 
 local register_event = function( key, name, message, callback, condition, weight, disabled_by_default, deprecated, inverted )
@@ -2078,7 +2101,8 @@ if HasFlagPersistent( FLAGS.DebugMode ) then
                     mana_max = {5000,5000}, -- mana max
                 },
                 stat_randoms = {},
-                permanent_actions = {},
+                permanent_actions = {
+                },
                 actions = {
                     { "GKBRKN_TRIPLE_CAST" },
                     { "BUBBLESHOT" },
@@ -2169,6 +2193,7 @@ if HasFlagPersistent( FLAGS.DebugMode ) then
         },
         { -- potions
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+            { { {"alcohol", 500}, {"lava",500} } }, -- a list of random choices of material amount pairs
         },
         { -- items
         },

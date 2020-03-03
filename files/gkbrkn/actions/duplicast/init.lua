@@ -1,15 +1,16 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 table.insert( actions, generate_action_entry(
     "GKBRKN_DUPLICAST", "duplicast", ACTION_TYPE_OTHER,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 12, -1,
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 25, -1,
     nil,
     function()
         current_reload_time = current_reload_time + 30;
         --[[
+        ]]
         c.pattern_degrees = c.pattern_degrees + 180;
         extra_projectiles( 7 );
         draw_actions( 1, true );
-        ]]
+        --[[
         local _current_reload_time = current_reload_time;
         if reflecting then 
             return;
@@ -51,5 +52,6 @@ table.insert( actions, generate_action_entry(
         draw_actions( 1, true );
         deck = _deck;
         current_reload_time = _current_reload_time;
+        ]]
     end
 ) );

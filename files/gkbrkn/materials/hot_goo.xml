@@ -1,13 +1,13 @@
 <Materials>
     <CellData
-        name="creepy_lava"
-        tags="[fire],[liquid],[lava]"
+        name="hot_goo"
+        tags="[liquid],[lava],[impure]"
         burnable="0"
         density="6"
         ui_name="Hot Goo"
         cell_type="liquid"
         gfx_glow="150"
-        wang_color="ffff6001"
+        wang_color="ff414345"
         generates_smoke="0"
         liquid_gravity="0.1"
         liquid_sand="0"
@@ -16,9 +16,13 @@
         danger_fire="1"
         requires_oxygen="0"
         temperature_of_fire="90">
+        <Graphics
+        color="ffff6000">
+    </Graphics>
     </CellData>
+    
     <Reaction probability="100"
-        input_cell1="creepy_lava" input_cell2="air"
-        output_cell1="creepy_lava" output_cell2="creepy_lava">
+        input_cell1="hot_goo" input_cell2="air"
+        output_cell1="hot_goo" output_cell2="hot_goo">
     </Reaction>
 </Materials>

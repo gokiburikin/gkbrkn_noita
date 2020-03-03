@@ -128,7 +128,7 @@ end
 --[[ Health Recovery ]]
 local health_recovery = 0;
 if CONTENT[DEV_OPTIONS.RecoverHealth].enabled() then
-    health_recovery = 4/60;
+    health_recovery = 4/15;
 end
 if health_recovery ~= 0 then
     for _,damage_model in pairs( damage_models ) do
@@ -1147,5 +1147,22 @@ if now % 60 == 0 then
         end
     end
 end
+
+--[[
+if now % 10 == 0 then
+    local nearby_enemies = EntityGetWithTag( "enemy" );
+    for _,enemy in pairs( nearby_enemies ) do
+        if not EntityHasTag( enemy, "low_gravity" ) then
+            EntityAddTag( enemy, "low_gravity" );
+            local character_platforming = EntityGetFirstComponent( enemy, "CharacterPlatformingComponent" );
+            if character_platforming then
+                local pixel_gravity = tonumber( ComponentGetValue( character_platforming, "pixel_gravity" ) );
+                ComponentSetValue( character_platforming, "pixel_gravity", math.min( 200, pixel_gravity ) );
+                GamePrint( "set "..EntityGetName(enemy).." to low gravity" );
+            end
+        end
+    end
+end
+]]
 
 add_update_time( GameGetRealWorldTimeSinceStarted() - t );

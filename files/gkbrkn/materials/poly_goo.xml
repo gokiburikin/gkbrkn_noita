@@ -6,7 +6,7 @@
         density="4"
         ui_name="Poly Goo"
         cell_type="liquid"
-        wang_color="80f18bec"
+        wang_color="ff212228"
         generates_smoke="0"
         liquid_gravity="0.8"
         liquid_sand="0"
@@ -18,6 +18,9 @@
         status_effects="POLYMORPH"
         show_in_creative_mode="1"
         >
+        <Graphics
+		color="80f18beb" 
+		></Graphics>
         <ParticleEffect
             vel.y="-2.857"
             vel_random.min_x="-6"

@@ -3,7 +3,6 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
-    local keep = false;
     local shooter = tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) or 0;
     local active_wand = WandGetActive( shooter );
     if active_wand ~= nil then

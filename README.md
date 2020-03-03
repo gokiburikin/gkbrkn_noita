@@ -16,24 +16,42 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 
 ### Loadouts
 - **Alchemist**: Chaotic Transmutation Acid Ball, Water, Potions, Material Compression.
-- **Blood**: Magic Arrow, Magic Missile, Blood Magic.
+- **Blood**: Following Blood Cloud, Multi-cast Sparkbolts, More Blood.
+- **Bomb**: Firecracker TNT, Unstable Crystals, Pocket Holy Bombs, Bombs Materialized.
 - **Bubble**: Gravity Bubble Spark, Bouncy Dropper Shot, Fast Swimmer.
 - **Charge**: Magic Hand, Stored Shot, Sparkbolt, Critical Hit +.
+- **Combustion**: Bouncy Laser, Flaming Bouncing Burst, Revenge Explosion.
 - **Conjurer**: Living Death Cross, Boomerang Spells.
+- **Convergent**: Trigger Spark Bolt into converging Spark Bolts.
 - **Default**: The standard loadout.
 - **Demolition**: Dormant Crystal, Dormant Crystal Detonator, Demolition.
 - **Duplication**: Spell Duplicated Sparkbolt Field, Spell Duplicated Energy Orb, Extra Projectile.
+- **Event Horizon**: A challenge mode loadout. Clear the game with only an Always Cast Giga Black Hole wand!
+- **Frost**: Triggered Poison Explosion, Circle of Stillness, Freeze Field.
+- **Geomancer**: Soil Egg, Holy Bomb Egg, Dissolve Powders.
 - **Glitter**: Long Distance Glittering Trail Stored Shot, Glitter Bomb.
 - **Goo Mode**: A loadout designed for the Goo Mode and Hot Goo Mode Game Modifiers.
+- **Grease**: Crit on Oil and Burning Sparkbolts, Long Distance Cast Oil Trail, Oil Blood.
 - **Heroic**: Luminous Drill, Energy Shield, Protagonist.
+- **Hydromancy**: Light Shot Water to Point Glowing Lance, Water conjuration, Very Fast Swimming.
 - **Kamikaze**: Explosive Teleport, Protective Enchantment Explosion, Fire Immunity.
+- **Knockback**: Super Burst of Air, Bomb, Lead Boots.
 - **Legendary**: Starts with a random Legendary Wand.
+- **Light**: Lasers, Lasers, Lasers!
+- **Melting**: 
+- **Rapid**: 
 - **Seeker**: Double Persistent Avoiding Drilling Bolts, TNT.
 - **Spark**: Electric Charge Sparkbolt Timer Zap, Thunder Charge.
+- **Speed**: 
 - **Speedrunning**: Teleport, Black Hole, Teleportitis.
+- **Spellsword**: 
+- **Taikasauva Terror**: 
+- **Tentacle**: 
+- **Toxic**: 
 - **Treasure Hunter**: Treasure Sense, Nugget Shot, Digging Bolt, Attract Gold.
 - **Trickster**: Long Distance Cast Magicbolt / Sparkbolt split cast, Forward and Back Teleport, Passive Recharge.
 - **Unstable**: Chaotic Burst, Unstable Crystal, Fragile Ego.
+- **Vampiric**: 
 - **Wandsmith**: Default wands. Starts with 8 random spells and Edit Wands Everywhere.
 - **Zoning**: Energy Sphere Mines, Giga Death Cross.
 
@@ -75,6 +93,7 @@ Activating Options > Champions > Enabled will allow enemies to randomly be upgra
 - **Regenerating**: If damage hasn't been taken in the last second, rapidly recover missing health.
 - **Revenge Explosion**: Explode upon death.
 - **Reward**: Spawn a chest on death (used for mini-bosses.)
+- **Sparkbolt**: Gain a basic sparkbolt projectile attack.
 - **Teleporting**: Teleport randomly or when taking damage (must be near the player.)
 - **Toxic Trail**: Projectiles gain a trail of toxic sludge.
 
@@ -91,12 +110,15 @@ Carnage Mode is an extra unfair difficulty intended to be a challenge for those 
 Unique wands can rarely be found in place of normal altar wands. These wands are specifically crafted builds that may or may not be editable.
 
 - **Alchemic Lance**: Convert local materials at a cost.
+- **Arcane Volley**: Rain magic down onto your enemies.
+- **Auto Spell**: Summon a static phenomenon that casts guided copies of the chosen spell.
 - **Bubble Burst**: Bubbles orbiting bubbles.
 - **Emerald Splash**: A sudden release of many bouncing bursts.
 - **Endless Alchemy**: Free chaotic transmutation. Maybe you'll strike gold?
 - **Frost Wall**: Create an (inconsistent) wall of frost in an instant!
 - **Magic Popcorn**: Magical gravity-defying popcorn.
 - **Matra Magic**: Rapid-fire enemy seeking lasers.
+- **Meat Grinder**: Slice and dice.
 - **Noitius**: A powerful volley of basic spells in a pleasing formation.
 - **Pocket Black Hole**: A black hole that goes wherever you do.
 - **Slime Rocket**: A player-guided, explosive slime ball.
@@ -123,24 +145,6 @@ Options to start runs with random changes. All of these can be used separately o
 - **Random Flasks**: Start with a random assortment of flasks.
 - **Random Perk**: Start with a random perk.
 
-## Game Modifiers
-Options to modify your run. They are not all compatible, but can be combined to create interesting challenge runs.
-
-- **Goo Mode**: Outrun the goo that is taking over the world!
-- **Guaranteed Always Cast**: Wands will generate with at least one always cast spell.
-- **Hard Mode**: Removes a handful of perks and spells that tend to trivialize certain gameplay mechanics (immunities, freeze, polymorph spells, etc.)
-- **Hot Goo Mode**: Outrun the hot goo that is taking over the world!
-- **Limited Ammo**: Unlimited spells become limited based on their mana cost.
-- **Limited Mana**: Wands have more mana, but do not recharge mana over time.
-- **No Hit**: Game over if you take any damage!
-- **No Wand Editing**: All wands are frozen and can not be edited!
-- **No Wand Generation**: Removes all wands from the game that weren't specifically given to the player.\nUse this with Loadouts to create challenge runs!
-- **Order Wand Only**: Wands always generate as Shuffle: No.
-- **Shuffle Wand Only**: Wands always generate as Shuffle: Yes.
-- **Spell Shops Only**: Shops will only carry spells.
-- **Unlimited Ammo**: Limited spells become unlimited.
-- **Wand Shops Only**: Shops will only carry wands.
-
 ## Utility
 These options have an impact on general gameplay and are meant to be picked and chosen based on your preferred play style.
 
@@ -160,7 +164,6 @@ These options have an impact on general gameplay and are meant to be picked and 
 - **Health Bars**: Show enemy health bars.
 - **Invincibility Frames**: Become invincibile for a short time when damaged by enemies.
 - **Less Particles**: Reduce or disable cosmetic particle emission (to reduce particle load.)
-- **Limited Ammo**: Gives all unlimited projectile spells limited uses.
 - **No Preset Wands**: Replace the preset wands in the first biome with procedural wands.
 - **Passive Recharge**: Wands recharge while holstered.
 - **Persistent Gold**: Gold nuggets no longer despawn.
@@ -170,8 +173,6 @@ These options have an impact on general gameplay and are meant to be picked and 
 - **Spell Slot Machine**: Add a slot machine that you can buy spells from in the Holy Mountain.
 - **Starting Perks**: Adds the ability to start with a selection of perks from all loaded mods.
 - **Target Dummy**: Add a target dummy to each Holy Mountain.
-- **Unimited Ammo**: Gives all limited spells unlimited uses.
-- **Wand Shops Only**: All spell shops will be replaced with wand shops.
 
 ## Content
 All content can be toggled on or off. Pick and choose what you like, or disable it all if you're only interested in the utility of Goki's Things.
@@ -187,11 +188,49 @@ All content can be toggled on or off. Pick and choose what you like, or disable 
 - **Heavy Shot**: Costs more mana, reduce damage bonus, but increase critical chance. Lower average DPS, more useful across spells that can crit.
 - **Increase Mana**: Disable.
 - **Projectile Repulsion**: No longer rejects self projectiles, performance improvements.
+- **Reduce Blood Amount**: Reduces the amount of blood enemies have every time they take damage so they don't flood the world.
 - **Reduce Stun Lock**: Reduces the time the player can't fly for when taking a knockback hit.
 - **Revenge Explosion**: No longer activates on environmental / self damage, fixes the explosions not proccing when taking rapid tick (fire) damage.
 - **Revenge Tentacle**: No longer activates on environmental / self damage, fixes the tentacle not proccing when taking rapid tick (fire) damage.
 - **Spiral Shot**: Complete rewrite to fix the extremely heavy performance cost.
 - **Teleport Cast**: Cast on hitbox centre instead of entity origin.
+
+### Game Modifiers
+Options to spice up your runs. Most of these require a new game to activate and are active for the entire game (can't be disabled halfway) so use them to create challenge runs! Many of them can be mixed and matched to create even more crazy combinations.
+
+*Generated wands do not include the preset wands that spawn in the first biome. You can remove those wands by using the No Preset Wands option on page 2 of the Options tab!*
+
+- **Disintegrate Corpses**: Your kills leave no corpses behind.
+- **Floor is Lava**: You take damage while grounded.
+- **Free Shops**: Items in the shop will cost 0 gold.
+- **Guaranteed Always Cast**: Generated wands will have at least 1 Always Cast spell.
+- **Limited Ammo**: Unlimited use spells become limited.
+- **Limited Mana**: Wands have more mana, but do not recharge mana.
+- **No Hit**: You die in one hit.
+- **No Wand Editing**: You can not edit wands.
+- **Order Wands Only**: Generated wands will be Shuffle: No.
+- **Remove Generic Wands**: Wands that aren't considered special (loadouts, challenges, duplicates, merged, etc.) are removed from the world.
+- **Shuffle Wands Only**: Generated wands will be Shuffle: Yes.
+- **Spell Shops Only**: Shops will only have spells in them.
+- **Unlimited Ammo**: Limited use spells become unlimited.
+- **Unlimited Levitation**: You can levitate freely.
+- **Wand Shops Only**: Shops will only have wands in them.
+
+#### Goo Modes
+These modes are challenge runs that are meant to be played with the Goo Loadout! You can enable that loadout by enabling Loadouts -> Enable Loadouts on the first page of the Options tab and disabling all loadouts but the Goo Mode loadout from the Loadouts tab!
+
+- **Corruption Goo Mode**: Corruption is spreading and converting the world. Don't get caught up in it!
+- **Goo Mode**: Try to outrun the ever expanding goo! You'll drown if you get stuck in it, so move quickly!
+- **Hot Goo Mode**: The floor is lava? How about the world is lava! Get away from that hot goo!
+- **Killer Goo Mode**: A mysterious killer goo is consuming everything it touches! Avoid it at all cost!
+- **Poly Goo Mode**: Some pretty pink goo is making everything cute and fluffy. Will this be your fate, too?
+
+#### Hard Mode
+This mode disables certain perks and spell that remove game mechanics / trivialize combat as you progress through the game.
+
+Current changes:
+- Disable the spells Freeze Charge, Increase Mana, Piercing Shot, Circle of Transmutation, and Circle of Stillness
+- Disable the perks Electricity, Fire Immunity, Explosion Immunity, Melee Immunity, Electric Immunity, Invisibility, Teleportitis, More Love, Always Cast, and Edit Wands Everywhere
 
 ### Perks
 - **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.

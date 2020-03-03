@@ -781,22 +781,22 @@ register_loadout(
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
             stat_ranges = {
-                deck_capacity = {6,6}, -- capacity
+                deck_capacity = {7,7}, -- capacity
                 reload_time = {17,17}, -- recharge time in frames
                 fire_rate_wait = {9,9}, -- cast delay in frames
                 spread_degrees = {2,2}, -- spread
                 mana_charge_speed = {60,60}, -- mana charge speed
-                mana_max = {160,160}, -- mana max
+                mana_max = {200,200}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
-                { "HORIZONTAL_ARC" },
-                { "FLY_UPWARDS" },
-                { "FLY_DOWNWARDS" },
-                { "GKBRKN_FEATHER_SHOT" },
-                { "BOUNCY_ORB" },
+                { "LONG_DISTANCE_CAST" },
+                { "GKBRKN_PROTECTIVE_ENCHANTMENT" },
+                { "BURST_2" },
+                { "WALL_VERTICAL" },
+                { "WALL_HORIZONTAL" },
             }
         },
         {
@@ -1262,7 +1262,8 @@ register_loadout(
                 { "GKBRKN_GUIDED_SHOT" },
                 { "GKBRKN_CLINGING_SHOT" },
                 { "AVOIDING_ARC" },
-                { "DEATH_CROSS" },
+                { "GKBRKN_POWER_SHOT" },
+                { "GKBRKN_FALSE_SPELL" },
             }
         },
         {
@@ -1319,19 +1320,22 @@ register_loadout(
                 fire_rate_wait = {40,40}, -- cast delay in frames
                 spread_degrees = {-3,-3}, -- spread
                 mana_charge_speed = {60,60}, -- mana charge speed
-                mana_max = {140,140}, -- mana max
+                mana_max = {210,210}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
-                { "LIGHT_BULLET_TRIGGER" },
-                { "HEAVY_SPREAD" },
-                { "GKBRKN_TRIPLE_CAST" },
-                { "LONG_DISTANCE_CAST" },
-                { "I_SHAPE" },
-                { "LIGHT_BULLET" },
-                { "DIGGER" },
+                { { action="GKBRKN_TRIGGER_HIT", locked=true} },
+                { { action="LIGHT_BULLET", locked=false} },
+                { { action="HEAVY_SPREAD", locked=true} },
+                { { action="ACCELERATING_SHOT", locked=true} },
+                { { action="GKBRKN_DOUBLE_CAST", locked=false} },
+                { { action="GKBRKN_DOUBLE_CAST", locked=false} },
+                { { action="LONG_DISTANCE_CAST", locked=true} },
+                { { action="I_SHAPE", locked=true} },
+                { { action="LIGHT_BULLET", locked=false} },
+                { { action="DIGGER", locked=false} },
             }
         },
         {
@@ -1555,7 +1559,8 @@ register_loadout(
                 { { action="GKBRKN_DOUBLE_CAST", locked=true } },
                 { { action="GKBRKN_TRIPLE_CAST", locked=true } },
                 { { action="GKBRKN_CARRY_SHOT", locked=true } },
-                { { action="LIGHT_BULLET_TIMER", locked=false } },
+                { { action="GKBRKN_TRIGGER_TIMER", locked=true } },
+                { { action="RUBBER_BALL", locked=false } },
             }
         },
         {
@@ -1797,10 +1802,10 @@ register_loadout(
     }
 );
 
--- Frost (More Loadouts Update)
+-- Poison (More Loadouts Update; was Frost)
 register_loadout(
-    "gkbrkn_frost", -- unique identifier
-    gkbrkn_localization.loadout_frost, -- displayed loadout name
+    "gkbrkn_poison", -- unique identifier
+    gkbrkn_localization.loadout_poison, -- displayed loadout name
     "goki",
     0xff929292, -- cape color (ABGR)
     0xfff0ea6d, -- cape edge color (ABGR)
@@ -2312,10 +2317,10 @@ register_loadout(
     }
 );
 
--- Blood (More Loadouts Update)
+-- Critical (More Loadouts Update; was Blood)
 register_loadout(
-    "gkbrkn_blood", -- unique identifier
-    gkbrkn_localization.loadout_blood, -- displayed loadout name
+    "gkbrkn_critical", -- unique identifier
+    gkbrkn_localization.loadout_critical, -- displayed loadout name
     "goki",
     0xff1e1a87, -- cape color (ABGR)
     0xff2f2aa9, -- cape edge color (ABGR)
@@ -2557,17 +2562,17 @@ register_loadout(
             },
             stat_ranges = {
                 deck_capacity = {7,7}, -- capacity
-                reload_time = {24,24}, -- recharge time in frames
+                reload_time = {48,48}, -- recharge time in frames
                 fire_rate_wait = {60,60}, -- cast delay in frames
                 spread_degrees = {1,1}, -- spread
-                mana_charge_speed = {100,100}, -- mana charge speed
-                mana_max = {180,180}, -- mana max
+                mana_charge_speed = {150,150}, -- mana charge speed
+                mana_max = {150,150}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
-                { "GKBRKN_DESTRUCTIVE_SHOT" },
+                { "UNSTABLE_GUNPOWDER" },
                 { "GKBRKN_FORMATION_STACK" },
                 { "LASER" },
                 { "LASER" },
@@ -2770,6 +2775,121 @@ register_loadout(
                 {"BURST_2"},
                 {"POISON_BLAST"},
                 {"FIRE_BLAST"},
+            }
+        },
+    },
+    { -- potions
+        { { { "water", 1000 } } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+    }
+);
+
+-- Bouncy (More Loadouts Update)
+register_loadout(
+    "gkbrkn_bouncy", -- unique identifier
+    gkbrkn_localization.loadout_bouncy, -- displayed loadout name
+    "goki",
+    0xff00FF00, -- cape color (ABGR)
+    0xff00FF00, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {8,8}, -- capacity
+                reload_time = {15,15}, -- recharge time in frames
+                fire_rate_wait = {15,15}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {80,80}, -- mana charge speed
+                mana_max = {180,180}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { { action="GKBRKN_HYPER_BOUNCE",locked=true} },
+                { { action="ACCELERATING_SHOT",locked=true} },
+                { { action="GKBRKN_ZERO_GRAVITY",locked=true} },
+                { "LIGHT" },
+                { "RUBBER_BALL" },
+            }
+        },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {5,5}, -- capacity
+                reload_time = {30,30}, -- recharge time in frames
+                fire_rate_wait = {30,30}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {80,80}, -- mana charge speed
+                mana_max = {180,180}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { "BOUNCE" },
+                { "GRENADE_LARGE" },
+            }
+        },
+    },
+    { -- potions
+        { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+    },
+    { -- items
+    },
+    { -- perks
+    }
+);
+
+-- Lancer (More Loadouts Update)
+register_loadout(
+    "gkbrkn_lancer", -- unique identifier
+    gkbrkn_localization.loadout_lancer, -- displayed loadout name
+    "goki",
+    0xFFFFFFFF, -- cape color (ABGR)
+    0xFFFFFFFF, -- cape edge color (ABGR)
+    { -- wands
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 4, -- spells per cast
+                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {12,12}, -- capacity
+                reload_time = {23,23}, -- recharge time in frames
+                fire_rate_wait = {23,23}, -- cast delay in frames
+                spread_degrees = {1,1}, -- spread
+                mana_charge_speed = {80,80}, -- mana charge speed
+                mana_max = {180,180}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                { { action="GKBRKN_ZERO_GRAVITY",locked=true } },
+                { { action="GKBRKN_TRIGGER_DEATH",locked=true } },
+                { { action="GKBRKN_FALSE_SPELL",locked=true } },
+                { { action="HEAVY_SHOT",locked=true } },
+                { { action="GKBRKN_SPEED_DOWN",locked=true } },
+                { { action="LONG_DISTANCE_CAST",locked=true } },
+                { { action="GKBRKN_FALSE_SPELL",locked=true } },
+                { { action="DAMAGE",locked=true } },
+                { { action="LONG_DISTANCE_CAST",locked=true } },
             }
         },
     },

@@ -1,9 +1,40 @@
 --[[
 changelog
-    -m "Fix Options: Development Mode having strange activation logic (fixes dev options being enabled even if hidden)"
-    -m "Rename Loadout: Eldritch to Loadout: Tentacle"
-    -m "Change Action: Arcane Bouquet (mana cost 50 -> 12)"
-    -m "Remove a line of code that is causing the mod to not work on stable branch (even though this mod is marked as beta branch only)"
+    -m "The Update that fixes Hot Goo"
+    -m "Add Action: False Spell"
+    -m "Add Action: Hyper Bounce"
+    -m "Add Action: Perforating Shot"
+    -m "Add Action: Reduce Knockback"
+    -m "Add Action: Speed Down"
+    -m "Add Action: Zero Gravity Shot"
+    -m "Add Game Modifier: Angry Gods"
+    -m "Add Game Modifier: Corruption Goo Mode"
+    -m "Add Game Modifier: No Hit Lite"
+    -m "Add Loadout: Bouncy"
+    -m "Add Unique Wand: Arcane Volley"
+    -m "Add Unique Wand: Earth Mover"
+    -m "Add Unique Wand: Spell Burst"
+    -m "Change Action: Bound Shot (damage 2 -> 0)"
+    -m "Change Action: Chaotic Burst (spawn weighting 0.8 -> 0.6)"
+    -m "Change Action: Feather Shot (remove knockback reduction, remove gravity reduction, remove mass reduction, remove recoil reduction)"
+    -m "Change Action: Guided Shot (apply aim angle on the first frame)"
+    -m "Change Action: Magic Hand (remove unintended extra distance, clean up logic, maintain spread, improve synergy capabilities)"
+    -m "Change Action: Zap (spawn weighting 0.8 -> 0.6)"
+    -m "Change Loadout: Conjuration (switch death cross out for false spell)"
+    -m "Change Loadout: Convergent (more early usability, more potential)"
+    -m "Change Loadout: Light (digging wand changes)"
+    -m "Change Loadout: Zoning (rework)"
+    -m "Change Options: Fixed Camera (interpolation speed 50 -> 20)"
+    -m "Change some Goo Mode stuff (fix Poly Goo, wang colour collision, remove killer goo alt, add particle effects to killer goo)"
+    -m "Change Tweak: Increase Mana (no longer disables the spell, mana cost -30 -> 0, restores 30 mana on cast fixing the always cast synergy)"
+    -m "Change Unique Wand: Auto Spell (remove accelerating shots since they're no longer needed with the guided shot change)"
+    -m "Change Unique Wand: Spark Swarm (update for the arcane bouquet rework)"
+    -m "Change Unique Wand: Spirit Familiar (switch death cross out for false spell)"
+    -m "Change Unique Wand: Telefragger (simplified)"
+    -m "Deprecate Action: Queued Cast"
+    -m "Deprecate Perk: Queue Casting"
+    -m "Deprecate Perk: Resilience"
+    -m "Fix Hot Goo spawning in unintended circumstances"
 
 TODO
     Hard Mode
@@ -14,8 +45,6 @@ TODO
             Lukki Mutation, Vampirism, More Blood x3, Enemy Radar, Slime Blood, Chainsaw Only, Immunities Forbidden
         Space Wizard
             Teleportitus, Freeze Field, every wand you build must have a Teleport spell (consider: bleed teleportitus, make every spawned wand always cast teleport.)
-        Super Singularity Bros.
-            Wand with always cast long-distance Giga Black Holes, can't use anything else.
         Use What You See
             You must use every wand you come across. Spells are allowed to be edited, but you can't change the base wand unless you find a replacement. Shop wands only.
     Alternative Enemies
@@ -129,7 +158,7 @@ ModLuaFileAppend( "data/scripts/items/drop_money.lua", "mods/gkbrkn_noita/files/
 ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_procedural.lua" );
 ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noita/files/gkbrkn/append/generate_shop_item.lua" );
 ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn/starting_perks_config_append.lua" );
-ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/creepy_lava.xml" );
+ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/hot_goo.xml" );
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/poly_goo.xml" );
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" );
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );

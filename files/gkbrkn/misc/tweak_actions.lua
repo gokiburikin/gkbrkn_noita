@@ -85,6 +85,20 @@ local edit_callbacks = {
 			c.fire_rate_wait = c.fire_rate_wait + 20;
 			c.spread_degrees = c.spread_degrees + 12;
 		end
+    end,
+    PIERCING_SHOT = function ( action, index )
+        action.action = function()
+			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/piercing_shot.xml,"
+			draw_actions( 1, true );
+		end
+    end,
+    CLIPPING_SHOT = function ( action, index )
+        action.action = function()
+			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/clipping_shot.xml,"
+            c.fire_rate_wait = c.fire_rate_wait + 50;
+			current_reload_time = current_reload_time + 40;
+			draw_actions( 1, true );
+		end
     end
 }
 

@@ -1,5 +1,6 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 
 function shot( projectile_entity )
     local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
@@ -90,5 +91,64 @@ function shot( projectile_entity )
     if CONTENT[TWEAKS.BloodAmount].enabled() then
         local add = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/blood_tweak/projectile_extra_entity.xml" );
         EntityAddChild( projectile_entity, add );
+    end
+
+    if EntityGetVariableNumber( projectile_entity, "gkbrkn_guided_shot", 0 ) == 1 then
+        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
+        if velocity ~= nil then
+            local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
+            if projectile ~= nil then
+                local aim_angle = 0;
+                local components = EntityGetAllComponents( player ) or {};
+                for _,component in pairs( components ) do
+                    if ComponentGetTypeName( component ) == "ControlsComponent" then
+                        local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
+                        aim_angle = math.atan2( ay, ax );
+                        break;
+                    end
+                end
+                local vx,vy = ComponentGetValueVector2( velocity, "mVelocity", vx, vy );
+                local magnitude = math.sqrt( vx * vx + vy * vy );
+                ComponentSetValueVector2( velocity, "mVelocity", math.cos( aim_angle ) * magnitude, math.sin( aim_angle ) * magnitude );
+            end
+        end
+    end
+
+    if EntityGetVariableNumber( projectile_entity, "gkbrkn_magic_hand", 0 ) == 1 then
+
+        if projectile ~= nil then
+            ComponentSetValue( projectile, "die_on_low_velocity", "0" );
+        end
+
+        local initial_angle = 0;
+        local aim_angle = 0;
+
+        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
+        if velocity ~= nil then
+            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            initial_angle = math.atan2( vy, vx );
+            ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+            ComponentSetValue( velocity, "gravity_y", 0 );
+        end
+
+        local components = EntityGetAllComponents( player ) or {};
+        for _,component in pairs( components ) do
+            if ComponentGetTypeName( component ) == "ControlsComponent" then
+                local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
+                aim_angle = math.atan2( ay, ax );
+            end
+        end
+
+        local x, y = EntityGetTransform( projectile_entity );
+        local active_wand = WandGetActive( player );
+        if active_wand ~= nil then
+            local wx, wy = EntityGetTransform( active_wand );
+            local distance = math.sqrt( math.pow( wx - x, 2 ) + math.pow( wy - y, 2 ) ) + 8;
+            EntitySetVariableNumber( projectile_entity, "gkbrkn_magic_hand_distance", distance );
+        end
+
+        if initial_angle ~= nil then
+            EntitySetVariableNumber( projectile_entity, "gkbrkn_magic_hand_angle_offset", initial_angle - aim_angle );
+        end
     end
 end
