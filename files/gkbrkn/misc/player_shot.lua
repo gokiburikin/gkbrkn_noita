@@ -120,14 +120,16 @@ function shot( projectile_entity )
             ComponentSetValue( projectile, "die_on_low_velocity", "0" );
         end
 
-        local initial_angle = 0;
+        local initial_angle = nil;
         local aim_angle = 0;
 
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
-            initial_angle = math.atan2( vy, vx );
-            ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+            if vx ~= 0 or vy ~= 0 then
+                initial_angle = math.atan2( vy, vx );
+                ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+            end
             ComponentSetValue( velocity, "gravity_y", 0 );
         end
 
@@ -149,6 +151,35 @@ function shot( projectile_entity )
 
         if initial_angle ~= nil then
             EntitySetVariableNumber( projectile_entity, "gkbrkn_magic_hand_angle_offset", initial_angle - aim_angle );
+        else
+            EntitySetVariableNumber( projectile_entity, "gkbrkn_magic_hand_angle_offset", 0 );
+        end
+    end
+
+    if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
+        reduce_particles( projectile_entity, HasFlagPersistent( MISC.LessParticles.DisableEnabled ) );
+    end
+
+    if HasFlagPersistent( MISC.RainbowProjectiles.Enabled ) then
+        SetRandomSeed( projectile_entity, projectile_entity );
+        local color = 0xFF000000 + math.floor( Random() * 0xFFFFFF );
+        local r = bit.band( 0xFF, color );
+        local g = bit.rshift( bit.band( 0xFF00, color ), 8 );
+        local b = bit.rshift( bit.band( 0xFF0000, color ), 16 );
+        local particle_emitters = EntityGetComponent( projectile_entity, "ParticleEmitterComponent" ) or {};
+        for _,particle_emitter in pairs( particle_emitters ) do
+            ComponentSetValue( particle_emitter, "color", tostring( color ) );
+        end
+        if ComponentGetValue2 and ComponentSetValue2 then
+            local sprite_particle_emitters = EntityGetComponent( projectile_entity, "SpriteParticleEmitterComponent" ) or {};
+            for _,sprite_particle_emitter in pairs( sprite_particle_emitters ) do
+                local color = {ComponentGetValue2( sprite_particle_emitter, "color" )};
+                local color_change = {ComponentGetValue2( sprite_particle_emitter, "color_change" )};
+                local ratio_r = r / 255;
+                local ratio_g = g / 255;
+                local ratio_b = b / 255;
+                ComponentSetValue2( sprite_particle_emitter, "color", ratio_r, ratio_g, ratio_b, color[4] );
+            end
         end
     end
 end

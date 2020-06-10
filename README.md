@@ -27,7 +27,7 @@ There is another mod called Selectable Classes by Ruri (https://modworkshop.net/
 - **Demolition**: Dormant Crystal, Dormant Crystal Detonator, Demolition.
 - **Duplication**: Spell Duplicated Sparkbolt Field, Spell Duplicated Energy Orb, Extra Projectile.
 - **Event Horizon**: A challenge mode loadout. Clear the game with only an Always Cast Giga Black Hole wand!
-- **Frost**: Triggered Poison Explosion, Circle of Stillness, Freeze Field.
+- **Poison**: Triggered Poison Explosion, Circle of Stillness, Freeze Field.
 - **Geomancer**: Soil Egg, Holy Bomb Egg, Dissolve Powders.
 - **Glitter**: Long Distance Glittering Trail Stored Shot, Glitter Bomb.
 - **Goo Mode**: A loadout designed for the Goo Mode and Hot Goo Mode Game Modifiers.
@@ -233,7 +233,7 @@ Current changes:
 - Disable the perks Electricity, Fire Immunity, Explosion Immunity, Melee Immunity, Electric Immunity, Invisibility, Teleportitis, More Love, Always Cast, and Edit Wands Everywhere
 
 ### Perks
-- **Always Cast**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
+- **Always Cast+**: Upgrade a random spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to always cast.
 - **Demolition**: Your spells cause larger, more powerful explosions.
 - **Demote Always Cast**: Demote a random always cast spell on the wand you're holding (or a random wand in your inventory if you're not holding one) to a standard cast.
 - **Diplomatic Immunity**: You can no longer anger the gods.

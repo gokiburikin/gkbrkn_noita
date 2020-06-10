@@ -24,7 +24,7 @@
     explosion_dont_damage_shooter="1"
     on_collision_die="0"
     on_collision_remove_projectile="0"
-    lifetime="0"
+    lifetime="1"
     damage="0"
     lifetime_randomness="0"
     ragdoll_force_multiplier="0"
@@ -45,8 +45,7 @@
 	physics_impulse_coeff="100"
 	damage_every_x_frames="6"
     >
-	<damage_by_type
-		>
+	<damage_by_type>
 	</damage_by_type>
     <config_explosion
         damage="0.0"

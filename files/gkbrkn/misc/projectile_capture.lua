@@ -1,3 +1,4 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/constants.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
 function EntitiesAverageMemberList( entities, component_type, member_list, rounded, overrides )
@@ -66,17 +67,18 @@ local formation_stack_projectiles = {};
 local trailing_shot_projectiles = {};
 
 for _,player_projectile in pairs( EntityGetWithTag( "player_projectile" ) or {} ) do
-    if EntityGetVariableNumber( player_projectile, "gkbrkn_spell_merge", 0 ) == 1 then
+    local projectile_capture = EntityGetVariableNumber( player_projectile, "gkbrkn_projectile_capture", 0 );
+    if bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) ~= 0 then
         table.insert( spell_merge_projectiles, player_projectile );
-    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_projectile_gravity_well", 0 ) == 1 then
+    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.ProjectileGravityWell ) ~= 0 then
         table.insert( projectile_gravity_well_projectiles, player_projectile );
-    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_projectile_orbit", 0 ) == 1 then
+    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) ~= 0 then
         table.insert( projectile_orbit_projectiles, player_projectile );
-    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_link_shot", 0 ) == 1 then
+    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.LinkShot ) ~= 0 then
         table.insert( link_shot_projectiles, player_projectile );
-    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_formation_stack", 0 ) == 1 then
+    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.FormationStack ) ~= 0 then
         table.insert( formation_stack_projectiles, player_projectile );
-    elseif EntityGetVariableNumber( player_projectile, "gkbrkn_trailing_shot", 0 ) == 1 then
+    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.TrailingShot ) ~= 0 then
         table.insert( trailing_shot_projectiles, player_projectile );
     end
 end
@@ -90,7 +92,7 @@ if #formation_stack_projectiles > 0 then
     local magnitudes = {};
     local velocities = {};
     for i,projectile in pairs(formation_stack_projectiles) do
-        EntitySetVariableNumber( projectile, "gkbrkn_formation_stack", 0 );
+        EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.FormationStack ) );
 
         local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
         if velocity ~= nil then
@@ -126,7 +128,8 @@ if #spell_merge_projectiles > 0 then
         "angular_velocity", "friction", "die_on_low_velocity_limit"
     },
     { bounces_left = true },
-    { bounce_at_any_angle="1", bounce_always="1", on_collision_die="0", die_on_low_velocity="0" } );
+    -- on_collision_die is too powerful to adapt for the cost
+    { bounce_at_any_angle="1", bounce_always="1", --[[on_collision_die="0",]] die_on_low_velocity="0" } );
     EntitiesAverageMemberList( spell_merge_projectiles, "VelocityComponent", { 
         "gravity_x", "gravity_y", "mass", "air_friction", "terminal_velocity"
     } );
@@ -134,7 +137,8 @@ if #spell_merge_projectiles > 0 then
     local angles = {};
     local magnitudes = {};
     for i,projectile_entity in pairs( spell_merge_projectiles ) do
-        EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
+        --EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) );
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
@@ -173,7 +177,7 @@ if #projectile_orbit_projectiles > 0 then
         local previous_projectile = nil;
         local leader = nil;
         for i,projectile in pairs( projectile_orbit_projectiles ) do
-            EntitySetVariableNumber( projectile, "gkbrkn_projectile_orbit", 0 );
+            EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) );
             if previous_projectile ~= nil then
                 EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
                 EntityAddComponent( projectile, "VariableStorageComponent", {
@@ -212,7 +216,7 @@ if #projectile_gravity_well_projectiles > 0 then
     local previous_projectile = nil;
     local leader = nil;
     for i,projectile in pairs( projectile_gravity_well_projectiles ) do
-        EntitySetVariableNumber( projectile, "gkbrkn_projectile_gravity_well", 0 );
+        EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileGravityWell ) );
         if previous_projectile ~= nil then
             EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( leader ) );
             local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
@@ -239,7 +243,7 @@ if #link_shot_projectiles > 0 then
     local previous_projectile = nil;
     local leader = nil;
     for i,projectile in pairs( link_shot_projectiles ) do
-        EntitySetVariableNumber( projectile, "gkbrkn_link_shot", 0 );
+        EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.LinkShot ) );
 
         if previous_projectile ~= nil then
             EntitySetVariableNumber( projectile, "gkbrkn_soft_parent", tonumber( leader ) );
@@ -263,7 +267,7 @@ end
 if #trailing_shot_projectiles > 0 then
     local previous_projectile = nil;
     for i,projectile in pairs( trailing_shot_projectiles ) do
-        EntitySetVariableNumber( projectile, "gkbrkn_trailing_shot", 0 );
+        EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.TrailingShot ) );
 
         if previous_projectile ~= nil then
             EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( previous_projectile ) );

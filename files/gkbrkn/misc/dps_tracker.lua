@@ -1,3 +1,4 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 current = current or 0;
 best = best or 0;
 first_hit_frame = first_hit_frame or 0;
@@ -32,26 +33,25 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         best = current;
     end
 
-    local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
-    local offset_y = 0;
-    if hitbox ~= nil then
-        offset_y = -tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) );
-    end
+    local width,height = EntityGetFirstHitboxSize( entity );
+
+    local damage_text = string.format( "%.2f", current * 25 );
 
     local text = EntityGetFirstComponent( entity, "SpriteComponent", "gkbrkn_dps_tracker" );
     if text ~= nil then
         EntityRemoveComponent( entity, text );
     end
+
     EntityAddComponent( entity, "SpriteComponent", {
         _tags="enabled_in_world,gkbrkn_dps_tracker",
-        image_file="mods/gkbrkn_noita/files/gkbrkn/font_pixel_white.xml" ,
+        image_file="mods/gkbrkn_noita/files/gkbrkn/font_small_numbers.xml",
         emissive="1",
         is_text_sprite="1",
-        offset_x="12" ,
-        offset_y=tostring(offset_y * 2),
+        offset_x=tostring( #damage_text * 2 - 2 ),
+        offset_y=tostring( height * 2 ),
         update_transform="1" ,
         update_transform_rotation="0",
-        text=math.floor(current * 25 * 100) / 100,
+        text=damage_text,
         has_special_scale="1",
         special_scale_x="0.6667",
         special_scale_y="0.6667",

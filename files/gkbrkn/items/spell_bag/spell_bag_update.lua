@@ -18,10 +18,10 @@ if holder ~= nil then
     local now = GameGetFrameNum();
     local controls = EntityGetFirstComponent( holder, "ControlsComponent" );
     if controls ~= nil then
-        local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
-        local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
-        if alt_fire == "1" and tonumber(alt_fire_frame) == now then
-            last_use_frame = tonumber(alt_fire_frame);
+        local use_button = ComponentGetValue( controls, "mButtonDownFire" );
+        local use_button_frame = ComponentGetValue( controls, "mButtonFrameFire" );
+        if use_button == "1" and tonumber(use_button_frame) == now then
+            last_use_frame = tonumber(use_button_frame);
             local children = EntityGetAllChildren( spell_storage ) or {};
             if #children > 0 then
                 local random_child = children[ math.ceil( math.random() * #children )];

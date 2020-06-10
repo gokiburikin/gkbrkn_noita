@@ -30,10 +30,12 @@ FLAGS = {
     AngryGods = "gkbrkn_angry_gods",
     HitsTeleportToLastHolyMountain = "gkbrkn_no_hit_lite",
     ConfigMenuOpen = "gkbrkn_config_menu_open",
+    KickSpellsOffWands = "gkbrkn_kick_spells_off_wands",
+    KickSpellsAround = "gkbrkn_kick_spells_around",
 }
 
 SETTINGS = {
-    Version = "c97"
+    Version = "c98"
 }
 
 CONTENT_TYPE = {
@@ -49,6 +51,7 @@ CONTENT_TYPE = {
     Event = 10,
     GameModifier = 11,
     DevOption = 12,
+    --Removal = 13
 }
 
 CONTENT_TYPE_PREFIX = {
@@ -64,6 +67,7 @@ CONTENT_TYPE_PREFIX = {
     [CONTENT_TYPE.Event] = "event_",
     [CONTENT_TYPE.GameModifier] = "game_modifier_",
     [CONTENT_TYPE.DevOption] = "dev_option_",
+    --[CONTENT_TYPE.Removal] = "removal_",
 }
 
 CONTENT_TYPE_DISPLAY_NAME = {
@@ -79,6 +83,7 @@ CONTENT_TYPE_DISPLAY_NAME = {
     [CONTENT_TYPE.Event] = gkbrkn_localization.config_content_type_name_event,
     [CONTENT_TYPE.GameModifier] = gkbrkn_localization.config_content_type_name_game_modifier,
     [CONTENT_TYPE.DevOption] = gkbrkn_localization.config_content_type_name_dev_option,
+    --[CONTENT_TYPE.Removal] = gkbrkn_localization.config_content_type_name_removal,
 }
 
 CONTENT_TYPE_DEVELOPMENT_ONLY = {
@@ -325,6 +330,7 @@ ACTIONS = {
     SpeedDown = register_action( "speed_down" ),
     HyperBounce = register_action( "hyper_bounce" ),
     FalseSpell = register_action( "false_spell" ),
+    FamiliarShot = register_action( "familiar_shot", nil, nil, true, true ),
 }
 
 local register_tweak = function( key, options, disabled_by_default, deprecated, inverted, init_function )
@@ -351,7 +357,7 @@ TWEAKS = {
     RevengeTentacle = register_tweak( "revenge_tentacle", { perk_id="REVENGE_TENTACLE" } ),
     GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" } ),
     AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" } ),
-    ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" } ),
+    ChainBolt = register_tweak( "chain_bolt", { action_id="CHAIN_BOLT" }, true, true, true ),
     StunLock = register_tweak( "stun_lock" ),
     ProjectileRepulsion = register_tweak( "projectile_repulsion", { perk_id="PROJECTILE_REPULSION" } ),
     ExplosionOfThunder = register_tweak( "explosion_of_thunder", { action_id="THUNDER_BLAST" } ),
@@ -367,6 +373,35 @@ TWEAKS = {
 
 LOADOUTS = {};
 LEGENDARY_WANDS = {};
+
+REMOVALS = {};
+
+local register_removal = function( key, name, options, disabled_by_default, deprecated, inverted )
+    if disabled_by_default == nil then disabled_by_default = true; end
+    if inverted == nil then inverted = true; end
+    if options == nil then
+        options = {};
+    end
+    local dynamic_name = nil;
+    if options.perk_id ~= nil then
+        local translated_name = GameTextGetTranslatedOrNot( "$perk_"..options.perk_id:lower() );
+        if #translated_name == 0 then
+            translated_name = name or options.perk_id or key;
+        end
+        dynamic_name = "Perk: "..translated_name;
+    elseif options.action_id ~= nil then
+        local translated_name = GameTextGetTranslatedOrNot( "$action_"..options.action_id:lower() );
+        if #translated_name == 0 then
+            translated_name = name or options.action_id or key;
+        end
+        dynamic_name = "Action: "..translated_name;
+    end
+    if dynamic_name == nil then
+        dynamic_name = name or key;
+    end
+    REMOVALS[key] = register_content( CONTENT_TYPE.Removal, key, dynamic_name, options, disabled_by_default, deprecated, inverted, init_function );
+end
+
 
 local register_champion_type = function( key, options, disabled_by_default, deprecated, inverted )
     if options == nil then
@@ -598,14 +633,8 @@ CHAMPION_TYPES = {
         validator = function( entity ) return true end,
         apply = function( entity )
             local x, y = EntityGetTransform( entity );
-            local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
             local radius = nil;
-            local height = 18;
-            local width = 18;
-            if hitbox ~= nil then
-                height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
-                width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
-            end
+            local width,height = EntityGetFirstHitboxSize( entity, 18, 18 );
             radius = math.max( height, width ) + 6;
             local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml", x, y );
             local emitters = EntityGetComponent( shield, "ParticleEmitterComponent" ) or {};
@@ -1093,10 +1122,13 @@ local register_dev_option = function( key, options, disabled_by_default, depreca
     return register_content( CONTENT_TYPE.DevOption, key, gkbrkn_localization["dev_option_"..key.."_name"], options, disabled_by_default, deprecated, inverted, nil, true );
 end
 
+
 DEV_OPTIONS = {
     InfiniteMana = register_dev_option( "infinite_mana" ),
     InfiniteSpells = register_dev_option( "infinite_spells" ),
     RecoverHealth = register_dev_option( "recover_health" ),
+    InfiniteMoney = register_dev_option( "infinite_money" ),
+    CheapRerolls = register_dev_option( "cheap_rerolls" ),
 }
 
 local register_game_modifier = function( key, options, disabled_by_default, deprecated, inverted )
@@ -1235,6 +1267,8 @@ GAME_MODIFIERS = {
     FloorIsLava = register_game_modifier( "floor_is_lava", { run_flags = { FLAGS.FloorIsLava } } ),
     InfiniteFlight = register_game_modifier( "infinite_flight", { run_flags = { FLAGS.InfiniteFlight } } ),
     DisintegrateCorpses = register_game_modifier( "disintegrate_corpses", { run_flags = { FLAGS.DisintegrateCorpses } } ),
+    KickSpellsOffWands = register_game_modifier( "kick_spells_off_wands", { run_flags = { FLAGS.KickSpellsOffWands } } ),
+    KickSpellsAround = register_game_modifier( "kick_spells_around", { run_flags = { FLAGS.KickSpellsAround } } ),
     AngryGods = register_game_modifier( "angry_gods", {
         player_spawned_callback = function( player_entity )
             GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", "1" );
@@ -1516,6 +1550,9 @@ MISC = {
         OtherStuffEnabled = "gkbrkn_less_particles_other_stuff",
         DisableEnabled = "gkbrkn_less_particles_disable"
     },
+    RainbowProjectiles = {
+        Enabled = "gkbrkn_rainbow_projectiles"
+    },
     RandomStart = {
         RandomWandEnabled = "gkbrkn_random_start_random_wand",
         RandomHealthEnabled = "gkbrkn_random_start_random_health",
@@ -1595,6 +1632,9 @@ MISC = {
     },
     ShowEntityNames = {
         Enabled = "gkbrkn_show_entity_names",
+    },
+    ShowDamageNumbers = {
+        Enabled = "gkbrkn_show_damage_numbers",
     },
     FixedCamera = {
         Enabled = "gkbrkn_fixed_camera",
@@ -1904,6 +1944,11 @@ OPTIONS = {
         SubOption = true,
     },
     {
+        Name = gkbrkn_localization.option_rainbow_projectiles,
+        Description = gkbrkn_localization.option_rainbow_projectiles_description,
+        PersistentFlag = MISC.RainbowProjectiles.Enabled,
+    },
+    {
         Name = gkbrkn_localization.option_disable_random_spells,
         Description = gkbrkn_localization.option_disable_random_spells_description,
         PersistentFlag = "gkbrkn_disable_spells",
@@ -1975,6 +2020,11 @@ OPTIONS = {
         Name = gkbrkn_localization.option_show_entity_names,
         Description = gkbrkn_localization.option_show_entity_names_description,
         PersistentFlag = MISC.ShowEntityNames.Enabled,
+    },
+    {
+        Name = gkbrkn_localization.option_show_damage_numbers,
+        Description = gkbrkn_localization.option_show_damage_numbers_description,
+        PersistentFlag = MISC.ShowDamageNumbers.Enabled,
     },
     {
         Name = gkbrkn_localization.option_fixed_camera,
@@ -2105,6 +2155,8 @@ if HasFlagPersistent( FLAGS.DebugMode ) then
                 },
                 actions = {
                     { "GKBRKN_TRIPLE_CAST" },
+                    nil,
+                    nil,
                     { "BUBBLESHOT" },
                 }
             },
@@ -2192,8 +2244,9 @@ if HasFlagPersistent( FLAGS.DebugMode ) then
             }
         },
         { -- potions
-            { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+            { { {"water", 250} } }, -- a list of random choices of material amount pairs
             { { {"alcohol", 500}, {"lava",500} } }, -- a list of random choices of material amount pairs
+            { { {"magic_liquid_random_polymorph", 750} } }, -- a list of random choices of material amount pairs
         },
         { -- items
         },
@@ -2285,6 +2338,8 @@ GKBRKN_CONFIG = {
     register_event = register_event,
     register_dynamic_event = register_dynamic_event,
     register_legendary_wand = register_legendary_wand,
+    register_dev_option = register_dev_option,
+    register_removal = register_removal,
     initialize_legendary_wand = initialize_legendary_wand,
     register_loadout = register_loadout,
 };

@@ -27,33 +27,33 @@ table.insert( perk_list,
             end
         end
 
-        local comparisons = {
-            shuffle_deck_when_empty=function( current_value, previous_value ) if current_value == "false" then return current_value; end end,
-            actions_per_round=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-            speed_multiplier=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-            deck_capacity=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-            reload_time=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
-            fire_rate_wait=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
-            spread_degrees=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
-            mana_charge_speed=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-            mana_max=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-            mana=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-        }
-
-        local best_values = {
-            shuffle_deck_when_empty="true",
-            actions_per_round=1,
-            speed_multiplier=1,
-            deck_capacity=0,
-            reload_time=99999,
-            fire_rate_wait=99999,
-            spread_degrees=0,
-            mana_charge_speed=0,
-            mana_max=0,
-            mana=0,
-        };
-
         if #held_wands > 0 then
+            local comparisons = {
+                shuffle_deck_when_empty=function( current_value, previous_value ) if current_value == "false" then return current_value; end end,
+                actions_per_round=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+                speed_multiplier=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+                deck_capacity=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+                reload_time=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
+                fire_rate_wait=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
+                spread_degrees=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
+                mana_charge_speed=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+                mana_max=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+                mana=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+            }
+
+            local best_values = {
+                shuffle_deck_when_empty="true",
+                actions_per_round=1,
+                speed_multiplier=1,
+                deck_capacity=0,
+                reload_time=99999,
+                fire_rate_wait=99999,
+                spread_degrees=0,
+                mana_charge_speed=0,
+                mana_max=0,
+                mana=0,
+            };
+
             for _,wand in pairs( held_wands ) do
                 local ability = WandGetAbilityComponent( wand, "AbilityComponent" );
                 for stat,comparison in pairs( comparisons ) do
@@ -62,49 +62,49 @@ table.insert( perk_list,
                     best_values[stat] = outcome or current_value;
                 end
             end
-        end
 
-        local held_actions = {};
-        for _,wand in pairs( held_wands ) do
-            while true do
-                if wand == active_wand then
-                    local removed_spell = wand_remove_first_action( wand );
-                    if not removed_spell then
-                        break;
+            local held_actions = {};
+            for _,wand in pairs( held_wands ) do
+                while true do
+                    if wand == active_wand then
+                        local removed_spell = wand_remove_first_action( wand, true, true );
+                        if not removed_spell then
+                            break;
+                        else
+                            table.insert( held_actions, removed_spell );
+                        end
                     else
-                        table.insert( held_actions, removed_spell );
-                    end
-                else
-                    if not wand_explode_random_action( wand ) then
-                        break;
+                        if not wand_explode_random_action( wand, false, false ) then
+                            break;
+                        end
                     end
                 end
+                GameKillInventoryItem( entity_who_picked, wand );
+                EntitySetTransform( item, -9999, -9999 );
+                EntityRemoveFromParent( wand );
             end
-            GameKillInventoryItem( entity_who_picked, wand );
-            EntitySetTransform( item, -9999, -9999 );
-            EntityRemoveFromParent( wand );
-        end
-            
-        if inventory2 ~= nil then
-            local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
+                
             if inventory2 ~= nil then
-                ComponentSetValue( inventory2, "mInitialized", 0 );
-                ComponentSetValue( inventory2, "mForceRefresh", 1 );
+                local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
+                if inventory2 ~= nil then
+                    ComponentSetValue( inventory2, "mInitialized", 0 );
+                    ComponentSetValue( inventory2, "mForceRefresh", 1 );
+                end
             end
-        end
 
-        local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/placeholder_wand.xml", x, y-8 );
-        EntitySetVariableNumber( copy_wand, "gkbrkn_merged_wand", 1 );
+            local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/placeholder_wand.xml", x, y-8 );
+            EntitySetVariableNumber( copy_wand, "gkbrkn_merged_wand", 1 );
 
-        initialize_wand( copy_wand, { name="merged wand", stats=best_values } );
+            initialize_wand( copy_wand, { name="merged wand", stats=best_values } );
 
-        for _,held_action in pairs( held_actions ) do
-            wand_attach_action( copy_wand, held_action );
-        end
+            for _,held_action in pairs( held_actions ) do
+                wand_attach_action( copy_wand, held_action );
+            end
 
-        local item = EntityGetFirstComponent( copy_wand, "ItemComponent" );
-        if item ~= nil then
-            ComponentSetValue( item, "play_hover_animation", "1" );
+            local item = EntityGetFirstComponent( copy_wand, "ItemComponent" );
+            if item ~= nil then
+                ComponentSetValue( item, "play_hover_animation", "1" );
+            end
         end
 	end
 ) );

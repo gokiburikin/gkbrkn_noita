@@ -113,25 +113,43 @@ function initialize_wand( wand, wand_data )
         end
     end
 
-    for _,actions in pairs( wand_data.actions or {} ) do
-        local random_action = actions[ Random( 1, #actions ) ];
-        if random_action ~= nil then
-            if type( random_action ) == "table" then
-                local amount = random_action.amount or 1;
-                for i=1,amount do
-                    local action_entity = CreateItemActionEntity( random_action.action );
-                    local component = EntityGetFirstComponent( action_entity, "ItemComponent" );
-                    if random_action.locked then
-                        ComponentSetValue( component, "is_frozen", "1" );
+    --for _,actions in pairs( wand_data.actions or {} ) do
+    if wand_data.actions then
+        for i=1,#wand_data.actions,1 do
+            local actions = wand_data.actions[i];
+            if actions ~= nil then
+                local random_action = actions[ Random( 1, #actions ) ];
+                if random_action ~= nil then
+                    if type( random_action ) == "table" then
+                        local amount = random_action.amount or 1;
+                        for i=1,amount do
+                            local action_entity = CreateItemActionEntity( random_action.action );
+                            local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+                            if random_action.locked then
+                                ComponentSetValue( item, "is_frozen", "1" );
+                            end
+                            if random_action.permanent then
+                                ComponentSetValue( item, "permanently_attached", "1" );
+                            end
+                            if ComponentSetValue2 then
+                                ComponentSetValue2( item, "inventory_slot", i-1, 0 );
+                            end
+                            EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                            EntityAddChild( wand, action_entity );
+                        end
+                    else
+                        local action_entity = CreateItemActionEntity( random_action );
+                        local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+                        if item ~= nil then
+                            if ComponentSetValue2 then
+                                ComponentSetValue2( item, "inventory_slot", i-1, 0 );
+                            end
+                        end
+                        EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                        EntityAddChild( wand, action_entity );
+                        --AddGunAction( wand, random_action );
                     end
-                    if random_action.permanent then
-                        ComponentSetValue( component, "permanently_attached", "1" );
-                    end
-                    EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
-                    EntityAddChild( wand, action_entity );
                 end
-            else
-                AddGunAction( wand, random_action );
             end
         end
     end
@@ -173,24 +191,24 @@ function initialize_wand( wand, wand_data )
 end
 
 
-function wand_explode_random_action( wand )
+function wand_explode_random_action( wand, include_permanent_actions, include_frozen_actions )
     local x, y = EntityGetTransform( wand );
     local actions = {};
     local children = EntityGetAllChildren( wand ) or {};
-    for i,v in ipairs( children ) do
-        local all_comps = EntityGetAllComponents( v );
-        local action_id = nil;
-        local permanent = false;
-        for i, c in ipairs( all_comps ) do
-            if ComponentGetValue( c, "action_id") ~= "" then
-                action_id = ComponentGetValue( c, "action_id");
+    for i,action in ipairs( children ) do
+        local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
+        if item_action ~= nil then
+            local item = FindFirstComponentByType( action, "ItemComponent" );
+            if item ~= nil then
+                local action_id = ComponentGetValue( item_action, "action_id" );
+                if action_id ~= nil then
+                    if include_permanent_actions == true or ComponentGetValue( item, "permanently_attached" ) == "0" then
+                        if include_frozen_actions == true or ComponentGetValue( item, "is_frozen" ) == "0" then
+                            table.insert( actions, { action_id=action_id, permanent=permanent, entity=action } );
+                        end
+                    end
+                end
             end
-            if ComponentGetValue( c, "permanently_attached") ~= "" then
-                permanent = ComponentGetValue( c, "permanently_attached" );
-            end
-        end
-        if action_id ~= nil and permanent == "0" then
-            table.insert( actions, {action_id=action_id, permanent=permanent, entity=v} );
         end
     end
     if #actions > 0 then
@@ -202,20 +220,47 @@ function wand_explode_random_action( wand )
     end
 end
 
-function wand_remove_first_action( wand )
+function wand_remove_first_action( wand, include_permanent_actions, include_frozen_actions )
     local x, y = EntityGetTransform( wand );
     local actions = {};
     local children = EntityGetAllChildren( wand ) or {};
     for _,action in pairs( children ) do
         local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
         if item_action ~= nil then
-            EntityRemoveFromParent( action );
-            EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", true );
-            EntitySetComponentsWithTagEnabled( action,  "enabled_in_hand", false );
-            EntitySetComponentsWithTagEnabled( action,  "enabled_in_inventory", false );
-            EntitySetComponentsWithTagEnabled( action,  "item_unidentified", false );
-            EntitySetTransform( action, x, y );
-            return action;
+            local item = FindFirstComponentByType( action, "ItemComponent" );
+            if item ~= nil then
+                if include_permanent_actions == true or ComponentGetValue( item, "permanently_attached" ) == "0" then
+                    if include_frozen_actions == true or ComponentGetValue( item, "is_frozen" ) == "0" then
+                        EntityRemoveFromParent( action );
+                        EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", true );
+                        EntitySetComponentsWithTagEnabled( action,  "enabled_in_hand", false );
+                        EntitySetComponentsWithTagEnabled( action,  "enabled_in_inventory", false );
+                        EntitySetComponentsWithTagEnabled( action,  "item_unidentified", false );
+                        EntitySetTransform( action, x, y );
+                        return action;
+                    end
+                end
+            end
+        end
+    end
+end
+
+function wand_lock( wand, lock_spells, lock_wand )
+    if lock_spells == nil then lock_spells = true; end
+    if lock_wand == nil then lock_wand = true; end
+    if lock_spells then
+        local children = EntityGetAllChildren( wand ) or {};
+        for i,action in ipairs( children ) do
+            local item = FindFirstComponentByType( action, "ItemComponent" );
+            if item ~= nil then
+                ComponentSetValue( item, "is_frozen", "1" );
+            end
+        end
+    end
+    if lock_wand then
+        local item = FindFirstComponentByType( wand, "ItemComponent" );
+        if item ~= nil then
+            ComponentSetValue( item, "is_frozen", "1" );
         end
     end
 end
@@ -239,4 +284,22 @@ function wand_is_special( wand )
     then
         return true;
     end
+end
+
+function wand_is_always_cast_valid( wand )
+    local children = EntityGetAllChildren( wand ) or {};
+    for i,v in ipairs( children ) do
+        local components = EntityGetAllComponents( v );
+        local has_a_valid_spell = false;
+        for _,component in pairs(components) do
+            if ComponentGetValue( component, "permanently_attached" ) == "0" then
+                has_a_valid_spell = true;
+                break;
+            end
+        end
+        if has_a_valid_spell then
+            return true;
+        end
+    end
+    return false;
 end

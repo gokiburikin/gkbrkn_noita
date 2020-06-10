@@ -120,9 +120,34 @@ if CONTENT[GAME_MODIFIERS.LimitedMana].enabled() then
     end
 end
 
+--[[ Infinite Money ]]
+if CONTENT[DEV_OPTIONS.InfiniteMoney].enabled() then
+    local wallet = EntityGetFirstComponent( player_entity, "WalletComponent" );
+    if wallet then
+        ComponentSetValue( wallet, "money", 2000000000 );
+    end
+end
+
+--[[ Cheap Rerolls ]]
+if CONTENT[DEV_OPTIONS.CheapRerolls].enabled() then
+    GlobalsSetValue( "TEMPLE_PERK_REROLL_COUNT", "-1" );
+end
+
 --[[ Spell Recovery ]]
 if CONTENT[DEV_OPTIONS.InfiniteSpells].enabled() then
     GameRegenItemActionsInPlayer( player_entity );
+    --[[
+    if now % 60 == 0 then
+        if active_wand ~= nil then
+            local wand_children = EntityGetAllChildren( active_wand ) or {};
+            for _,child in pairs( wand_children ) do
+                local item = FindFirstComponentByType( child, "ItemComponent" );
+                local itemid = ComponentGetValue( item, "mItemUid" );
+                ActionUsesRemainingChanged( itemid, 100 );
+            end
+        end
+    end
+    ]]
 end
 
 --[[ Health Recovery ]]
@@ -130,6 +155,7 @@ local health_recovery = 0;
 if CONTENT[DEV_OPTIONS.RecoverHealth].enabled() then
     health_recovery = 4/15;
 end
+
 if health_recovery ~= 0 then
     for _,damage_model in pairs( damage_models ) do
         local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
@@ -144,6 +170,7 @@ local mana_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_mana_recov
 if CONTENT[DEV_OPTIONS.InfiniteMana].enabled() then
     mana_recovery = 9999;
 end
+
 if mana_recovery ~= 0 then
     if #wands > 0 then
         for _,wand in pairs( wands ) do
@@ -164,6 +191,7 @@ local recharge_speed = EntityGetVariableNumber( player_entity, "gkbrkn_passive_r
 if HasFlagPersistent( MISC.PassiveRecharge.Enabled ) and recharge_speed < MISC.PassiveRecharge.Speed then
     recharge_speed = MISC.PassiveRecharge.Speed;
 end
+
 if recharge_speed ~= 0 then
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     local active_item = ComponentGetValue( inventory2, "mActiveItem" );
@@ -225,9 +253,9 @@ if HasFlagPersistent( MISC.QuickSwap.Enabled ) then
     if controls ~= nil and inventory2 ~= nil then
         local active_item = tonumber(ComponentGetValue( inventory2, "mActiveItem" ));
         if active_item == nil or active_item == 0 or EntityHasTag( active_item, "wand" ) == true then
-            local alt_fire = ComponentGetValue( controls, "mButtonDownFire2" );
-            local alt_fire_frame = ComponentGetValue( controls, "mButtonFrameFire2" );
-            if alt_fire == "1" and now == tonumber(alt_fire_frame) then
+            local use_button = ComponentGetValue( controls, "mButtonDownThrow" );
+            local use_button_frame = ComponentGetValue( controls, "mButtonFrameThrow" );
+            if use_button == "1" and now == tonumber(use_button_frame) then
                 local inventory = nil;
                 local swap_inventory = nil;
                 for _,child in pairs(EntityGetAllChildren( player_entity )) do
@@ -294,17 +322,18 @@ if gold_tracker_world or gold_tracker_message then
                 end
                 local x,y = EntityGetTransform( player_entity );
                 local text = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/gold_tracking/gold_tracker.xml", x, y );
+                local amount_text = "$"..tostring( money_picked_total );
                 EntityAddChild( player_entity, text );
                 EntityAddComponent( text, "SpriteComponent", {
                     _tags="enabled_in_world",
-                    image_file="mods/gkbrkn_noita/files/gkbrkn/font_pixel_white.xml" ,
+                    image_file="mods/gkbrkn_noita/files/gkbrkn/font_small_numbers_gold.xml" ,
                     emissive="1",
                     is_text_sprite="1",
-                    offset_x="8" ,
-                    offset_y="-4" ,
+                    offset_x=tostring( #amount_text * 2 ),
+                    offset_y="-6" ,
                     update_transform="1" ,
                     update_transform_rotation="0",
-                    text="$"..tostring(money_picked_total),
+                    text=amount_text,
                     has_special_scale="1",
                     special_scale_x="0.6667",
                     special_scale_y="0.6667",
@@ -469,8 +498,22 @@ if succ_bonus ~= nil then
                             local item_current_succ_bonus = tonumber( ComponentGetValue( item_succ_bonus, "value_string" ) );
                             local succ_bonus_difference = current_succ_bonus - item_current_succ_bonus;
                             if succ_bonus_difference > 0 then
-                                ComponentSetValue( component, "barrel_size", tostring( succ_size * math.pow( 2, succ_bonus_difference ) ) );
-                                ComponentSetValue( item_succ_bonus, "value_string", tostring( current_succ_bonus ) );
+                                local new_succ_size = succ_size * math.pow( 2, succ_bonus_difference );
+                                local succ_size_difference = new_succ_size - succ_size;
+                                ComponentSetValue( component, "barrel_size", new_succ_size );
+                                ComponentSetValue( item_succ_bonus, "value_string", current_succ_bonus );
+
+                                local material_inventory = FindFirstComponentByType(item, "MaterialInventoryComponent");
+                                if material_inventory ~= nil and ComponentGetValue2 then
+                                    local count_per_material_type = ComponentGetValue2( material_inventory, "count_per_material_type");
+                                    for k,v in pairs(count_per_material_type) do
+                                        if v ~= 0 then
+                                            local ratio = v / succ_size;
+                                            local amount_to_add = new_succ_size * ratio;
+                                            AddMaterialInventoryMaterial( item, CellFactory_GetName(k-1), amount_to_add );
+                                        end
+                                    end
+                                end
                             end
                         end
                     end
@@ -756,6 +799,19 @@ if now % 10 == 0 then
         end
     end
 
+    --[[ Custom Damage Numbers ]]
+    if HasFlagPersistent( MISC.ShowDamageNumbers.Enabled ) then
+        local nearby_targets = EntityGetWithTag( "homing_target" );
+        for _,target in pairs( nearby_targets ) do
+            if EntityGetVariableNumber( target, "gkbrkn_custom_damage_numbers", 0 ) == 0 then
+                EntitySetVariableNumber( target, "gkbrkn_custom_damage_numbers", 1 );
+                EntityAddComponent( target, "LuaComponent", {
+                    script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua"
+                });
+            end
+        end
+    end
+
     --[[ Tweak - Blood Amount ]]
     if CONTENT[TWEAKS.BloodAmount].enabled() then
         for _,enemy in pairs( nearby_enemies ) do
@@ -1036,42 +1092,14 @@ if blood_magic_stacks ~= 0 then
 end
 
 --[[ Less Particles ]]
--- TODO update this one too
-local nearby_entities = EntityGetInRadius( x, y, 256 );
 if HasFlagPersistent( MISC.LessParticles.OtherStuffEnabled ) then
+    local nearby_entities = EntityGetInRadius( x, y, 256 );
     local disable = HasFlagPersistent( MISC.LessParticles.DisableEnabled );
     _less_particle_entity_cache = _less_particle_entity_cache or {};
     for _,nearby in pairs( nearby_entities ) do
         if _less_particle_entity_cache[nearby] ~= true then
             _less_particle_entity_cache[nearby] = true;
-            local particle_emitters = EntityGetComponent( nearby, "ParticleEmitterComponent" ) or {};
-            for _,emitter in pairs( particle_emitters ) do
-                if ComponentGetValue( emitter, "emit_cosmetic_particles" ) == "1" and ComponentGetValue( emitter, "create_real_particles" ) == "0" and ComponentGetValue( emitter, "emit_real_particles" ) == "0" then
-                    if disable then
-                        EntitySetComponentIsEnabled( nearby, emitter, false );
-                    else
-                        ComponentSetValue( emitter, "count_max", "1" );
-                        ComponentSetValue( emitter, "collide_with_grid", "0" );
-                        ComponentSetValue( emitter, "is_trail", "0" );
-                        local lifetime_min = tonumber( ComponentGetValue( emitter, "lifetime_min" ) );
-                        ComponentSetValue( emitter, "lifetime_min", tostring( math.min( lifetime_min * 0.5, 0.1 ) ) );
-                        local lifetime_max = tonumber( ComponentGetValue( emitter, "lifetime_max" ) );
-                        ComponentSetValue( emitter, "lifetime_max", tostring( math.min( lifetime_max * 0.5, 0.5 ) ) );
-                    end
-                end
-            end
-            local sprite_particle_emitters = EntityGetComponent( nearby, "SpriteParticleEmitterComponent" ) or {};
-            for _,emitter in pairs( sprite_particle_emitters ) do
-                if disable then
-                    EntitySetComponentIsEnabled( nearby, emitter, false );
-                else
-                    if ComponentGetValue( emitter, "entity_file" ) == "" then
-                        ComponentSetValue( emitter, "count_max", "1" );
-                        ComponentSetValue( emitter, "emission_interval_min_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_min_frames" ) ) * 2 ) ) );
-                        ComponentSetValue( emitter, "emission_interval_max_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_max_frames" ) ) * 2 ) ) );
-                    end
-                end
-            end
+            reduce_particles( nearby, disable );
         end
     end
 end
@@ -1091,14 +1119,12 @@ if CONTENT[TWEAKS.Blindness].enabled() then
 end
 
 --[[ Game Modifier - Floor is Lava ]]
-if GameHasFlagRun( FLAGS.FloorIsLava ) then
+if GameHasFlagRun( FLAGS.FloorIsLava ) and now % 10 == 0 then
     local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
     if character_data ~= nil then
         local is_on_ground = ComponentGetValue( character_data, "is_on_ground" );
         if is_on_ground == "1" then
-            local x, y = EntityGetTransform( player_entity );
-            local take_damage = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/events/take_damage.xml", x, y );
-            ComponentSetValue( EntityGetFirstComponent( take_damage, "AreaDamageComponent" ), "damage_per_frame", 1/100 );
+            EntityInflictDamage( player_entity, 5/25, "curse", "Floor is Lava", "NORMAL", 0, 0 );
         end
     end
 end

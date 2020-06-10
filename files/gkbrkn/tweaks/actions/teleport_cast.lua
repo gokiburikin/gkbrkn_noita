@@ -9,6 +9,6 @@ SetRandomSeed( x + y, GameGetFrameNum() );
 
 if #targets > 0 then
 	local target = targets[ Random( 1, #targets ) ];
-	local tx, ty = EntityGetHitboxCenter( target );
+	local tx, ty = EntityGetFirstHitboxCenter( target );
 	EntitySetTransform( entity, tx, ty );
 end

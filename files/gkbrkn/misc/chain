@@ -1,0 +1,193 @@
+
+
+
+local points = [];
+local lines = [];
+if true then
+
+local pointsStart;
+local fric = 0.999; // drag or air friction
+local surF = 0.999; // ground and box friction
+local grav = 0.9;   // gravity
+local ballRad = 10;  // chain radius set as ball radius
+local stiffness = 12;  // number of itterations for line constraint
+local fontSize = 33;
+
+function AddPoint( x, y, vx, vy, radius, fixed ){
+    local point = {
+        x = x,
+        y = y,
+        ox = x - vx,
+        oy = y - vy,
+        fixed = fixed or false,
+        radius = radius or 10,
+    };
+    table.insert( points, point );
+    return point;
+}
+
+function AddLine( p1, p2, image ){
+    local line = {
+        p1 = p1,
+        p2 = p2,
+        len = Hypot( p1.x - p2.x, p1.y  -p2.y ),
+    };
+    table.insert( lines, line );
+    return line;
+}
+
+function Hypot( x, y )
+{
+    return math.sqrt( x * x +  y * y );
+}
+
+function ConstrainPoint( p ){
+    if( p.fixed ){
+        return;
+    }
+    local vx = (p.x - p.ox) * fric;
+    local vy = (p.y - p.oy) * fric;
+    local len = Hypot(vx,vy);
+    local r = p.radius;
+    if(p.y <= r){
+        p.y = r;
+        p.oy = r + vy * surF;
+    }
+    if(p.y >= h - r){
+        local c = vy / len 
+        p.y = h - r
+        p.oy = h - r + vy * surF;
+        p.ox += c * vx;
+    }
+    if(p.x < r){
+        p.x = r;
+        p.ox = r + vx * surF;
+    }
+    if(p.x > w - r){
+        p.x = w - r;
+        p.ox = w - r + vx * surF;
+    }
+}
+
+function MovePoint(p){
+    if(p.fixed){
+        return;
+    }
+    var vx = (p.x - p.ox) * fric;
+    var vy = (p.y - p.oy) * fric;
+    p.ox = p.x;
+    p.oy = p.y;
+    p.x += vx;
+    p.y += vy;
+    p.y += grav;
+}
+
+function ConstrainLine(l){
+    var dx = l.p2.x - l.p1.x;
+    var dy = l.p2.y - l.p1.y;
+    var ll = Hypot(dx,dy);
+    var fr = ((l.len - ll) / ll) / 2;
+    dx *= fr;
+    dy *= fr;
+    if(l.p2.fixed){
+        if(!l.p1.fixed){
+            l.p1.x -=dx * 2;
+            l.p1.y -=dy * 2;
+        }
+    }else if(l.p1.fixed){
+        if(!l.p2.fixed){
+            l.p2.x +=dx * 2;
+            l.p2.y +=dy * 2;
+        }
+    }else{
+        l.p1.x -=dx;
+        l.p1.y -=dy;
+        l.p2.x +=dx;
+        l.p2.y +=dy;
+    }
+}
+
+function ClosestPoint(x,y){
+    local min = 40;
+    local index = -2;
+    for(local i = 0; i < points.length; i ++){
+        local p = points[i];
+        local dist = Hypot(p.x-x,p.y-y);
+        p.mouseDist = dist;
+        if(dist < min){
+            min = dist;
+            index = i;
+            
+        }
+        
+    }
+    return index;
+}
+
+function ConstrainPoints(){
+    for k,point in pairs( points ) do
+        ConstrainPoint( point );
+    end
+}
+function MovePoints(){
+    for k,point in pairs( points ) do
+        MovePoint( point );
+    end
+}
+function ConstrainLines(){
+    for k,line in pairs( lines ) do
+        ConstrainLine( lines );
+    end
+}
+
+function AddChainLink(){
+    local lp = points[points.length-1];
+    AddPoint(lp.x,lp.y-(chainImages[0].width-ballRad*2),0,0,ballRad);
+    AddLine(points[points.length-2],points[points.length-1],lastChainLink % 2);
+}
+
+local linkAddSpeed = 20;
+local linkAddCount = 0;
+local holdingCount = 0;
+function Simulate(){
+    if(mouse.buttonRaw & 4){
+        if(linkAddCount > 0){  // delay adding links
+            linkAddCount-=1;
+        }else{
+            AddChainLink(mouse.x,mouse.y);
+        }
+    }
+    if(points.length > 0){
+        if(mouse.buttonRaw & 1){
+            if(holding < 0){
+                holding = closestPoint(mouse.x,mouse.y);
+            }
+        }else{
+            holding = -1;
+        }
+        movePoints();
+        constrainPoints();
+        // attach the last link to the mouse
+        if(holding > -1){
+            var mousehold = points[holding];
+            mousehold.ox = mousehold.x = mouse.x;
+            mousehold.oy = mousehold.y = mouse.y;
+            holdingCount += 1; // used to hide help;
+        }
+        
+        for(var i = 0; i < stiffness; i++){
+            constrainLines();
+            if(holding > -1){
+                mousehold.ox = mousehold.x = mouse.x;
+                mousehold.oy = mousehold.y = mouse.y;
+            }
+        }
+        drawLines();
+    }else{
+        holding = -1;
+    }
+}
+
+Simulate();
+
+end

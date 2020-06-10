@@ -45,13 +45,6 @@ gkbrkn = {
 }
 
 function state_per_cast( state )
-    if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
-        if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
-            state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.xml,";
-        else
-            state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/less_particles.xml,";
-        end
-    end
     local player = GetUpdatedEntityID();
     local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
     if current_protagonist_bonus ~= 0 then

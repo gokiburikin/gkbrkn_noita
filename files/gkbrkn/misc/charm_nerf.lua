@@ -1,8 +1,5 @@
-if GKBRKN_CHARM_NERF_INIT == nil then
-    GKBRKN_CHARM_NERF_INIT = true;
-    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
-    _do_money_drop = do_money_drop
-end
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+_do_money_drop = _do_money_drop or do_money_drop;
 
 function do_money_drop( amount_multiplier )
     if HasFlagPersistent( MISC.CharmNerf.Enabled ) then

@@ -25,7 +25,7 @@ if projectile ~= nil then
         local px, py = EntityGetTransform( soft_parent );
         local distance = math.sqrt( ( px - x ) ^ 2 + ( py - y ) ^ 2 );
         if distance < 48 then
-            px, py = EntityGetHitboxCenter( soft_parent );
+            px, py = EntityGetFirstHitboxCenter( soft_parent );
             if px ~= nil and py ~= nil then
                 local parent_velocity = EntityGetFirstComponent( soft_parent, "VelocityComponent" );
                 local parent_vx, parent_vy = 0, 0;

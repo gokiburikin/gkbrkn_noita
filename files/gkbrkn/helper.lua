@@ -328,7 +328,10 @@ function FindComponentByType( entity_id, component_type_name )
     return valid_components;
 end
 
-function FindFirstComponentByType( entity_id, component_type_name ) 
+function FindFirstComponentByType( entity_id, component_type_name )
+    if EntityGetFirstComponentIncludingDisabled then
+        return EntityGetFirstComponentIncludingDisabled( entity_id, component_type_name );
+    end
     return FindComponentByType( entity_id, component_type_name )[1];
 end
 
@@ -615,8 +618,28 @@ function EntityGetHitboxCenter( entity )
     return tx, ty;
 end
 
+function EntityGetFirstHitboxSize( entity, fallbackWidth, fallbackHeight )
+    local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
+
+    local width = fallbackWidth or 0;
+    local height = fallbackHeight or 0;
+    if hitbox ~= nil then
+        width =  tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
+        height =  tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
+    end
+    return width, height;
+end
+
 function EntitySetVelocity( entity, x, y )
     EntityIterateComponentsByType( entity, "VelocityComponent", function( component )
         ComponentSetValueVector2( component, "mVelocity", x, y );
     end );
+end
+
+
+function EaseAngle( angle, target_angle, easing )
+    local dir = (angle - target_angle) / (math.pi*2);
+    dir = dir - math.floor(dir + 0.5);
+    dir = dir * (math.pi*2);
+    return angle - dir * easing;
 end

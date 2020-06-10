@@ -1,3 +1,4 @@
+print( "goki's things config menu init" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
@@ -37,7 +38,7 @@ local tabs = {
 }
 for index,content in pairs( CONTENT ) do
     if content.visible() then
-        table.insert( sorted_content, { id=index, name=content.name } );
+        table.insert( sorted_content, { id=index, name=content.name or ( "missing content name: "..index ) } );
         content_counts[content.type] = ( content_counts[content.type] or 0 ) + 1;
     end
 end

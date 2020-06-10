@@ -2881,17 +2881,40 @@ register_loadout(
             permanent_actions = {
             },
             actions = {
+                -- TODO if they remove gravity from long distance cast, zero gravity won't be necessary
                 { { action="GKBRKN_ZERO_GRAVITY",locked=true } },
-                { { action="GKBRKN_TRIGGER_DEATH",locked=true } },
-                { { action="GKBRKN_FALSE_SPELL",locked=true } },
+                { { action="GKBRKN_TRIGGER_DEATH",locked=false } },
+                { { action="GKBRKN_FALSE_SPELL",locked=false } },
                 { { action="HEAVY_SHOT",locked=true } },
                 { { action="GKBRKN_SPEED_DOWN",locked=true } },
                 { { action="LONG_DISTANCE_CAST",locked=true } },
-                { { action="GKBRKN_FALSE_SPELL",locked=true } },
+                { { action="GKBRKN_FALSE_SPELL",locked=false } },
                 { { action="DAMAGE",locked=true } },
                 { { action="LONG_DISTANCE_CAST",locked=true } },
             }
         },
+        {
+            name = "Wand",
+            stats = {
+                shuffle_deck_when_empty = 0, -- shuffle
+                actions_per_round = 1, -- spells per cast
+                speed_multiplier = 1 -- projectile speed multiplier (hidden)
+            },
+            stat_ranges = {
+                deck_capacity = {2,2}, -- capacity
+                reload_time = {12,12}, -- recharge time in frames
+                fire_rate_wait = {12,12}, -- cast delay in frames
+                spread_degrees = {0,0}, -- spread
+                mana_charge_speed = {20,20}, -- mana charge speed
+                mana_max = {100,100}, -- mana max
+            },
+            stat_randoms = {},
+            permanent_actions = {
+            },
+            actions = {
+                {"BOMB"},
+            }
+        }
     },
     { -- potions
         { { { "water", 1000 } } }, -- a list of random choices of material amount pairs

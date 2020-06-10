@@ -4,32 +4,6 @@ local correction_distance = 36;
 
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 
--- relatively performance impacting
-function is_in_line_of_sight( x, y, tx, ty )
-    return true;
-    --[[
-    local hit,hit_x,hit_y = Raytrace( x, y, tx, ty );
-    local in_line_of_sight = false;
-    if hit == false then
-        in_line_of_sight = true;
-    else
-        local distance_to_hit = math.sqrt( (hit_x - x) ^2 + (hit_y - y) ^ 2 );
-        local distance_to_target = math.sqrt( (tx - x) ^2 + (ty - y) ^ 2 );
-        if distance_to_hit > distance_to_target then
-            in_line_of_sight = true;
-        end
-    end
-    return in_line_of_sight;
-    ]]
-end
-
-function ease_angle( angle, target_angle, easing )
-    local dir = (angle - target_angle) / (math.pi*2);
-    dir = dir - math.floor(dir + 0.5);
-    dir = dir * (math.pi*2);
-    return angle - dir * easing;
-end
-
 local nearby_entities = EntityGetInRadiusWithTag( x, y, correction_distance, "homing_target" ) or {};
 local target = nearby_entities[ math.ceil( math.random() * #nearby_entities ) ];
 if target ~= nil then
@@ -62,13 +36,9 @@ if target ~= nil then
         end
         ]]
         if damaged_entities[tostring(entity)] ~= true then
-            local tx, ty = EntityGetTransform( target );
-            local hitbox = EntityGetFirstComponent( target, "HitboxComponent" );
-            if hitbox ~= nil then
-                local width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
-                local height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
-                tx = tx + tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) ) + width * 0.5;
-                ty = ty + tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) ) + height * 0.5;
+            local tx, ty = EntityGetFirstHitboxCenter( target );
+            if tx == nil or ty == nil then
+                EntityGetTransform( target );
             end
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
@@ -76,11 +46,10 @@ if target ~= nil then
             local target_angle = math.atan2( ty - y, tx - x );
             local magnitude = math.sqrt( vx * vx + vy * vy );
             local distance = math.sqrt( math.pow( tx - x, 2 ) + math.pow( ty - y, 2 )  );
-            local new_angle = ease_angle( angle, target_angle, 1.0 );
             if distance <= 12 then
                 EntitySetVariableString( entity, "gkbrkn_damaged_entities",damaged_entities_string..entity.."," )
             end
-            ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
+            ComponentSetValueVector2( velocity, "mVelocity", math.cos( target_angle ) * magnitude, math.sin( target_angle ) * magnitude );
         end
     end
 end

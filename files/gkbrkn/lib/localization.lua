@@ -28,11 +28,14 @@ gkbrkn_localization = {
     config_content_type_name_event = "Events",
     config_content_type_name_game_modifier = "Game Modifiers",
     config_content_type_name_dev_option = "Dev Options",
+    config_content_type_name_removal = "Removals",
 
     --[[ Dev Options ]]
     dev_option_infinite_mana_name = "Infinite Mana",
     dev_option_infinite_spells_name = "Infinite Spells",
     dev_option_recover_health_name = "Recover Health",
+    dev_option_cheap_rerolls_name = "Cheap Rerolls",
+    dev_option_infinite_money_name = "Infinite Money",
 
     --[[ Options ]]
     option_gold_tracking = "Gold Tracking",
@@ -101,6 +104,8 @@ gkbrkn_localization = {
     sub_option_selectable_classes_integration_description = "If the Selectable Classes mod is enabled, add all loadouts managed by Goki's Things to the class selection area",
     option_disable_random_spells = "Disable Random Spells",
     option_disable_random_spells_description = "A challenge option that disables 10% of spells at the start of the run",
+    option_rainbow_projectiles = "Rainbow Projectiles",
+    option_rainbow_projectiles_description = "Player projectiles will be random colours",
     option_charm_nerf = "Charm Nerf",
     option_charm_nerf_description = "Charmed enemies will no longer drop gold when killed",
     option_limited_ammo = "Limited Ammo",
@@ -147,6 +152,8 @@ gkbrkn_localization = {
     option_show_badges_description = "Show challenge modes as icons on the right side of the screen",
     option_show_entity_names = "Show Hovered Entity Names",
     option_show_entity_names_description = "Show entity names when hovering over them",
+    option_show_damage_numbers = "Show Damage Numbers",
+    option_show_damage_numbers_description = "Show persistent damage numbers over enemies",
     option_fixed_camera = "Fixed Camera",
     option_fixed_camera_description = "Keep the player in the center of the screen",
     option_auto_hide = "Auto-hide Config Button",
@@ -273,7 +280,7 @@ gkbrkn_localization = {
     ui_icon_description_nightmare_mode = "The world is unfamiliar. Death feels closer than ever.",
 
     --[[ Perks ]]
-    perk_name_always_cast = "Always Cast",
+    perk_name_always_cast = "Promote Spell",
     perk_description_always_cast = "A random spell on your wand has been promoted to always cast.",
     perk_name_demolitionist = "Demolition",
     perk_description_demolitionist = "Your projectiles cause larger, more destructive explosions.",
@@ -325,7 +332,7 @@ gkbrkn_localization = {
     perk_description_thrifty_shopper = "From now on Holy Mountain shops will carry two additional items.",
     perk_name_queue_casting = "Queue Casting",
     perk_description_queue_casting = "Each of your spells triggers the next when it expires.",
-    perk_name_disenchant_spell = "Demote Always Cast",
+    perk_name_disenchant_spell = "Demote Spell",
     perk_description_disenchant_spell = "A random always cast spell on your wand has been demoted.",
     perk_name_blood_magic = "Blood Magic",
     perk_description_blood_magic = "Your life force is used in place of mana, but you take 5x damage.",
@@ -491,6 +498,8 @@ gkbrkn_localization = {
     action_description_speed_down = "Decreases the speed at which the projectile flies through the air",
     action_name_false_spell = "False Spell",
     action_description_false_spell = "A spell that quickly dissipates",
+    action_name_familiar_shot = "Familiar Shot",
+    action_description_familiar_shot = "Projectiles return to the caster if they're too far away",
     action_name_wip = "WIP Action",
     action_description_wip = "A work in progress action",
 
@@ -654,4 +663,8 @@ gkbrkn_localization = {
     game_modifier_angry_gods_description = "The gods start angered.",
     game_modifier_no_hit_lite_name = "No Hit Lite",
     game_modifier_no_hit_lite_description = "You move to the previous Holy Mountain upon taking damage.",
+    game_modifier_kick_spells_off_wands_name = "Kick Spells Off Wands",
+    game_modifier_kick_spells_off_wands_description = "You can kick spells off of wands.",
+    game_modifier_kick_spells_around_name = "Kick Spells Around",
+    game_modifier_kick_spells_around_description = "You can kick spells around.",
 }

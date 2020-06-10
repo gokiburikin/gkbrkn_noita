@@ -25,7 +25,7 @@ if velocity ~= nil then
             prev_entity = target;
             target_found = true;
             
-            local tx, ty = EntityGetHitboxCenter( target );
+            local tx, ty = EntityGetFirstHitboxCenter( target );
             EntitySetTransform( entity, tx, ty );
             x = tx;
             y = ty;

@@ -1,40 +1,32 @@
 --[[
 changelog
-    -m "The Update that fixes Hot Goo"
-    -m "Add Action: False Spell"
-    -m "Add Action: Hyper Bounce"
-    -m "Add Action: Perforating Shot"
-    -m "Add Action: Reduce Knockback"
-    -m "Add Action: Speed Down"
-    -m "Add Action: Zero Gravity Shot"
-    -m "Add Game Modifier: Angry Gods"
-    -m "Add Game Modifier: Corruption Goo Mode"
-    -m "Add Game Modifier: No Hit Lite"
-    -m "Add Loadout: Bouncy"
-    -m "Add Unique Wand: Arcane Volley"
-    -m "Add Unique Wand: Earth Mover"
-    -m "Add Unique Wand: Spell Burst"
-    -m "Change Action: Bound Shot (damage 2 -> 0)"
-    -m "Change Action: Chaotic Burst (spawn weighting 0.8 -> 0.6)"
-    -m "Change Action: Feather Shot (remove knockback reduction, remove gravity reduction, remove mass reduction, remove recoil reduction)"
-    -m "Change Action: Guided Shot (apply aim angle on the first frame)"
-    -m "Change Action: Magic Hand (remove unintended extra distance, clean up logic, maintain spread, improve synergy capabilities)"
-    -m "Change Action: Zap (spawn weighting 0.8 -> 0.6)"
-    -m "Change Loadout: Conjuration (switch death cross out for false spell)"
-    -m "Change Loadout: Convergent (more early usability, more potential)"
-    -m "Change Loadout: Light (digging wand changes)"
-    -m "Change Loadout: Zoning (rework)"
-    -m "Change Options: Fixed Camera (interpolation speed 50 -> 20)"
-    -m "Change some Goo Mode stuff (fix Poly Goo, wang colour collision, remove killer goo alt, add particle effects to killer goo)"
-    -m "Change Tweak: Increase Mana (no longer disables the spell, mana cost -30 -> 0, restores 30 mana on cast fixing the always cast synergy)"
-    -m "Change Unique Wand: Auto Spell (remove accelerating shots since they're no longer needed with the guided shot change)"
-    -m "Change Unique Wand: Spark Swarm (update for the arcane bouquet rework)"
-    -m "Change Unique Wand: Spirit Familiar (switch death cross out for false spell)"
-    -m "Change Unique Wand: Telefragger (simplified)"
-    -m "Deprecate Action: Queued Cast"
-    -m "Deprecate Perk: Queue Casting"
-    -m "Deprecate Perk: Resilience"
-    -m "Fix Hot Goo spawning in unintended circumstances"
+    -m "Add Development Option: Cheap Rerolls"
+    -m "Add Development Option: Infinite Money"
+    -m "Add Game Modifier: Kick Spells Around"
+    -m "Add Game Modifier: Kick Spells Off Wands"
+    -m "Add Option: Show Damage Numbers"
+    -m "Add Option: Rainbow Projectiles"
+    -m "Add Unique Wand: Creation: Blue"
+    -m "Add Unique Wand: Creation: Green"
+    -m "Add Unique Wand: Creation: Red"
+    -m "Add Unique Wand: The Huntress"
+    -m "Add support for null actions in wand generation functions (nil will leave a blank space in the wand)"
+    -m "Change Action: Path Correction (script updates)"
+    -m "Change Action: False Spell (lifetime 0 -> 1)"
+    -m "Change Action: Magic Hand (fix 0 velocity spells having an incorrect offset)"
+    -m "Change Action: Spell Merge (mana cost 7 -> 14, remove on_collision_die adoption)"
+    -m "Change font files used for DPS Tracker and Gold Tracker"
+    -m "Change Loadout: Lancer (add forgotten digging wand)"
+    -m "Change Option: Less Particles (include some missed player shots, update less particles logic for other entities)"
+    -m "Change Game Modifier: Floor is Lava (properly inflict damage, deal more damage less often while grounded)"
+    -m "Change Option: Show Health Bars (never ragdollify on death 0 -> 1)"
+    -m "Change Perk: Always Cast (renamed Promote Spell)"
+    -m "Change Perk: Demote Always Cast (renamed Demote Spell)"
+    -m "Change Perk: Material Compression (now doubles the amount of liquid inside flasks as well, no more half empty flask pickups)"
+    -m "Change Perk: Wand Fusion (no longer explodes frozen or permanently attached spells from merged wands; they are deleted instead, fusing 0 wands no longer produces a wand)"
+    -m "Deprecate Tweak: Chain Bolt (no longer necessary)"
+    -m "Update some scripts to utilize new API functions"
+    -m "Optimize projectile capture functions (large increase in performance when many player projectiles are on screen)"
 
 TODO
     Hard Mode
@@ -59,15 +51,14 @@ TODO
         suck up items you don't want, turn them into gold
 
 TODO EVENTUALLY
-    make material compression fill all flasks you pick up for the first time (not possible right now)
     fix spell duplicator to use the new peek actions functions instead of the inaccurate extremely complicated system it uses right now
 
 EXTRA THINGS
     lily pikku (big scarf?)
 mimic perks
-        Strong Leviathan
-        Prague Rats
-        Invisibility Frames
+    Strong Leviathan
+    Prague Rats
+    Invisibility Frames
 
 ACTIONS
     damage cut (damage below a certain number is blocked) (can't override damage right now)
@@ -121,10 +112,6 @@ for content_id,content in pairs( CONTENT ) do
 end
 
 --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/action_info.lua" );
-
--- [[ Tweaks ]]
-ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_actions.lua" );
-ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
 
 --[[ Biomes ]]
 ModLuaFileAppend( "data/scripts/biomes/temple_altar.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_altar.lua" );
@@ -210,11 +197,19 @@ if HasFlagPersistent( MISC.FixedCamera.Enabled ) then
 end
 
 function OnModPreInit()
-    -- append the logic to parse the old loadouts as new loadouts 
+    -- append the logic to parse the old loadouts as new loadouts
     ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn_loadouts/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/parse_old_loadouts.lua" );
     -- slap the fully combined set of loadout files onto the end of config so it can be caught by the config menu and performed
     ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/loadouts.lua" );
     ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn_legendary_wands/register.lua" );
+    -- handle dynamic removal generation
+    -- TODO this doesn't work well at all
+    --ModLuaFileAppend( "mods/gkbrkn_noita/files/gkbrkn/config.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/removals_append.lua" );
+    --ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_actions.lua" );
+    --ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/append/perk_list.lua" ); 
+    -- handle tweaks
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_actions.lua" );
+    ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
 end
 
 function OnModPostInit()

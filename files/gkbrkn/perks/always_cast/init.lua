@@ -1,24 +1,7 @@
 dofile_once("data/scripts/lib/utilities.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
-
-function is_wand_always_cast_valid( wand )
-    local children = EntityGetAllChildren( wand ) or {};
-    for i,v in ipairs( children ) do
-        local components = EntityGetAllComponents( v );
-        local has_a_valid_spell = false;
-        for _,component in pairs(components) do
-            if ComponentGetValue( component, "permanently_attached" ) == "0" then
-                has_a_valid_spell = true;
-                break;
-            end
-        end
-        if has_a_valid_spell then
-            return true;
-        end
-    end
-    return false;
-end
+dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua");
 
 table.insert( perk_list, 
     generate_perk_entry( "GKBRKN_ALWAYS_CAST", "always_cast", false, function( entity_perk_item, entity_who_picked, item_name )
@@ -33,8 +16,8 @@ table.insert( perk_list,
         end
         if #wands > 0 then
             local filtered_wands = {};
-            for _,wand in pairs(wands) do
-                if is_wand_always_cast_valid( wand ) then
+            for _,wand in pairs( wands ) do
+                if wand_is_always_cast_valid( wand ) then
                     table.insert( filtered_wands, wand );
                 end
             end
@@ -76,6 +59,7 @@ table.insert( perk_list,
                     ComponentSetValue( to_attach, "permanently_attached", "1" );
                 end
             end
+            --wand_lock( base_wand );
         end
 	end
 ));

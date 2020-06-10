@@ -193,13 +193,6 @@ function draw_action( instant_reload_if_empty )
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
     
     if gkbrkn.draw_action_stack_size == 0 then
-        if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
-            if HasFlagPersistent( MISC.LessParticles.DisableEnabled ) then
-                c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.xml,";
-            else
-                c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/less_particles.xml,";
-            end
-        end
         local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
         if current_protagonist_bonus ~= 0 then
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";

@@ -808,3 +808,121 @@ register_legendary_wand( "earth_mover", "Earth Mover", "Ivylistar", {
         { { action="AIR_BULLET", locked=false } },
     }
 } );
+
+register_legendary_wand( "the_huntress", "The Huntress", "Zentimental", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {12,12}, -- capacity
+        reload_time = {12,12}, -- recharge time in frames
+        fire_rate_wait = {12,12}, -- cast delay in frames
+        spread_degrees = {2,2}, -- spread
+        mana_charge_speed = {100,100}, -- mana charge speed
+        mana_max = {350,350}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="SHIELD_SECTOR", locked=true } },
+        { { action="GKBRKN_TRIGGER_TIMER", locked=true } },
+        { { action="BULLET", locked=false } },
+        { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
+        { { action="GKBRKN_TRIPLE_CAST", locked=true } },
+        { { action="SCATTER_3", locked=true } },
+        { { action="LIGHT_BULLET", locked=false } },
+        { { action="LIGHT_BULLET", locked=false } },
+    }
+} );
+
+register_legendary_wand( "creation_blue", "Creation: Blue", "Zentimental", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 1, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {5,5}, -- capacity
+        reload_time = {2,2}, -- recharge time in frames
+        fire_rate_wait = {2,2}, -- cast delay in frames
+        spread_degrees = {2,2}, -- spread
+        mana_charge_speed = {1000,1000}, -- mana charge speed
+        mana_max = {1000,1000}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="SPEED", locked=true } },
+        { { action="ELECTRIC_CHARGE", locked=true } },
+        { { action="ARC_ELECTRIC", locked=true } },
+        { { action="HORIZONTAL_ARC", locked=true } },
+        { { action="GKBRKN_ZAP", locked=true } },
+    }
+} );
+
+
+register_legendary_wand( "creation_red", "Creation: Red", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 0, -- shuffle
+        actions_per_round = 5, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {3,3}, -- capacity
+        reload_time = {20,20}, -- recharge time in frames
+        fire_rate_wait = {20,20}, -- cast delay in frames
+        spread_degrees = {1,1}, -- spread
+        mana_charge_speed = {1000,1000}, -- mana charge speed
+        mana_max = {1000,1000}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="FIREBALL_RAY_LINE", locked=true, permanent=true } },
+        { { action="ARC_FIRE", locked=true } },
+        { { action="FIREBOMB", locked=true } },
+        { { action="FIREBOMB", locked=true } },
+        { { action="FIREBOMB", locked=true } },
+    }
+} );
+
+
+register_legendary_wand( "creation_green", "Creation: Green", "goki", {
+    name = "Wand",
+    stats = {
+        shuffle_deck_when_empty = 1, -- shuffle
+        actions_per_round = 2, -- spells per cast
+        speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+    },
+    stat_ranges = {
+        deck_capacity = {11,11}, -- capacity
+        reload_time = {0,0}, -- recharge time in frames
+        fire_rate_wait = {-10,-10}, -- cast delay in frames
+        spread_degrees = {15,15}, -- spread
+        mana_charge_speed = {1000,1000}, -- mana charge speed
+        mana_max = {1000,1000}, -- mana max
+    },
+    stat_randoms = {},
+    permanent_actions = {
+    },
+    actions = {
+        { { action="PINGPONG_PATH", locked=true, permanent=true } },
+        { { action="SINEWAVE", locked=true, permanent=true } },
+        { { action="CHAOTIC_ARC", locked=true, permanent=true } },
+        { { action="ACCELERATING_SHOT", locked=true, permanent=true } },
+        { { action="GKBRKN_SPELL_MERGE", locked=true, permanent=true } },
+        { { action="RECOIL_DAMPER", locked=true, permanent=true } },
+        { { action="RUBBER_BALL", locked=true } },
+        { { action="HEAVY_BULLET", locked=true } },
+        { { action="SPITTER_TIER_2", locked=true } },
+        { { action="BULLET", locked=true } },
+    }
+} );
