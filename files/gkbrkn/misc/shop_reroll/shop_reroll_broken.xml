@@ -1,0 +1,27 @@
+<Entity tags="teleportable_NOT">
+	<UIInfoComponent
+		name="Shop Reroll (Broken)"
+		>
+	</UIInfoComponent>
+
+	<InteractableComponent
+        ui_text="The reroller is broken and can't be used"
+        name="Shop Reroll (Broken)">
+  </InteractableComponent>
+	
+	<VelocityComponent />
+
+	<SimplePhysicsComponent/>
+
+	<SpriteComponent 
+		_tags="enabled_in_world,character" 
+		alpha="1" 
+		image_file="data/buildings_gfx/perk_reroll.png" 
+		next_rect_animation="" 
+		rect_animation="" 
+		offset_x="10"
+		offset_y="40"
+		z_index="20" >
+	</SpriteComponent>
+  
+</Entity>

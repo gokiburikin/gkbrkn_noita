@@ -2,8 +2,6 @@ dofile( "data/scripts/items/generate_shop_item.lua" );
 function item_pickup( entity_item, entity_who_picked, item_name )
 	local x, y = EntityGetTransform( entity_item );
 
-    local pull = tonumber( GlobalsGetValue( "gkbrkn_shop_rerolls", "0" ) );
-    GlobalsSetValue( "gkbrkn_shop_rerolls", pull + 1 );
     SetRandomSeed( x, y );
     -- NOTE: Because of mods, it's not clear how big this radius should be
     local nearby_entities = EntityGetInRadius( x, y, 512 );
@@ -25,24 +23,36 @@ function item_pickup( entity_item, entity_who_picked, item_name )
     -- NOTE: Because the item has to be moved and the sale tag will be offset, this doesn't allow for sales
 	local sale_item_i = -1
     --for shop_item in pairs( shop_items )
+    local pull = tonumber( GlobalsGetValue( "gkbrkn_shop_rerolls", "0" ) );
+    GlobalsSetValue( "gkbrkn_shop_rerolls", pull + 1 );
+    local _SetRandomSeed = SetRandomSeed;
+    SetRandomSeed = function( x, y )
+        return _SetRandomSeed( x + pull * 13, y + pull * 127 );
+    end
+    local _GetRandomAction = GetRandomAction;
+    GetRandomAction = function( x, y, max_level, type, i )
+        return _GetRandomAction( x + pull * 13, y + pull * 127, max_level, type, i );
+    end
     for i=1,#shop_items do
         local item = shop_items[i];
         local wand = EntityHasTag( item, "wand" );
         local x, y = EntityGetTransform( item );
-        local rng_x, rng_y = x + pull * 0.001, y + pull * 0.001;
         EntityKill( item );
         if wand then
-            generate_shop_wand( rng_x, rng_y, i == sale_item_i, nil, true );
+            generate_shop_wand( x, y, i == sale_item_i, nil, true );
         else
-            generate_shop_item( rng_x, rng_y, i == sale_item_i, nil, true );
-        end
-        local new_item = EntityGetInRadius( rng_x, rng_y, 2 )[1];
-        if new_item then
-            EntityApplyTransform( new_item, x, y );
+            generate_shop_item( x, y, i == sale_item_i, nil, true );
         end
     end
+    SetRandomSeed = _SetRandomSeed;
+    GetRandomAction = _GetRandomAction;
 
 	EntityKill( entity_item );
-	EntityLoad( "data/entities/particles/perk_reroll.xml", x, y );
-	EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/shop_reroll/shop_reroll.xml", x, y );
+    EntityLoad( "data/entities/particles/perk_reroll.xml", x, y );
+    local break_roll = math.random();
+    if break_roll < 1.25 - 0.05 * pull then
+        EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/shop_reroll/shop_reroll.xml", x, y );
+    else
+        EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/shop_reroll/shop_reroll_broken.xml", x, y );
+    end
 end
