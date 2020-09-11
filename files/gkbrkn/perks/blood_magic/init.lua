@@ -4,7 +4,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_BLOOD_MAGIC", "blood_magic", false, function( entity_perk_item, entity_who_picked, item_name )
         EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_blood_magic_stacks", 0.0, function( value ) return value + 1.0; end );
-        local damage_multiplier = CONTENT[PERKS.BloodMagic].options.DamageMultiplier;
+        local damage_multiplier = 5;
         local adjustments = {
             ice = damage_multiplier,
             electricity = damage_multiplier,

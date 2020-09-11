@@ -9,6 +9,6 @@ ModLuaFileAppend(
 );
 
 ModLuaFileAppend(
-    "mods/gkbrkn_noita/files/gkbrkn/config.lua",
+    "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua",
     "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_loadout_skipper.lua"
 );

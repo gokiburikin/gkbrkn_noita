@@ -140,39 +140,49 @@ Options to start runs with random changes. All of these can be used separately o
 
 - **Random Wands**: Start with two randomly generated wands.
 - **Alternative Wand Generation**: Generate random starting wands using less repetitive custom wand generation logic.
-- **Random Cape Colour**: Start with a randomly coloured cape.
 - **Random Starting Health**: Start with a random amount of health from 50 to 150.
+- **Random Cape Colour**: Start with a randomly coloured cape.
 - **Random Flasks**: Start with a random assortment of flasks.
 - **Random Perk**: Start with a random perk.
+- **Disable Random Spells**: Disable 10% of spells chosen at random at the start of each run.
+- **Generate Random Spellbooks**: Generate 10 spellbooks that are a combination of 3-6 random spells.
 
 ## Utility
 These options have an impact on general gameplay and are meant to be picked and chosen based on your preferred play style.
 
-- **Any Spell On Any Wand**: Allows any standard spell to spawn on any generated wand, ignoring spawn level.
-- **Auto-collect Gold**: Automatically collect gold nuggets.
-- **Auto-hide Config Menu**: Hide the config menu 5 seconds after the start of the run or closing the menu.
-- **Chaotic Wand Generation**: Replace all spells on a wand with random spells.
-- **Charm Nerf**: Charmed enemies no longer drop gold nuggets.
-- **Chests Can Contain Perks**: Chests have a chance (12% or 25% for a super chest) to spawn a perk instead of the usual drop table (one perk only.)
+- **Log Collected Gold**: Add a message showing how much gold was recently collected.
+- **Count Collected Gold**: Add an in-world ui element showing how much gold was recently collected.
+- **Gold Nuggets -> Gold Powder**: Gold nuggets will turn into gold power instead of disappearing.
+- **Persistent Gold**: Gold nuggets no longer despawn.
+- **Auto-collect Gold**: Automatically collect all gold nuggets (even ones you didn't personally earn.)
 - **Combine Gold**: Automatically combine nearby gold nuggets (to reduce physics load.)
-- **Disable Spells**: Disable 10% of spells chosen at random at the start of each run.
-- **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. - *Required for some spells to show up if using Wand Shops Only.*
-- **Fixed Camera**: Keep the camera centered on the player.
-- **Gold Counter**: Add a message showing how much gold was recently collected.
-- **Gold Decay**: Gold nuggets will turn into gold power instead of disappearing.
-- **Heal On Max Health Up**: Heal for the amount gained when gaining max health.
-- **Health Bars**: Show enemy health bars.
-- **Invincibility Frames**: Become invincibile for a short time when damaged by enemies.
+- **Invincibility Frames**: Become invincibile for a short time when damaged by enemies. Optional: Show character invincibility flashing.
+- **Heal New Health**: Heal for the amount gained when gaining max health. Optional: Full heal when collecting max health.
 - **Less Particles**: Reduce or disable cosmetic particle emission (to reduce particle load.)
+- **Any Spell On Any Wand**: Allows any standard spell to spawn on any generated wand, ignoring spawn level.
+- **Extended Wand Generation**: Include unused spell types (static projectiles, materials, passives, other) in procedural wand generation. - *Required for some spells to show up if using Wand Shops Only.*
+- **Chaotic Wand Generation**: Replace all spells on a wand with random spells.
 - **No Preset Wands**: Replace the preset wands in the first biome with procedural wands.
 - **Passive Recharge**: Wands recharge while holstered.
-- **Persistent Gold**: Gold nuggets no longer despawn.
-- **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
-- **Show Badges**: Show selected game mode options as UI icons.
+- **Health Bars**: Show enemy health bars. Optional: Slightly better looking health bars.
+- **Show Entity Names**: Show the names of entities you target.
+- **Show Perk Descriptions**: Show the descriptions of perks you target.
+- **Show Damage Numbers**: Show custom grouped damage numbers. Much better performance when causing rapid tick damage (disable default damage numbers.)
 - **Show FPS**: Add an FPS counter.
-- **Spell Slot Machine**: Add a slot machine that you can buy spells from in the Holy Mountain.
-- **Starting Perks**: Adds the ability to start with a selection of perks from all loaded mods.
+- **Show Badges**: Show selected game mode options as UI icons.
+- **Auto-hide Config Menu**: Hide the config menu 5 seconds after the start of the run or closing the menu.
+
+- **Rainbow Projectiles**: Projectiles you fire have their colours randomized.
+- **Quick Swap (WIP)**: Use alt-fire to switch between hotbars.
+- **Chests Can Contain Perks**: Chests have a chance (12% or 25% for a super chest) to spawn a perk instead of the usual drop table (one perk only.)
 - **Target Dummy**: Add a target dummy to each Holy Mountain.
+- **Spell Slot Machine**: Add a slot machine that you can buy spells from in the Holy Mountain.
+- **Shop Reroller**: Add a shop reroller that will reroll items in the shop to new items of the same type.
+- **Fixed Camera**: Keep the camera centered on the player.
+- **Show Deprecated Content**: Allows you to enable content that was removed from Goki's Things.
+
+### Starting Perks
+Goki's Things registers all perks as potential starting perks. Toggling any perk on in the Starting Perks menu will give you one copy of that perk at the start of your run.
 
 ## Content
 All content can be toggled on or off. Pick and choose what you like, or disable it all if you're only interested in the utility of Goki's Things.
@@ -204,6 +214,7 @@ Options to spice up your runs. Most of these require a new game to activate and 
 - **Floor is Lava**: You take damage while grounded.
 - **Free Shops**: Items in the shop will cost 0 gold.
 - **Guaranteed Always Cast**: Generated wands will have at least 1 Always Cast spell.
+- **Keep Moving**: Deadly barriers spawn where you've recently been. Stay clear of them!
 - **Limited Ammo**: Unlimited use spells become limited.
 - **Limited Mana**: Wands have more mana, but do not recharge mana.
 - **No Hit**: You die in one hit.

@@ -1,6 +1,6 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 table.insert( actions, generate_action_entry(
-    "GKBRKN_CHAOTIC_BURST", "chaotic_burst", ACTION_TYPE_PROJECTILE,
+    "GKBRKN_CHAOTIC_BURST", "chaotic_burst", ACTION_TYPE_OTHER,
     "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 260, 42, -1,
     nil,
     function()

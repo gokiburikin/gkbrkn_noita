@@ -115,39 +115,39 @@ function initialize_wand( wand, wand_data )
 
     --for _,actions in pairs( wand_data.actions or {} ) do
     if wand_data.actions then
-        for i=1,#wand_data.actions,1 do
-            local actions = wand_data.actions[i];
+        for action_index=1,#wand_data.actions,1 do
+            local actions = wand_data.actions[action_index];
             if actions ~= nil then
                 local random_action = actions[ Random( 1, #actions ) ];
                 if random_action ~= nil then
                     if type( random_action ) == "table" then
                         local amount = random_action.amount or 1;
-                        for i=1,amount do
+                        for _=1,amount,1 do
                             local action_entity = CreateItemActionEntity( random_action.action );
-                            local item = FindFirstComponentByType( action_entity, "ItemComponent" );
-                            if random_action.locked then
-                                ComponentSetValue( item, "is_frozen", "1" );
+                            if action_entity then
+                                local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+                                if random_action.locked then
+                                    ComponentSetValue( item, "is_frozen", "1" );
+                                end
+                                if random_action.permanent then
+                                    ComponentSetValue( item, "permanently_attached", "1" );
+                                end
+                                ComponentSetValue2( item, "inventory_slot", action_index - 1, 0 );
+                                EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                                EntityAddChild( wand, action_entity );
                             end
-                            if random_action.permanent then
-                                ComponentSetValue( item, "permanently_attached", "1" );
-                            end
-                            if ComponentSetValue2 then
-                                ComponentSetValue2( item, "inventory_slot", i-1, 0 );
-                            end
-                            EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
-                            EntityAddChild( wand, action_entity );
                         end
                     else
                         local action_entity = CreateItemActionEntity( random_action );
-                        local item = FindFirstComponentByType( action_entity, "ItemComponent" );
-                        if item ~= nil then
-                            if ComponentSetValue2 then
-                                ComponentSetValue2( item, "inventory_slot", i-1, 0 );
+                        if action_entity then
+                            local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+                            if item ~= nil then
+                                ComponentSetValue2( item, "inventory_slot", action_index - 1, 0 );
                             end
+                            EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+                            EntityAddChild( wand, action_entity );
+                            --AddGunAction( wand, random_action );
                         end
-                        EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
-                        EntityAddChild( wand, action_entity );
-                        --AddGunAction( wand, random_action );
                     end
                 end
             end
@@ -157,7 +157,7 @@ function initialize_wand( wand, wand_data )
     if wand_data.sprite ~= nil then
         if wand_data.sprite.file ~= nil then
             ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
-            -- TODO this takes a second to apply, probably work fixing, but for now just prefer using custom file
+            -- TODO this takes a second to apply, probably worth fixing, but for now just prefer using custom file
             local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
             if sprite ~= nil then
                 ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
@@ -191,7 +191,7 @@ function initialize_wand( wand, wand_data )
 end
 
 
-function wand_explode_random_action( wand, include_permanent_actions, include_frozen_actions )
+function wand_explode_random_action( wand, include_permanent_actions, include_frozen_actions, ox, oy )
     local x, y = EntityGetTransform( wand );
     local actions = {};
     local children = EntityGetAllChildren( wand ) or {};
@@ -212,8 +212,9 @@ function wand_explode_random_action( wand, include_permanent_actions, include_fr
         end
     end
     if #actions > 0 then
-        local action_to_remove = actions[ math.ceil( math.random() * #actions ) ];
-        local card = CreateItemActionEntity( action_to_remove.action_id, x, y );
+        local r = math.ceil( math.random() * #actions );
+        local action_to_remove = actions[ r ];
+        local card = CreateItemActionEntity( action_to_remove.action_id, ox or x, oy or y );
         ComponentSetValueVector2( EntityGetFirstComponent( card, "VelocityComponent" ), "mVelocity", Random( -150, 150 ), Random( -250, -100 ) );
         EntityRemoveFromParent( action_to_remove.entity );
         return action_to_remove;
@@ -302,4 +303,53 @@ function wand_is_always_cast_valid( wand )
         end
     end
     return false;
+end
+
+function force_always_cast( wand, amount )
+    if amount == nil then amount = 1 end
+    local children = EntityGetAllChildren( wand ) or {};
+    local always_cast_count = 0;
+    for _,child in pairs( children ) do
+        local item_component = FindFirstComponentByType( child, "ItemComponent" );
+        if item_component then
+            if ComponentGetValue( item_component, "permanently_attached" ) == "1" then
+                always_cast_count = always_cast_count + 1;
+                break;
+            end
+        end
+    end
+    while always_cast_count < amount do
+        local random_child = children[ Random( 1,#children ) ];
+        local item_component = FindFirstComponentByType( random_child, "ItemComponent" );
+        if item_component and ComponentGetValue( item_component, "permanently_attached" ) ~= "1" then
+            ComponentSetValue( item_component, "permanently_attached", "1" );
+            always_cast_count = always_cast_count + 1;
+        end
+    end
+end
+
+function initialize_legendary_wand( base_wand, x, y, level, force )
+    dofile( "mods/gkbrkn_noita/files/gkbrkn/content/legendary_wands.lua" );
+    for _,child in pairs( EntityGetAllChildren( base_wand ) or {} ) do
+        EntityRemoveFromParent( child );
+    end
+    local shine = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand_shine.xml" );
+    if shine ~= nil then
+        EntityAddChild( base_wand, shine );
+    end
+    SetRandomSeed( GameGetFrameNum(), x + y );
+    local valid_wands = {};
+    local chosen_wand = force;
+    local content_data = nil;
+    if chosen_wand == nil then
+        for index,content in pairs( legendary_wands ) do
+            if (level == nil or ( level >= content.min_level or 0 and level <= content.max_level or 99 ) ) then
+                table.insert( valid_wands, index );
+            end
+        end
+        chosen_wand = valid_wands[Random( 1, #valid_wands )];
+    end
+    content_data = force or legendary_wands[chosen_wand];
+    if content_data == nil then print("[goki's things] legendary wand error: no wand data found"); return; end
+    initialize_wand( base_wand, content_data.wand );
 end

@@ -1,6 +1,6 @@
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "data/scripts/perks/perk.lua" );
 dofile_once( "data/scripts/perks/perk_list.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 
 local init_check_flag = "gkbrkn_random_start_init";
 if GameHasFlagRun( init_check_flag ) == false then
@@ -26,14 +26,14 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     -- random cape colour
-    if HasFlagPersistent( MISC.RandomStart.RandomCapeColorEnabled ) and cape ~= nil then
+    if HasFlagPersistent( MISC.RandomStart.RandomCapeColorFlag ) and cape ~= nil then
         local verlet_physics = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
         ComponentSetValue( verlet_physics, "cloth_color",  Random( 0xFF000000, 0xFFFFFFFF ) );
         ComponentSetValue( verlet_physics, "cloth_color_edge",  Random( 0xFF000000, 0xFFFFFFFF ) );
     end
 
     -- randomize starting hp
-    if HasFlagPersistent( MISC.RandomStart.RandomHealthEnabled ) then
+    if HasFlagPersistent( MISC.RandomStart.RandomHealthFlag ) then
         local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
         if damage_models ~= nil then
             for i,v in pairs(damage_models) do
@@ -46,7 +46,7 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     -- random wands
     if inventory ~= nil then
-        if HasFlagPersistent( MISC.RandomStart.RandomWandEnabled ) then
+        if HasFlagPersistent( MISC.RandomStart.RandomWandsFlag ) then
             local inventory_items = EntityGetAllChildren( inventory );
             if inventory_items ~= nil then
                 for i,item_entity in ipairs( inventory_items ) do
@@ -61,7 +61,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                 "cost_actions"
             }
             for i=1,2 do
-                if HasFlagPersistent( MISC.RandomStart.CustomWandGenerationEnabled ) == true then
+                if HasFlagPersistent( MISC.RandomStart.CustomWandGenerationFlag ) == true then
                     local item_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
                     EntityAddComponent( item_entity, "VariableStorageComponent", {
                         name = "random_start_actions_pool",
@@ -82,7 +82,7 @@ if GameHasFlagRun( init_check_flag ) == false then
             end
         end
 
-        if HasFlagPersistent( MISC.RandomStart.RandomFlaskEnabled ) then
+        if HasFlagPersistent( MISC.RandomStart.RandomFlaskFlag ) then
             local inventory_items = EntityGetAllChildren( inventory );
             local flasks_to_replace = 0;
             if inventory_items ~= nil then
@@ -101,7 +101,7 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     -- random perk
-    if HasFlagPersistent( MISC.RandomStart.RandomPerkEnabled ) then
+    if HasFlagPersistent( MISC.RandomStart.RandomPerkFlag ) then
         local random_perk = random_from_array( perk_list ).id;
         local perk_entity = perk_spawn( x, y, random_perk );
         if perk_entity ~= nil then

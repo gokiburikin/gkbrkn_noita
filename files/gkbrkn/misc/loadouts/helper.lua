@@ -1,12 +1,11 @@
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 dofile_once( "data/scripts/perks/perk.lua" );
 dofile_once( "data/scripts/lib/utilities.lua" );
 dofile_once( "data/scripts/gun/procedural/gun_action_utils.lua" );
-dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" );
 dofile_once( "data/scripts/gun/procedural/wands.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
 function handle_loadout( player_entity, loadout_data )
     local x, y = EntityGetTransform( player_entity );
@@ -33,7 +32,7 @@ function handle_loadout( player_entity, loadout_data )
     end
 
     -- set cape colour
-    if HasFlagPersistent( MISC.Loadouts.CapeColorEnabled ) then
+    if HasFlagPersistent( MISC.Loadouts.CapeColorFlag ) then
         local verlet = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
         if verlet ~= nil then
             if loadout_data.cape_color ~= nil then
@@ -166,7 +165,7 @@ function handle_loadout( player_entity, loadout_data )
         end	
     end
 
-    if HasFlagPersistent( MISC.Loadouts.PlayerSpritesEnabled ) and loadout_data.sprites ~= nil then
+    if HasFlagPersistent( MISC.Loadouts.PlayerSpritesFlag ) and loadout_data.sprites ~= nil then
         if loadout_data.sprites.player_sprite_filepath ~= nil then
             local player_sprite_component = EntityGetFirstComponent( player_entity, "SpriteComponent" );
             local player_sprite_file = loadout_data.sprites.player_sprite_filepath;

@@ -1,10 +1,10 @@
 dofile_once( "data/scripts/gun/gun_enums.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
-_generate_gun = _generate_gun or generate_gun;
 
 local extended_types = {
     ACTION_TYPE_STATIC_PROJECTILE,
@@ -14,6 +14,7 @@ local extended_types = {
     ACTION_TYPE_PASSIVE
 };
 local chance_to_replace = 0.03;
+local _generate_gun = generate_gun;
 function generate_gun( cost, level, force_unshuffle )
     _generate_gun( cost, level, force_unshuffle );
     local entity = GetUpdatedEntityID();
@@ -29,7 +30,7 @@ function generate_gun( cost, level, force_unshuffle )
 
     for _,wand in pairs( local_wands ) do
         local ability = FindFirstComponentByType( wand, "AbilityComponent" );
-        if HasFlagPersistent( MISC.ChaoticWandGeneration.Enabled ) then
+        if HasFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
                 local item = FindFirstComponentByType( child, "ItemComponent" );
@@ -62,7 +63,7 @@ function generate_gun( cost, level, force_unshuffle )
                 end
                 EntityAddChild( wand, child_to_return );
             end
-        elseif HasFlagPersistent( MISC.ExtendedWandGeneration.Enabled ) then
+        elseif HasFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
                 local item = FindFirstComponentByType( child, "ItemComponent" );
@@ -97,25 +98,7 @@ function generate_gun( cost, level, force_unshuffle )
             end
         end
         if GameHasFlagRun( FLAGS.GuaranteedAlwaysCast ) then
-            local children = EntityGetAllChildren( wand ) or {};
-            local has_always_cast = false;
-            for _,child in pairs( children ) do
-                local item_component = FindFirstComponentByType( child, "ItemComponent" );
-                if item_component then
-                    if ComponentGetValue( item_component, "permanently_attached" ) == "1" then
-                        has_always_cast = true;
-                        break;
-                    end
-                end
-            end
-            if not has_always_cast then
-                SetRandomSeed( x, y );
-                local random_child = children[ Random( 1,#children ) ];
-                local item_component = FindFirstComponentByType( random_child, "ItemComponent" );
-                if item_component then
-                    ComponentSetValue( item_component, "permanently_attached", "1" );
-                end
-            end
+            force_always_cast( wand, 1 )
         end
 
         if ability ~= nil then
@@ -139,8 +122,8 @@ function generate_gun( cost, level, force_unshuffle )
             if mana_mastery_stacks > 0 then
                 local mana_max = ability_component_get_stat( ability, "mana_max" );
                 local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
-                ability_component_set_stat( ability, "mana_max", mana_charge_speed );
-                ability_component_set_stat( ability, "mana_charge_speed", mana_max );
+                ability_component_set_stat( ability, "mana_max", (mana_charge_speed + mana_max) / 2 * 1.0 + mana_mastery_stacks * 0.1 );
+                ability_component_set_stat( ability, "mana_charge_speed", (mana_charge_speed + mana_max) / 2 * 1.0 + mana_mastery_stacks * 0.1 );
             end
         end
     end

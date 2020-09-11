@@ -1,4 +1,4 @@
-<Entity  tags="prop,hittable,mortal,homing_target" >
+<Entity  tags="prop,hittable,mortal,homing_target,enemy" >
 	<VelocityComponent />
     <SimplePhysicsComponent/>
 	<SpriteComponent 
@@ -27,7 +27,7 @@
 		falling_damages="0" 
 		fire_damage_amount="0.0" 
 		fire_probability_of_ignition="0.0" 
-		hp="1000000" 
+		hp="1" 
 		is_on_fire="0" 
 		materials_damage="1" 
 		materials_that_damage="acid,lava,poison,blood_cold,blood_cold_vapour,radioactive_gas,radioactive_gas_static,rock_static_radioactive,rock_static_poison,ice_radioactive_static,ice_radioactive_glass,ice_acid_static,ice_acid_glass,rock_static_cursed" 
@@ -62,6 +62,11 @@
         script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
     >
     </LuaComponent>
+	<GenomeDataComponent 
+		herd_id="orcs"
+		food_chain_rank="9"
+		is_predator="1" >
+	</GenomeDataComponent>
     <SpriteAnimatorComponent>
 	</SpriteAnimatorComponent>
 </Entity>

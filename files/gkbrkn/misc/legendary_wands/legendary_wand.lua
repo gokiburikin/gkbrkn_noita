@@ -1,5 +1,5 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
-GKBRKN_CONFIG.initialize_legendary_wand( entity, x, y );
+initialize_legendary_wand( entity, x, y );

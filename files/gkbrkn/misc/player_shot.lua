@@ -1,12 +1,20 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 function shot( projectile_entity )
     local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
     local player = GetUpdatedEntityID();
     local damage_multiplier =  EntityGetVariableNumber( player, "gkbrkn_damage_multiplier", 1.0 );
-    ComponentAdjustValue( projectile, "damage", function( value ) return tonumber( value ) * damage_multiplier; end );
+    local projectile_damage_multiplier =  EntityGetVariableNumber( projectile_entity, "gkbrkn_damage_multiplier", 1.0 );
+    adjust_all_entity_damage( projectile_entity, function( current_damage ) return current_damage * projectile_damage_multiplier; end )
+
+    local current_protagonist_bonus = get_protagonist_bonus( player );
+    if current_protagonist_bonus ~= 0 then
+        adjust_all_entity_damage( projectile_entity, function( current_damage ) return current_damage * current_protagonist_bonus; end );
+    end
 
     local demolitionist_bonus = EntityGetVariableNumber( player, "gkbrkn_demolitionist_bonus", 0.0 ) + EntityGetVariableNumber( projectile_entity, "gkbrkn_demolitionist_bonus", 0.0 );
     if demolitionist_bonus ~= 0 then
@@ -48,10 +56,10 @@ function shot( projectile_entity )
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then
             ComponentAdjustValues( velocity, {
-                air_friction=function( value ) return math.min( tonumber( value ), 0 ); end,
+                air_friction=function( value ) return math.min( tonumber( value ), -25 ); end,
                 gravity_y=function( value ) return 0; end,
                 apply_terminal_velocity=function( value ) return 1; end,
-                terminal_velocity=function( value ) return 2000; end,
+                terminal_velocity=function( value ) return 1500; end,
             } );
         end
         if projectile ~= nil then
@@ -87,8 +95,7 @@ function shot( projectile_entity )
         execute_every_n_frame="1",
     } );
 
-
-    if CONTENT[TWEAKS.BloodAmount].enabled() then
+    if find_tweak("blood_amount") then
         local add = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/blood_tweak/projectile_extra_entity.xml" );
         EntityAddChild( projectile_entity, add );
     end
@@ -156,30 +163,13 @@ function shot( projectile_entity )
         end
     end
 
-    if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesEnabled ) then
-        reduce_particles( projectile_entity, HasFlagPersistent( MISC.LessParticles.DisableEnabled ) );
+    if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesFlag ) then
+        reduce_particles( projectile_entity, HasFlagPersistent( MISC.LessParticles.DisableCosmeticsFlag ) );
     end
 
-    if HasFlagPersistent( MISC.RainbowProjectiles.Enabled ) then
+    if HasFlagPersistent( MISC.RainbowProjectiles.EnabledFlag ) then
         SetRandomSeed( projectile_entity, projectile_entity );
         local color = 0xFF000000 + math.floor( Random() * 0xFFFFFF );
-        local r = bit.band( 0xFF, color );
-        local g = bit.rshift( bit.band( 0xFF00, color ), 8 );
-        local b = bit.rshift( bit.band( 0xFF0000, color ), 16 );
-        local particle_emitters = EntityGetComponent( projectile_entity, "ParticleEmitterComponent" ) or {};
-        for _,particle_emitter in pairs( particle_emitters ) do
-            ComponentSetValue( particle_emitter, "color", tostring( color ) );
-        end
-        if ComponentGetValue2 and ComponentSetValue2 then
-            local sprite_particle_emitters = EntityGetComponent( projectile_entity, "SpriteParticleEmitterComponent" ) or {};
-            for _,sprite_particle_emitter in pairs( sprite_particle_emitters ) do
-                local color = {ComponentGetValue2( sprite_particle_emitter, "color" )};
-                local color_change = {ComponentGetValue2( sprite_particle_emitter, "color_change" )};
-                local ratio_r = r / 255;
-                local ratio_g = g / 255;
-                local ratio_b = b / 255;
-                ComponentSetValue2( sprite_particle_emitter, "color", ratio_r, ratio_g, ratio_b, color[4] );
-            end
-        end
+        projectile_change_particle_colors( projectile_entity, color );
     end
 end

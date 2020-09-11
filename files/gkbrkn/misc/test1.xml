@@ -1,0 +1,21 @@
+<Entity>
+  <SpriteComponent
+    image_file="mods/removable_perks/files/arrow_left.png"
+    offset_x="7"
+    offset_y="7">
+  </SpriteComponent>
+  <SpriteOffsetAnimatorComponent 
+    _tags="enabled_in_world"
+    sprite_id="0"
+    x_amount="1"
+    x_speed="2.5">
+  </SpriteOffsetAnimatorComponent>
+  <InteractableComponent
+    ui_text="Press $0 to show previous perks"
+    name="left">
+  </InteractableComponent>
+  <LuaComponent
+    script_interacting="mods/removable_perks/files/interacting.lua"
+    execute_every_n_frame="-1">
+  </LuaComponent>
+</Entity>

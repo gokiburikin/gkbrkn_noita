@@ -7,6 +7,8 @@ if parent ~= 0 and EntityGetIsAlive(parent) then
     local x,y = EntityGetTransform( entity );
     local px, py = EntityGetTransform( parent );
     local parent_velocity = EntityGetFirstComponent( parent, "VelocityComponent" );
-    local parent_vx, parent_vy = ComponentGetValueVector2( parent_velocity, "mVelocity" );
-    ComponentSetValueVector2( velocity, "mVelocity", (px - x) * 60 + parent_vx, (py - y) * 60 + parent_vy );
+    if parent_velocity then
+        local parent_vx, parent_vy = ComponentGetValueVector2( parent_velocity, "mVelocity" );
+        ComponentSetValueVector2( velocity, "mVelocity", (px - x) * 60 + parent_vx, (py - y) * 60 + parent_vy );
+    end
 end

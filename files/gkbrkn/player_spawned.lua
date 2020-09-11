@@ -1,33 +1,16 @@
+GameAddFlagRun( "gkbrkn_content_cached" );
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile( "mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua" );
+dofile( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
+local CONTENT = GKBRKN_CONFIG.CONTENT;
+local DEV_OPTIONS = GKBRKN_CONFIG.DEV_OPTIONS;
+-- load active content, not cached content
+local ACTIVE_CONTENT = {};
+GKBRKN_CONFIG.parse_content( false, false, ACTIVE_CONTENT );
+
 local x, y = EntityGetTransform( player_entity );
-
---[[
-local spells_to_add = {"TRANSMUTATION"};
-local children = EntityGetAllChildren( player_entity );
-if children ~= nil then
-    for index,child_entity in pairs( children ) do
-        if EntityGetName( child_entity ) == "inventory_full" then
-            for _,action in pairs( spells_to_add ) do
-                local action_card = CreateItemActionEntity( action, x, y );
-                EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
-                EntityAddChild( child_entity, action_card );
-            end
-            break;
-        end
-    end
-end
-]]
-
---[[
-for i=1,50 do
-    EntityLoad( "data/entities/animals/longleg.xml", x - 100, y - 100 );
-end
-for i=1,50 do
-    EntityLoad( "data/entities/animals/zombie.xml", x- 100, y - 100 );
-end
-]]
 
 if EntityGetFirstComponent( player_entity, "LuaComponent", "gkbrkn_player_update" ) == nil then
     EntityAddComponent( player_entity, "LuaComponent", {
@@ -46,46 +29,32 @@ end
 
 local init_check_flag = "gkbrkn_player_new_game";
 if GameHasFlagRun( init_check_flag ) == false then
-    GameAddFlagRun( init_check_flag );
-    DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/init.lua", { player_entity = player_entity } );
-    DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
+    if not HasFlagPersistent( "gkbrkn_intro" ) then
+        AddFlagPersistent( "gkbrkn_intro" );
+        GamePrint( "Welcome to Goki's Things! Thanks for playing." );
+        GamePrint( "Don't forget to adjust the settings by clicking the button in the top right." );
+    end
+    if HasFlagPersistent( MISC.ShowModTips.EnabledFlag ) then
+        local tip = math.ceil( Random() * #MISC.ShowModTips.Tips );
+        GamePrint( GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip] ) );
+    end
 
-    --[[
-        local children = EntityGetAllChildren( player_entity ) or {};
-        local inventory = nil;
-        for _,child in pairs( children ) do
-            if EntityGetName( child ) == "inventory_quick" then
-                inventory = child;
-            end
-        end
-        
-        if inventory ~= nil then
-            local items = EntityGetAllChildren( inventory );
-            for _,child in pairs( items ) do
-                if EntityHasTag( child, "wand" ) then 
-                    ComponentSetValue( child, "ItemComponent", "1" );
+    --[[ Content Callbacks ]]
+    for _,content in pairs( ACTIVE_CONTENT ) do
+        if content.enabled() and content.options ~= nil then
+            if content.options.run_flags ~= nil then
+                for _,flag in pairs( content.options.run_flags ) do
+                    GameAddFlagRun( flag );
                 end
             end
         end
-    ]]
-
-    EntityAddComponent( player_entity, "LuaComponent", {
-        script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/player_shot.lua"
-    });
-
-    EntityAddComponent( player_entity, "LuaComponent", {
-        script_kick="mods/gkbrkn_noita/files/gkbrkn/misc/player_kick.lua"
-    });
-
-    local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
-    if inventory ~= nil then
-        --[[ Spell Bag ]]
-        if CONTENT[ITEMS.SpellBag].enabled() then
-            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/item.xml", x + 20, y - 10 );
-        end
     end
 
-    --EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.xml", x + 200, y - 40 );
+    DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/init.lua", { player_entity = player_entity } );
+    DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
+
+    EntityAddComponent( player_entity, "LuaComponent", { script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/player_shot.lua" });
+    EntityAddComponent( player_entity, "LuaComponent", { script_kick="mods/gkbrkn_noita/files/gkbrkn/misc/player_kick.lua" });
 
     EntityAddComponent( player_entity, "LuaComponent", {
         script_source_file="mods/gkbrkn_noita/files/gkbrkn/events/event_loop.lua",
@@ -96,26 +65,26 @@ if GameHasFlagRun( init_check_flag ) == false then
     });
 
     --[[ Hero Mode ]]
-    if HasFlagPersistent( MISC.HeroMode.Enabled ) then
-        GameAddFlagRun( MISC.HeroMode.Enabled );
-        if HasFlagPersistent( MISC.HeroMode.OrbsDifficultyEnabled ) then
-            GameAddFlagRun( MISC.HeroMode.OrbsDifficultyEnabled );
+    if HasFlagPersistent( MISC.HeroMode.EnabledFlag ) then
+        GameAddFlagRun( MISC.HeroMode.EnabledFlag );
+        if HasFlagPersistent( MISC.HeroMode.OrbsDifficultyFlag ) then
+            GameAddFlagRun( MISC.HeroMode.OrbsDifficultyFlag );
         end
-        if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyEnabled ) then
-            GameAddFlagRun( MISC.HeroMode.DistanceDifficultyEnabled );
+        if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyFlag ) then
+            GameAddFlagRun( MISC.HeroMode.DistanceDifficultyFlag );
         end
-        if HasFlagPersistent( MISC.HeroMode.CarnageDifficultyEnabled ) then
-            GameAddFlagRun( MISC.HeroMode.CarnageDifficultyEnabled );
+        if HasFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ) then
+            GameAddFlagRun( MISC.HeroMode.CarnageDifficultyFlag );
         end
-        if HasFlagPersistent( MISC.Badges.Enabled ) then
+        if HasFlagPersistent( MISC.Badges.EnabledFlag ) then
             local badge = load_dynamic_badge( "hero_mode", {
-                {_distance=GameHasFlagRun( MISC.HeroMode.DistanceDifficultyEnabled )},
-                {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsDifficultyEnabled )},
-                {_carnage=GameHasFlagRun( MISC.HeroMode.CarnageDifficultyEnabled )},
-            }, gkbrkn_localization );
+                {_distance=GameHasFlagRun( MISC.HeroMode.DistanceDifficultyFlag )},
+                {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsDifficultyFlag )},
+                {_carnage=GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag )},
+            } );
             EntityAddChild( player_entity, badge );
 
-            if GameHasFlagRun( MISC.HeroMode.CarnageDifficultyEnabled ) == false then
+            if GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag ) == false then
                 local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
                 if character_platforming ~= nil then
                     local speed_multiplier = 1.25;
@@ -147,7 +116,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                 GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/orb_distant_monster/create", x, y );
                 GameScreenshake( 500 );
 		        EntityAddChild( player_entity, child_id );
-		        GamePrintImportant( gkbrkn_localization.ui_carnage_warning, gkbrkn_localization.ui_carnage_warning_note );
+		        GamePrintImportant( "$ui_carnage_warning_gkbrkn", "$ui_carnage_warning_note_gkbrkn" );
                 local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
                 if damage_models ~= nil then
                     local resistances = {
@@ -177,68 +146,89 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     --[[ Champions Mode ]]
-    if HasFlagPersistent( MISC.ChampionEnemies.Enabled ) then
-        GameAddFlagRun( MISC.ChampionEnemies.Enabled );
+    if HasFlagPersistent( MISC.ChampionEnemies.EnabledFlag ) then
+        GameAddFlagRun( MISC.ChampionEnemies.EnabledFlag );
         GlobalsSetValue( "gkbrkn_next_miniboss", MISC.ChampionEnemies.MiniBossThreshold );
-        if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsEnabled ) then
-            GameAddFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled );
+        if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsFlag ) then
+            GameAddFlagRun( MISC.ChampionEnemies.SuperChampionsFlag );
         end
-        if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsEnabled ) then
-            GameAddFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled );
+        if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsFlag ) then
+            GameAddFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag );
         end
-        if HasFlagPersistent( MISC.ChampionEnemies.MiniBossesEnabled ) then
-            GameAddFlagRun( MISC.ChampionEnemies.MiniBossesEnabled );
+        if HasFlagPersistent( MISC.ChampionEnemies.MiniBossesFlag ) then
+            GameAddFlagRun( MISC.ChampionEnemies.MiniBossesFlag );
         end
-        if HasFlagPersistent( MISC.Badges.Enabled ) then
+        if HasFlagPersistent( MISC.Badges.EnabledFlag ) then
             local badge = load_dynamic_badge( "champion_mode", {
-                {_always=GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsEnabled )},
-                {_mini_boss=GameHasFlagRun( MISC.ChampionEnemies.MiniBossesEnabled )},
-                {_super=GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsEnabled )},
-            }, gkbrkn_localization );
+                {_always=GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag )},
+                {_mini_boss=GameHasFlagRun( MISC.ChampionEnemies.MiniBossesFlag )},
+                {_super=GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsFlag )},
+            } );
             EntityAddChild( player_entity, badge );
         end
     end
 
-    --[[ Starting Perks ]]
-    for _,content_id in pairs( STARTING_PERKS or {} ) do
-        local starting_perk = CONTENT[content_id];
-        if starting_perk ~= nil then
-            if starting_perk.enabled() then
-                local perk_entity = perk_spawn( x, y, starting_perk.key );
-                if perk_entity ~= nil then
-                    perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
-                end
-            end
-        end
-    end
-
-    if CONTENT[TWEAKS.StunLock].enabled() then 
+    if find_tweak("stun_lock") then 
         local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
         if character_platforming ~= nil then
             ComponentSetValue( character_platforming, "precision_jumping_max_duration_frames", "10" );
         end
     end
 
-    --[[ Content Callbacks ]]
-    for _,content in pairs( CONTENT ) do
-        if content.enabled() and content.options ~= nil then
-            if content.options.player_spawned_callback ~= nil then
-                content.options.player_spawned_callback( player_entity );
+    local wands = {};
+    local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
+    if inventory2 ~= nil then
+        local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+        for key, child in pairs( EntityGetAllChildren( player_entity ) ) do
+            if EntityGetName( child ) == "inventory_quick" then
+                wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+                break;
             end
-            if content.options.run_flags ~= nil then
-                for _,flag in pairs( content.options.run_flags ) do
-                    GameAddFlagRun( flag );
+        end
+        for _,wand in pairs(wands) do
+            if wand then
+                if GameHasFlagRun( FLAGS.GuaranteedAlwaysCast ) then
+                    force_always_cast( wand, 1 )
+                end
+                local ability = FindFirstComponentByType( wand, "AbilityComponent" );
+                if ability ~= nil then
+                    if GameHasFlagRun( FLAGS.OrderWandsOnly ) then
+                        ability_component_set_stat( ability, "shuffle_deck_when_empty", "0" );
+                    elseif GameHasFlagRun( FLAGS.ShuffleWandsOnly ) then
+                        ability_component_set_stat( ability, "shuffle_deck_when_empty", "1" );
+                    end
                 end
             end
         end
     end
 
+    --[[ Content Callbacks ]]
+    for _,content in pairs( ACTIVE_CONTENT ) do
+        if content.enabled() then
+            if content.options and content.options.player_spawned_callback then
+                content.options.player_spawned_callback( player_entity );
+            end
+        end
+    end
+
+    --[[ Starting Perks ]]
+    for _,starting_perk in pairs( starting_perks or {} ) do
+        local perk_entity = perk_spawn( x, y, starting_perk );
+        if perk_entity ~= nil then
+            perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+        end
+    end
+
+    -- moved to bottom so things in here can check if the flag has been set yet
+    GameAddFlagRun( init_check_flag );
 end
 
 --[[ Development Options enabled warning ]]
-for k,v in pairs( DEV_OPTIONS ) do
-    if CONTENT[v].enabled() then
-        GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
-        break;
+if HasFlagPersistent( FLAGS.DebugMode ) then
+    for k,v in pairs( DEV_OPTIONS ) do
+        if CONTENT[v].enabled() then
+            GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
+            break;
+        end
     end
 end

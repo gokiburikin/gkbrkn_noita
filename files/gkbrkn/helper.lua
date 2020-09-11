@@ -102,6 +102,10 @@ function DoFileEnvironment( filepath, environment )
     return environment;
 end
 
+function ModTextFileAppend( left, right )
+    ModTextFileSetContent( left, (ModTextFileGetContent( left ) or "") .. "\r\n" .. (ModTextFileGetContent( right ) or "") );
+end
+
 function PackString( separator, ... )
 	local string = {};
 	for n=1,select( '#' , ... ) do
@@ -436,15 +440,15 @@ function GetWandActions( wand )
     local actions = {};
     local children = EntityGetAllChildren( wand ) or {};
     for i,v in ipairs( children ) do
-        local all_comps = EntityGetAllComponents( v );
-        local action_id = nil;
-        local permanent = false;
-        for i, c in ipairs( all_comps ) do
-            action_id = ComponentGetValueDefault( c, "action_id", action_id );
-            permanent = ComponentGetValueDefault( c, "permanently_attached", permanent );
-        end
-        if action_id ~= nil then
-            table.insert( actions, {action_id=action_id, permanent=permanent} );
+        local item = EntityGetFirstComponentIncludingDisabled( v, "ItemComponent" );
+        local item_action = EntityGetFirstComponentIncludingDisabled( v, "ItemActionComponent" );
+        if item and item_action then
+            local action_id = ComponentGetValue2( item_action, "action_id" );
+            local permanent = ComponentGetValue2( item, "permanently_attached" );
+            local x, y = ComponentGetValue2( item, "inventory_slot" );
+            if action_id ~= nil then
+                table.insert( actions, { action_id = action_id, permanent = permanent, x = x, y = y } );
+            end
         end
     end
     return actions;
@@ -453,11 +457,25 @@ end
 function CopyWandActions( base_wand, copy_wand )
     local actions = GetWandActions( base_wand );
     for index,action_data in pairs( actions ) do
+        print( action_data.action_id);
+        local action_entity = CreateItemActionEntity( action_data.action_id );
+        print(tostring(action_entity));
+        local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+        if action_data.permanent then
+            ComponentSetValue( item, "permanently_attached", "1" );
+        end
+        if ComponentSetValue2 and action_data.x ~= nil and action_data.y ~= nil then
+            ComponentSetValue2( item, "inventory_slot", action_data.x, action_data.y );
+        end
+        EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+        EntityAddChild( copy_wand, action_entity );
+    --[[
         if action_data.permanent ~= "1" then
             AddGunAction( copy_wand, action_data.action_id );
         else
             AddGunActionPermanent( copy_wand, action_data.action_id );
         end
+        ]]
     end
 end
 

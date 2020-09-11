@@ -1,3 +1,5 @@
+-- NOTE This calls config which breaks stuff
+dofile_once("data/scripts/gun/procedural/gun_procedural.lua" );
 dofile_once("data/scripts/lib/utilities.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
@@ -74,7 +76,7 @@ table.insert( perk_list,
                             table.insert( held_actions, removed_spell );
                         end
                     else
-                        if not wand_explode_random_action( wand, false, false ) then
+                        if not wand_explode_random_action( wand, false, false, x, y ) then
                             break;
                         end
                     end
@@ -83,7 +85,7 @@ table.insert( perk_list,
                 EntitySetTransform( item, -9999, -9999 );
                 EntityRemoveFromParent( wand );
             end
-                
+            
             if inventory2 ~= nil then
                 local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
                 if inventory2 ~= nil then

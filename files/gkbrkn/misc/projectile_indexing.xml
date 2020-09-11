@@ -1,0 +1,7 @@
+<Entity>
+  <LuaComponent
+    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.lua"
+    execute_on_added="1"
+    remove_after_executed="1">
+  </LuaComponent>
+</Entity>

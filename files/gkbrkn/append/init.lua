@@ -1,7 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 
-if HasFlagPersistent( MISC.HeroMode.CarnageDifficultyEnabled ) then
+if HasFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ) then
     local world_state = GameGetWorldStateEntity();
     ComponentSetValues( world_state, {
         fog="1",

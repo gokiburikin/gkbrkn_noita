@@ -1,5 +1,6 @@
 dofile_once( "data/scripts/lib/utilities.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local tracker_variable = "gkbrkn_lost_treasure_tracker";
 table.insert( perk_list,

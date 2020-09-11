@@ -1,0 +1,36 @@
+<Entity name="trigger repeat projectile" tags="projectile_player">
+	<Base file="data/entities/base_projectile.xml" >
+    <VelocityComponent gravity_y="0" air_friction="0" mass="0"></VelocityComponent>
+	</Base>
+
+  <ProjectileComponent 
+    _enabled="1" 
+    lob_min="0.5"
+    lob_max="0.7"
+    speed_min="20"
+    speed_max="20"
+    friction="1"
+    direction_random_rad="0.00"
+    on_death_explode="0"
+    on_death_gfx_leave_sprite="0" 
+    on_lifetime_out_explode="0"
+    explosion_dont_damage_shooter="1"
+    on_collision_die="0"
+	collide_with_world="0"
+    lifetime="-1"
+    damage="0"
+    velocity_sets_scale="0"
+    lifetime_randomness="0"
+    ragdoll_force_multiplier="0.0"
+    hit_particle_force_multiplier="0.1"
+    muzzle_flash_file="data/entities/particles/muzzle_flashes/muzzle_flash_small_pink.xml"
+	knockback_force="0"
+	>
+    <config_explosion damage="0.0" explosion_radius="0"></config_explosion>
+  </ProjectileComponent>
+
+	<LuaComponent execute_on_added="1" remove_after_executed="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.lua"></LuaComponent>
+	<LuaComponent execute_on_added="1" remove_after_executed="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/trigger_repeat/projectile_init.lua"></LuaComponent>
+	<LuaComponent execute_on_added="1" execute_every_n_frame="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/trigger_repeat/projectile_update.lua" ></LuaComponent>
+	<InheritTransformComponent _tags="enabled_in_world" ></InheritTransformComponent>
+</Entity>

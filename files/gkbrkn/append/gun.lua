@@ -1,6 +1,16 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
+
+--[[
+gun.*:
+    shuffle_deck_when_empty
+    deck_capacity
+    actions_per_round
+    reload_time
+]]
 
 gkbrkn = {
     TRIGGER_TYPE = {
@@ -22,14 +32,18 @@ gkbrkn = {
         delay_frames = 0,
     },
     peeking = 0,
-    projectiles_fired = 0,
+    projectiles_fired = {},
     skip_cards = 0,
     trigger_queue = {},
+    old_trigger_queue = {},
     add_projectile_capture_callback = nil,
     draw_actions_capture = nil,
     capture_draw_actions = true,
     draw_action_stack_size = 0,
-    _create_shot = create_shot,
+    spell_merge_groups = 0,
+    did_action_add_projectile = false,
+    mana_multiplier = 1,
+    skip_projectiles = false,
     _create_shot = create_shot,
     _draw_actions = draw_actions,
     _set_current_action = set_current_action,
@@ -45,19 +59,16 @@ gkbrkn = {
 }
 
 function state_per_cast( state )
-    local player = GetUpdatedEntityID();
-    local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
-    if current_protagonist_bonus ~= 0 then
-        state.extra_entities = state.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/perks/protagonist/projectile_extra_entity.xml,";
-    end
-    if GameHasFlagRun( FLAGS.DisintegrateCorpses ) then
-        state.game_effect_entities = state.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
-    end
+    -- empty out the trigger queue since it's per cast
+    gkbrkn.trigger_queue = {};
+    gkbrkn.extra_projectiles = 0;
+    gkbrkn.spell_merge_groups = 0;
+    gkbrkn.skip_projectiles = false;
+    gkbrkn.mana_multiplier = 1.0;
 end
 
 function create_shot( num_of_cards_to_draw )
     local shot = gkbrkn._create_shot( num_of_cards_to_draw );
-    state_per_cast( shot.state );
     return shot;
 end
 
@@ -208,7 +219,6 @@ function duplicate_draw_action( amount, repeat_n_times, instant_reload_if_empty 
     SetProjectileConfigs();
 end
 
-
 function skip_cards( amount )
     if amount == nil then
         amount = #deck;
@@ -218,11 +228,12 @@ end
 
 function reset_per_casts()
     delete_cloned_actions();
-    gkbrkn.projectiles_fired = 0;
-    gkbrkn.stack_next_actions = 0;
-    gkbrkn.stack_projectiles = "";
-    gkbrkn.extra_projectiles = 0;
-    gkbrkn.trigger_queue = {};
+    gkbrkn.projectiles_fired = {};
+    gkbrkn.old_trigger_queue = {};
+end
+
+function calculate_mana( base_mana )
+    return base_mana * gkbrkn.mana_multiplier;
 end
 
 function order_deck()
@@ -252,10 +263,26 @@ function order_deck()
     else
         gkbrkn._order_deck();
     end
+    
+    -- This allows me to hook into the mana access and call an arbitrary function. Very tricksy
+    for _,action in pairs(deck) do
+        if action.gkbrkn == nil then
+            local base_mana = action.mana;
+            action.mana = nil;
+            local action_meta = {
+                __index = function( table, key )
+                    if key == "mana" then
+                        return calculate_mana( base_mana );
+                    end
+                end
+            }
+            setmetatable( action, action_meta );
+            action.gkbrkn = true;
+        end
+    end
 end
 
 function move_hand_to_discarded()
-    GlobalsSetValue( "gkbrkn_projectiles_fired", gkbrkn.projectiles_fired );
     gkbrkn._move_hand_to_discarded();
     gkbrkn.reset_on_draw = true;
     gkbrkn.drawn_actions = {};
@@ -265,11 +292,7 @@ function pre_play_action( action )
     local player = GetUpdatedEntityID();
     local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
     local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
-
-    if current_action ~= nil and current_action.type == ACTION_TYPE_PROJECTILE then
-        c.fire_rate_wait = c.fire_rate_wait + 8 * extra_projectiles_level;
-        current_reload_time = current_reload_time + 8 * extra_projectiles_level;
-    end
+    gkbrkn.did_action_add_projectile = false;
 end
 
 function set_current_action( action )
@@ -282,11 +305,16 @@ function play_action( action )
         gkbrkn.reset_on_draw = false;
         reset_per_casts();
     end
-    if playing_permanent_card and CONTENT[PERKS.BloodMagic].options.FreeAlwaysCasts == false then
+    if action.mana then
+        if playing_permanent_card and action.mana < 0 and find_tweak("allow_negative_mana_always_cast") then
+            mana = mana - action.mana;
+        end
+    end
+    if playing_permanent_card and MISC.PerkOptions.BloodMagic.FreeAlwaysCasts == false then
         local player = GetUpdatedEntityID();
         local blood_magic_stacks = EntityGetVariableNumber( player, "gkbrkn_blood_magic_stacks", 0 );
         if blood_magic_stacks > 0 then
-            local blood_to_mana_ratio = CONTENT[PERKS.BloodMagic].options.BloodToManaRatio * blood_magic_stacks / 25;
+            local blood_to_mana_ratio = MISC.PerkOptions.BloodMagic.BloodToManaRatio * blood_magic_stacks / 25;
             local used_mana = action.mana;
             local damage_models = EntityGetComponent( player, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
@@ -296,6 +324,10 @@ function play_action( action )
         end
     end
     gkbrkn._play_action( action );
+end
+
+function post_play_action( action )
+    gkbrkn.trigger_queue[gkbrkn.draw_action_stack_size] = {};
 end
 
 function draw_actions( how_many, instant_reload_if_empty )
@@ -332,6 +364,9 @@ function draw_action( instant_reload_if_empty )
             current_reload_time = current_reload_time + 8 * extra_projectiles_level;
         end
     ]]
+    if not reflecting and not c.extra_entities:find("mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.xml,") then
+        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.xml,";
+    end
 
     if gkbrkn.skip_cards <= 0 then
         --for index,extra_modifier in pairs( active_extra_modifiers ) do
@@ -366,13 +401,16 @@ function draw_action( instant_reload_if_empty )
         result = true;
         discard_action();
     end
+    post_play_action();
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size - 1;
     gkbrkn.draw_cards_remaining = gkbrkn.draw_cards_remaining - 1;
+
+    if GameHasFlagRun( FLAGS.DisintegrateCorpses ) then
+        c.game_effect_entities = c.game_effect_entities .. "data/entities/misc/effect_disintegrated.xml,"
+    end
     
     if gkbrkn.draw_action_stack_size == 0 then
-        state_per_cast( c );
         local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
-        local hyper_casting = EntityGetVariableNumber( player, "gkbrkn_hyper_casting", 0 );
         local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
         if #deck == 0 then
             current_reload_time = math.min( current_reload_time, current_reload_time * math.pow( 0.5, rapid_fire_level ) );
@@ -387,22 +425,53 @@ function draw_action( instant_reload_if_empty )
                 end
             end
         end
-        if hyper_casting > 0 then
-            c.speed_multiplier = 100;
-        end
+        state_per_cast( c );
+    else
+        --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/misc/ephemeral.xml,"
     end
     return result;
 end
 
 function add_projectile( filepath )
+    if not gkbrkn.did_action_add_projectile then
+        local player = GetUpdatedEntityID();
+        local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
+        gkbrkn.extra_projectiles = gkbrkn.extra_projectiles + extra_projectiles_level;
+        gkbrkn.did_action_add_projectile = true;
+        c.fire_rate_wait = c.fire_rate_wait + 2 * extra_projectiles_level;
+        current_reload_time = current_reload_time + 2 * extra_projectiles_level;
+    end
+    if gkbrkn.extra_projectiles > 0 then
+        gkbrkn.extra_projectiles = gkbrkn.extra_projectiles - 1;
+        add_projectile( filepath );
+    end
+    gkbrkn.projectiles_fired[gkbrkn.draw_action_stack_size] = (gkbrkn.projectiles_fired[gkbrkn.draw_action_stack_size] or 0) + 1;
     local trigger_type = 0;
     local trigger_delay_frames = 0;
     local trigger_action_draw_count = nil;
-    if #gkbrkn.trigger_queue > 0 then
-        trigger_type = gkbrkn.trigger_queue[1].type;
-        trigger_delay_frames = gkbrkn.trigger_queue[1].delay_frames;
-        trigger_action_draw_count = gkbrkn.trigger_queue[1].action_draw_count;
-        table.remove( gkbrkn.trigger_queue, 1 );
+    if find_tweak( "trigger_block_expansion" ) then
+        local trigger_queue_index = gkbrkn.draw_action_stack_size;
+        local trigger_queue = gkbrkn.trigger_queue[trigger_queue_index];
+        while (trigger_queue and #trigger_queue == 0) or (trigger_queue == nil and trigger_queue_index > 0) do
+            -- NOTE: this is to catch non nil and non zero projectile counts that happened before this
+            if gkbrkn.projectiles_fired[trigger_queue_index - 1] then
+                break;
+            end
+            trigger_queue_index = trigger_queue_index - 1;
+            trigger_queue = gkbrkn.trigger_queue[trigger_queue_index];
+        end
+        if trigger_queue and #trigger_queue > 0 then
+            trigger_type = trigger_queue[1].type;
+            trigger_delay_frames = trigger_queue[1].delay_frames;
+            trigger_action_draw_count = trigger_queue[1].action_draw_count;
+        end
+    else
+        if #gkbrkn.old_trigger_queue > 0 then
+            trigger_type = gkbrkn.old_trigger_queue[1].type;
+            trigger_delay_frames = gkbrkn.old_trigger_queue[1].delay_frames;
+            trigger_action_draw_count = gkbrkn.old_trigger_queue[1].action_draw_count;
+            table.remove( gkbrkn.old_trigger_queue, 1 );
+        end
     end
     if gkbrkn.peeking > 0 then
         if trigger_action_draw_count ~= nil then
@@ -411,26 +480,7 @@ function add_projectile( filepath )
         return;
     end
 
-    local player = GetUpdatedEntityID();
-    local projectiles_to_add = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
-    if #deck == 0 then
-        gkbrkn.stack_next_actions = 0;
-    end
-    local before = c.extra_entities;
-    if #gkbrkn.stack_projectiles > 0 and gkbrkn.stack_next_actions == 0 then
-        c.extra_entities = c.extra_entities..gkbrkn.stack_projectiles;
-        gkbrkn.stack_projectiles = "";
-        projectiles_to_add = projectiles_to_add + gkbrkn.extra_projectiles + 1;
-    elseif gkbrkn.stack_next_actions > 0 then
-        gkbrkn.stack_next_actions = gkbrkn.stack_next_actions - 1;
-        gkbrkn.stack_projectiles = (gkbrkn.stack_projectiles or "") .. filepath..",";
-        draw_action( 1 );
-    else
-        projectiles_to_add = projectiles_to_add + gkbrkn.extra_projectiles + 1;
-    end
-    
-    for i=1,projectiles_to_add do
-        gkbrkn.projectiles_fired = gkbrkn.projectiles_fired + 1;
+    if gkbrkn.skip_projectiles ~= true then
         if gkbrkn.add_projectile_capture_callback ~= nil then
             gkbrkn.add_projectile_capture_callback( filepath, trigger_action_draw_count, trigger_delay_frames );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
@@ -457,7 +507,6 @@ function add_projectile( filepath )
             end
         end
     end
-    gkbrkn.extra_projectiles = 0;
 end
 
 function add_projectile_trigger_timer( entity_filename, delay_frames, action_draw_count )
@@ -475,8 +524,17 @@ function add_projectile_trigger_death( entity_filename, action_draw_count )
     add_projectile( entity_filename );
 end
 
+function get_current_trigger_queue()
+    if find_tweak( "trigger_block_expansion") then
+        gkbrkn.trigger_queue[ gkbrkn.draw_action_stack_size ] = gkbrkn.trigger_queue[ gkbrkn.draw_action_stack_size ] or {};
+        return gkbrkn.trigger_queue[ gkbrkn.draw_action_stack_size ];
+    else
+        return gkbrkn.old_trigger_queue;
+    end
+end
+
 function set_trigger_timer( delay_frames, action_draw_count )
-    table.insert( gkbrkn.trigger_queue, {
+    table.insert( get_current_trigger_queue(), {
         type=gkbrkn.TRIGGER_TYPE.Timer,
         delay_frames=delay_frames,
         action_draw_count=action_draw_count,
@@ -484,28 +542,24 @@ function set_trigger_timer( delay_frames, action_draw_count )
 end
 
 function set_trigger_hit_world( action_draw_count )
-    table.insert( gkbrkn.trigger_queue, {
+    table.insert( get_current_trigger_queue(), {
         type=gkbrkn.TRIGGER_TYPE.Hit,
         action_draw_count=action_draw_count,
     });
 end
 
 function set_trigger_death( action_draw_count )
-    table.insert( gkbrkn.trigger_queue, {
+    table.insert( get_current_trigger_queue(), {
         type=gkbrkn.TRIGGER_TYPE.Death,
         action_draw_count=action_draw_count,
     });
 end
 
 function set_trigger_instant( action_draw_count )
-    table.insert( gkbrkn.trigger_queue, {
+    table.insert( get_current_trigger_queue(), {
         type=gkbrkn.TRIGGER_TYPE.Instant,
         action_draw_count=action_draw_count,
     });
-end
-
-function stack_next_action( amount )
-    gkbrkn.stack_next_actions = gkbrkn.stack_next_actions + amount;
 end
 
 function extra_projectiles( amount )

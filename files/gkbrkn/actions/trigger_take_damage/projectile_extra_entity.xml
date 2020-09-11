@@ -1,0 +1,8 @@
+<Entity>
+    <LuaComponent
+        execute_on_added="1"
+        remove_after_executed="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/trigger_take_damage/projectile_init.lua"
+		>
+	</LuaComponent>
+</Entity>

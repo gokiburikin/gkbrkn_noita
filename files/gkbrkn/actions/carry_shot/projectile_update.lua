@@ -23,7 +23,7 @@ if projectile ~= nil then
                     local distance = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_distance", 0 );
                     if distance ~= nil and aim_angle ~= nil then
                         local wx, wy = EntityGetTransform( active_wand );
-                        EntitySetTransform( entity, wx + math.cos( aim_angle + angle_offset ) * distance, wy + math.sin( aim_angle + angle_offset ) * distance );
+                        EntityApplyTransform( entity, wx + math.cos( aim_angle + angle_offset ) * distance, wy + math.sin( aim_angle + angle_offset ) * distance );
                     end
                 end
 

@@ -1,7 +1,40 @@
-dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
+--[[
+#define ENUM_DAMAGE_TYPES(_)                  
+    _(DAMAGE_MELEE,                  1 << 0 ) 
+    _(DAMAGE_PROJECTILE,             1 << 1 ) 
+    _(DAMAGE_EXPLOSION,              1 << 2 ) 
+    _(DAMAGE_BITE,                   1 << 3 ) 
+    _(DAMAGE_FIRE,                   1 << 4 ) 
+    _(DAMAGE_MATERIAL,               1 << 5 ) 
+    _(DAMAGE_FALL,                   1 << 6 ) 
+    _(DAMAGE_ELECTRICITY,            1 << 7 ) 
+    _(DAMAGE_DROWNING,               1 << 8 ) 
+    _(DAMAGE_PHYSICS_BODY_DAMAGED,   1 << 9 ) 
+    _(DAMAGE_DRILL,                  1 << 10 )
+    _(DAMAGE_SLICE,                  1 << 11 )
+    _(DAMAGE_ICE,                    1 << 12 )
+    _(DAMAGE_HEALING,                1 << 13 )
+    _(DAMAGE_PHYSICS_HIT,            1 << 14 )
+    _(DAMAGE_RADIOACTIVE,            1 << 15 )
+    _(DAMAGE_POISON,                 1 << 16 )
+    _(DAMAGE_MATERIAL_WITH_FLASH,    1 << 17 )
+    _(DAMAGE_OVEREATING,             1 << 18 )
 
-function load_dynamic_badge ( key, append_bool_table, localization_table )
+#define ENUM_RAGDOLL_FX(_)
+    _(NONE,                     0)
+    _(NORMAL,                   1)
+    _(BLOOD_EXPLOSION,          2)
+    _(BLOOD_SPRAY,              3)
+    _(FROZEN,                   4)
+    _(CONVERT_TO_MATERIAL,      5)
+    _(CUSTOM_RAGDOLL_ENTITY,    6)
+    _(DISINTEGRATED,            7)
+    _(NO_RAGDOLL_FILE,          8)
+    _(PLAYER_RAGDOLL_CAMERA,    9)
+]]
+
+function load_dynamic_badge ( key, append_bool_table )
     local badge_image = "ui_icon_image_"..key;
     local badge_name = "ui_icon_name_"..key;
     local badge_description = "ui_icon_description_"..key;
@@ -20,43 +53,41 @@ function load_dynamic_badge ( key, append_bool_table, localization_table )
     if badge ~= nil then
         local ui_icon = EntityGetFirstComponent( badge, "UIIconComponent" );
         if ui_icon ~= nil then
-            ComponentSetValue( ui_icon, "icon_sprite_file", localization_table[badge_image] );
-            ComponentSetValue( ui_icon, "name", localization_table[badge_name] );
-            ComponentSetValue( ui_icon, "description", localization_table[badge_description] );
+            ComponentSetValue( ui_icon, "icon_sprite_file", GameTextGetTranslatedOrNot("$"..badge_image) );
+            ComponentSetValue( ui_icon, "name", GameTextGetTranslatedOrNot("$"..badge_name) );
+            ComponentSetValue( ui_icon, "description", GameTextGetTranslatedOrNot("$"..badge_description) );
         end
     end
     return badge;
 end
 
-function get_update_time( )
-    return tonumber( GlobalsGetValue( "gkbrkn_update_time" ) ) or 0;
-end
+function get_update_time( ) return tonumber( GlobalsGetValue( "gkbrkn_update_time" ) ) or 0; end
+function reset_update_time( ) GlobalsSetValue( "gkbrkn_update_time", 0 ); end
+function get_frame_time( ) return tonumber( GlobalsGetValue( "gkbrkn_frame_time" ) ) or 0; end
+function reset_frame_time( ) GlobalsSetValue( "gkbrkn_frame_time", 0 ); end
+function add_update_time( amount ) GlobalsSetValue( "gkbrkn_update_time", get_update_time() + amount ); end
+function add_frame_time( amount ) GlobalsSetValue( "gkbrkn_frame_time", get_frame_time() + amount ); end
 
-function reset_update_time( )
-    GlobalsSetValue( "gkbrkn_update_time", 0 );
-end
-
-function add_update_time( amount )
-    GlobalsSetValue( "gkbrkn_update_time", get_update_time() + amount );
-end
-
-function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function )
+function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, deprecated, author )
     return {
-        id = perk_id,
-        ui_name = gkbrkn_localization["perk_name_"..key] or ("missing name "..key),
-        ui_description = gkbrkn_localization["perk_description_"..key] or ("missing description "..key),
-        ui_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ui.png",
-        perk_icon = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ig.png",
-        usable_by_enemies = usable_by_enemies,
-        func = pickup_function,
+        id                  = perk_id,
+        ui_name             = "$perk_name_gkbrkn_"..key,
+        ui_description      = "$perk_desc_gkbrkn_"..key,
+        ui_icon             = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ui.png",
+        perk_icon           = "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/icon_ig.png",
+        usable_by_enemies   = usable_by_enemies,
+        func                = pickup_function,
+        deprecated          = deprecated,
+        author              = "$ui_author_name_goki_dev" or author,
+        local_content       = true
     };
 end
 
-function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, icon_path )
+function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, deprecated, icon_path, author )
     return {
         id = action_id,
-        name 		        = gkbrkn_localization["action_name_"..key] or ("missing name "..key),
-        description         = gkbrkn_localization["action_description_"..key] or ( "missing description "..key),
+        name 		        = "$action_name_gkbrkn_"..key,
+        description         = "$action_desc_gkbrkn_"..key,
         sprite 		        = icon_path or "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
         sprite_unidentified = icon_path or "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/icon.png",
         type 		        = action_type,
@@ -66,7 +97,10 @@ function generate_action_entry( action_id, key, action_type, spawn_level, spawn_
         mana                = mana,
         max_uses            = max_uses,
         custom_xml_file     = custom_xml,
-        action = action_function
+        action              = action_function,
+        deprecated          = deprecated,
+        author              = "$ui_author_name_goki_dev" or author,
+        local_content       = true
     };
 end
 
@@ -354,8 +388,8 @@ end
 
 function string_split( s, splitter )
     local words = {};
-    for word in string.gmatch(str, '([^'..splitter..']+)') do
-        table.insert( words );
+    for word in string.gmatch( s, '([^'..splitter..']+)') do
+        table.insert( words, word );
     end
     return words;
 end
@@ -415,10 +449,91 @@ function find_polymorphed_players()
         local game_stats = EntityGetFirstComponent( entity, "GameStatsComponent" );
         if game_stats ~= nil then
             if ComponentGetValue( game_stats, "is_player" ) == "1" then
-                GamePrint( "entity ".. entity .. "is likely a polymorphed player" );
+                --GamePrint( "entity ".. entity .. "is likely a polymorphed player" );
                 table.insert( polymorphed_players, entity );
             end
         end
     end
     return polymorphed_players;
+end
+
+function ease_angle( angle, target_angle, easing )
+    local dir = (angle - target_angle) / (math.pi*2);
+    dir = dir - math.floor(dir + 0.5);
+    dir = dir * (math.pi*2);
+    return angle - dir * easing;
+end
+
+function angle_difference( target_angle, starting_angle )
+    return math.atan2( math.sin( target_angle - starting_angle ), math.cos( target_angle - starting_angle ) );
+end
+
+function projectile_change_particle_colors( projectile_entity, color )
+    local r = bit.band( 0xFF, color );
+    local g = bit.rshift( bit.band( 0xFF00, color ), 8 );
+    local b = bit.rshift( bit.band( 0xFF0000, color ), 16 );
+    local particle_emitters = EntityGetComponent( projectile_entity, "ParticleEmitterComponent" ) or {};
+    for _,particle_emitter in pairs( particle_emitters ) do
+        ComponentSetValue( particle_emitter, "color", tostring( color ) );
+    end
+    local sprite_particle_emitters = EntityGetComponent( projectile_entity, "SpriteParticleEmitterComponent" ) or {};
+    for _,sprite_particle_emitter in pairs( sprite_particle_emitters ) do
+        local color = {ComponentGetValue2( sprite_particle_emitter, "color" )};
+        local color_change = {ComponentGetValue2( sprite_particle_emitter, "color_change" )};
+        local ratio_r = r / 255;
+        local ratio_g = g / 255;
+        local ratio_b = b / 255;
+        ComponentSetValue2( sprite_particle_emitter, "color", ratio_r, ratio_g, ratio_b, color[4] );
+    end
+end
+
+function distance_to_entity( x, y, entity )
+    local tx, ty = EntityGetFirstHitboxCenter( entity );
+    if tx == nil or ty == nil then
+        tx, ty = EntityGetTransform( entity );
+    end
+    return math.sqrt( math.pow( tx - x, 2 ) + math.pow( ty - y, 2 ) );
+end
+
+function get_protagonist_bonus( player )
+    local multiplier = 1.0;
+    local health_ratio = 1;
+    local damage_models = EntityGetComponent( player, "DamageModelComponent" );
+    if damage_models ~= nil then
+        for i,damage_model in ipairs( damage_models ) do
+            local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
+            local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+            local ratio = current_hp / max_hp;
+            if ratio < health_ratio then
+                health_ratio = ratio;
+            end
+        end
+    end
+    if player ~= nil then
+        local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
+        local adjuted_ratio = ( 1 - health_ratio ) ^ 1.5;
+        multiplier = 1.0 + current_protagonist_bonus * adjuted_ratio;
+    end
+    return multiplier;
+end
+
+function append_translations( filepath )
+    local translations = ModTextFileGetContent( "data/translations/common.csv" );
+    while translations:find("\r\n\r\n") do
+        translations = translations:gsub("\r\n\r\n","\r\n");
+    end
+    local new_translations = ModTextFileGetContent( filepath );
+    translations = translations .. new_translations;
+    ModTextFileSetContent( "data/translations/common.csv", translations );
+end
+
+function thousands_separator(amount)
+    local formatted = amount;
+    while true do  
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+            if (k==0) then
+            break
+        end
+    end
+    return formatted;
 end

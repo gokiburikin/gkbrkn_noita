@@ -1,4 +1,4 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 
 local edit_callbacks = {
@@ -72,24 +72,9 @@ local edit_callbacks = {
     end
 }
 
-local HARD_MODE_REMOVALS = {
-    ELECTRICITY=true,
-    PROTECTION_FIRE=true,
-    PROTECTION_RADIOACTIVITY=true,
-    PROTECTION_EXPLOSION=true,
-    PROTECTION_MELEE=true,
-    PROTECTION_ELECTRICITY=true,
-    INVISIBLITY=true,
-    TELEPORTITIS=true,
-    GENOME_MORE_LOVE=true,
-    GKBRKN_ALWAYS_CAST=true,
-    EDIT_WANDS_EVERYWHERE=true,
-};
-
 local apply_tweaks = {};
-for _,content_id in pairs( TWEAKS ) do
-    local tweak = CONTENT[content_id];
-    if tweak.enabled() and tweak.options ~= nil and tweak.options.perk_id ~= nil then
+for _,tweak in pairs( tweaks ) do
+    if tweak.options and tweak.options.perk_id then
         apply_tweaks[ tweak.options.perk_id ] = true
     end
 end
@@ -97,9 +82,7 @@ end
 for i=#perk_list,1,-1 do
     local perk = perk_list[i];
     if perk ~= nil then
-        if CONTENT[GAME_MODIFIERS.HardMode].enabled() and HARD_MODE_REMOVALS[perk.id] then
-            table.remove( perk_list, i );
-        elseif edit_callbacks[ perk.id ] ~= nil and apply_tweaks[ perk.id ] == true then
+        if edit_callbacks[ perk.id ] ~= nil and apply_tweaks[ perk.id ] == true then
             edit_callbacks[perk.id]( perk, i );
         end
     end

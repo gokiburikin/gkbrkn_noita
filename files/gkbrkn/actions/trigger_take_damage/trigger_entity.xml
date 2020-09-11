@@ -1,0 +1,18 @@
+<Entity tags="gkbrkn_trigger_take_damage" >
+	<_Transform 
+		rotation="0" 
+		scale.x="1" 
+		scale.y="1" >
+	</_Transform>
+
+	<VelocityComponent
+		updates_velocity="0" >
+	</VelocityComponent>
+
+	<HitboxComponent
+		aabb_max_x="1" 
+		aabb_max_y="1" 
+		aabb_min_x="-1" 
+		aabb_min_y="-1" >
+	</HitboxComponent>
+</Entity>

@@ -5,6 +5,8 @@
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/guided_shot/projectile_init.lua" >
 	</LuaComponent>
     <LuaComponent 
+        execute_on_added="1"
+        execute_every_n_frame="1"
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/guided_shot/projectile_update.lua" >
 	</LuaComponent>
 </Entity>

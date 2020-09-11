@@ -1,4 +1,4 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 
 if g_items ~= nil then
     table.insert( g_items, {

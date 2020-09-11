@@ -4,6 +4,11 @@ dofile_once("mods/gkbrkn_noita/files/gkbrkn/config.lua");
 
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_RESILIENCE", "resilience", true, function( entity_perk_item, entity_who_picked, item_name )
-        TryAdjustDamageMultipliers( entity_who_picked, CONTENT[PERKS.Resilience].options.Resistances );
+        TryAdjustDamageMultipliers( entity_who_picked, {
+            fire=0.33,
+            radioactive=0.33,
+            poison=0.33,
+            electricity=0.33,
+        } );
 	end
 ) );

@@ -1,0 +1,18 @@
+items = {
+    {
+        id = "spell_bag",
+        name = "$item_name_gkbrkn_spell_bag",
+        description = "$item_desc_gkbrkn_spell_bag",
+        author = "$ui_author_name_goki_dev",
+        item_path = "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/item.xml",
+        options = {
+            player_spawned_callback = function( player_entity )
+                local x,y = EntityGetTransform( player_entity );
+                local inventory = EntityGetNamedChild( player_entity, "inventory_quick" );
+                if inventory ~= nil then
+                    EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/item.xml", x + 20, y - 10 );
+                end
+            end
+        }
+    }
+}

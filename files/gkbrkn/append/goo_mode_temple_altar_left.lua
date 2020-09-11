@@ -1,5 +1,6 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
-_spawn_music_trigger = spawn_music_trigger;
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
+
+local _spawn_music_trigger = spawn_music_trigger;
 function spawn_music_trigger( x, y )
 	_spawn_music_trigger( x, y );
     if GameHasFlagRun( FLAGS.GooMode ) then

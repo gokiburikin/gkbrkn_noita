@@ -38,7 +38,7 @@ if target ~= nil then
         if damaged_entities[tostring(entity)] ~= true then
             local tx, ty = EntityGetFirstHitboxCenter( target );
             if tx == nil or ty == nil then
-                EntityGetTransform( target );
+                tx, ty = EntityGetTransform( target );
             end
             local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );

@@ -1,8 +1,9 @@
 dofile_once("data/scripts/lib/utilities.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 
-_collision_trigger = _collision_trigger or collision_trigger;
+local _collision_trigger = collision_trigger;
 function collision_trigger()
-    if GameHasFlagRun( "gkbrkn_calm_gods" ) then
+    if GameHasFlagRun( FLAGS.CalmGods ) then
         StatsBiomeReset();
         GameTriggerMusicFadeOutAndDequeueAll( 2.0 );
     else

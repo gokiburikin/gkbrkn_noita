@@ -1,4 +1,4 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
 function kick( is_electric )
@@ -24,7 +24,7 @@ function kick( is_electric )
             if item_cost == nil or tonumber( ComponentGetValue( item_cost, "cost" ) ) <= 0 then
                 local wand_parent = EntityGetParent( wand );
                 if wand_parent == nil or wand_parent == 0 then
-                    wand_explode_random_action( wand );
+                    wand_explode_random_action( wand, false );
                 end
             end
         end

@@ -1,13 +1,15 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
-
-for i=#perk_list,1,-1 do
-    local perk = perk_list[i];
-    if perk.not_in_default_perk_pool ~= true then
-        local content = CONTENT[REMOVALS["remove_perk_"..perk.id]];
-        if content and content.enabled() then
-            perk.not_in_default_perk_pool = true;
-            print( "moved "..perk.id.."out of perk pool");
-            --table.remove( perk_list, i );
+local memoize_perks = {};
+function find_perk( id )
+    local perk = nil;
+    if memoize_perks[id] then
+        perk = memoize_perks[id];
+    else
+        for _,entry in pairs(perk_list) do
+            if entry.id == id then
+                perk = entry;
+                memoize_perks[id] = entry;
+            end
         end
     end
+    return perk;
 end

@@ -120,52 +120,60 @@ if #formation_stack_projectiles > 0 then
 end
 
 if #spell_merge_projectiles > 0 then
-    local leader = spell_merge_projectiles[1];
-    
-    EntitiesAverageMemberList( spell_merge_projectiles, "ProjectileComponent", {
-        "lifetime", "bounces_left", "bounce_energy",
-        "knockback_force", "ragdoll_force_multiplier", "camera_shake_when_shot",
-        "angular_velocity", "friction", "die_on_low_velocity_limit"
-    },
-    { bounces_left = true },
-    -- on_collision_die is too powerful to adapt for the cost
-    { bounce_at_any_angle="1", bounce_always="1", --[[on_collision_die="0",]] die_on_low_velocity="0" } );
-    EntitiesAverageMemberList( spell_merge_projectiles, "VelocityComponent", { 
-        "gravity_x", "gravity_y", "mass", "air_friction", "terminal_velocity"
-    } );
-    local average_velocity_magnitude = 0;
-    local angles = {};
-    local magnitudes = {};
-    for i,projectile_entity in pairs( spell_merge_projectiles ) do
-        --EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
-        EntitySetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) );
-        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
-        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
-        local angle = math.atan2( vy, vx );
-        local magnitude = math.sqrt(vx * vx + vy * vy);
-        average_velocity_magnitude = average_velocity_magnitude + magnitude;
-
-        -- ignore projectiles that don't move
-        table.insert( angles, angle );
-        table.insert( magnitudes, magnitude );
-
+    local groups = {};
+    for _,projectile in pairs(spell_merge_projectiles) do
+        local depth = EntityGetVariableNumber( projectile, "gkbrkn_projectile_depth", 1 );
+        groups[depth] = groups[depth] or {}
+        table.insert( groups[depth], projectile );
     end
-    local average_angle = mean_angle( angles, magnitudes );
-    average_velocity_magnitude = average_velocity_magnitude / #spell_merge_projectiles;
-    for i,projectile_entity in pairs( spell_merge_projectiles ) do
-        if projectile_entity == leader then
+    for _,group in pairs(groups) do
+        local leader = group[1];
+        
+        EntitiesAverageMemberList( group, "ProjectileComponent", {
+            "lifetime", "bounces_left", "bounce_energy",
+            "knockback_force", "ragdoll_force_multiplier", "camera_shake_when_shot",
+            "angular_velocity", "friction", "die_on_low_velocity_limit"
+        },
+        { bounces_left = true },
+        -- on_collision_die is too powerful to adapt for the cost
+        { bounce_at_any_angle="1", bounce_always="1", --[[on_collision_die="0",]] die_on_low_velocity="0" } );
+        EntitiesAverageMemberList( group, "VelocityComponent", { 
+            "gravity_x", "gravity_y", "mass", "air_friction", "terminal_velocity"
+        } );
+        local average_velocity_magnitude = 0;
+        local angles = {};
+        local magnitudes = {};
+        for i,projectile_entity in pairs( group ) do
+            --EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
+            EntitySetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) );
             local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
             local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
             local angle = math.atan2( vy, vx );
-            ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
-        else
-            EntitySetVariableString( projectile_entity, "gkbrkn_soft_parent", tostring( leader ) );
+            local magnitude = math.sqrt(vx * vx + vy * vy);
+            average_velocity_magnitude = average_velocity_magnitude + magnitude;
+
+            -- ignore projectiles that don't move
+            table.insert( angles, angle );
+            table.insert( magnitudes, magnitude );
+
         end
-        EntityAddComponent( projectile_entity, "LuaComponent", {
-            execute_on_added="1",
-            execute_every_n_frame="1",
-            script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile_update.lua",
-        });
+        local average_angle = mean_angle( angles, magnitudes );
+        average_velocity_magnitude = average_velocity_magnitude / #group;
+        for i,projectile_entity in pairs( group ) do
+            if projectile_entity == leader then
+                local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
+                local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+                local angle = math.atan2( vy, vx );
+                ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
+            else
+                EntitySetVariableString( projectile_entity, "gkbrkn_soft_parent", tostring( leader ) );
+            end
+            EntityAddComponent( projectile_entity, "LuaComponent", {
+                execute_on_added="1",
+                execute_every_n_frame="1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile_update.lua",
+            });
+        end
     end
 end
 

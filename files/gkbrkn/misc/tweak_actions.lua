@@ -1,4 +1,4 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
+dofile( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua");
 
 local edit_callbacks = {
     MANA_REDUCE = function( action, index )
@@ -102,18 +102,9 @@ local edit_callbacks = {
     end
 }
 
-local HARD_MODE_REMOVALS = {
-    FREEZE=true,
-    MANA_REDUCE=true,
-    PIERCING_SHOT=true,
-    TRANSMUTATION=true,
-    FREEZE_FIELD=true,
-};
-
 local apply_tweaks = {};
-for _,content_id in pairs(TWEAKS) do
-    local tweak = CONTENT[content_id];
-    if tweak.enabled() and tweak.options ~= nil and tweak.options.action_id ~= nil then
+for _,tweak in pairs( tweaks ) do
+    if tweak.options and tweak.options.action_id then
         apply_tweaks[ tweak.options.action_id ] = true
     end
 end
@@ -121,9 +112,7 @@ end
 for i=#actions,1,-1 do
     local action = actions[i];
     if action ~= nil then
-        if CONTENT[GAME_MODIFIERS.HardMode].enabled() and HARD_MODE_REMOVALS[action.id] then
-            table.remove( actions, i );
-        elseif edit_callbacks[ action.id ] ~= nil and apply_tweaks[ action.id ] == true then
+        if edit_callbacks[ action.id ] ~= nil and apply_tweaks[ action.id ] == true then
             edit_callbacks[action.id]( action, i );
         end
     end

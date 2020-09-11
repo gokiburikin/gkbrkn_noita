@@ -1,10 +1,20 @@
-print( "goki's things config menu init" );
+-- NOTE: Using GameTextGetXX may be wastey. Consider caching some of the ui elements like [?] and [X] and only update them when the menu is clicked
+print("[goki's things] setting up GUI");
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "data/scripts/lib/coroutines.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua");
+-- TODO: this is a temporary solution, fix this later
+GKBRKN_CONFIG.parse_content( false, true );
 
+local SETTINGS                      = GKBRKN_CONFIG.SETTINGS;
+local OPTIONS                       = GKBRKN_CONFIG.OPTIONS;
+local CONTENT_TYPE                  = GKBRKN_CONFIG.CONTENT_TYPE;
+local CONTENT_ACTIVATION_TYPE       = GKBRKN_CONFIG.CONTENT_ACTIVATION_TYPE;
+local CONTENT_TYPE_PREFIX           = GKBRKN_CONFIG.CONTENT_TYPE_PREFIX;
+local CONTENT_TYPE_DISPLAY_NAME     = GKBRKN_CONFIG.CONTENT_TYPE_DISPLAY_NAME;
+local CONTENT                       = GKBRKN_CONFIG.CONTENT;
 local SCREEN = {
     Options = 1,
     ContentSelection = 2,
@@ -13,15 +23,16 @@ local SCREEN = {
 local options = {}
 local gui = gui or GuiCreate();
 local gui_id = 1707;
-local gui_require_restart = false;
-local wrap_threshold = 16;
+local gui_required_activation = CONTENT_ACTIVATION_TYPE.Immediate;
+local wrap_threshold = 17;
 local wrap_limit = 3;
-local wrap_size = 28;
+local content_wrap_limit = 2;
+local wrap_size = 33;
 local last_time = 0;
 local fps_easing = 4;
 local current_fps = 0;
 local screen = 0;
-local page = 0;
+local page = 1;
 local id_offset = 0;
 local sorted_content = {};
 local content_counts = {};
@@ -29,23 +40,46 @@ local content_type_selection = {};
 local content_type = nil;
 local tab_index = 1;
 local hide_menu_frame = GameGetFrameNum() + 300;
+
+local truncate_long_string = function( str )
+    if #str > 31 then
+        str = str:sub( 0, 14 ).."..."..str:sub( -14 );
+    end
+    return str;
+end
+
 local tabs = {
     {
-        name = gkbrkn_localization.ui_tab_name_options,
+        name = GameTextGetTranslatedOrNot("$ui_tab_name_gkbrkn_options"),
         screen = SCREEN.Options,
         development_only = false
     }
 }
+
 for index,content in pairs( CONTENT ) do
+    if content.options == nil  then
+    print("missing options "..content.name)
+    end
     if content.visible() then
-        table.insert( sorted_content, { id=index, name=content.name or ( "missing content name: "..index ) } );
+        table.insert( sorted_content, {
+            id=index,
+            name=GameTextGetTranslatedOrNot( content.name ) or ( "missing content name: "..index ),
+            author=GameTextGetTranslatedOrNot( content.options.author or "Unknown" )
+        } );
         content_counts[content.type] = ( content_counts[content.type] or 0 ) + 1;
     end
 end
-table.sort( sorted_content, function( a, b ) return a.name < b.name end );
+
+table.sort( sorted_content, function( a, b )
+    if a.author:lower() == b.author:lower() then
+        return a.name:lower() < b.name:lower();
+    else
+        return a.author:lower() < b.author:lower();
+    end
+end );
 
 for k,v in pairs( CONTENT_TYPE ) do
-    local name = CONTENT_TYPE_DISPLAY_NAME[v];
+    local name = GameTextGetTranslatedOrNot( CONTENT_TYPE_DISPLAY_NAME[v] );
     name = ( content_counts[v] or 0 ).." "..name;
     table.insert( content_type_selection, { name = name, type = v } );
     table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v, development_only = tonumber(v) == CONTENT_TYPE.DevOption } );
@@ -64,21 +98,29 @@ end
 
 local pagination_list = nil;
 
-function RegisterFlagOption( name, flag, require_restart, sub_option, required_flags, toggle_callback, require_new_game, description )
+function RegisterFlagOption( name, flag, activation_type, sub_option, activation_type, toggle_callback, require_new_game, description, height )
     table.insert( options, {
         name = name,
         flag = flag,
-        require_restart = require_restart,
+        activation_type = activation_type,
         sub_option = sub_option,
-        required_flags = required_flags,
+        activation_type = activation_type,
         toggle_callback = toggle_callback,
         require_new_game = require_new_game,
         description = description,
+        height = height
     } );
 end
 
 for _,option in pairs( OPTIONS ) do
-    RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, option.SubOption, option.RequiredFlags, option.ToggleCallback, option.RequiresNewGame, option.Description );
+    if option.GroupName then
+        RegisterFlagOption( option.GroupName, nil, nil, nil, nil, nil, nil, nil, #option.SubOptions + 1 );
+        for _,subOption in pairs(option.SubOptions) do
+            RegisterFlagOption( subOption.Name, subOption.PersistentFlag, subOption.RequiresRestart, true, subOption.ActivationType, subOption.ToggleCallback, subOption.RequiresNewGame, subOption.Description, 0 );
+        end
+    else
+        RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, false, option.ActivationType, option.ToggleCallback, option.RequiresNewGame, option.Description, 1 );
+    end
 end
 
 function next_id()
@@ -98,10 +140,10 @@ function do_gui()
     id_offset = 0;
     GuiStartFrame( gui );
 
-    -- Config Menu Bitton
-    GuiLayoutBeginVertical( gui, 86, 0 ); -- fold vertical
-        local main_text = "["..gkbrkn_localization.ui_mod_name.." "..SETTINGS.Version.."]";
-        if gui_require_restart == true then
+    -- Config Menu Button
+    GuiLayoutBeginVertical( gui, 90, 0 ); -- fold vertical
+        local main_text = "["..GameTextGetTranslatedOrNot("$ui_mod_name_gkbrkn").."]";
+        if gui_required_activation ~= CONTENT_ACTIVATION_TYPE.Immediate then
             main_text = main_text.."*"
         end
         if GuiButton( gui, 0, 0, main_text, gui_id ) then
@@ -110,6 +152,9 @@ function do_gui()
             else
                 change_screen( SCREEN.Options );
             end
+        end
+        if screen ~= 0 then
+            GuiText( gui, 0, 0, SETTINGS.Version );
         end
     GuiLayoutEnd( gui ); -- fold vertical
 
@@ -120,17 +165,17 @@ function do_gui()
         GuiLayoutBeginVertical( gui, 92, 93 );
         local update_time = get_update_time();
         reset_update_time();
+        local frame_time = get_frame_time();
+        reset_frame_time();
         GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
+        GuiText( gui, 0, 0, tostring( math.floor( frame_time * 100000 ) / 100 ).."ms/fr" );
         GuiLayoutEnd( gui );
     end
 
     GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
     if screen ~= 0 then
-        -- TODO needed until stable gets this
-        if GameCreateSpriteForXFrames ~= nil then
-            local cx, cy = GameGetCameraPos();
-            GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", cx, cy );
-        end
+        local cx, cy = GameGetCameraPos();
+        GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", cx, cy );
         hide_menu_frame = GameGetFrameNum() + 300;
         GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
         local tab_index = 1;
@@ -163,29 +208,8 @@ function do_gui()
     end
 
     if screen == SCREEN.Options then
-        local wrap_threshold = 12;
         GuiText( gui, 0, 0, " ");
-        do_pagination( options, wrap_threshold * wrap_limit );
-        GuiText( gui, 0, 0, " ");
-        GuiLayoutBeginVertical( gui, 0, 0 );
-        local wrap_index = 1;
-        local start_index = 1 + page * wrap_threshold * wrap_limit;
-        local option_index = 0;
-        for index=start_index,math.min( start_index + wrap_threshold * wrap_limit - 1, #options ),1 do
-            local option = options[index];
-            if option.sub_option == nil and option_index >= wrap_index * wrap_threshold then
-                wrap_index = wrap_index + 1;
-                GuiLayoutEnd( gui );
-                GuiLayoutBeginVertical( gui, wrap_size * math.floor( option_index / wrap_threshold ), 0 );
-            end
-            do_option( option, index );
-            option_index = option_index + 1;
-        end
-        if gui_require_restart == true then
-            GuiText( gui, 0, 0, " ");
-            GuiText( gui, 0, 0, gkbrkn_localization.ui_restart_required.." *");
-        end
-        GuiLayoutEnd( gui );
+        do_paginated_content( options, function( option )do_option(option) end );
     elseif screen == SCREEN.ContentTypeSelection then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
@@ -199,83 +223,87 @@ function do_gui()
         end
     elseif screen == SCREEN.ContentSelection then
         local filtered_content = filter_content( sorted_content, content_type );
+        --do_paginated_content( filtered_content, function( content ) do_content( contnt ) end );
+
         --for index,action_id in pairs( sorted_actions ) do
+        --[[]]
         GuiText( gui, 0, 0, " ");
-        do_pagination( filtered_content, wrap_threshold * wrap_limit );
-        GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
-            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_enable_all.."]", next_id() ) then
-                for index,content_mapping in pairs( filtered_content ) do
-                    CONTENT[ content_mapping.id ].toggle( true );
-                end
-                gui_require_restart = true;
-            end
-            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_disable_all.."]", next_id() ) then
-                for index,content_mapping in pairs( filtered_content ) do
-                    CONTENT[ content_mapping.id ].toggle( false );
-                end
-                gui_require_restart = true;
-            end
-            if GuiButton( gui, 0, 0, "["..gkbrkn_localization.ui_toggle_all.."]", next_id() ) then
-                for index,content_mapping in pairs( filtered_content ) do
-                    CONTENT[ content_mapping.id ].toggle();
-                end
-                gui_require_restart = true;
-            end
-        GuiLayoutEnd( gui ); -- quick bar horizontal
-        GuiText( gui, 0, 0, " " );
-        GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
-        local wrap_index = 1;
-        local start_index = 1 + page * wrap_threshold * wrap_limit;
-        local option_index = 0;
-        for index=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
-            local content = CONTENT[ filtered_content[index].id ];
-            if option_index >= wrap_threshold * wrap_index then
-                wrap_index = wrap_index + 1;
-                GuiLayoutEnd( gui ); -- content wrapping vertical
-                GuiLayoutBeginVertical( gui, wrap_size * math.floor( option_index / wrap_threshold ), 0 ); -- content wrapping vertical
-            end
-            local text = "";
-            local flag = GKBRKN_CONFIG.get_content_flag( content.id );
-            if flag ~= nil then
-                if content.enabled() == true then
-                    text = text .. gkbrkn_localization.ui_check_mark;
-                else
-                    text = text .. gkbrkn_localization.ui_uncheck_mark;
-                end
-                text = text .. " "..content.name;
-            end
-            
-            GuiLayoutBeginHorizontal( gui, 0, 0 );
-                if content.options ~= nil and content.options.description ~= nil then
-                    if GuiButton( gui, 0, 0, "[?]", next_id() ) then
-                        for word in string.gmatch( content.options.description, '([^\n]+)' ) do
-                            GamePrint( word );
-                        end
+        local pages_info = do_pagination( filtered_content, wrap_threshold,  wrap_limit, page );
+        local break_index = 1;
+        local breaks_hit = 0;
+        if pages_info[page].size > 0 then
+            do_quick_bar( filtered_content );
+            GuiText( gui, 0, 0, " " );
+            GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
+                local wrap_index = 1;
+                local start_index = 1;
+                local page_size = pages_info[page].size;
+                local page_breaks = pages_info[page].breaks;
+                for p=1,#pages_info,1 do
+                    if page > p then
+                        start_index = start_index + pages_info[p].size;
                     end
                 end
-                if content.options ~= nil and content.options.preview_callback ~= nil then
-                    if GuiButton( gui, 0, 0, "[P]", next_id() ) then
-                        content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
+                local content_index = 0;
+                for index = start_index, start_index + page_size-1,1 do
+                    --for index=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
+                    if page_breaks[wrap_index] and break_index > page_breaks[wrap_index] then
+                        GuiLayoutEnd( gui );
+                        GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 0 );
+                        wrap_index = wrap_index + 1;
+                        break_index = 1;
                     end
+                    do_content( CONTENT[ filtered_content[index].id ] );
+                    content_index = content_index + 1;
+                    break_index = break_index + 1;
                 end
-                if GuiButton( gui, 0, 0, text, next_id() ) then
-                    gui_require_restart = true;
-                    content.toggle();
-                end
-            GuiLayoutEnd( gui );
-            option_index = option_index + 1;
+                do_required_activation();
+            GuiLayoutEnd( gui ); -- content wrapping vertical
+        else
+            GuiText( gui, 0, 0, " " );
+            GuiText( gui, 0, 0, "No content" );
         end
-        if gui_require_restart == true then
-            GuiText( gui, 0, 0, " ");
-            GuiText( gui, 0, 0, gkbrkn_localization.ui_restart_required.." *");
-        end
-        GuiLayoutEnd( gui ); -- content wrapping vertical
     end
     GuiLayoutEnd( gui ); -- main vertical
 end
 
+function do_paginated_content( content_list, content_callback )
+    local pages_info = do_pagination( content_list, wrap_threshold,  wrap_limit, page );
+    local break_index = 1;
+    local breaks_hit = 0;
+    GuiText( gui, 0, 0, " ");
+    GuiLayoutBeginVertical( gui, 0, 0 );
+        local wrap_index = 1;
+        local start_index = 1;
+        local page_size = pages_info[page].size;
+        local page_breaks = pages_info[page].breaks;
+        for p=1,#pages_info,1 do
+            if page > p then
+                start_index = start_index + pages_info[p].size;
+            end
+        end
+        local content_index = 0;
+        for index = start_index, start_index + page_size-1,1 do
+            local content = content_list[index];
+            if content then
+                --if option.sub_option ~= true and content_index + option.height > wrap_index * wrap_threshold then
+                if page_breaks[wrap_index] and break_index > page_breaks[wrap_index] then
+                    GuiLayoutEnd( gui );
+                    GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 0 );
+                    wrap_index = wrap_index + 1;
+                    break_index = 1;
+                end
+                content_callback( content );
+                content_index = content_index + 1;
+            end
+            break_index = break_index + 1;
+        end
+        do_required_activation();
+    GuiLayoutEnd( gui );
+end
+
 function do_fps()
-    if HasFlagPersistent( MISC.ShowFPS.Enabled ) then
+    if HasFlagPersistent( MISC.ShowFPS.EnabledFlag ) then
         local now = GameGetRealWorldTimeSinceStarted();
         local fps = 1 / (now - last_time);
         current_fps = current_fps + (fps - current_fps ) / fps_easing;
@@ -286,6 +314,10 @@ function do_fps()
     end
 end
 
+function change_page( new_page )
+    page = new_page;
+end
+
 function change_screen( new_screen )
     if new_screen == 0 then
         GameRemoveFlagRun( FLAGS.ConfigMenuOpen );
@@ -293,10 +325,79 @@ function change_screen( new_screen )
         GameAddFlagRun( FLAGS.ConfigMenuOpen );
     end
     screen = new_screen;
-    page = 0;
+    change_page(1);
 end
 
-function do_option( option, index )
+function do_required_activation()
+    if gui_required_activation == CONTENT_ACTIVATION_TYPE.NewGame then
+        GuiText( gui, 0, 0, " ");
+        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_new_game_required_gkbrkn").." *");
+    elseif gui_required_activation == CONTENT_ACTIVATION_TYPE.Restart then
+        GuiText( gui, 0, 0, " ");
+        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_restart_required_gkbrkn").." *");
+    end
+end
+
+function do_quick_bar( filtered_content )
+    GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
+        if GuiButton( gui, 0, 0, "["..GameTextGetTranslatedOrNot("$ui_enable_all_gkbrkn").."]", next_id() ) then
+            for index,content_mapping in pairs( filtered_content ) do
+                CONTENT[ content_mapping.id ].toggle( true );
+            end
+            gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
+        end
+        if GuiButton( gui, 0, 0, "["..GameTextGetTranslatedOrNot("$ui_disable_all_gkbrkn").."]", next_id() ) then
+            for index,content_mapping in pairs( filtered_content ) do
+                CONTENT[ content_mapping.id ].toggle( false );
+            end
+            gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
+        end
+        if GuiButton( gui, 0, 0, "["..GameTextGetTranslatedOrNot("$ui_toggle_all_gkbrkn").."]", next_id() ) then
+            for index,content_mapping in pairs( filtered_content ) do
+                CONTENT[ content_mapping.id ].toggle();
+            end
+            gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
+        end
+    GuiLayoutEnd( gui ); -- quick bar horizontal
+end
+
+function do_content( content )
+    local text = "";
+    local flag = GKBRKN_CONFIG.get_content_flag( content.id );
+    if flag ~= nil then
+        if content.enabled() == true then
+            text = text .. GameTextGetTranslatedOrNot("$ui_check_mark_gkbrkn");
+        else
+            text = text .. GameTextGetTranslatedOrNot("$ui_uncheck_mark_gkbrkn");
+        end
+        text = text .. " "..truncate_long_string( GameTextGetTranslatedOrNot( ( content.options and content.options.display_name ) or content.name ) );
+        if content.options.menu_note then
+            text = text .. " " .. GameTextGetTranslatedOrNot( content.options.menu_note );
+        end
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            if HasFlagPersistent( MISC.VerboseMenus.EnabledFlag ) and content.options ~= nil then
+                if content.description ~= nil then
+                    if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
+                        for word in string.gmatch( content.description, '([^\n]+)' ) do
+                            GamePrint( word );
+                        end
+                    end
+                end
+                if content.options.preview_callback ~= nil then
+                    if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_preview_button_gkbrkn"), next_id() ) then
+                        content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
+                    end
+                end
+            end
+            if GuiButton( gui, 0, 0, text, next_id() ) then
+                gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
+                content.toggle();
+            end
+        GuiLayoutEnd( gui );
+    end
+end
+
+function do_option( option )
     GuiLayoutBeginHorizontal( gui, 0, 0 );
     if option.flag ~= nil then
         local text = "";
@@ -305,22 +406,20 @@ function do_option( option, index )
         end
         local option_enabled = HasFlagPersistent( option.flag );
         if option_enabled then
-            text = text .. gkbrkn_localization.ui_check_mark;
+            text = text .. GameTextGetTranslatedOrNot("$ui_check_mark_gkbrkn");
         else
-            text = text .. gkbrkn_localization.ui_uncheck_mark;
+            text = text .. GameTextGetTranslatedOrNot("$ui_uncheck_mark_gkbrkn");
         end
-        text = text .. " ".. option.name;
+        text = text .. " ".. GameTextGetTranslatedOrNot(option.name);
         if option ~= nil and option.description ~= nil then
-            if GuiButton( gui, 0, 0, "[?]", next_id() ) then
-                for word in string.gmatch( option.description, '([^\n]+)' ) do
+            if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
+                for word in string.gmatch( GameTextGetTranslatedOrNot(option.description), '([^\n]+)' ) do
                     GamePrint( word );
                 end
             end
         end
         if GuiButton( gui, 0, 0, text, next_id() ) then
-            if option.require_restart == true then
-                gui_require_restart = true;
-            end
+            gui_required_activation = math.max( gui_required_activation, option.activation_type )
             if option_enabled then
                 RemoveFlagPersistent( option.flag );
             else
@@ -336,21 +435,47 @@ function do_option( option, index )
     GuiLayoutEnd( gui );
 end
 
-function do_pagination( list, per_page )
+function do_pagination( list, rows, columns, page )
+    local page_info = {};
+    local page_sizes = {};
     GuiLayoutBeginHorizontal( gui, 0, 0 );
-    GuiText( gui, 0, 0, get_tab_name().." "..gkbrkn_localization.ui_page.." " );
-    for i=1,math.ceil( #list / per_page ) do
+    GuiText( gui, 0, 0, get_tab_name().." "..GameTextGetTranslatedOrNot("$ui_page_gkbrkn").." " );
+    local page_rows = 0;
+    local page_columns = 1;
+    local page_size = 0;
+    local page_breaks = {};
+    for i=1,#list,1 do
+        -- NOTE this logic is stupid and i'm tired, fix this later
+        local entry_height = (list[i].height or 1);
+        if page_rows + entry_height >= rows then
+            page_columns = page_columns + 1;
+            if page_columns > columns then
+                table.insert( page_info, { size = page_size, breaks = page_breaks } );
+                page_breaks = {};
+                page_columns = 1;
+                page_size = 0;
+            end
+            table.insert( page_breaks, page_rows );
+            page_rows = entry_height;
+        else
+            page_rows = page_rows + entry_height;
+        end
+        page_size = page_size + entry_height;
+    end
+    table.insert( page_info, { size = page_size, breaks = page_breaks } );
+    for i=1,#page_info do
         local text = "";
-        if page == i-1 then
+        if page == i then
             text = "("..i..")";
         else
             text = "  "..i.."  ";
         end
         if GuiButton( gui, 0, 0, text, next_id() ) then
-            page = i-1;
+            change_page( i );
         end
     end
     GuiLayoutEnd( gui );
+    return page_info;
 end
 
 local auto_hide_message_shown = false;
@@ -358,11 +483,11 @@ local auto_hide_message_shown = false;
 if gui then
     async_loop(function()
         if gui then
-            if HasFlagPersistent( MISC.AutoHide.Enabled ) == false or GameGetFrameNum() - hide_menu_frame < 0 then
+            if HasFlagPersistent( MISC.AutoHide.EnabledFlag ) == false or GameGetFrameNum() - hide_menu_frame < 0 then
                 do_gui();
             elseif auto_hide_message_shown == false then
                 auto_hide_message_shown = true;
-                GamePrint( gkbrkn_localization.ui_auto_hide_message );
+                GamePrint( GameTextGetTranslatedOrNot("$ui_auto_hide_message_gkbrkn") );
             end
             do_fps();
         end
