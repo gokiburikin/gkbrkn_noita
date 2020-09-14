@@ -1,5 +1,6 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
@@ -73,6 +74,10 @@ function shot( projectile_entity )
     end
 
     if projectile ~= nil then
+        local critical = ComponentObjectGetMembers( projectile, "damage_critical" );
+        if find_game_modifier("limit_critical_damage") then
+            ComponentObjectSetValue2( projectile, "damage_critical", "chance", math.min( ComponentObjectGetValue2( projectile, "damage_critical", "chance" ), 100 ) );
+        end
         EntitySetVariableNumber( projectile_entity, "gkbrkn_bounces_last", ComponentGetValue( projectile, "bounces_left" ) );
         EntitySetVariableNumber( projectile_entity, "gkbrkn_bounce_damage_remaining", 10 );
         EntitySetVariableNumber( projectile_entity, "gkbrkn_initial_damage", ComponentGetValue( projectile, "damage" ) );
@@ -172,4 +177,5 @@ function shot( projectile_entity )
         local color = 0xFF000000 + math.floor( Random() * 0xFFFFFF );
         projectile_change_particle_colors( projectile_entity, color );
     end
+
 end

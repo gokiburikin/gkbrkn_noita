@@ -104,7 +104,7 @@
 
     <LuaComponent
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile_update.lua"
-		execute_every_n_frame="1"
+		execute_every_n_frame="2"
 		>
 	</LuaComponent>
 

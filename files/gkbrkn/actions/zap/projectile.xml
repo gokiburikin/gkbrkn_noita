@@ -41,14 +41,11 @@
     velocity_updates_animation="1"
     velocity_sets_scale="1"
     velocity_sets_scale_coeff="0.6"
-	knockback_force="0.0"
-	physics_impulse_coeff="0"
-	penetrate_entities="1"
+    knockback_force="0.0"
+    physics_impulse_coeff="0"
+    penetrate_entities="1"
      >
-	<damage_by_type
-        electricity="0.086"
-		>
-	</damage_by_type>
+	<damage_by_type electricity="0.086"></damage_by_type>
     <config_explosion
         damage="0.0"
         explosion_radius="0">

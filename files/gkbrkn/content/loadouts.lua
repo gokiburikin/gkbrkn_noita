@@ -1261,7 +1261,7 @@ loadouts = {
                     reload_time = {40,40}, -- recharge time in frames
                     fire_rate_wait = {40,40}, -- cast delay in frames
                     spread_degrees = {-3,-3}, -- spread
-                    mana_charge_speed = {60,60}, -- mana charge speed
+                    mana_charge_speed = {70,70}, -- mana charge speed
                     mana_max = {210,210}, -- mana max
                 },
                 stat_randoms = {},
@@ -1270,10 +1270,9 @@ loadouts = {
                 actions = {
                     { { action="GKBRKN_TRIGGER_HIT", locked=true} },
                     { { action="LIGHT_BULLET", locked=false} },
+                    { { action="GKBRKN_BURST_FIRE", locked=true} },
                     { { action="HEAVY_SPREAD", locked=true} },
-                    { { action="ACCELERATING_SHOT", locked=true} },
-                    { { action="GKBRKN_DOUBLE_CAST", locked=false} },
-                    { { action="GKBRKN_DOUBLE_CAST", locked=false} },
+                    { { action="GKBRKN_SPEED_DOWN", locked=true} },
                     { { action="LONG_DISTANCE_CAST", locked=true} },
                     { { action="I_SHAPE", locked=true} },
                     { { action="LIGHT_BULLET", locked=false} },

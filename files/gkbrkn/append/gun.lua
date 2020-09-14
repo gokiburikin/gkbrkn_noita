@@ -42,8 +42,9 @@ gkbrkn = {
     draw_action_stack_size = 0,
     spell_merge_groups = 0,
     did_action_add_projectile = false,
-    mana_multiplier = 1,
+    mana_multiplier = 1.0,
     skip_projectiles = false,
+    added_projectiles = 0,
     _create_shot = create_shot,
     _draw_actions = draw_actions,
     _set_current_action = set_current_action,
@@ -56,7 +57,13 @@ gkbrkn = {
     _add_projectile_trigger_timer = add_projectile_trigger_timer,
     _add_projectile_trigger_death = add_projectile_trigger_death,
     _add_projectile_trigger_hit_world = add_projectile_trigger_hit_world,
+    _BeginProjectile = BeginProjectile
 }
+
+function BeginProjectile( filepath )
+    gkbrkn.added_projectiles = gkbrkn.added_projectiles + 1;
+    gkbrkn._BeginProjectile( filepath );
+end
 
 function state_per_cast( state )
     -- empty out the trigger queue since it's per cast
@@ -65,6 +72,7 @@ function state_per_cast( state )
     gkbrkn.spell_merge_groups = 0;
     gkbrkn.skip_projectiles = false;
     gkbrkn.mana_multiplier = 1.0;
+    gkbrkn.added_projectiles = 0;
 end
 
 function create_shot( num_of_cards_to_draw )
@@ -267,7 +275,7 @@ function order_deck()
     -- This allows me to hook into the mana access and call an arbitrary function. Very tricksy
     for _,action in pairs(deck) do
         if action.gkbrkn == nil then
-            local base_mana = action.mana;
+            local base_mana = action.mana or 0;
             action.mana = nil;
             local action_meta = {
                 __index = function( table, key )

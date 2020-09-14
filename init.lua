@@ -1,9 +1,12 @@
 --[[
 changelog
 
+BUG
+    trigger repeat is not retaining modifiers for the main projectile
+    grimoires should either be no limited uses or all limited uses or something, fix this somehow
+    zenti is finding "infinite" mana wands
+
 TODO
-    Packs
-        content definable card packs that have actions with weights. used to replace shops
     Wand Upgrades
         1 wand upgrade token per standard biome replacing an enemy
         wand upgrade tokens used to upgrade held wand
@@ -57,6 +60,13 @@ PERKS
 
 ABANDONED
     Lava, Acid, Poison (Material) Immunities (works if you're willing to polymorph the player for a frame. i'm not)
+
+the exit to the boss holy mountain still crumbles diplomatic immunity
+
+Champion Type Ideas
+    Pilfer (steal gold on hit)
+    Pickpocket/Fumbling (remove the item in your hand)
+    Fear (line of sight causes a debuff)
 
 ]]
 
@@ -169,21 +179,14 @@ ModTextFileAppend( "data/scripts/perks/perk_list.lua",  "mods/gkbrkn_noita/files
 
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/materials.xml" );
 
+--[[ Polymorph Nerf - This doesn't work how i want it to so for now being disabled until Nolla fixes status effects 
+ModLuaFileAppend( "data/scripts/status_effects/status_list.lua", "mods/gkbrkn_noita/files/gkbrkn/append/status_list.lua" );
+ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/slow_polymorph.xml" );
+]]
+
 function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
     ModTextFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/content/perks.lua" );
-
-    --[[ Champion Types ]]
-        local goki_champion_types = { "damage_buff", "projectile_buff", "knockback", "rapid_attack", "faster_movement", "teleporting", "burning", "freezing", "invisible", "regenerating", "revenge_explosion", "energy_shield", "electric", "projectile_repulsion_field", "hot_blooded", "gunpowder_blood", "frozen_blood", "projectile_bounce", "eldritch", "armored", "toxic_trail", "counter", "ice_burst", "infested", "digging", "leaping", "jetpack", "sparkbolt", "reward" };
-        local deprecated_goki_champion_types = { "healthy","invincibility_frames" };
-        for _,champion_type in pairs( goki_champion_types ) do
-            ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/champion_types.lua", "mods/gkbrkn_noita/files/gkbrkn/champion_types/"..champion_type.."/init.lua" );
-        end
-        if HasFlagPersistent( FLAGS.ShowDeprecatedContent ) then
-            for _,champion_type in pairs( deprecated_goki_champion_types ) do
-                ModTextFileAppend(  "mods/gkbrkn_noita/files/gkbrkn/content/champion_types.lua", "mods/gkbrkn_noita/files/gkbrkn/champion_types/"..champion_type.."/init.lua" );
-            end
-        end
 
 	if HasFlagPersistent( FLAGS.GenerateRandomSpellbooks ) then ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/generate_random_spellbooks.lua" ); end
     if HasFlagPersistent( FLAGS.DisableRandomSpells ) then ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/disable_spells.lua" ); end
@@ -193,10 +196,8 @@ function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where
 
     -- On first launch enable any options that should be enabled by default
     if HasFlagPersistent("gkbrkn_first_launch") == false then
-        local CONTENT = GKBRKN_CONFIG.CONTENT;
-        local OPTIONS = GKBRKN_CONFIG.OPTIONS;
         AddFlagPersistent("gkbrkn_first_launch");
-        for _,option in pairs(OPTIONS) do
+        for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
             if option.SubOptions ~= nil then
                 for _,sub_option in pairs(option.SubOptions) do
                     if sub_option.EnabledByDefault then
@@ -234,4 +235,6 @@ function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where
     dofile( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua");
     if find_game_modifier("limited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/limited_ammo.lua" ); end
     if find_game_modifier("unlimited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/unlimited_ammo.lua" ); end
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_actions.lua" );
+    print (ModTextFileGetContent("mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua"))
 end

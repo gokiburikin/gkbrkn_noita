@@ -6,19 +6,17 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "data/scripts/lib/coroutines.lua" );
 -- TODO: this is a temporary solution, fix this later
-GKBRKN_CONFIG.parse_content( false, true );
-
+local CONTENT = {};
+GKBRKN_CONFIG.parse_content( false, true, CONTENT );
 local SETTINGS                      = GKBRKN_CONFIG.SETTINGS;
 local OPTIONS                       = GKBRKN_CONFIG.OPTIONS;
-local CONTENT_TYPE                  = GKBRKN_CONFIG.CONTENT_TYPE;
 local CONTENT_ACTIVATION_TYPE       = GKBRKN_CONFIG.CONTENT_ACTIVATION_TYPE;
-local CONTENT_TYPE_PREFIX           = GKBRKN_CONFIG.CONTENT_TYPE_PREFIX;
-local CONTENT_TYPE_DISPLAY_NAME     = GKBRKN_CONFIG.CONTENT_TYPE_DISPLAY_NAME;
-local CONTENT                       = GKBRKN_CONFIG.CONTENT;
 local SCREEN = {
-    Options = 1,
-    ContentSelection = 2,
-    ContentTypeSelection = 3,
+    Closed = 0,
+    Info = 1,
+    Options = 2,
+    ContentSelection = 3,
+    ContentTypeSelection = 4,
 }
 local options = {}
 local gui = gui or GuiCreate();
@@ -31,7 +29,7 @@ local wrap_size = 33;
 local last_time = 0;
 local fps_easing = 4;
 local current_fps = 0;
-local screen = 0;
+local screen = SCREEN.Closed;
 local page = 1;
 local id_offset = 0;
 local sorted_content = {};
@@ -40,6 +38,7 @@ local content_type_selection = {};
 local content_type = nil;
 local tab_index = 1;
 local hide_menu_frame = GameGetFrameNum() + 300;
+local tip = "";
 
 local truncate_long_string = function( str )
     if #str > 31 then
@@ -78,15 +77,16 @@ table.sort( sorted_content, function( a, b )
     end
 end );
 
-for k,v in pairs( CONTENT_TYPE ) do
-    local name = GameTextGetTranslatedOrNot( CONTENT_TYPE_DISPLAY_NAME[v] );
-    name = ( content_counts[v] or 0 ).." "..name;
-    table.insert( content_type_selection, { name = name, type = v } );
-    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = v, development_only = tonumber(v) == CONTENT_TYPE.DevOption } );
+for _,content_type in pairs( content_types ) do
+    local name = GameTextGetTranslatedOrNot( content_type.display_name );
+    name = ( content_counts[content_type.id] or 0 ).." "..name;
+    table.insert( content_type_selection, { name = name, type = content_type.id } );
+    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = content_type.id, development_only = tonumber(v) == "dev_option" } );
 end
 table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
 
-function filter_content( content_list, content_type )
+function filter_content( content_list, content_type, content_table )
+    if content_table == nil then content_table = CONTENT; end
     local filtered = {};
     for _,content in pairs( content_list ) do
         if CONTENT[content.id].type == content_type then
@@ -136,6 +136,85 @@ function get_tab_name()
     end
 end
 
+function toggle_vanilla()
+    for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
+        if option.SubOptions ~= nil then
+            for _,sub_option in pairs(option.SubOptions) do
+                RemoveFlagPersistent( sub_option.PersistentFlag );
+            end
+        else
+            RemoveFlagPersistent( option.PersistentFlag );
+        end
+    end
+    for _,content in pairs( CONTENT ) do
+        content.toggle( false );
+    end
+end
+
+function toggle_default()
+    toggle_vanilla();
+    for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
+        if option.SubOptions ~= nil then
+            for _,sub_option in pairs(option.SubOptions) do
+                if sub_option.EnabledByDefault then
+                    AddFlagPersistent( sub_option.PersistentFlag );
+                end
+            end
+        else
+            if option.EnabledByDefault then
+                AddFlagPersistent( option.PersistentFlag );
+            end
+        end
+    end
+    for _,content in pairs( CONTENT ) do
+        if content.enabled_by_default or content.type == "action" or content.type == "perk" or content.type == "pack" or content.type == "champion_type" or content.type == "legendary_wand" then
+            content.toggle( true );
+        end
+    end
+end
+
+function toggle_content_by_tag( tag, skip_default )
+    for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
+        if option.SubOptions ~= nil then
+            for _,sub_option in pairs(option.SubOptions) do
+                if skip_default == false then
+                    if sub_option.EnabledByDefault then
+                        AddFlagPersistent( sub_option.PersistentFlag );
+                    end
+                end
+                if sub_option.Tags[tag] then
+                    AddFlagPersistent( sub_option.PersistentFlag );
+                elseif sub_option.Tags[tag] == false then
+                    RemoveFlagPersistent( sub_option.PersistentFlag );
+                end
+            end
+        else
+            if skip_default == false then
+                if option.EnabledByDefault then
+                    AddFlagPersistent( option.PersistentFlag );
+                end
+            end
+            if option.Tags[tag] then
+                AddFlagPersistent( option.PersistentFlag );
+            elseif option.Tags[tag] == false then
+                RemoveFlagPersistent( sub_option.PersistentFlag );
+            end
+        end
+    end
+    for _,content in pairs( CONTENT ) do
+        if skip_default == false then
+            if content.enabled_by_default then
+                content.toggle( true );
+            end
+        end
+        if content.tags[tag] then
+            content.toggle( true );
+        elseif content.tags[tag] == false then
+            content.toggle( false );
+        end
+    end
+end
+
 function do_gui()
     id_offset = 0;
     GuiStartFrame( gui );
@@ -150,7 +229,7 @@ function do_gui()
             if screen ~= 0 then
                 change_screen( 0 );
             else
-                change_screen( SCREEN.Options );
+                change_screen( SCREEN.Info );
             end
         end
         if screen ~= 0 then
@@ -173,7 +252,7 @@ function do_gui()
     end
 
     GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
-    if screen ~= 0 then
+    if screen ~= SCREEN.Closed then
         local cx, cy = GameGetCameraPos();
         GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", cx, cy );
         hide_menu_frame = GameGetFrameNum() + 300;
@@ -192,7 +271,13 @@ function do_gui()
                     tab_title = "["..tab_title.."]";
                 end
                 if GuiButton( gui, 0, 0, tab_title.." ", next_id() ) then
-                    change_screen( tab_data.screen );
+                    if screen ~= tab_data.screen then
+                        change_screen( tab_data.screen );
+                    else
+                        if tab_data.content_type == nil or content_type == tab_data.content_type then
+                            change_screen( SCREEN.Info );
+                        end
+                    end
                     if tab_data.content_type ~= nil then
                         content_type = tab_data.content_type;
                     end
@@ -207,9 +292,71 @@ function do_gui()
         GuiLayoutEnd( gui ); -- tabs horizontal
     end
 
-    if screen == SCREEN.Options then
+    if screen == SCREEN.Info then
         GuiText( gui, 0, 0, " ");
-        do_paginated_content( options, function( option )do_option(option) end );
+        GuiText( gui, 0, 0, "Welcome to Goki's Things!")
+        GuiText( gui, 0, 0, " ");
+        GuiText( gui, 0, 0, "Choose a tab up above to customize the mod or choose one of the presets below!")
+        GuiText( gui, 0, 0, "Be sure to check out all the different pages of content for that tab, what you're looking for may be on page 2.")
+        GuiText( gui, 0, 0, " ");
+        GuiText( gui, 0, 0, "Press one of the buttons below to select a preset. Be careful, you can't undo this!");
+        GuiText( gui, 0, 0, " ");
+        if GuiButton( gui, 0, 0, "[Vanilla] Turn off all custom Goki's Things content", next_id() ) then
+            toggle_vanilla();
+        end
+        if GuiButton( gui, 0, 0, "[Default] Reset Goki's Things to default settings", next_id() ) then
+            toggle_default();
+        end
+        if GuiButton( gui, 0, 0, "[Goki Mode] Apply the settings Goki prefers to use", next_id() ) then
+            toggle_default();
+            toggle_content_by_tag("goki_thing");
+        end
+        if GuiButton( gui, 0, 0, "[Ultimate Challenge Mode] Enable the Ultimate Hero + Ultimate Champion game modes", next_id() ) then
+            toggle_content_by_tag("ultimate_challenge");
+        end
+        if GuiButton( gui, 0, 0, "[Random Start] Start runs with random equipment", next_id() ) then
+            toggle_content_by_tag("random_starts");
+        end
+        if GuiButton( gui, 0, 0, "[Loadouts] Allow Goki's Things to manage loadouts and start runs with a random loadout", next_id() ) then
+            toggle_content_by_tag("loadouts");
+            for _,content in pairs( CONTENT ) do
+                if content.type == "loadout" or content.type == "action" or content.type == "perk" then
+                    content.toggle( true );
+                end
+            end
+        end
+        if GuiButton( gui, 0, 0, "[Randomize] Randomize all of the options (this is probably a bad idea)", next_id() ) then
+            for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
+                if option.SubOptions ~= nil then
+                    for _,sub_option in pairs(option.SubOptions) do
+                        if Random() < 0.5 then
+                            AddFlagPersistent( sub_option.PersistentFlag );
+                        else
+                            RemoveFlagPersistent( sub_option.PersistentFlag );
+                        end
+                    end
+                else
+                    if Random() < 0.5 then
+                        AddFlagPersistent( option.PersistentFlag );
+                    else
+                        RemoveFlagPersistent( option.PersistentFlag );
+                    end
+                end
+            end
+            for _,content in pairs( CONTENT ) do
+                if Random() < 0.5 then
+                    content.toggle( true );
+                else
+                    content.toggle( false );
+                end
+            end
+            RemoveFlagPersistent( MISC.AutoHide.EnabledFlag );
+        end
+        GuiText( gui, 0, 0, " ");
+        GuiText( gui, 0, 0, "Goki Says: "..tip);
+    elseif screen == SCREEN.Options then
+        GuiText( gui, 0, 0, " ");
+        do_paginated_content( options, function( option ) do_option(option) end );
     elseif screen == SCREEN.ContentTypeSelection then
         GuiText( gui, 0, 0, " ");
         GuiLayoutBeginHorizontal( gui, 0, 0 );
@@ -321,6 +468,8 @@ end
 function change_screen( new_screen )
     if new_screen == 0 then
         GameRemoveFlagRun( FLAGS.ConfigMenuOpen );
+        local tip_index = math.ceil( Random() * #MISC.ShowModTips.Tips );
+        tip = GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip_index] );
     else
         GameAddFlagRun( FLAGS.ConfigMenuOpen );
     end
@@ -363,7 +512,7 @@ end
 
 function do_content( content )
     local text = "";
-    local flag = GKBRKN_CONFIG.get_content_flag( content.id );
+    local flag = GKBRKN_CONFIG.get_content_flag( content.id, CONTENT );
     if flag ~= nil then
         if content.enabled() == true then
             text = text .. GameTextGetTranslatedOrNot("$ui_check_mark_gkbrkn");
@@ -493,4 +642,7 @@ if gui then
         end
         wait( 0 );
     end);
+    change_screen(0);
 end
+
+print("[goki's things] done setting up GUI");

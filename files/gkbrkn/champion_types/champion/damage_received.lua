@@ -11,9 +11,9 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
                 total_health = total_health + ComponentGetValue( damage_model, "max_hp" );
             end
             local x, y = EntityGetTransform( entity );
-            local gold_reward = math.ceil( total_health + 0.5 ) * 8 * EntityGetVariableNumber( entity, "gkbrkn_champion_modifier_amount", 0 );
+            local gold_reward = math.ceil( total_health + 0.5 ) * 6 * EntityGetVariableNumber( entity, "gkbrkn_champion_modifier_amount", 0 );
             gold_reward = math.ceil( gold_reward / 10 ) * 10;
-            GamePrint( "[goki's things] champion bonus was "..gold_reward.." gold for "..(total_health * 25).. " health");
+            --GamePrint( "[goki's things] champion bonus was "..gold_reward.." gold for "..(total_health * 25).. " health");
             if gold_reward > 0 then
                 spawn_gold_nuggets( gold_reward, x, y );
             end

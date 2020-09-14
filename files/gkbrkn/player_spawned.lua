@@ -1,6 +1,8 @@
+print( "[goki's things] player spawn")
 GameAddFlagRun( "gkbrkn_content_cached" );
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua" );
+dofile( "mods/gkbrkn_noita/files/gkbrkn/content/dev_options.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
@@ -225,10 +227,7 @@ end
 
 --[[ Development Options enabled warning ]]
 if HasFlagPersistent( FLAGS.DebugMode ) then
-    for k,v in pairs( DEV_OPTIONS ) do
-        if CONTENT[v].enabled() then
-            GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
-            break;
-        end
+    if #dev_options > 0 then
+        GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
     end
 end

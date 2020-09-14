@@ -3,19 +3,12 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/champion_types.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/dev_options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/dev_options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "data/scripts/lib/utilities.lua" );
-
-local CONTENT = GKBRKN_CONFIG.CONTENT;
-local TWEAKS = GKBRKN_CONFIG.TWEAKS;
-
-if not gkbrkn_content_parsed then
-    gkbrkn_content_parsed = true;
-    GKBRKN_CONFIG.parse_content();
-end
 
 --TODO a lot of this stuff should be done in a world update rather than a player update since it doesn't need to happen per player
 --TODO in fact much of this could (and should) be done based on the camera position since the player won't always be here (polymorph)
@@ -44,7 +37,7 @@ end
 local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
 
 --[[ Tweak: Reduced Electrocution ]]
-if CONTENT[ TWEAKS["reduced_electrocution"] ].enabled() then
+if find_tweak("reduced_electrocution") then
     local electrocution_effect = GameGetGameEffect( player_entity, "ELECTROCUTION" );
     if electrocution_effect ~= 0 then
         if ComponentGetValue2( electrocution_effect, "frames" ) > 1 then
@@ -137,18 +130,6 @@ end
 --[[ Spell Recovery ]]
 if is_debug_mode_enabled and find_dev_option( "infinite_spells" ) then
     GameRegenItemActionsInPlayer( player_entity );
-    --[[
-    if now % 60 == 0 then
-        if active_wand ~= nil then
-            local wand_children = EntityGetAllChildren( active_wand ) or {};
-            for _,child in pairs( wand_children ) do
-                local item = FindFirstComponentByType( child, "ItemComponent" );
-                local itemid = ComponentGetValue( item, "mItemUid" );
-                ActionUsesRemainingChanged( itemid, 100 );
-            end
-        end
-    end
-    ]]
 end
 
 --[[ Health Recovery ]]
@@ -613,101 +594,21 @@ if now % 10 == 0 then
                     
                     EntitySetVariableNumber( nearby, "gkbrkn_champion_modifier_amount", champion_types_to_apply );
 
-                    --[[ Things to apply to all champions ]]
-                    EntityAddComponent( nearby, "LuaComponent", {
-                        script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/shot.lua"
-                    });
-                    local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
-                    if #animal_ais > 0 then
-                        for _,ai in pairs( animal_ais ) do
-                            ComponentSetValues( ai, {
-                                aggressiveness_min="100",
-                                aggressiveness_max="100",
-                                escape_if_damaged_probability="0",
-                                hide_from_prey="0",
-                                needs_food="0",
-                                sense_creatures="1",
-                                attack_only_if_attacked="0",
-                                creature_detection_check_every_x_frames="60",
-                                creature_detection_angular_range_deg="180",
-                                dont_counter_attack_own_herd="1",
-                            });
-                            ComponentAdjustValues( ai, {
-                                max_distance_to_cam_to_start_hunting=function( value ) return  tonumber( value ) * 2; end,
-                                creature_detection_range_x=function( value ) return  tonumber( value ) * 2; end,
-                                creature_detection_range_y=function( value ) return  tonumber( value ) * 2; end,
-                                --attack_dash_distance=function(value) return math.max( tonumber( value ), 150 ) end,
-                            });
-                        end
-                    end
-                    local character_platforming = EntityGetFirstComponent( nearby, "CharacterPlatformingComponent" );
-                    local speed_multiplier = 1.25;
-                    if character_platforming ~= nil then
-                        ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * speed_multiplier ) );
-                        ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * speed_multiplier ) );
-                        ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * speed_multiplier ) );
-                        local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
-                        ComponentSetMetaCustom( character_platforming, "fly_velocity_x", tostring( fly_velocity_x * speed_multiplier ) );
-                        ComponentSetValue( character_platforming, "fly_smooth_y", "0" );
-                        ComponentSetValue( character_platforming, "fly_speed_mult", tostring( fly_velocity_x * speed_multiplier ) );
-                        ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( fly_velocity_x * speed_multiplier ) );
-                        ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( fly_velocity_x * speed_multiplier ) );
-                        ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( fly_velocity_x * speed_multiplier ) );
-                    end
-                    local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
-                    if damage_models ~= nil then
-                        local resistances = {
-                            ice = 1.00,
-                            electricity = 1.00,
-                            radioactive = 1.00,
-                            slice = 1.00,
-                            projectile = 1.00,
-                            healing = 1.00,
-                            physics_hit = 1.00,
-                            explosion = 1.00,
-                            poison = 1.00,
-                            melee = 1.00,
-                            drill = 1.00,
-                            fire = 1.00,
-                        };
-                        if is_mini_boss then
-                            resistances.physics_hit = 0.25;
-                        end
-                        for index,damage_model in pairs( damage_models ) do
-                            for damage_type,multiplier in pairs( resistances ) do
-                                local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
-                                resistance = resistance * multiplier;
-                                ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
-                            end
-
-                            local current_hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-                            local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
-                            local new_max = max_hp * 1.25;
-                            if is_mini_boss then
-                                new_max = math.max( 2, math.pow( max_hp, 0.75 ) * 8 );
-                            end
-                            local regained = new_max - current_hp;
-                            ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
-                            ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
-                        end
-                    end
-
                     local add_these_badges = {};
 
-                    -- TODO: minibosses don't work. these types don't exist!
                     local apply_these_champion_types = {};
                     if is_mini_boss then
                         apply_these_champion_types = {
-                            CHAMPION_TYPES.Damage,
-                            CHAMPION_TYPES.Projectile,
-                            CHAMPION_TYPES.Haste,
-                            CHAMPION_TYPES.Fast,
-                            CHAMPION_TYPES.Armored,
-                            CHAMPION_TYPES.Jetpack,
-                            CHAMPION_TYPES.Reward,
-                            CHAMPION_TYPES.Burning,
+                            find_champion_type("damage_buff"),
+                            find_champion_type("projectile_buff"),
+                            find_champion_type("rapid_attack"),
+                            find_champion_type("faster_movement"),
+                            find_champion_type("armored"),
+                            find_champion_type("jetpack"),
+                            find_champion_type("reward"),
+                            find_champion_type("burning"),
                         };
-                        add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/mini_boss.xml"};
+                        add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml"};
                     end
 
                     for i=1,math.min(#valid_champion_types, champion_types_to_apply) do
@@ -715,7 +616,6 @@ if now % 10 == 0 then
                         table.insert( apply_these_champion_types, valid_champion_types[ champion_type_index ] );
                         table.remove( valid_champion_types, champion_type_index );
                     end
-
 
                     --[[ Per champion type ]]
                     for _,champion_data in pairs( apply_these_champion_types ) do
@@ -848,7 +748,7 @@ if now % 10 == 0 then
     end
 
     --[[ Tweak - Blood Amount ]]
-    if CONTENT[ TWEAKS["blood_amount"] ].enabled() then
+    if find_tweak("blood_amount") then
         for _,enemy in pairs( nearby_enemies ) do
             if EntityGetVariableNumber( enemy, "gkbrkn_blood_amount_tweak", 0 ) == 0 then
                 EntitySetVariableNumber( enemy, "gkbrkn_blood_amount_tweak", 1 );
@@ -1143,7 +1043,7 @@ end
 dofile("mods/gkbrkn_noita/files/gkbrkn/misc/projectile_capture.lua");
 
 --[[ Tweak - Shorten Blindness ]]
-if CONTENT[ TWEAKS["blindness"] ].enabled() then
+if find_tweak("blindness") then
     local blindness = GameGetGameEffectCount( player_entity, "BLINDNESS" );
     if blindness > 0 then
         local effect = GameGetGameEffect( player_entity, "BLINDNESS" );

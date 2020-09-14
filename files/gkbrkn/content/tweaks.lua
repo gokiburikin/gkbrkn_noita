@@ -55,14 +55,16 @@ tweaks = {
         name = "$tweak_name_gkbrkn_revenge_explosion",
         description = "$tweak_desc_gkbrkn_revenge_explosion",
         author = "$ui_author_name_goki_dev",
-        options = { perk_id="REVENGE_EXPLOSION" }
+        options = { perk_id="REVENGE_EXPLOSION" },
+        tags = {goki_thing = true}
     },
     {
         id = "revenge_tentacle",
         name = "$tweak_name_gkbrkn_revenge_tentacle",
         description = "$tweak_desc_gkbrkn_revenge_tentacle",
         author = "$ui_author_name_goki_dev",
-        options = { perk_id="REVENGE_TENTACLE" }
+        options = { perk_id="REVENGE_TENTACLE" },
+        tags = {goki_thing = true}
     },
     {
         id = "glass_cannon",
@@ -84,7 +86,7 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_chain_bolt",
         author = "$ui_author_name_goki_dev",
         options = { action_id="CHAIN_BOLT" },
-        deprecated = true,
+        tags = {goki_thing = true}
     },
     {
         id = "stun_lock",
@@ -104,7 +106,8 @@ tweaks = {
         name = "$tweak_name_gkbrkn_explosion_of_thunder",
         description = "$tweak_desc_gkbrkn_explosion_of_thunder",
         author = "$ui_author_name_goki_dev",
-        options = { action_id="THUNDER_BLAST" }
+        options = { action_id="THUNDER_BLAST" },
+        tags = {goki_thing = true}
     },
     {
         id = "all_seeing_eye",
@@ -121,6 +124,7 @@ tweaks = {
         author = "$ui_author_name_goki_dev",
         options = { action_id="SPIRAL_SHOT" },
         enabled_by_default = true,
+        tags = {goki_thing = true}
     },
     {
         id = "piercing_shot",
@@ -129,6 +133,7 @@ tweaks = {
         author = "$ui_author_name_goki_dev",
         options = { action_id="PIERCING_SHOT" },
         enabled_by_default = true,
+        tags = {goki_thing = true}
     },
     {
         id = "clipping_shot",
@@ -137,13 +142,16 @@ tweaks = {
         author = "$ui_author_name_goki_dev",
         options = { action_id="CLIPPING_SHOT" },
         enabled_by_default = true,
+        tags = {goki_thing = true}
     },
     {
         id = "teleport_cast",
         name = "$tweak_name_gkbrkn_teleport_cast",
         description = "$tweak_desc_gkbrkn_teleport_cast",
         author = "$ui_author_name_goki_dev",
-        options = { action_id="TELEPORT_CAST" }
+        options = { action_id="TELEPORT_CAST" },
+        enabled_by_default = true,
+        tags = {goki_thing = true}
     },
     {
         id = "blood_amount",
@@ -158,6 +166,7 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_allow_negative_mana_always_cast",
         author = "$ui_author_name_goki_dev",
         enabled_by_default = true,
+        tags = {goki_thing = true}
     },
     {
         id = "reduced_electrocution",
@@ -171,5 +180,6 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_trigger_block_expansion",
         author = "$ui_author_name_goki_dev",
         enabled_by_default = true,
+        tags = {goki_thing = true}
     }
 }

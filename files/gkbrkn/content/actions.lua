@@ -328,18 +328,6 @@ table.insert( actions, generate_action_entry(
 ) );
 
 table.insert( actions, generate_action_entry(
-    "GKBRKN_EXTRA_PROJECTILE", "extra_projectile", ACTION_TYPE_OTHER,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 320, 12, -1,
-    nil,
-    function()
-        c.fire_rate_wait = c.fire_rate_wait + 8;
-        current_reload_time = current_reload_time + 8;
-        extra_projectiles( 1 );
-        draw_actions( 1 , true );
-    end
-) );
-
-table.insert( actions, generate_action_entry(
     "GKBRKN_FALSE_SPELL", "false_spell", ACTION_TYPE_PROJECTILE,
     "0,1,2,3,4,5,6", "0.1,0.1,0.1,0.1,0.1,0.1,0.1", 90, 1, -1,
     nil,
@@ -390,6 +378,7 @@ table.insert( actions, generate_action_entry(
     end
 ));
 
+--[[ TODO still not complete ]]
 table.insert( actions, generate_action_entry(
     "GKBRKN_FRACTURE", "fracture", ACTION_TYPE_MODIFIER,
     "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
@@ -441,6 +430,45 @@ table.insert( actions, generate_action_entry(
         SetProjectileConfigs();
     end
 ) );
+
+--[[
+table.insert( actions, generate_action_entry(
+    "GKBRKN_FRACTURE", "fracture", ACTION_TYPE_MODIFIER,
+    "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
+    nil,    
+    function()
+        local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile.xml";
+        if reflecting then 
+            Reflection_RegisterProjectile( projectile_path );
+            return;
+        end
+        
+        local old_c = c;
+        local fractured_c;
+        c = {};
+        reset_modifiers( c );
+
+        print("\nfracture")
+        local deck_snapshot = peek_draw_actions( 1, true );
+        for _,action in pairs( deck_snapshot ) do
+            print( action.id );
+        end
+
+        BeginProjectile( projectile_path );
+        BeginTriggerDeath();
+            
+            draw_actions( 1, true );
+        EndTrigger();
+        register_action( c );
+        SetProjectileConfigs();
+        EndProjectile();
+
+        c = fractured_c or old_c;
+        register_action( c );
+        SetProjectileConfigs();
+    end
+) );
+]]
 
 table.insert( actions, generate_action_entry(
     "GKBRKN_GLITTERING_TRAIL", "glittering_trail", ACTION_TYPE_MODIFIER,
@@ -517,7 +545,7 @@ table.insert( actions, generate_action_entry(
     "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 150, 0, -1,
     nil,
     function()
-        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 0.75;
+        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 0.50;
         draw_actions( 1, true );
     end
 ) );
@@ -699,16 +727,30 @@ table.insert( actions, generate_action_entry(
 ) );
 
 table.insert( actions, generate_action_entry(
-    "GKBRKN_PROJECTILE_BURST", "projectile_burst", ACTION_TYPE_OTHER,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 320, 24, 24,
+    "GKBRKN_EXTRA_PROJECTILE", "extra_projectile", ACTION_TYPE_OTHER,
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 320, 12, -1,
     nil,
     function()
-        c.fire_rate_wait = c.fire_rate_wait + 10;
-        current_reload_time = current_reload_time + 10;
-        c.speed_multiplier = c.speed_multiplier * (1 + ( math.random() - 0.5 ) * 0.2 );
+        c.fire_rate_wait = c.fire_rate_wait + 6;
+        current_reload_time = current_reload_time + 6;
+        c.spread_degrees = c.spread_degrees + 2;
+        extra_projectiles( 1 );
+        draw_actions( 1 , true );
+    end
+) );
+
+table.insert( actions, generate_action_entry(
+    "GKBRKN_PROJECTILE_BURST", "projectile_burst", ACTION_TYPE_OTHER,
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 480, 30, -1,
+    nil,
+    function()
+        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_burst/projectile_extra_entity.xml,";
+        c.fire_rate_wait = c.fire_rate_wait + 12;
+        current_reload_time = current_reload_time + 12;
+        c.spread_degrees = c.spread_degrees + 5;
         extra_projectiles( 4 );
         draw_actions( 1, true );
-    end, true
+    end
 ) );
 
 table.insert( actions, generate_action_entry(
@@ -799,7 +841,7 @@ table.insert( actions, generate_action_entry(
     nil,
     function()
         c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/seeker_shot/projectile_extra_entity.xml,";
-		c.speed_multiplier = c.speed_multiplier * 0.23;
+		c.speed_multiplier = c.speed_multiplier * 0.65;
         draw_actions( 1, true );
     end
 ) );
@@ -1243,21 +1285,14 @@ table.insert( actions, generate_action_entry(
         SetProjectileConfigs();
     end
 ) );
-        ]]
+]]
 
+-- TODO revisit this, it's not complete
 table.insert( actions, generate_action_entry(
     "GKBRKN_TRIGGER_REPEAT", "trigger_repeat", ACTION_TYPE_MODIFIER,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 0, -1,
+    "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 100, 0, -1,
     nil,
     function()
-        --[[ simple version doesn't allow me to hook into the draw_actions cast delay
-        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_repeat/projectile_extra_entity.xml,";
-        set_trigger_hit_world( 1 )
-        local projectile_index = GlobalsGetValue("gkbrkn_projectile_index","0");
-        draw_actions( 1, true );
-        GlobalsSetValue("gkbrkn_projectile_data_"..tostring(projectile_index), tostring( c.fire_rate_wait + current_reload_time ) );
-        ]]
-
         c.fire_rate_wait = c.fire_rate_wait + 22;
         current_reload_time = current_reload_time + 22;
 
@@ -1268,32 +1303,29 @@ table.insert( actions, generate_action_entry(
         end
         
         local old_c = c;
-        local captured_trigger_delay = 60; -- default to one second if for some reason capture is impossible
-        c = {};
-        reset_modifiers( c );
+        local pre_c = {};
 
         gkbrkn.add_projectile_capture_callback = function( filepath, trigger_action_draw_count, trigger_delay_frames )
             gkbrkn.add_projectile_capture_callback = nil;
             BeginProjectile( filepath );
             EndProjectile();
+            pre_c = c;
 
             BeginProjectile( projectile_path );
             BeginTriggerHitWorld()
                 c = {};
                 reset_modifiers( c );
                 draw_actions( 1, true );
-                captured_trigger_delay = c.fire_rate_wait + current_reload_time;
-                --captured_trigger_delay = c.fire_rate_wait;
                 register_action( c );
                 SetProjectileConfigs();
             EndTrigger();
             EndProjectile();
         end
-        local projectile_index = GlobalsGetValue("gkbrkn_projectile_index","0");
         draw_actions( 1, true );
-        -- TODO this isn't a solution that can work as long as global data can't be cleared
-        GlobalsSetValue("gkbrkn_projectile_data_"..tostring(projectile_index+1), tostring( math.max( 0, captured_trigger_delay ) ) );
         c = old_c;
+        for k,v in pairs( pre_c ) do
+            c[k] = v;
+        end
         register_action( c );
         SetProjectileConfigs();
     end
@@ -1301,7 +1333,7 @@ table.insert( actions, generate_action_entry(
 
 table.insert( actions, generate_action_entry(
     "GKBRKN_TRIGGER_TAKE_DAMAGE", "trigger_take_damage", ACTION_TYPE_MODIFIER,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 0, -1,
+    "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 100, 0, -1,
     nil,
     function()
         local take_damage_triggers = EntityGetWithTag("gkbrkn_trigger_take_damage_projectile") or {};

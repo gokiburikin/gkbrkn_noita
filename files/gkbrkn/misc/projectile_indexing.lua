@@ -5,7 +5,7 @@ if projectile_index == nil then
     projectile_index = 0;
     GlobalsSetValue("gkbrkn_projectile_index", "0");
 end
-if not EntityGetVariableNumber( entity, "gkbrkn_projectile_index" ) then
+if EntityGetVariableNumber( entity, "gkbrkn_projectile_index", 0 ) == 0 then
     EntitySetVariableNumber( entity, "gkbrkn_projectile_index", projectile_index );
     GlobalsSetValue("gkbrkn_projectile_index", tostring( projectile_index + 1 ) );
 end

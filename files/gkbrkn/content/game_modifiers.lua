@@ -1,17 +1,18 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua");
 local memoize_game_modifiers = {};
 function find_game_modifier( id )
-    local tweak = nil;
+    local game_modifier = nil;
     if memoize_game_modifiers[id] then
-        tweak = memoize_game_modifiers[id];
+        game_modifier = memoize_game_modifiers[id];
     else
         for _,entry in pairs(game_modifiers) do
             if entry.id == id then
-                tweak = entry;
+                game_modifier = entry;
                 memoize_game_modifiers[id] = entry;
             end
         end
     end
-    return tweak;
+    return game_modifier;
 end
 
 game_modifiers = {
@@ -224,7 +225,8 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_wand_shops_only",
         description = "$game_modifier_desc_gkbrkn_wand_shops_only",
         author = "$ui_author_name_goki_dev",
-        options = { run_flags = { FLAGS.WandShopsOnly } }
+        options = { run_flags = { FLAGS.WandShopsOnly } },
+        tags = {goki_thing = true}
     },
     {
         id = "free_shops",
@@ -238,7 +240,8 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_rebalance_shops",
         description = "$game_modifier_desc_gkbrkn_rebalance_shops",
         author = "$ui_author_name_goki_dev",
-        options = { run_flags = { FLAGS.RebalanceShops } }
+        options = { run_flags = { FLAGS.RebalanceShops } },
+        tags = {goki_thing = true}
     },
     {
         id = "floor_is_lava",
@@ -273,14 +276,17 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_kick_spells_off_wands",
         description = "$game_modifier_desc_gkbrkn_kick_spells_off_wands",
         author = "$ui_author_name_goki_dev",
-        options = { run_flags = { FLAGS.KickSpellsOffWands } }
+        options = { run_flags = { FLAGS.KickSpellsOffWands } },
+        tags = {goki_thing = true}
     },
     {
         id = "kick_spells_around",
         name = "$game_modifier_name_gkbrkn_kick_spells_around",
         description = "$game_modifier_desc_gkbrkn_kick_spells_around",
         author = "$ui_author_name_goki_dev",
-        options = { run_flags = { FLAGS.KickSpellsAround } }
+        options = { run_flags = { FLAGS.KickSpellsAround } },
+        enabled_by_default = true,
+        tags = {goki_thing = true}
     },
     {
         id = "enemy_invincibility_frames",
@@ -294,7 +300,8 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_enemy_intangibility_frames",
         description = "$game_modifier_desc_gkbrkn_enemy_intangibility_frames",
         author = "$ui_author_name_goki_dev",
-        options = { run_flags = { FLAGS.EnemyIntangibilityFrames } }
+        options = { run_flags = { FLAGS.EnemyIntangibilityFrames } },
+        tags = {goki_thing = true}
     },
     {
         id = "angry_gods",
@@ -335,5 +342,6 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_generate_random_spellbooks",
         description = "$game_modifier_desc_gkbrkn_generate_random_spellbooks",
         author = "$ui_author_name_goki_dev",
+        tags = {goki_thing = true}
     }
 }

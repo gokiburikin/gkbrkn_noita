@@ -457,9 +457,7 @@ end
 function CopyWandActions( base_wand, copy_wand )
     local actions = GetWandActions( base_wand );
     for index,action_data in pairs( actions ) do
-        print( action_data.action_id);
         local action_entity = CreateItemActionEntity( action_data.action_id );
-        print(tostring(action_entity));
         local item = FindFirstComponentByType( action_entity, "ItemComponent" );
         if action_data.permanent then
             ComponentSetValue( item, "permanently_attached", "1" );
@@ -660,4 +658,48 @@ function EaseAngle( angle, target_angle, easing )
     dir = dir - math.floor(dir + 0.5);
     dir = dir * (math.pi*2);
     return angle - dir * easing;
+end
+
+function WeightedRandom( items, weights, sum )
+    if weights == nil  then
+        weights = {};
+        for k,v in pairs( items ) do 
+            weights[k] = 1;
+        end
+        sum = items.length;
+    end
+    if sum == nil then
+        sum = 0;
+        for k,v in pairs( weights ) do
+            sum = sum + v;
+        end
+    end
+    if sum <= 0 then
+        return nil;
+    end
+    local random = Random() * sum;
+    for k,v in pairs(items) do
+        local weight = weights[k];
+        if random <= weight then
+            return items[k];
+        end
+        random = random - weight;
+    end
+end
+
+function WeightedRandomTable( entries )
+    local sum = 0;
+    for k,v in pairs( entries ) do
+        sum = sum + v;
+    end
+    if sum <= 0 then
+        return nil;
+    end
+    local random = Random() * sum;
+    for k,v in pairs( entries ) do
+        if random <= v then
+            return k;
+        end
+        random = random - v;
+    end
 end

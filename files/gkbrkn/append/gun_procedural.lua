@@ -1,3 +1,4 @@
+dofile( "data/scripts/gun/gun_actions.lua" );
 dofile_once( "data/scripts/gun/gun_enums.lua" );
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
@@ -6,6 +7,16 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
+local action_types = {
+    ACTION_TYPE_PROJECTILE,
+    ACTION_TYPE_STATIC_PROJECTILE,
+    ACTION_TYPE_MODIFIER,
+    ACTION_TYPE_DRAW_MANY,
+    ACTION_TYPE_MATERIAL,
+    ACTION_TYPE_OTHER,
+    ACTION_TYPE_UTILITY,
+    ACTION_TYPE_PASSIVE
+}
 local extended_types = {
     ACTION_TYPE_STATIC_PROJECTILE,
     ACTION_TYPE_MATERIAL,
@@ -13,6 +24,16 @@ local extended_types = {
     ACTION_TYPE_UTILITY,
     ACTION_TYPE_PASSIVE
 };
+local action_type_weights  = {
+    [ACTION_TYPE_STATIC_PROJECTILE]=3,
+    [ACTION_TYPE_PROJECTILE]=30,
+    [ACTION_TYPE_MODIFIER]=15,
+    [ACTION_TYPE_DRAW_MANY]=5,
+    [ACTION_TYPE_MATERIAL]=1,
+    [ACTION_TYPE_OTHER]=1,
+    [ACTION_TYPE_UTILITY]=1,
+    [ACTION_TYPE_PASSIVE]=1
+}
 local chance_to_replace = 0.03;
 local _generate_gun = generate_gun;
 function generate_gun( cost, level, force_unshuffle )
@@ -54,7 +75,8 @@ function generate_gun( cost, level, force_unshuffle )
                     if action_id ~= nil and action_id ~= "" then
                         -- TODO an assert will fail if the action type pool is empty
                         -- not too much that can be done about this right now, doesn't show up outside of dev
-                        local action = GetRandomActionWithType( x, y, level or Random(0,6), Random(0,7), Random(0,1000)+_+x+y );
+                        local weighted_type = WeightedRandomTable( action_type_weights );
+                        local action = GetRandomActionWithType( x, y, level or Random(0,6), weighted_type, Random(0,1000)+_+x+y );
                         if action ~= nil and action ~= "" then
                             child_to_return = CreateItemActionEntity( action, x, y );
                             local item = EntityGetFirstComponent( child_to_return, "ItemComponent" );
@@ -128,8 +150,8 @@ function generate_gun( cost, level, force_unshuffle )
             if mana_mastery_stacks > 0 then
                 local mana_max = ability_component_get_stat( ability, "mana_max" );
                 local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
-                ability_component_set_stat( ability, "mana_max", (mana_charge_speed + mana_max) / 2 * 1.0 + mana_mastery_stacks * 0.1 );
-                ability_component_set_stat( ability, "mana_charge_speed", (mana_charge_speed + mana_max) / 2 * 1.0 + mana_mastery_stacks * 0.1 );
+                ability_component_set_stat( ability, "mana_max", (mana_charge_speed + mana_max) / 2 * ( 1.0 + mana_mastery_stacks * 0.1 ) );
+                ability_component_set_stat( ability, "mana_charge_speed", (mana_charge_speed + mana_max) / 2 * ( 1.0 + mana_mastery_stacks * 0.1 ) );
             end
         end
     end

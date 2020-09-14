@@ -4,13 +4,7 @@ local entity = GetUpdatedEntityID();
 local lifetime = GameGetFrameNum() - EntityGetVariableNumber( entity, "gkbrkn_spawn_time", GameGetFrameNum() );
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile then
-    local trigger_delay = EntityGetVariableNumber( entity, "gkbrkn_trigger_rate" );
-    if trigger_delay == nil then
-        trigger_delay = 60;
-    else
-        trigger_delay = math.max( 0, trigger_delay );
-    end
-    if trigger_delay == 0 or lifetime % trigger_delay == 0 then
+    if lifetime % 15 == 0 then
         --[[ only work with enemies nearby
         local x, y = EntityGetTransform( entity );
         local nearby_enemies = EntityGetInRadiusWithTag( x, y, 192, "enemy" );

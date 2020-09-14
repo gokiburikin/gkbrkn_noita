@@ -5,5 +5,5 @@ local linked_entity = EntityGetVariableNumber( entity, "linked_entity", 0 )
 if linked_entity ~= 0 then
     local lx, ly = EntityGetTransform(  linked_entity );
     local x, y = EntityGetTransform( entity );
-    EntityApplyTransform(  linked_entity, x, y );
+    --EntityApplyTransform(  linked_entity, x, y );
 end

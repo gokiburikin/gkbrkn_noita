@@ -37,9 +37,9 @@ if velocity ~= nil then
             target = test_entity;
         end
     end
-    if target ~= nil then
-        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
-        if velocity ~= nil then
+    local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    if velocity ~= nil then
+        if target ~= nil then
             local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
             if projectile ~= nil then
                 --local tx, ty = EntityGetTransform( target );
@@ -53,10 +53,16 @@ if velocity ~= nil then
                 local magnitude = math.sqrt( vx * vx + vy * vy );
                 local angle = math.atan2( vy, vx );
                 local difference = math.abs( math.pow( angle_difference( angle, aim_angle ), 2 ) );
-                local new_angle = ease_angle( angle, aim_angle, 0.01 + ( 0.1 + 0.08 * math.random() ) * lifetime_multiplier * math.max( 1, difference ) );
+                local new_angle = ease_angle( angle, aim_angle + (Random(-1.0, 1.0) * 15 / 180 * math.pi), ( 0.06 + 0.27 * lifetime_multiplier ) ) + (Random(-1.0, 1.0) * 3 / 180 * math.pi);
 
                 ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
             end
+        else
+            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local magnitude = math.sqrt( vx * vx + vy * vy );
+            local angle = math.atan2( vy, vx );
+            local new_angle = angle + (Random(-1.0, 1.0) * 3 / 180 * math.pi);
+            ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
         end
     end
 end

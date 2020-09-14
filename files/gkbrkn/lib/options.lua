@@ -56,6 +56,11 @@ local options = {
         EnabledFlag = "gkbrkn_health_bars",
         PrettyHealthBarsFlag = "gkbrkn_health_bars_pretty",
     },
+    PackShops = {
+        EnabledFlag = "gkbrkn_pack_shops",
+        RandomCardsPerPack = 1,
+        CardsPerPack = 4,
+    },
     GoldDecay = { EnabledFlag = "gkbrkn_gold_decay",},
     PersistentGold = { EnabledFlag = "gkbrkn_persistent_gold", },
     AutoPickupGold = { EnabledFlag = "gkbrkn_auto_pickup_gold", },
@@ -104,6 +109,9 @@ local options = {
             "$mod_tips_gkbrkn_tip_3",
             "$mod_tips_gkbrkn_tip_4",
             "$mod_tips_gkbrkn_tip_5",
+            "$mod_tips_gkbrkn_tip_6",
+            "$mod_tips_gkbrkn_tip_7",
+            "$mod_tips_gkbrkn_tip_8",
         }
     },
     Badges = { EnabledFlag = "gkbrkn_show_badges", },

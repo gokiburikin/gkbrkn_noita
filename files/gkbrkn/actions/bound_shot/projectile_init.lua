@@ -9,3 +9,9 @@ if projectile ~= nil then
     end
     EntityAddTag( entity, "gkbrkn_bound_entity" );
 end
+
+local lifetime = EntityGetFirstComponent( entity, "LifetimeComponent" );
+if lifetime ~= nil then
+    ComponentSetValue( lifetime, "lifetime", "-1" );
+    EntityAddTag( entity, "gkbrkn_bound_entity" );
+end

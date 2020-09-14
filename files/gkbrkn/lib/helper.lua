@@ -68,7 +68,7 @@ function reset_frame_time( ) GlobalsSetValue( "gkbrkn_frame_time", 0 ); end
 function add_update_time( amount ) GlobalsSetValue( "gkbrkn_update_time", get_update_time() + amount ); end
 function add_frame_time( amount ) GlobalsSetValue( "gkbrkn_frame_time", get_frame_time() + amount ); end
 
-function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, deprecated, author )
+function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, deprecated, author, stackable )
     return {
         id                  = perk_id,
         ui_name             = "$perk_name_gkbrkn_"..key,
@@ -79,7 +79,8 @@ function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, 
         func                = pickup_function,
         deprecated          = deprecated,
         author              = "$ui_author_name_goki_dev" or author,
-        local_content       = true
+        local_content       = true,
+        stackable           = stackable
     };
 end
 
@@ -536,4 +537,46 @@ function thousands_separator(amount)
         end
     end
     return formatted;
+end
+
+function copy_component( left, right )
+    for k,v in pairs( ComponentGetMembers( left ) ) do
+        ComponentSetValue2( right, k, ComponentGetValue2( left, k ) )
+    end
+end
+
+function update_sprite_image( entity, sprite_component, new_image_filepath )
+--[[
+    if sprite_component then
+        local new_sprite_component = EntityAddComponent2( entity, "SpriteComponent" );
+        ComponentSetValue2( sprite, "image_file", pack_data.image_filepath );
+        copy_component( sprite_component, new_sprite_component );
+        EntityRemoveComponent( sprite_component );
+    end
+    ]]
+    local new_sprite = EntityAddComponent2( entity, "SpriteComponent", {
+        image_file=new_image_filepath,
+        ui_is_parent=ComponentGetValue2(sprite_component,"ui_is_parent"),
+        is_text_sprite=ComponentGetValue2(sprite_component,"is_text_sprite"),
+        offset_x=ComponentGetValue2(sprite_component,"offset_x"),
+        offset_y=ComponentGetValue2(sprite_component,"offset_y"),
+        alpha=ComponentGetValue2(sprite_component,"alpha"),
+        visible=ComponentGetValue2(sprite_component,"visible"),
+        emissive=ComponentGetValue2(sprite_component,"emissive"),
+        additive=ComponentGetValue2(sprite_component,"additive"),
+        fog_of_war_hole=ComponentGetValue2(sprite_component,"fog_of_war_hole"),
+        smooth_filtering=ComponentGetValue2(sprite_component,"smooth_filtering"),
+        rect_animation=ComponentGetValue2(sprite_component,"rect_animation"),
+        next_rect_animation=ComponentGetValue2(sprite_component,"next_rect_animation"),
+        text=ComponentGetValue2(sprite_component,"text"),
+        z_index=ComponentGetValue2(sprite_component,"z_index"),
+        update_transform=ComponentGetValue2(sprite_component,"update_transform"),
+        update_transform_rotation=ComponentGetValue2(sprite_component,"update_transform_rotation"),
+        kill_entity_after_finished=ComponentGetValue2(sprite_component,"kill_entity_after_finished"),
+        has_special_scale=ComponentGetValue2(sprite_component,"has_special_scale"),
+        special_scale_x=ComponentGetValue2(sprite_component,"special_scale_x"),
+        special_scale_y=ComponentGetValue2(sprite_component,"special_scale_y"),
+        never_ragdollify_on_death=ComponentGetValue2(sprite_component,"never_ragdollify_on_death")
+    } );
+    EntityRemoveComponent( entity, sprite_component );
 end

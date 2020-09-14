@@ -48,5 +48,6 @@
 	  >
     </config_explosion>
   </ProjectileComponent>
+	<InheritTransformComponent _tags="enabled_in_world" ></InheritTransformComponent>
 
 </Entity>
