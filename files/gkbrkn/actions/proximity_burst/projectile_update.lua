@@ -8,16 +8,16 @@ local nearby_entities = EntityGetInRadiusWithTag( x, y, correction_distance, "ho
 local target = nearby_entities[ math.ceil( math.random() * #nearby_entities ) ];
 if target ~= nil then
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
-    local shooter = ComponentGetValue( projectile, "mWhoShot" );
+    local shooter = ComponentGetValue2( projectile, "mWhoShot" );
     local shooter_genome = EntityGetFirstComponent( shooter, "GenomeDataComponent" );
     local shooter_herd = -1;
     if shooter_genome ~= nil then
-        shooter_herd = ComponentGetMetaCustom( shooter_genome, "herd_id" );
+        shooter_herd = ComponentGetValue2( shooter_genome, "herd_id" );
     end
     local target_genome = EntityGetFirstComponent( target, "GenomeDataComponent" );
     local target_herd = -1;
     if target_genome ~= nil then
-        target_herd = ComponentGetMetaCustom( target_genome, "herd_id" );
+        target_herd = ComponentGetValue2( target_genome, "herd_id" );
     end
     if tonumber(target) ~= tonumber(shooter) and target_herd ~= shooter_herd then
         local tx, ty = EntityGetFirstHitboxCenter( target );
@@ -25,11 +25,11 @@ if target ~= nil then
             tx, ty = EntityGetTransform( target );
         end
         local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
-        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+        local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
         local target_angle = math.atan2( ty - y, tx - x ) + ( math.random() - 0.5 ) * 15 / 180 * math.pi;
         local magnitude = math.sqrt( vx * vx + vy * vy );
-        ComponentSetValueVector2( velocity, "mVelocity", math.cos( target_angle ) * magnitude, math.sin( target_angle ) * magnitude );
+        ComponentSetValue2( velocity, "mVelocity", math.cos( target_angle ) * magnitude, math.sin( target_angle ) * magnitude );
         EntityKill( entity );
     end
 end

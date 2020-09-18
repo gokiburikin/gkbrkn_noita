@@ -13,10 +13,10 @@ events = {
                     local hp = 0;
                     local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
                     for _,damage_model in pairs( damage_models ) do
-                        hp = hp + ComponentGetValue( damage_model, "hp" );
+                        hp = hp + ComponentGetValue2( damage_model, "hp" );
                     end
                     local take_damage = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/events/take_damage.xml", x, y );
-                    ComponentSetValue( EntityGetFirstComponent( take_damage, "AreaDamageComponent" ), "damage_per_frame", hp / 2 );
+                    ComponentSetValue2( EntityGetFirstComponent( take_damage, "AreaDamageComponent" ), "damage_per_frame", hp / 2 );
                 end
             }
         end, 
@@ -40,7 +40,7 @@ events = {
                     local sx, sy = x + math.cos( angle ) * distance, y + math.sin( angle ) * distance;
                     local black_hole = EntityLoad( "data/entities/projectiles/deck/black_hole.xml", sx, sy );
                     local circle = EntityLoad( "data/entities/projectiles/deck/circle_acid.xml", sx, sy );
-                    ComponentSetValue( EntityGetFirstComponent( circle, "ParticleEmitterComponent" ), "emitted_material_name", random_material );
+                    ComponentSetValue2( EntityGetFirstComponent( circle, "ParticleEmitterComponent" ), "emitted_material_name", random_material );
                 end
             }
         end
@@ -134,26 +134,26 @@ events = {
                         local height = 18;
                         local width = 18;
                         if hitbox ~= nil then
-                            height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
-                            width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
+                            height = ComponentGetValue2( hitbox, "aabb_max_y" ) - ComponentGetValue2( hitbox, "aabb_min_y" );
+                            width = ComponentGetValue2( hitbox, "aabb_max_x" ) - ComponentGetValue2( hitbox, "aabb_min_x" );
                         end
                         radius = math.max( height, width ) + 6;
                         local shield = EntityLoad( "data/entities/misc/animal_energy_shield.xml", x, y );
                         local inherit_transform = EntityGetFirstComponent( shield, "InheritTransformComponent" );
                         if inherit_transform ~= nil then
-                            ComponentSetValue( inherit_transform, "parent_hotspot_tag", "shield_center" );
+                            ComponentSetValue2( inherit_transform, "parent_hotspot_tag", "shield_center" );
                         end
                         local emitters = EntityGetComponent( shield, "ParticleEmitterComponent" ) or {};
                         for _,emitter in pairs( emitters ) do
                             ComponentSetValueValueRange( emitter, "area_circle_radius", radius, radius );
                         end
                         local energy_shield = EntityGetFirstComponent( shield, "EnergyShieldComponent" );
-                        ComponentSetValue( energy_shield, "radius", tostring( radius ) );
+                        ComponentSetValue2( energy_shield, "radius", radius );
 
                         local hotspot = EntityAddComponent( entity, "HotspotComponent",{
                             _tags="shield_center"
                         } );
-                        ComponentSetValueVector2( hotspot, "offset", 0, -height * 0.3 );
+                        ComponentSetValue2( hotspot, "offset", 0, -height * 0.3 );
 
                         if shield ~= nil then EntityAddChild( entity, shield ); end
                     end
@@ -211,8 +211,8 @@ events = {
                     for _,cloud_child in pairs( cloud_children ) do
                         local child_components = FindComponentByType( cloud_child, "ParticleEmitterComponent" ) or {};
                         for _,component in pairs( child_components ) do
-                            if ComponentGetValue( component, "emitted_material_name" ) == "water" then
-                                ComponentSetValue( component, "emitted_material_name", chosen_material );
+                            if ComponentGetValue2( component, "emitted_material_name" ) == "water" then
+                                ComponentSetValue2( component, "emitted_material_name", chosen_material );
                                 break;
                             end
                         end
@@ -256,7 +256,7 @@ events = {
                     local x, y = EntityGetTransform( player_entity );
                     local game_effect = GetGameEffectLoadTo( player_entity, "BLINDNESS", false );
                     if game_effect ~= nil then
-                        ComponentSetValue( game_effect, "frames", 600 );
+                        ComponentSetValue2( game_effect, "frames", 600 );
                     end
                 end
             }
@@ -280,9 +280,9 @@ events = {
                         homing_velocity_multiplier="0.99",
                         detect_distance="300",
                     } );
-                    local projectile = FindFirstComponentByType( black_hole, "ProjectileComponent" );
+                    local projectile = EntityGetFirstComponentIncludingDisabled( black_hole, "ProjectileComponent" );
                     if projectile ~= nil then
-                        ComponentSetValue( projectile, "lifetime", 300 );
+                        ComponentSetValue2( projectile, "lifetime", 300 );
                     end
                 end
             }

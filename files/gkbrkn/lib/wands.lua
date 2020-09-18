@@ -21,15 +21,79 @@ local WAND_STAT_SETTERS = {
     mana = WAND_STAT_SETTER.Direct,
 }
 
+function wand_get_actions( wand )
+    local actions = {};
+    local children = EntityGetAllChildren( wand ) or {};
+    for i,v in ipairs( children ) do
+        local item = EntityGetFirstComponentIncludingDisabled( v, "ItemComponent" );
+        local item_action = EntityGetFirstComponentIncludingDisabled( v, "ItemActionComponent" );
+        if item and item_action then
+            local action_id = ComponentGetValue2( item_action, "action_id" );
+            local permanent = ComponentGetValue2( item, "permanently_attached" );
+            local x, y = ComponentGetValue2( item, "inventory_slot" );
+            if action_id ~= nil then
+                table.insert( actions, { action_id = action_id, permanent = permanent, x = x, y = y } );
+            end
+        end
+    end
+    return actions;
+end
+
+function wand_copy_actions( base_wand, copy_wand )
+    local actions = wand_get_actions( base_wand );
+    for index,action_data in pairs( actions ) do
+        local action_entity = CreateItemActionEntity( action_data.action_id );
+        local item = EntityGetFirstComponentIncludingDisabled( action_entity, "ItemComponent" );
+        if action_data.permanent then
+            ComponentSetValue2( item, "permanently_attached", true );
+        end
+        if ComponentSetValue2 and action_data.x ~= nil and action_data.y ~= nil then
+            ComponentSetValue2( item, "inventory_slot", action_data.x, action_data.y );
+        end
+        EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
+        EntityAddChild( copy_wand, action_entity );
+    end
+end
+
+function wand_copy_stats( base_wand, copy_wand )
+    local base_ability = EntityGetFirstComponentIncludingDisabled( base_wand, "AbilityComponent" );
+    local target_ability = EntityGetFirstComponentIncludingDisabled( copy_wand, "AbilityComponent" );
+    if base_ability and target_ability then
+        for stat,stat_type in pairs( WAND_STAT_SETTERS ) do
+            ability_component_set_stat( target_ability, stat, ability_component_get_stat( base_ability, stat ) );
+        end
+    end
+end
+
+function wand_copy( base_wand, copy_wand, copy_sprite, copy_actions )
+    wand_copy_stats( base_wand, copy_wand );
+    if copy_sprite ~= false then
+        local base_ability = EntityGetFirstComponentIncludingDisabled( base_wand, "AbilityComponent" );
+        local target_ability = EntityGetFirstComponentIncludingDisabled( copy_wand, "AbilityComponent" );
+        ComponentSetValue2( target_ability, "sprite_file", ComponentGetValue2( base_ability, "sprite_file" ) );
+        local base_sprite = EntityGetFirstComponentIncludingDisabled( base_wand, "SpriteComponent" )
+        local copy_sprite = EntityGetFirstComponentIncludingDisabled( copy_wand, "SpriteComponent" )
+        CopyListedComponentMembers( base_sprite, copy_sprite, "image_file","offset_x","offset_y");
+        local base_hotspot = EntityGetFirstComponentIncludingDisabled( base_wand, "HotspotComponent", "shoot_pos" );
+        local copy_hotspot = EntityGetFirstComponentIncludingDisabled( copy_wand, "HotspotComponent", "shoot_pos" );
+        CopyComponentMembers( base_hotspot, copy_hotspot );
+        local base_hotspot_x, base_hotspot_y = ComponentGetValue2( base_hotspot, "offset" );
+        ComponentSetValue2( copy_hotspot, "offset", base_hotspot_x, base_hotspot_y );
+    end
+    if copy_actions ~= false then
+        wand_copy_actions( base_wand, copy_wand );
+    end
+end
+
 function ability_component_get_stat( ability, stat )
     local setter = WAND_STAT_SETTERS[stat];
     if setter ~= nil then
         if setter == WAND_STAT_SETTER.Direct then
-            return ComponentGetValue( ability, stat );
+            return ComponentGetValue2( ability, stat );
         elseif setter == WAND_STAT_SETTER.Gun then
-            return ComponentObjectGetValue( ability, "gun_config", stat );
+            return ComponentObjectGetValue2( ability, "gun_config", stat );
         elseif setter == WAND_STAT_SETTER.GunAction then
-            return ComponentObjectGetValue( ability, "gunaction_config", stat );
+            return ComponentObjectGetValue2( ability, "gunaction_config", stat );
         end
     end
 end
@@ -38,11 +102,11 @@ function ability_component_set_stat( ability, stat, value )
     local setter = WAND_STAT_SETTERS[stat];
     if setter ~= nil then
         if setter == WAND_STAT_SETTER.Direct then
-            ComponentSetValue( ability, stat, tostring( value ) );
+            ComponentSetValue2( ability, stat, value );
         elseif setter == WAND_STAT_SETTER.Gun then
-            ComponentObjectSetValue( ability, "gun_config", stat, tostring( value ) );
+            ComponentObjectSetValue2( ability, "gun_config", stat, value );
         elseif setter == WAND_STAT_SETTER.GunAction then
-            ComponentObjectSetValue( ability, "gunaction_config", stat, tostring( value ) );
+            ComponentObjectSetValue2( ability, "gunaction_config", stat, value );
         end
     end
 end
@@ -52,19 +116,19 @@ function ability_component_adjust_stat( ability, stat, callback )
     if setter ~= nil then
         local current_value = nil;
         if setter == WAND_STAT_SETTER.Direct then
-            current_value = ComponentGetValue( ability, stat );
+            current_value = ComponentGetValue2( ability, stat );
         elseif setter == WAND_STAT_SETTER.Gun then
-            current_value = ComponentObjectGetValue( ability, "gun_config", stat );
+            current_value = ComponentObjectGetValue2( ability, "gun_config", stat );
         elseif setter == WAND_STAT_SETTER.GunAction then
-            current_value = ComponentObjectGetValue( ability, "gunaction_config", stat );
+            current_value = ComponentObjectGetValue2( ability, "gunaction_config", stat );
         end
         local new_value = callback( current_value );
         if setter == WAND_STAT_SETTER.Direct then
-            ComponentSetValue( ability, stat, tostring( new_value ) );
+            ComponentSetValue2( ability, stat, new_value );
         elseif setter == WAND_STAT_SETTER.Gun then
-            ComponentObjectSetValue( ability, "gun_config", stat, tostring( new_value ) );
+            ComponentObjectSetValue2( ability, "gun_config", stat, new_value );
         elseif setter == WAND_STAT_SETTER.GunAction then
-            ComponentObjectSetValue( ability, "gunaction_config", stat, tostring( new_value ) );
+            ComponentObjectSetValue2( ability, "gunaction_config", stat, new_value );
         end
     end
 end
@@ -84,12 +148,12 @@ end
 function initialize_wand( wand, wand_data )
     local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
     if wand_data.name ~= nil then
-        ComponentSetValue( ability, "ui_name", wand_data.name );
+        ComponentSetValue2( ability, "ui_name", wand_data.name );
     end
 
     local item = EntityGetFirstComponent( wand, "ItemComponent" );
     if item ~= nil then
-        ComponentSetValue( item, "item_name", wand_data.name );
+        ComponentSetValue2( item, "item_name", wand_data.name );
     end
 
     for stat,value in pairs( wand_data.stats or {} ) do
@@ -125,12 +189,12 @@ function initialize_wand( wand, wand_data )
                         for _=1,amount,1 do
                             local action_entity = CreateItemActionEntity( random_action.action );
                             if action_entity then
-                                local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+                                local item = EntityGetFirstComponentIncludingDisabled( action_entity, "ItemComponent" );
                                 if random_action.locked then
-                                    ComponentSetValue( item, "is_frozen", "1" );
+                                    ComponentSetValue2( item, "is_frozen", true );
                                 end
                                 if random_action.permanent then
-                                    ComponentSetValue( item, "permanently_attached", "1" );
+                                    ComponentSetValue2( item, "permanently_attached", true );
                                 end
                                 ComponentSetValue2( item, "inventory_slot", action_index - 1, 0 );
                                 EntitySetComponentsWithTagEnabled( action_entity, "enabled_in_world", false );
@@ -140,7 +204,7 @@ function initialize_wand( wand, wand_data )
                     else
                         local action_entity = CreateItemActionEntity( random_action );
                         if action_entity then
-                            local item = FindFirstComponentByType( action_entity, "ItemComponent" );
+                            local item = EntityGetFirstComponentIncludingDisabled( action_entity, "ItemComponent" );
                             if item ~= nil then
                                 ComponentSetValue2( item, "inventory_slot", action_index - 1, 0 );
                             end
@@ -156,30 +220,30 @@ function initialize_wand( wand, wand_data )
     
     if wand_data.sprite ~= nil then
         if wand_data.sprite.file ~= nil then
-            ComponentSetValue( ability, "sprite_file", wand_data.sprite.file );
+            ComponentSetValue2( ability, "sprite_file", wand_data.sprite.file );
             -- TODO this takes a second to apply, probably worth fixing, but for now just prefer using custom file
             local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
             if sprite ~= nil then
-                ComponentSetValue( sprite, "image_file", wand_data.sprite.file );
+                ComponentSetValue2( sprite, "image_file", wand_data.sprite.file );
             end
         end
         if wand_data.sprite.hotspot ~= nil then
             local hotspot = EntityGetFirstComponent( wand, "HotspotComponent", "shoot_pos" );
             if hotspot ~= nil then
-                ComponentSetValueVector2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
+                ComponentSetValue2( hotspot, "offset", wand_data.sprite.hotspot.x, wand_data.sprite.hotspot.y );
             end
         end
     else
         local gun = {
-            deck_capacity = ability_component_get_stat( ability, "deck_capacity" ),
-            actions_per_round = ability_component_get_stat( ability,"actions_per_round" ),
-            reload_time = ability_component_get_stat( ability,"reload_time" ),
-            shuffle_deck_when_empty = ability_component_get_stat( ability,"shuffle_deck_when_empty" ),
-            fire_rate_wait = ability_component_get_stat( ability,"fire_rate_wait" ),
-            spread_degrees = ability_component_get_stat( ability,"spread_degrees" ),
-            speed_multiplier = ability_component_get_stat( ability,"speed_multiplier" ),
-            mana_charge_speed = ability_component_get_stat( ability,"mana_charge_speed" ),
-            mana_max = ability_component_get_stat( ability,"mana_max" ),
+            deck_capacity               = ability_component_get_stat( ability,"deck_capacity" ),
+            actions_per_round           = ability_component_get_stat( ability,"actions_per_round" ),
+            reload_time                 = ability_component_get_stat( ability,"reload_time" ),
+            shuffle_deck_when_empty     = ability_component_get_stat( ability,"shuffle_deck_when_empty" ) and 1 or 0,
+            fire_rate_wait              = ability_component_get_stat( ability,"fire_rate_wait" ),
+            spread_degrees              = ability_component_get_stat( ability,"spread_degrees" ),
+            speed_multiplier            = ability_component_get_stat( ability,"speed_multiplier" ),
+            mana_charge_speed           = ability_component_get_stat( ability,"mana_charge_speed" ),
+            mana_max                    = ability_component_get_stat( ability,"mana_max" ),
         };
         local dynamic_wand = GetWand( gun );
         SetWandSprite( wand, ability, dynamic_wand.file, dynamic_wand.grip_x, dynamic_wand.grip_y, ( dynamic_wand.tip_x - dynamic_wand.grip_x ), ( dynamic_wand.tip_y - dynamic_wand.grip_y ) );
@@ -190,20 +254,19 @@ function initialize_wand( wand, wand_data )
     end
 end
 
-
 function wand_explode_random_action( wand, include_permanent_actions, include_frozen_actions, ox, oy )
     local x, y = EntityGetTransform( wand );
     local actions = {};
     local children = EntityGetAllChildren( wand ) or {};
     for i,action in ipairs( children ) do
-        local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
+        local item_action = EntityGetFirstComponentIncludingDisabled( action, "ItemActionComponent" );
         if item_action ~= nil then
-            local item = FindFirstComponentByType( action, "ItemComponent" );
+            local item = EntityGetFirstComponentIncludingDisabled( action, "ItemComponent" );
             if item ~= nil then
-                local action_id = ComponentGetValue( item_action, "action_id" );
+                local action_id = ComponentGetValue2( item_action, "action_id" );
                 if action_id ~= nil then
-                    if include_permanent_actions == true or ComponentGetValue( item, "permanently_attached" ) == "0" then
-                        if include_frozen_actions == true or ComponentGetValue( item, "is_frozen" ) == "0" then
+                    if include_permanent_actions == true or ComponentGetValue2( item, "permanently_attached" ) == false then
+                        if include_frozen_actions == true or ComponentGetValue2( item, "is_frozen" ) == false then
                             table.insert( actions, { action_id=action_id, permanent=permanent, entity=action } );
                         end
                     end
@@ -215,7 +278,7 @@ function wand_explode_random_action( wand, include_permanent_actions, include_fr
         local r = math.ceil( math.random() * #actions );
         local action_to_remove = actions[ r ];
         local card = CreateItemActionEntity( action_to_remove.action_id, ox or x, oy or y );
-        ComponentSetValueVector2( EntityGetFirstComponent( card, "VelocityComponent" ), "mVelocity", Random( -150, 150 ), Random( -250, -100 ) );
+        ComponentSetValue2( EntityGetFirstComponent( card, "VelocityComponent" ), "mVelocity", Random( -150, 150 ), Random( -250, -100 ) );
         EntityRemoveFromParent( action_to_remove.entity );
         return action_to_remove;
     end
@@ -226,12 +289,12 @@ function wand_remove_first_action( wand, include_permanent_actions, include_froz
     local actions = {};
     local children = EntityGetAllChildren( wand ) or {};
     for _,action in pairs( children ) do
-        local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
+        local item_action = EntityGetFirstComponentIncludingDisabled( action, "ItemActionComponent" );
         if item_action ~= nil then
-            local item = FindFirstComponentByType( action, "ItemComponent" );
+            local item = EntityGetFirstComponentIncludingDisabled( action, "ItemComponent" );
             if item ~= nil then
-                if include_permanent_actions == true or ComponentGetValue( item, "permanently_attached" ) == "0" then
-                    if include_frozen_actions == true or ComponentGetValue( item, "is_frozen" ) == "0" then
+                if include_permanent_actions == true or ComponentGetValue2( item, "permanently_attached" ) == false then
+                    if include_frozen_actions == true or ComponentGetValue2( item, "is_frozen" ) == false then
                         EntityRemoveFromParent( action );
                         EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", true );
                         EntitySetComponentsWithTagEnabled( action,  "enabled_in_hand", false );
@@ -252,23 +315,23 @@ function wand_lock( wand, lock_spells, lock_wand )
     if lock_spells then
         local children = EntityGetAllChildren( wand ) or {};
         for i,action in ipairs( children ) do
-            local item = FindFirstComponentByType( action, "ItemComponent" );
+            local item = EntityGetFirstComponentIncludingDisabled( action, "ItemComponent" );
             if item ~= nil then
-                ComponentSetValue( item, "is_frozen", "1" );
+                ComponentSetValue2( item, "is_frozen", true );
             end
         end
     end
     if lock_wand then
-        local item = FindFirstComponentByType( wand, "ItemComponent" );
+        local item = EntityGetFirstComponentIncludingDisabled( wand, "ItemComponent" );
         if item ~= nil then
-            ComponentSetValue( item, "is_frozen", "1" );
+            ComponentSetValue2( item, "is_frozen", true );
         end
     end
 end
 
 function wand_attach_action( wand, action, permanent, locked )
     EntityAddChild( wand, action );
-    local item_action = FindFirstComponentByType( action, "ItemActionComponent" );
+    local item_action = EntityGetFirstComponentIncludingDisabled( action, "ItemActionComponent" );
     if item_action ~= nil then
         EntitySetComponentsWithTagEnabled( action,  "enabled_in_world", false );
         EntitySetComponentsWithTagEnabled( action,  "enabled_in_hand", false );
@@ -290,10 +353,10 @@ end
 function wand_is_always_cast_valid( wand )
     local children = EntityGetAllChildren( wand ) or {};
     for i,v in ipairs( children ) do
-        local components = EntityGetAllComponents( v );
+        local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" )
         local has_a_valid_spell = false;
-        for _,component in pairs(components) do
-            if ComponentGetValue( component, "permanently_attached" ) == "0" then
+        for _,item in pairs( items or {}) do
+            if ComponentGetValue2( item, "permanently_attached" ) == false then
                 has_a_valid_spell = true;
                 break;
             end
@@ -310,9 +373,9 @@ function force_always_cast( wand, amount )
     local children = EntityGetAllChildren( wand ) or {};
     local always_cast_count = 0;
     for _,child in pairs( children ) do
-        local item_component = FindFirstComponentByType( child, "ItemComponent" );
+        local item_component = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
         if item_component then
-            if ComponentGetValue( item_component, "permanently_attached" ) == "1" then
+            if ComponentGetValue2( item_component, "permanently_attached" ) == true then
                 always_cast_count = always_cast_count + 1;
                 break;
             end
@@ -320,9 +383,9 @@ function force_always_cast( wand, amount )
     end
     while always_cast_count < amount do
         local random_child = children[ Random( 1,#children ) ];
-        local item_component = FindFirstComponentByType( random_child, "ItemComponent" );
-        if item_component and ComponentGetValue( item_component, "permanently_attached" ) ~= "1" then
-            ComponentSetValue( item_component, "permanently_attached", "1" );
+        local item_component = EntityGetFirstComponentIncludingDisabled( random_child, "ItemComponent" );
+        if item_component and ComponentGetValue2( item_component, "permanently_attached" ) ~= true then
+            ComponentSet2Value( item_component, "permanently_attached", true );
             always_cast_count = always_cast_count + 1;
         end
     end

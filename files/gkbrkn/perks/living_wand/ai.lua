@@ -15,5 +15,5 @@ end
 
 local aiComponent = EntityGetFirstComponent( entity, "AnimalAIComponent" )
 if aiComponent ~= nil then
-    ComponentSetValueVector2( aiComponent, "mHomePosition", teleport_x, teleport_y );
+    ComponentSetValue2( aiComponent, "mHomePosition", teleport_x, teleport_y );
 end

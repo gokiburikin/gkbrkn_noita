@@ -10,7 +10,7 @@ local indicator_distance = 24;
 
 local is_chest = function( entity )
     for _,component in pairs( FindComponentByType( entity, "LuaComponent" ) or {} ) do
-        local script_item_picked_up = ComponentGetValue( component, "script_item_picked_up" );
+        local script_item_picked_up = ComponentGetValue2( component, "script_item_picked_up" );
         if script_item_picked_up == "data/scripts/items/chest_random.lua" or script_item_picked_up == "data/scripts/items/chest_random_super.lua" then
             return true;
         end
@@ -19,7 +19,7 @@ end
 
 local is_potion = function( entity )
     for _,component in pairs( FindComponentByType( entity, "LuaComponent" ) or {} ) do
-        local script_item_picked_up = ComponentGetValue( component, "script_item_picked_up" );
+        local script_item_picked_up = ComponentGetValue2( component, "script_item_picked_up" );
         if script_item_picked_up == "data/scripts/items/potion_effect.lua" then
             return true;
         end
@@ -28,7 +28,7 @@ end
 
 local is_heart_pickup = function( entity )
     for _,component in pairs( FindComponentByType( entity, "LuaComponent" ) or {} ) do
-        local script_item_picked_up = ComponentGetValue( component, "script_item_picked_up" );
+        local script_item_picked_up = ComponentGetValue2( component, "script_item_picked_up" );
         if script_item_picked_up == "data/scripts/items/heart.lua" or 
         script_item_picked_up == "data/scripts/items/heart_fullhp.lua" or 
         script_item_picked_up == "data/scripts/items/heart_fullhp_temple.lua" or 
@@ -44,7 +44,7 @@ local is_treasure = function( entity )
     local item = EntityGetFirstComponent( entity, "ItemComponent" );
     local is_treasure = false;
     if item ~= nil and EntityHasTag( entity, "gold_nugget" ) == false then
-        is_treasure = ComponentGetValue( item, "auto_pickup" ) == "1";
+        is_treasure = ComponentGetValue2( item, "auto_pickup" ) == true;
         if is_treasure == false then
             if EntityHasTag( entity, "wand" ) == false then
                 is_treasure = true;

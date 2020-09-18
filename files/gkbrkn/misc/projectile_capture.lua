@@ -33,10 +33,10 @@ function EntitiesAverageMemberList( entities, component_type, member_list, round
     end
     for _,component in pairs( components ) do
         for _,member in pairs( member_list ) do
-            ComponentSetValue( component, member, averages[member] );
+            ComponentSetValue2( component, member, averages[member] );
         end
         for member,value in pairs( overridden ) do
-            ComponentSetValue( component, member, value );
+            ComponentSetValue2( component, member, value );
         end
     end
 end
@@ -96,7 +96,7 @@ if #formation_stack_projectiles > 0 then
 
         local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
         if velocity ~= nil then
-            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
             local angle = math.atan2( vy, vx );
             local magnitude = vx * vx + vy * vy;
             if magnitude ~= 0 then table.insert( angles, angle ); end
@@ -107,7 +107,7 @@ if #formation_stack_projectiles > 0 then
     local average_angle = mean_angle( angles, magnitudes );
     for i,projectile in pairs( formation_stack_projectiles ) do
         local velocity = velocities[i];
-        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+        local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
         local magnitude = magnitudes[i];
         local x, y = EntityGetTransform( projectile );
@@ -115,7 +115,7 @@ if #formation_stack_projectiles > 0 then
         --y = y - math.sin( angle ) * math.sqrt(magnitude) / 60;
         local offset = (stack_distance * #formation_stack_projectiles) - stack_distance * i - stack_distance * (#formation_stack_projectiles-1) / 2;
         EntitySetTransform( projectile, x + math.cos( average_angle - math.pi / 2 ) * offset, y + math.sin( average_angle - math.pi / 2 ) * offset );
-        --ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * magnitude, math.sin( average_angle ) * magnitude );
+        --ComponentSetValue2( velocity, "mVelocity", math.cos( average_angle ) * magnitude, math.sin( average_angle ) * magnitude );
     end
 end
 
@@ -136,7 +136,7 @@ if #spell_merge_projectiles > 0 then
         },
         { bounces_left = true },
         -- on_collision_die is too powerful to adapt for the cost
-        { bounce_at_any_angle="1", bounce_always="1", --[[on_collision_die="0",]] die_on_low_velocity="0" } );
+        { bounce_at_any_angle=true, bounce_always=true, --[[on_collision_die="0",]] die_on_low_velocity=false } );
         EntitiesAverageMemberList( group, "VelocityComponent", { 
             "gravity_x", "gravity_y", "mass", "air_friction", "terminal_velocity"
         } );
@@ -147,7 +147,7 @@ if #spell_merge_projectiles > 0 then
             --EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
             EntitySetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) );
             local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
-            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
             local angle = math.atan2( vy, vx );
             local magnitude = math.sqrt(vx * vx + vy * vy);
             average_velocity_magnitude = average_velocity_magnitude + magnitude;
@@ -162,9 +162,9 @@ if #spell_merge_projectiles > 0 then
         for i,projectile_entity in pairs( group ) do
             if projectile_entity == leader then
                 local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
-                local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+                local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
                 local angle = math.atan2( vy, vx );
-                ComponentSetValueVector2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
+                ComponentSetValue2( velocity, "mVelocity", math.cos( average_angle ) * average_velocity_magnitude, math.sin( average_angle ) * average_velocity_magnitude );
             else
                 EntitySetVariableString( projectile_entity, "gkbrkn_soft_parent", tostring( leader ) );
             end
@@ -181,7 +181,7 @@ if #projectile_orbit_projectiles > 0 then
     local leader = projectile_orbit_projectiles[1];
     local velocity = EntityGetFirstComponent( leader, "VelocityComponent" );
     if velocity ~= nil then
-        local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
+        local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
         local previous_projectile = nil;
         local leader = nil;
         for i,projectile in pairs( projectile_orbit_projectiles ) do
@@ -201,15 +201,15 @@ if #projectile_orbit_projectiles > 0 then
                 });
                 if projectile ~= leader then
                     local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
-                    local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
-                    --ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+                    local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
+                    --ComponentSetValue2( velocity, "mVelocity", 0, 0 );
 
                     local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
                     local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
                     if projectile ~= nil and leader_projectile ~= nil then
-                        local leader_lifetime = tonumber( ComponentGetValue( leader_projectile, "lifetime" ) );
-                        local projectile_lifetime = tonumber( ComponentGetValue( projectile, "lifetime" ) );
-                        ComponentSetValue( projectile, "lifetime", tostring( leader_lifetime + projectile_lifetime ) );
+                        local leader_lifetime = ComponentGetValue2( leader_projectile, "lifetime" );
+                        local projectile_lifetime = ComponentGetValue2( projectile, "lifetime" );
+                        ComponentSetValue2( projectile, "lifetime", leader_lifetime + projectile_lifetime );
                     end
                 end
             else
@@ -230,16 +230,16 @@ if #projectile_gravity_well_projectiles > 0 then
             local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
             local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
             if projectile ~= nil and leader_projectile ~= nil then
-                local leader_lifetime = tonumber( ComponentGetValue( leader_projectile, "lifetime" ) );
-                local projectile_lifetime = tonumber( ComponentGetValue( projectile, "lifetime" ) );
-                ComponentSetValue( projectile, "lifetime", tostring( leader_lifetime + projectile_lifetime ) );
+                local leader_lifetime = ComponentGetValue2( leader_projectile, "lifetime" );
+                local projectile_lifetime = ComponentGetValue2( projectile, "lifetime" );
+                ComponentSetValue2( projectile, "lifetime", leader_lifetime + projectile_lifetime );
             end
         else
             leader = projectile;
             local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
             if velocity ~= nil then
-                ComponentSetValue( velocity, "gravity_y", "0" )
-                ComponentSetValue( velocity, "air_friction", "0" )
+                ComponentSetValue2( velocity, "gravity_y", 0 )
+                ComponentSetValue2( velocity, "air_friction", 0 )
             end
         end
         previous_projectile = projectile;

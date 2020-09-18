@@ -7,11 +7,11 @@ table.insert( actions, generate_action_entry(
         local shooter = GetUpdatedEntityID();
         local wallet = EntityGetFirstComponent( shooter, "WalletComponent" );
         if wallet ~= nil then
-            local money = tonumber( ComponentGetValue( wallet, "money" ) );
+            local money = ComponentGetValue2( wallet, "money" );
             local cost = 10;
             if money >= cost then
                 add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/projectile.xml");
-                ComponentSetValue( wallet, "money", money - cost );
+                ComponentSetValue2( wallet, "money", money - cost );
             end
         end
     end

@@ -1,6 +1,7 @@
 print( "[goki's things] player spawn")
 GameAddFlagRun( "gkbrkn_content_cached" );
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile( "mods/gkbrkn_noita/files/gkbrkn/content/packs.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/dev_options.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
@@ -90,22 +91,20 @@ if GameHasFlagRun( init_check_flag ) == false then
                 local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
                 if character_platforming ~= nil then
                     local speed_multiplier = 1.25;
-                    local fly_velocity_x = tonumber( ComponentGetMetaCustom( character_platforming, "fly_velocity_x" ) );
+                    local fly_velocity_x = ComponentGetValue2( character_platforming, "fly_velocity_x" );
                     ComponentAdjustValues( character_platforming, {
-                        jump_velocity_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                        jump_velocity_y = function(value) return tonumber( value ) * speed_multiplier; end,
-                        fly_smooth_y = function(value) return "0"; end,
-                        fly_speed_mult = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
-                        fly_speed_max_up = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
-                        fly_speed_max_down = function(value) return tonumber( fly_velocity_x ) * 1.5; end,
-                        fly_speed_change_spd = function(value) return tonumber( fly_velocity_x ) * speed_multiplier; end,
-                    });
-                    ComponentAdjustMetaCustoms( character_platforming, {
-                        fly_velocity_x = function(value) return fly_velocity_x * speed_multiplier; end,
-                        run_velocity = function(value) return tonumber( value ) * speed_multiplier; end,
-                        --velocity_min_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                        velocity_max_x = function(value) return tonumber( value ) * speed_multiplier; end,
-                        velocity_max_y = function(value) return tonumber( value ) * speed_multiplier; end,
+                        jump_velocity_x         = function(value) return value * speed_multiplier; end,
+                        jump_velocity_y         = function(value) return value * speed_multiplier; end,
+                        fly_smooth_y            = function(value) return false; end,
+                        fly_speed_mult          = function(value) return fly_velocity_x * speed_multiplier; end,
+                        fly_speed_max_up        = function(value) return fly_velocity_x * 1.5; end,
+                        fly_speed_max_down      = function(value) return fly_velocity_x * 1.5; end,
+                        fly_speed_change_spd    = function(value) return fly_velocity_x * speed_multiplier; end,
+                        fly_velocity_x          = function(value) return fly_velocity_x * speed_multiplier; end,
+                        run_velocity            = function(value) return value * speed_multiplier; end,
+                        --velocity_min_x        = function(value) return value * speed_multiplier; end,
+                        velocity_max_x          = function(value) return value * speed_multiplier; end,
+                        velocity_max_y          = function(value) return value * speed_multiplier; end,
                     });
                 end
             else
@@ -137,9 +136,9 @@ if GameHasFlagRun( init_check_flag ) == false then
                     };
                     for index,damage_model in pairs( damage_models ) do
                         for damage_type,multiplier in pairs( resistances ) do
-                            local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                            local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
                             resistance = resistance * multiplier;
-                            ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                            ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
                         end
                     end
                 end
@@ -173,14 +172,14 @@ if GameHasFlagRun( init_check_flag ) == false then
     if find_tweak("stun_lock") then 
         local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
         if character_platforming ~= nil then
-            ComponentSetValue( character_platforming, "precision_jumping_max_duration_frames", "10" );
+            ComponentSetValue2( character_platforming, "precision_jumping_max_duration_frames", 10 );
         end
     end
 
     local wands = {};
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if inventory2 ~= nil then
-        local active_item = ComponentGetValue( inventory2, "mActiveItem" );
+        local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
         for key, child in pairs( EntityGetAllChildren( player_entity ) ) do
             if EntityGetName( child ) == "inventory_quick" then
                 wands = EntityGetChildrenWithTag( child, "wand" ) or {};
@@ -192,12 +191,12 @@ if GameHasFlagRun( init_check_flag ) == false then
                 if GameHasFlagRun( FLAGS.GuaranteedAlwaysCast ) then
                     force_always_cast( wand, 1 )
                 end
-                local ability = FindFirstComponentByType( wand, "AbilityComponent" );
+                local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
                 if ability ~= nil then
                     if GameHasFlagRun( FLAGS.OrderWandsOnly ) then
-                        ability_component_set_stat( ability, "shuffle_deck_when_empty", "0" );
+                        ability_component_set_stat( ability, "shuffle_deck_when_empty", false );
                     elseif GameHasFlagRun( FLAGS.ShuffleWandsOnly ) then
-                        ability_component_set_stat( ability, "shuffle_deck_when_empty", "1" );
+                        ability_component_set_stat( ability, "shuffle_deck_when_empty", true );
                     end
                 end
             end
@@ -231,3 +230,9 @@ if HasFlagPersistent( FLAGS.DebugMode ) then
         GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
     end
 end
+
+--[[
+for _,pack_data in pairs( packs ) do
+    simulate_cracking_packs( pack_data.id, 100, x, y );
+end
+]]

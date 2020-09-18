@@ -1,11 +1,4 @@
 <Entity name="$projectile_default">
-	<LoadEntitiesComponent
-        count.min="1"
-        count.max="1"
-        kill_entity="0"
-        entity_file="data/entities/particles/image_emitters/magical_symbol_fast.xml" >
-    </LoadEntitiesComponent>
-	
 	<Entity>
 		<InheritTransformComponent>
 			<Transform 

@@ -11,7 +11,7 @@ function generate_shop_item( x, y, cheap_item, biomeid_, is_stealable )
         for _,wand in pairs( local_wands ) do
             local item_cost = EntityGetFirstComponent( wand, "ItemCostComponent" );
             if item_cost ~= nil then
-                ComponentSetValue( item_cost, "stealable", "0" );
+                ComponentSetValue2( item_cost, "stealable", false );
             end
         end
     else
@@ -23,7 +23,7 @@ function generate_shop_item( x, y, cheap_item, biomeid_, is_stealable )
         for _,item in pairs( generated_items ) do
             local item_cost = EntityGetFirstComponent( item, "ItemCostComponent" );
             if item_cost ~= nil then
-                ComponentSetValue( item_cost, "cost", "0" );
+                ComponentSetValue2( item_cost, "cost", 0 );
             end
         end
     end
@@ -51,7 +51,7 @@ function generate_shop_wand( x, y, cheap_item, biomeid_ )
         for _,item in pairs( generated_items ) do
             local item_cost = EntityGetFirstComponent( item, "ItemCostComponent" );
             if item_cost ~= nil then
-                ComponentSetValue( item_cost, "cost", "0" );
+                ComponentSetValue2( item_cost, "cost", 0 );
             end
         end
     end

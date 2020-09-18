@@ -36,10 +36,10 @@ function handle_loadout( player_entity, loadout_data )
         local verlet = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
         if verlet ~= nil then
             if loadout_data.cape_color ~= nil then
-                ComponentSetValue( verlet, "cloth_color", loadout_data.cape_color );
+                ComponentSetValue2( verlet, "cloth_color", loadout_data.cape_color );
             end
             if loadout_data.cape_color_edge ~= nil then
-                ComponentSetValue( verlet, "cloth_color_edge", loadout_data.cape_color_edge );
+                ComponentSetValue2( verlet, "cloth_color_edge", loadout_data.cape_color_edge );
             end
         end
     end
@@ -148,8 +148,8 @@ function handle_loadout( player_entity, loadout_data )
 
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if inventory2 ~= nil then
-        ComponentSetValue( inventory2, "mInitialized", 0 );
-        ComponentSetValue( inventory2, "mForceRefresh", 1 );
+        ComponentSetValue2( inventory2, "mInitialized", false );
+        ComponentSetValue2( inventory2, "mForceRefresh", true );
     end
 
     -- spawn perks
@@ -169,19 +169,19 @@ function handle_loadout( player_entity, loadout_data )
         if loadout_data.sprites.player_sprite_filepath ~= nil then
             local player_sprite_component = EntityGetFirstComponent( player_entity, "SpriteComponent" );
             local player_sprite_file = loadout_data.sprites.player_sprite_filepath;
-            ComponentSetValue( player_sprite_component, "image_file", player_sprite_file );
+            ComponentSetValue2( player_sprite_component, "image_file", player_sprite_file );
         end
 
         if loadout_data.sprites.player_arm_sprite_filepath ~= nil then
             local player_arm_sprite_component = EntityGetFirstComponent( player_arm, "SpriteComponent" );
             local player_arm_sprite_file = loadout_data.sprites.player_arm_sprite_filepath;
-            ComponentSetValue( player_arm_sprite_component, "image_file", player_arm_sprite_file );
+            ComponentSetValue2( player_arm_sprite_component, "image_file", player_arm_sprite_file );
         end
 
         if loadout_data.sprites.player_ragdoll_filepath ~= nil then
             local player_ragdoll_component = EntityGetFirstComponent( player_entity, "DamageModelComponent" );
             local player_ragdoll_file = loadout_data.sprites.player_ragdoll_filepath;
-            ComponentSetValue( player_ragdoll_component, "ragdoll_filenames_file", player_ragdoll_file );
+            ComponentSetValue2( player_ragdoll_component, "ragdoll_filenames_file", player_ragdoll_file );
         end
     end
 end

@@ -10,7 +10,7 @@ end
 
 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
 if velocity ~= nil then
-    local velocity_x, velocity_y = ComponentGetValueVector2( velocity, "mVelocity" );
+    local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
     if velocity_x ~= 0 and velocity_y ~= 0 and velocity_x == velocity_x and velocity_y == velocity_y then
         local angle = math.atan2( velocity_y, velocity_x );
         local magnitude = math.sqrt( velocity_x * velocity_x + velocity_y * velocity_y );
@@ -26,7 +26,7 @@ if velocity ~= nil then
                 local easing = math.max( 1, normal_dist * 0.36 );
                 local new_velocity_x = velocity_x + (target_velocity_x - velocity_x) / easing;
                 local new_velocity_y = velocity_y + (target_velocity_y - velocity_y) / easing;
-                ComponentSetValueVector2( velocity, "mVelocity", new_velocity_x, new_velocity_y );
+                ComponentSetValue2( velocity, "mVelocity", new_velocity_x, new_velocity_y );
             end
         end
     end

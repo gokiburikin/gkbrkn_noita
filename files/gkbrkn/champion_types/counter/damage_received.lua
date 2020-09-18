@@ -13,6 +13,8 @@ function damage_received( damage, desc, entity_who_caused, is_fatal )
         
         local length = 100;
         
+        local x, y = EntityGetTransform( entity );
+        SetRandomSeed( x, y );
         if EntityGetIsAlive( entity_who_caused ) then
             local ex, ey = EntityGetTransform( entity_who_caused );
             angle_inc = 0 - math.atan2( ey - y, ex - x );

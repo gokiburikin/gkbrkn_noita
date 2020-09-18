@@ -6,9 +6,9 @@ dofile_once("data/scripts/gun/procedural/wands.lua" );
 dofile_once("data/scripts/gun/gun_enums.lua");
 
 function EntityComponentGetValue( entity_id, component_type_name, component_key, default_value )
-    local component = EntityGetFirstComponent( entity_id, component_type_name );
+    local component = EntityGetFirstComponentIncludingDisabled( entity_id, component_type_name );
     if component ~= nil then
-        return ComponentGetValue( component, component_key );
+        return ComponentGetValue2( component, component_key );
     end
     return default_value;
 end
@@ -34,7 +34,7 @@ local gun = {
     deck_capacity = {3,6},
     actions_per_round = {1,2,3},
     reload_time = { 0.07  * time_ratio, 0.7 * time_ratio },
-    shuffle_deck_when_empty = {0,1},
+    shuffle_deck_when_empty = {false,true},
     cast_delay = { 0.0  * time_ratio, 0.5 * time_ratio },
     spread_degrees = {-2,6},
     speed_multiplier = 1,
@@ -99,20 +99,20 @@ local mana_max = get_random_between_range( gun.mana_max );
 local deck_capacity = get_random_between_range( gun.deck_capacity );
 local action_count = Random( 1, tonumber( deck_capacity ) );
 
-ComponentSetValue( ability_component, "ui_name", tostring(get_random_from( gun.name )) );
+ComponentSetValue2( ability_component, "ui_name", get_random_from( gun.name ) );
 
-ComponentObjectSetValue( ability_component, "gun_config", "reload_time", tostring(get_random_between_range( gun.reload_time )) );
-ComponentObjectSetValue( ability_component, "gunaction_config", "fire_rate_wait", tostring(get_random_between_range( gun.cast_delay )) );
-ComponentSetValue( ability_component, "mana_charge_speed", tostring(get_random_between_range( gun.mana_charge_speed)) );
+ComponentObjectSetValue2( ability_component, "gun_config", "reload_time", get_random_between_range( gun.reload_time ) );
+ComponentObjectSetValue2( ability_component, "gunaction_config", "fire_rate_wait", get_random_between_range( gun.cast_delay ) );
+ComponentSetValue2( ability_component, "mana_charge_speed", get_random_between_range( gun.mana_charge_speed) );
 
-ComponentObjectSetValue( ability_component, "gun_config", "actions_per_round", tostring(random_from_array(gun.actions_per_round)) );
-ComponentObjectSetValue( ability_component, "gun_config", "deck_capacity", tostring(deck_capacity) );
-ComponentObjectSetValue( ability_component, "gun_config", "shuffle_deck_when_empty", tostring(random_from_array(gun.shuffle_deck_when_empty)) );
-ComponentObjectSetValue( ability_component, "gunaction_config", "spread_degrees", tostring(get_random_between_range(gun.spread_degrees)) );
-ComponentObjectSetValue( ability_component, "gunaction_config", "speed_multiplier", tostring(gun.speed_multiplier) );
+ComponentObjectSetValue2( ability_component, "gun_config", "actions_per_round", random_from_array( gun.actions_per_round ) );
+ComponentObjectSetValue2( ability_component, "gun_config", "deck_capacity", deck_capacity );
+ComponentObjectSetValue2( ability_component, "gun_config", "shuffle_deck_when_empty", random_from_array( gun.shuffle_deck_when_empty ) );
+ComponentObjectSetValue2( ability_component, "gunaction_config", "spread_degrees", get_random_between_range( gun.spread_degrees ) );
+ComponentObjectSetValue2( ability_component, "gunaction_config", "speed_multiplier", gun.speed_multiplier );
 
-ComponentSetValue( ability_component, "mana_max", tostring(mana_max) );
-ComponentSetValue( ability_component, "mana", tostring(mana_max) );
+ComponentSetValue2( ability_component, "mana_max", mana_max );
+ComponentSetValue2( ability_component, "mana", mana_max );
 
 if math.random() > 1 / action_count then
     AddGunAction( entity_id, random_from_array( gun["modifier_actions"] ) );

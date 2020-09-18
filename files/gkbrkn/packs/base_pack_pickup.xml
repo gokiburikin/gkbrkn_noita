@@ -26,7 +26,7 @@
         _tags="enabled_in_world"
         y_amount="1"
         y_speed="2.5"
-        sprite_id="0" >
+        sprite_id="1" >
     </SpriteOffsetAnimatorComponent>
 
 	<SpriteParticleEmitterComponent

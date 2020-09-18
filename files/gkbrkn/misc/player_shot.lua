@@ -6,6 +6,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 function shot( projectile_entity )
+    local current_frame = GameGetFrameNum();
     local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
     local player = GetUpdatedEntityID();
     local damage_multiplier =  EntityGetVariableNumber( player, "gkbrkn_damage_multiplier", 1.0 );
@@ -15,6 +16,12 @@ function shot( projectile_entity )
     local current_protagonist_bonus = get_protagonist_bonus( player );
     if current_protagonist_bonus ~= 0 then
         adjust_all_entity_damage( projectile_entity, function( current_damage ) return current_damage * current_protagonist_bonus; end );
+    end
+
+    local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );
+    if current_frame - last_calibration_shot >= MISC.PerkOptions.MagicFocus.DecayFrames then
+        EntitySetVariableNumber( player, "gkbrkn_last_calibration_shot_percent", get_magic_focus_multiplier( last_calibration_shot ) );
+        EntitySetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", current_frame );
     end
 
     local demolitionist_bonus = EntityGetVariableNumber( player, "gkbrkn_demolitionist_bonus", 0.0 ) + EntityGetVariableNumber( projectile_entity, "gkbrkn_demolitionist_bonus", 0.0 );
@@ -59,7 +66,7 @@ function shot( projectile_entity )
             ComponentAdjustValues( velocity, {
                 air_friction=function( value ) return math.min( tonumber( value ), -25 ); end,
                 gravity_y=function( value ) return 0; end,
-                apply_terminal_velocity=function( value ) return 1; end,
+                apply_terminal_velocity=function( value ) return true; end,
                 terminal_velocity=function( value ) return 1500; end,
             } );
         end
@@ -78,14 +85,14 @@ function shot( projectile_entity )
         if find_game_modifier("limit_critical_damage") then
             ComponentObjectSetValue2( projectile, "damage_critical", "chance", math.min( ComponentObjectGetValue2( projectile, "damage_critical", "chance" ), 100 ) );
         end
-        EntitySetVariableNumber( projectile_entity, "gkbrkn_bounces_last", ComponentGetValue( projectile, "bounces_left" ) );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_bounces_last", ComponentGetValue2( projectile, "bounces_left" ) );
         EntitySetVariableNumber( projectile_entity, "gkbrkn_bounce_damage_remaining", 10 );
-        EntitySetVariableNumber( projectile_entity, "gkbrkn_initial_damage", ComponentGetValue( projectile, "damage" ) );
-        EntitySetVariableNumber( projectile_entity, "gkbrkn_damage_plus_lifetime_limit", GameGetFrameNum() + 300 );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_initial_damage", ComponentGetValue2( projectile, "damage" ) );
+        EntitySetVariableNumber( projectile_entity, "gkbrkn_damage_plus_lifetime_limit", current_frame + 300 );
         local active_types = {};
         local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
         for type,_ in pairs( damage_by_types ) do
-            local amount = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
+            local amount = ComponentObjectGetValue2( projectile, "damage_by_type", type );
             if amount == amount and amount ~= 0 then
                 table.insert( active_types, type.."="..amount );
             end
@@ -114,14 +121,14 @@ function shot( projectile_entity )
                 local components = EntityGetAllComponents( player ) or {};
                 for _,component in pairs( components ) do
                     if ComponentGetTypeName( component ) == "ControlsComponent" then
-                        local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
+                        local ax, ay = ComponentGetValue2( component, "mAimingVector" );
                         aim_angle = math.atan2( ay, ax );
                         break;
                     end
                 end
-                local vx,vy = ComponentGetValueVector2( velocity, "mVelocity", vx, vy );
+                local vx,vy = ComponentGetValue2( velocity, "mVelocity", vx, vy );
                 local magnitude = math.sqrt( vx * vx + vy * vy );
-                ComponentSetValueVector2( velocity, "mVelocity", math.cos( aim_angle ) * magnitude, math.sin( aim_angle ) * magnitude );
+                ComponentSetValue2( velocity, "mVelocity", math.cos( aim_angle ) * magnitude, math.sin( aim_angle ) * magnitude );
             end
         end
     end
@@ -129,7 +136,7 @@ function shot( projectile_entity )
     if EntityGetVariableNumber( projectile_entity, "gkbrkn_magic_hand", 0 ) == 1 then
 
         if projectile ~= nil then
-            ComponentSetValue( projectile, "die_on_low_velocity", "0" );
+            ComponentSetValue2( projectile, "die_on_low_velocity", false );
         end
 
         local initial_angle = nil;
@@ -137,18 +144,20 @@ function shot( projectile_entity )
 
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then
-            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
+            local magnitude = math.sqrt( vx * vx + vy * vy );
+            EntitySetVariableNumber( projectile_entity, "gkbrkn_magic_hand_magnitude", magnitude );
             if vx ~= 0 or vy ~= 0 then
                 initial_angle = math.atan2( vy, vx );
-                ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+                --ComponentSetValue2( velocity, "mVelocity", 0, 0 );
             end
-            ComponentSetValue( velocity, "gravity_y", 0 );
+            ComponentSetValue2( velocity, "gravity_y", 0 );
         end
 
         local components = EntityGetAllComponents( player ) or {};
         for _,component in pairs( components ) do
             if ComponentGetTypeName( component ) == "ControlsComponent" then
-                local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
+                local ax, ay = ComponentGetValue2( component, "mAimingVector" );
                 aim_angle = math.atan2( ay, ax );
             end
         end

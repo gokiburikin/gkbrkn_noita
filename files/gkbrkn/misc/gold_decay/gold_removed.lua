@@ -4,7 +4,7 @@ SetRandomSeed( GameGetFrameNum(), x + y + entity );
 local variables = EntityGetComponent( entity, "VariableStorageComponent" ) or {};
 local gold_value = 0;
 for key,comp_id in pairs(variables) do 
-    if ComponentGetValue( comp_id, "name" ) == "gold_value" then
+    if ComponentGetValue2( comp_id, "name" ) == "gold_value" then
         gold_value = ComponentGetValueInt( comp_id, "value_int" );
         break;
     end

@@ -15,7 +15,7 @@ function angle_difference( target_angle, starting_angle )
 end
 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
 if velocity ~= nil then
-    local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+    local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
     local velocity_angle = math.atan2( vy, vx );
 
     for _,test_entity in pairs( nearby_entities ) do
@@ -39,6 +39,7 @@ if velocity ~= nil then
     end
     local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
     if velocity ~= nil then
+        SetRandomSeed( x, y );
         if target ~= nil then
             local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
             if projectile ~= nil then
@@ -48,21 +49,21 @@ if velocity ~= nil then
                     tx, ty = EntityGetTransform( target );
                 end
                 local lifetime_multiplier = math.pow( math.min( 1, ( GameGetFrameNum() - EntityGetVariableNumber( entity, "gkbrkn_spawn_frame", 0 ) ) / 30  ), 2 );
-                local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+                local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
                 local aim_angle = math.atan2( ty - y, tx - x );
                 local magnitude = math.sqrt( vx * vx + vy * vy );
                 local angle = math.atan2( vy, vx );
                 local difference = math.abs( math.pow( angle_difference( angle, aim_angle ), 2 ) );
                 local new_angle = ease_angle( angle, aim_angle + (Random(-1.0, 1.0) * 15 / 180 * math.pi), ( 0.06 + 0.27 * lifetime_multiplier ) ) + (Random(-1.0, 1.0) * 3 / 180 * math.pi);
 
-                ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
+                ComponentSetValue2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
             end
         else
-            local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+            local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
             local magnitude = math.sqrt( vx * vx + vy * vy );
             local angle = math.atan2( vy, vx );
             local new_angle = angle + (Random(-1.0, 1.0) * 3 / 180 * math.pi);
-            ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
+            ComponentSetValue2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
         end
     end
 end

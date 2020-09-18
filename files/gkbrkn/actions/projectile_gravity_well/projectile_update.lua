@@ -22,15 +22,15 @@ if parent ~= 0 and EntityGetIsAlive(parent) then
     local velocity_components = EntityGetComponent( entity, "VelocityComponent" ) or {};
     
     local gravity_percent = ( distance - distance_full  ) / distance_full / (math.random() * 0.5 + 0.3);
-    local lifetime = tonumber( ComponentGetValue( parent_projectile, "lifetime" ) );
+    local lifetime = ComponentGetValue2( parent_projectile, "lifetime" );
     local gravity_coeff = math.min( maximum_strength, lifetime * 4 );
     
     for _,velocity_component in pairs(velocity_components) do
-        local vx,vy = ComponentGetValueVector2( velocity_component, "mVelocity", vx, vy);
+        local vx,vy = ComponentGetValue2( velocity_component, "mVelocity", vx, vy);
         local ox = math.cos( direction ) * ( gravity_coeff * gravity_percent );
         local oy = 0 - math.sin( direction ) * ( gravity_coeff * gravity_percent );
         vx = vx + ox;
         vy = vy + oy;
-        ComponentSetValueVector2( velocity_component, "mVelocity", vx, vy );
+        ComponentSetValue2( velocity_component, "mVelocity", vx, vy );
     end
 end

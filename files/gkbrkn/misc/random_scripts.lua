@@ -21,13 +21,13 @@ EntityAddComponent( pikku, "SpriteComponent", {
 -- here is an unlimited charm effect
 local game_effect = GetGameEffectLoadTo( pikku, "CHARM", true );
 if game_effect ~= nil then
-    ComponentSetValue( game_effect, "frames", -1 );
+    ComponentSetValue2( game_effect, "frames", -1 );
 end
 -- replace the projectile
 local animal_ais = EntityGetComponent( pikku, "AnimalAIComponent" ) or {};
 for _,animal_ai in pairs( animal_ais ) do
-    ComponentSetValue( animal_ai, "attack_ranged_entity_file", "data/entities/projectiles/healshot.xml" );
-    ComponentSetValue( animal_ai, "tries_to_ranged_attack_friends", "1" );
-    ComponentSetValue( animal_ai, "attack_melee_enabled", "0" );
-    ComponentSetValue( animal_ai, "attack_dash_enabled", "0" );
+    ComponentSetValue2( animal_ai, "attack_ranged_entity_file", "data/entities/projectiles/healshot.xml" );
+    ComponentSetValue2( animal_ai, "tries_to_ranged_attack_friends", true );
+    ComponentSetValue2( animal_ai, "attack_melee_enabled", false );
+    ComponentSetValue2( animal_ai, "attack_dash_enabled", false );
 end

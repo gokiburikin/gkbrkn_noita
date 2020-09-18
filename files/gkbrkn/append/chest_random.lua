@@ -13,7 +13,7 @@ function drop_random_reward( x, y, entity_id )
         end
         if MISC.ChestsContainPerks.DontKillOtherPerks then
             for _,component in pairs( EntityGetComponent( perk, "LuaComponent" ) or {} ) do
-                if ComponentGetValue( component, "script_item_picked_up" ) == "data/scripts/perks/perk_pickup.lua" then
+                if ComponentGetValue2( component, "script_item_picked_up" ) == "data/scripts/perks/perk_pickup.lua" then
                     EntityRemoveComponent( perk, component );
                     EntityAddComponent( perk, "LuaComponent", { 
                         script_item_picked_up="mods/gkbrkn_noita/files/gkbrkn/misc/perk_pickup_unique.lua"

@@ -60,62 +60,45 @@ table.insert( actions, generate_action_entry(
     "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
     nil,
     function()
-        c.fire_rate_wait = c.fire_rate_wait - 5;
+        --c.fire_rate_wait = c.fire_rate_wait - 5;
         local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/burst_fire/projectile.xml";
         if reflecting then 
             Reflection_RegisterProjectile( projectile_path );
             return;
         end
-        local burst_wait = c.fire_rate_wait + math.ceil( gun.reload_time / 5 );
+        local burst_wait = (c.fire_rate_wait + math.ceil( gun.reload_time / 5 )) / 3;
         local base_fire_rate_wait = c.fire_rate_wait;
         local old_c = c;
         c = {};
         reset_modifiers( c );
 
-        function inner( how_many, old_c, skip_amount, depth, deck_snapshot )
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c = {};
-                    reset_modifiers( c );
-                    temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
-                    register_action( c );
-                    SetProjectileConfigs();
-                    reset_modifiers( c );
-                EndTrigger();
-                if how_many > 1 then
-                    recursive_death_trigger( how_many - 1, old_c, skip_amount, depth, deck_snapshot );
-                end
-            EndProjectile();
-        end
+        local deck_snapshot = peek_draw_actions( 1, true );
 
-        function recursive_death_trigger( how_many, old_c, skip_amount, depth, deck_snapshot )
-            if depth == nil then
-                depth = (depth or 0) + 1;
-                skip_amount = #hand + 1;
-                c = {};
-                reset_modifiers( c );
-                deck_snapshot = peek_draw_actions( 1, true );
-
-                inner( how_many, old_c, skip_amount, depth, deck_snapshot );
-            else
-                BeginTriggerDeath();
-                    inner( how_many, old_c, skip_amount, depth, deck_snapshot );
-                    -- burst fire's delay
-                    c.lifetime_add = burst_wait;
-                    c.spread_degrees = 3;
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            end
-        end
-
-        -- NOTE: This is the secret sauce that makes burst fire lifetime_add not apply on the first shot
         BeginProjectile( projectile_path );
-            BeginTriggerDeath();
-                recursive_death_trigger( 3, old_c );
+            BeginTriggerTimer( 1 );
+                reset_modifiers( c );
+                temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
+                register_action( c );
+                SetProjectileConfigs();
+            EndTrigger();
+
+            BeginTriggerTimer( burst_wait );
+                reset_modifiers( c );
+                temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
+                register_action( c );
+                SetProjectileConfigs();
+            EndTrigger();
+
+            BeginTriggerTimer( burst_wait * 2 );
+                reset_modifiers( c );
+                temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
+                register_action( c );
+                SetProjectileConfigs();
             EndTrigger();
         EndProjectile();
+
         c = old_c;
+        c.lifetime_add = c.lifetime_add + burst_wait * 3;
     end
 ) );
 
@@ -132,8 +115,9 @@ table.insert( actions, generate_action_entry(
         local _deck = deck;
         local _hand = hand;
         local _discarded = discarded;
+        local old_capture = gkbrkn.add_projectile_capture_callback;
         gkbrkn.add_projectile_capture_callback = function( filepath )
-            gkbrkn.add_projectile_capture_callback = nil;
+            gkbrkn.add_projectile_capture_callback = old_capture;
             local captured_deck = nil;
             local old_c = c;
             BeginProjectile( filepath );
@@ -378,12 +362,25 @@ table.insert( actions, generate_action_entry(
     end
 ));
 
+--[[
+
+    fracture -> fracture -> spark bolt
+
+    single fracture: trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt  
+    double fracture:
+        trigger death -> sparkbolt -> triple cast ->
+            trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt ->
+            trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt ->
+            trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt   
+]]
+
 --[[ TODO still not complete ]]
 table.insert( actions, generate_action_entry(
     "GKBRKN_FRACTURE", "fracture", ACTION_TYPE_MODIFIER,
     "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
     nil,    
     function()
+    --print("\nFracture")
         local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile.xml";
         if reflecting then 
             Reflection_RegisterProjectile( projectile_path );
@@ -396,39 +393,53 @@ table.insert( actions, generate_action_entry(
         reset_modifiers( c );
 
         local deck_snapshot = peek_draw_actions( 1, true );
+        --print("make snapshot")
+        --for k,v in pairs(deck_snapshot) do
+        --    print( k.."/"..tostring(v.id));
+        --end
+        local old_capture = gkbrkn.add_projectile_capture_callback;
         gkbrkn.add_projectile_capture_callback = function( filepath, trigger_action_draw_count, trigger_delay_frames )
-            gkbrkn.add_projectile_capture_callback = nil;
+            --print(" WE ARE OVERRIDINGH")
+            gkbrkn.add_projectile_capture_callback = old_capture;
             BeginProjectile( filepath );
             BeginTriggerDeath();
-                c = {};
-                reset_modifiers( c );
-                for k,v in pairs(old_c) do
-                    c[k] = v;
+                for i=1,3 do
+                    c = {};
+                    reset_modifiers( c );
+                    --for k,v in pairs(old_c) do
+                    --    c[k] = v;
+                    --end
+                    c.spread_degrees = 45;
+                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile_extra_entity.xml,";
+                    temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
+                    register_action( c );
+                    SetProjectileConfigs();
                 end
-                c.spread_degrees = 45;
-                c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile_extra_entity.xml,";
-                temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
-                temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
-                temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
-                register_action( c );
-                SetProjectileConfigs();
-                if fractured_c == nil then
-                    fractured_c = {};
-                    for k,v in pairs(c) do
-                        fractured_c[k] = v;
-                    end
-                end
+                --if fractured_c == nil then
+                --    fractured_c = {};
+                --    for k,v in pairs(c) do
+                --        fractured_c[k] = v;
+                --    end
+                --end
             EndTrigger();
-            register_action( c );
-            SetProjectileConfigs();
+            --register_action( c );
+            --SetProjectileConfigs();
             EndProjectile();
         end
-        temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
+		--add_projectile("data/entities/projectiles/deck/bubbleshot.xml")
+        local temp = deck_from_actions( deck_snapshot );
+        for i=#temp,1,-1 do
+            if temp[i].id == "GKBRKN_FRACTURE" then
+                table.remove(temp, i);
+            end
+        end
+        temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, temp, {}, {} );
+        --draw_actions( 1, true );
 
         c = fractured_c or old_c;
-        register_action( c );
-        SetProjectileConfigs();
-    end
+        --register_action( c );
+        --SetProjectileConfigs();
+    end, true
 ) );
 
 --[[
@@ -531,10 +542,9 @@ table.insert( actions, generate_action_entry(
 
 table.insert( actions, generate_action_entry(
     "GKBRKN_MAGIC_LIGHT", "magic_light", ACTION_TYPE_PASSIVE,
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 240, 3, -1,
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 240, 0, -1,
     "mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/custom_card.xml",
     function()
-        --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/projectile_extra_entity.xml,";
         draw_actions( 1, true );
     end
 ) );
@@ -624,11 +634,11 @@ table.insert( actions, generate_action_entry(
         local shooter = GetUpdatedEntityID();
         local wallet = EntityGetFirstComponent( shooter, "WalletComponent" );
         if wallet ~= nil then
-            local money = tonumber( ComponentGetValue( wallet, "money" ) );
+            local money = ComponentGetValue2( wallet, "money" );
             local cost = 10;
             if money >= cost then
                 add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/nugget_shot/projectile.xml");
-                ComponentSetValue( wallet, "money", money - cost );
+                ComponentSetValue2( wallet, "money", money - cost );
             end
         end
     end
@@ -1305,8 +1315,9 @@ table.insert( actions, generate_action_entry(
         local old_c = c;
         local pre_c = {};
 
+        local old_capture = gkbrkn.add_projectile_capture_callback;
         gkbrkn.add_projectile_capture_callback = function( filepath, trigger_action_draw_count, trigger_delay_frames )
-            gkbrkn.add_projectile_capture_callback = nil;
+            gkbrkn.add_projectile_capture_callback = old_capture;
             BeginProjectile( filepath );
             EndProjectile();
             pre_c = c;
@@ -1328,7 +1339,7 @@ table.insert( actions, generate_action_entry(
         end
         register_action( c );
         SetProjectileConfigs();
-    end
+    end, true
 ) );
 
 table.insert( actions, generate_action_entry(

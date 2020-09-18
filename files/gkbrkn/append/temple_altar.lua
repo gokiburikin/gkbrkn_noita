@@ -33,6 +33,7 @@ function spawn_all_shopitems( x, y )
 
         local pack_weight_table = {};
         for _,pack_data in pairs( packs ) do
+            parse_pack_action_weights( pack_data );
             pack_weight_table[ pack_data.id ] = pack_data.weight;
         end
         for i=1,count do
@@ -40,6 +41,16 @@ function spawn_all_shopitems( x, y )
             local pack_data = find_pack( WeightedRandomTable( pack_weight_table ) );
             if pack_data then
                 local pack_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/packs/base_pack_pickup.xml", x + (i - 1) * item_width, y );
+                EntityAddComponent( pack_entity, "SpriteComponent", { 
+                    _tags="shop_cost,enabled_in_world",
+                    image_file="data/fonts/font_pixel_white.xml", 
+                    is_text_sprite="1", 
+                    offset_x="7", 
+                    offset_y="25", 
+                    update_transform="1" ,
+                    update_transform_rotation="0",
+                    text="111",
+                } );
                 EntitySetVariableString( pack_entity, "gkbrkn_pack_id", pack_data.id );
                 if pack_data.image_filepath then
                     local sprite = EntityGetFirstComponent( pack_entity, "SpriteComponent" );

@@ -12,6 +12,6 @@ if parent ~= nil then
 end
 for index,child in pairs( children ) do
     local sprite = EntityGetFirstComponent( child, "SpriteComponent" );
-    ComponentSetValue( sprite, "offset_x", -offset_x + ( index - 1 ) * 9 );
-    ComponentSetValue( sprite, "offset_y", offset_y );
+    ComponentSetValue2( sprite, "offset_x", -offset_x + ( index - 1 ) * 9 );
+    ComponentSetValue2( sprite, "offset_y", offset_y );
 end

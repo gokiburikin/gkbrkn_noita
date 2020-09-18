@@ -28,11 +28,92 @@ function find_pack( id )
         for _,entry in pairs(packs) do
             if entry.id == id then
                 pack = entry;
+                parse_pack_action_weights( entry );
                 memoize_packs[id] = entry;
             end
         end
     end
     return pack;
+end
+
+local RARITY = {
+    Common = 1,
+    Uncommon = 2,
+    Rare = 3,
+    VeryRare = 4,
+    Legendary = 5
+}
+
+local RARITY_RATIOS = {
+    [RARITY.Common] = 0.38,
+    [RARITY.Uncommon] = 0.28,
+    [RARITY.Rare] = 0.18,
+    [RARITY.VeryRare] = 0.10,
+    [RARITY.Legendary] = 0.06,
+}
+
+function parse_pack_action_weights( pack_data )
+    local rarity_buckets = {};
+    for _,action in pairs( pack_data.actions ) do
+        local action_rarity = action.rarity or RARITY.Common;
+        rarity_buckets[action_rarity] = ( rarity_buckets[action_rarity] or {} );
+        table.insert( rarity_buckets[action_rarity], action );
+    end
+    local rarity_weights = {};
+    for rarity,bucket in pairs( rarity_buckets ) do
+        local weight = RARITY_RATIOS[rarity] / ( #bucket or 1 );
+        for _,action_data in pairs( bucket ) do
+            --action_data.weight = math.ceil( weight * 100 );
+            action_data.weight = weight;
+        end
+    end
+end
+
+function crack_pack( pack_data, x, y, i )
+    local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua");
+    if i == nil then
+        i = 0;
+    end
+    SetRandomSeed( x + i, y + i );
+    local spawn_attempts = 100;
+    local card_amounts = {};
+    local card_weight_table = {};
+    local chosen_cards = {};
+    for card_data_index,action in pairs( pack_data.actions ) do
+        card_weight_table[card_data_index] = action.weight;
+    end
+    while #chosen_cards < MISC.PackShops.CardsPerPack and spawn_attempts > 0 do
+        local chosen_card_index = WeightedRandomTable( card_weight_table );
+        local chosen_card_data = pack_data.actions[ chosen_card_index ];
+        if chosen_card_data and ( chosen_card_data.limit_per_pack or -1 ) > 0 then
+            if ( card_amounts[chosen_card_data.id] or 0 ) < chosen_card_data.limit_per_pack then
+                card_amounts[chosen_card_data.id] = (card_amounts[chosen_card_data.id] or 0) + 1;
+                table.insert( chosen_cards, chosen_card_data.id );
+            end
+        else
+            spawn_attempts = spawn_attempts - 1;
+        end
+    end
+    for j=1,MISC.PackShops.RandomCardsPerPack do
+        table.insert( chosen_cards, GetRandomAction( x + i, y + i, 6, j ) );
+    end
+    return chosen_cards;
+end
+
+function simulate_cracking_packs( pack_id, amount, x, y )
+    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
+    local cards_pulled = {};
+    for i=1,amount do
+        local cards_in_pack = crack_pack( find_pack( pack_id ), x, y, i );
+        for _,action_id in pairs( cards_in_pack ) do
+            cards_pulled[ action_id ] = ( cards_pulled[ action_id ] or 0 ) + 1;
+        end
+    end
+    print( "\nSimulated opening "..pack_id.." "..amount.." times:" );
+    cards_pulled = sort_keyed_table( cards_pulled, function( a, b ) return a.value > b.value; end );
+    for k,v in pairs(cards_pulled) do
+        print("\t"..v.key..": "..v.value);
+    end
 end
 
 packs = {
@@ -67,12 +148,11 @@ packs = {
             }
         }
     },
-    ]]
     {
-        id = "gkbrkn_critical_hits",
-        name = "Critical Hits",
+        id = "gkbrkn_alchemy",
+        name = "Alchemy",
         -- this might become an xml to load? that way people could design specialer packs
-        image_filepath = "mods/gkbrkn_noita/files/gkbrkn/packs/critical_hits/pack.png", -- the path to the pack image
+        image_filepath = "mods/gkbrkn_noita/files/gkbrkn/packs/pack.png", -- the path to the pack image
         custom_xml = nil, -- this would contain a pack entity that might have cool legendary effects
         author = "goki", -- your name
         cards_in_pack = 5, -- this is how many cards the player will get when they buy the pack (default 5)
@@ -81,87 +161,171 @@ packs = {
         validation_callback = nil, -- a function callback to see if this can spawn. ignore for the most part
         actions = {
             {
-                id = "SWAPPER_PROJECTILE",
+                id = "ACIDSHOT",
                 weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "CIRCLE_ACID",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "MATERIAL_ACID",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "MATERIAL_CEMENT",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "BLOOD_TO_ACID",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "TOXIC_TO_ACID",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "SEA_ACID",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "SEA_ACID_GAS",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "CLOUD_ACID",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "ACID_TRAIL",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+            {
+                id = "",
+                weight = 5,
+                limit_per_pack = 1,
+            },
+        }
+    },
+    ]]
+    {
+        id = "gkbrkn_critical_hits",
+        name = "Critical Hits",
+        -- this might become an xml to load? that way people could design specialer packs
+        image_filepath = "mods/gkbrkn_noita/files/gkbrkn/packs/critical_hits/pack.png", -- the path to the pack image
+        custom_xml = nil, -- this would contain a pack entity that might have cool legendary effects
+        author = "goki", -- your name
+        weight = 1, -- the likelihood that this pack will show up over other packs (higher is more often)
+        limit_per_run = -1, -- the max amount this pack can spawn in a run. -1 is no limit
+        validation_callback = nil, -- a function callback to see if this can spawn. ignore for the most part
+        actions = {
+            {
+                id = "SWAPPER_PROJECTILE",
+                rarity = RARITY.VeryRare,
                 limit_per_pack = 1,
             },
             {
                 id = "CRITICAL_HIT",
-                weight = 5,
+                rarity = RARITY.VeryRare,
                 limit_per_pack = 1,
             },
             {
                 id = "LIGHT_BULLET",
-                weight = 60,
+                rarity = RARITY.Common,
                 limit_per_pack = 3,
             },
             {
                 id = "LIGHT_BULLET_TRIGGER",
-                weight = 20,
+                rarity = RARITY.Uncommon,
                 limit_per_pack = 1,
             },
             {
                 id = "LIGHT_BULLET_TRIGGER_2",
-                weight = 10,
+                rarity = RARITY.Rare,
                 limit_per_pack = 1,
             },
             {
                 id = "LIGHT_BULLET_TIMER",
-                weight = 3,
+                rarity = RARITY.Uncommon,
                 limit_per_pack = 1,
             },
             {
                 id = "BULLET",
-                weight = 50,
+                rarity = RARITY.Common,
                 limit_per_pack = 2,
             },
             {
                 id = "BULLET_TRIGGER",
-                weight = 10,
+                rarity = RARITY.Uncommon,
                 limit_per_pack = 1,
             },
             {
                 id = "BULLET_TIMER",
-                weight = 10,
+                rarity = RARITY.Uncommon,
                 limit_per_pack = 1,
             },
             {
                 id = "HEAVY_BULLET",
-                weight = 30,
+                rarity = RARITY.Uncommon,
                 limit_per_pack = 1,
             },
             {
                 id = "HEAVY_BULLET_TRIGGER",
-                weight = 10,
+                rarity = RARITY.Rare,
                 limit_per_pack = 1,
             },
             {
                 id = "HEAVY_BULLET_TIMER",
-                weight = 10,
+                rarity = RARITY.Rare,
                 limit_per_pack = 1,
             },
             {
                 id = "HITFX_BURNING_CRITICAL_HIT",
-                weight = 1,
+                rarity = RARITY.Legendary,
                 limit_per_pack = 1,
             },
             {
                 id = "HITFX_CRITICAL_WATER",
-                weight = 1,
+                rarity = RARITY.Legendary,
                 limit_per_pack = 1,
             },
             {
                 id = "HITFX_CRITICAL_OIL",
-                weight = 1,
+                rarity = RARITY.Legendary,
                 limit_per_pack = 1,
             },
             {
                 id = "HITFX_CRITICAL_BLOOD",
-                weight = 1,
+                rarity = RARITY.Legendary,
                 limit_per_pack = 1,
             }
         }
-    },
+    }--[[,
     {
         id = "pasta_1",
         name = "Hard to Breathe",
@@ -617,5 +781,5 @@ packs = {
                 limit_per_pack = 1,
             }
         }
-    },
+    },]]
 };

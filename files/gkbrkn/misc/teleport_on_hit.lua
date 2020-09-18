@@ -94,7 +94,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
             EntitySetTransform( entity, nearest_location.x + SPAWN_OFFSET.x, nearest_location.y + SPAWN_OFFSET.y );
             if not MAINTAIN_VELOCITY then
                 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
-                ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+                ComponentSetValue2( velocity, "mVelocity", 0, 0 );
             end
             if TELEPORT_MESSAGE ~= nil then
                 GamePrintImportant( TELEPORT_MESSAGE.text or "", TELEPORT_MESSAGE.note or "" );

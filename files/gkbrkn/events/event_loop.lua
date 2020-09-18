@@ -55,7 +55,7 @@ async_loop(
                     local player_entity = EntityGetWithTag( "player_unit" )[1];
                     local generation = next_event.generator( player_entity );
                     if generation.message then
-		                GamePrintImportant( generation.message, generation.note );
+		                GamePrintImportant( generation.message, generation.note or "" );
                     end
                     local status, err = pcall( generation.callback( player_entity ) );
                     if err ~= nil then

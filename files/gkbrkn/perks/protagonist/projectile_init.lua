@@ -4,13 +4,13 @@ dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
-    local shooter = ComponentGetValue( projectile, "mWhoShot" );
+    local shooter = ComponentGetValue2( projectile, "mWhoShot" );
     local health_ratio = 1;
     local damage_models = EntityGetComponent( shooter, "DamageModelComponent" );
     if damage_models ~= nil then
         for i,damage_model in ipairs( damage_models ) do
-            local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
-            local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+            local current_hp = ComponentGetValue2( damage_model, "hp" );
+            local max_hp = ComponentGetValue2( damage_model, "max_hp" );
             local ratio = current_hp / max_hp;
             if ratio < health_ratio then
                 health_ratio = ratio;

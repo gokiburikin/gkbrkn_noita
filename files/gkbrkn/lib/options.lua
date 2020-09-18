@@ -122,6 +122,10 @@ local options = {
     Events = { EnabledFlag = "gkbrkn_events", },
     AutoHide = { EnabledFlag = "gkbrkn_auto_hide", },
     PerkOptions = {
+        MagicFocus = {
+            DecayFrames = 60,
+            ChargeFrames = 240,
+        },
         BloodMagic = {
             BloodToManaRatio = 1,
             FreeAlwaysCasts = true,

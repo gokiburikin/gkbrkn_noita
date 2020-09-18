@@ -56,22 +56,22 @@ function generate_gun( cost, level, force_unshuffle )
     end
 
     for _,wand in pairs( local_wands ) do
-        local ability = FindFirstComponentByType( wand, "AbilityComponent" );
+        local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
         if HasFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
-                local item = FindFirstComponentByType( child, "ItemComponent" );
+                local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
                 local permanent_action = false;
                 if item ~= nil then
-                    if ComponentGetValue( item, "permanently_attached" ) == "1" then
+                    if ComponentGetValue2( item, "permanently_attached" ) == true then
                         permanent_action = true;
                     end
                 end
                 EntityRemoveFromParent( child );
                 local child_to_return = child;
-                local components = EntityGetAllComponents( child );
-                for _, component in ipairs( components ) do
-                    local action_id = ComponentGetValue( component, "action_id" );
+                local item_action = EntityGetFirstComponentIncludingDisabled( child, "ItemActionComponent" );
+                if item_action then
+                    local action_id = ComponentGetValue2( item_action, "action_id" );
                     if action_id ~= nil and action_id ~= "" then
                         -- TODO an assert will fail if the action type pool is empty
                         -- not too much that can be done about this right now, doesn't show up outside of dev
@@ -82,7 +82,7 @@ function generate_gun( cost, level, force_unshuffle )
                             local item = EntityGetFirstComponent( child_to_return, "ItemComponent" );
                             if item ~= nil then
                                 if permanent_action == true  then
-                                    ComponentSetValue( item, "permanently_attached", "1" );
+                                    ComponentSetValue2( item, "permanently_attached", true );
                                 end
                             end
                             EntitySetComponentsWithTagEnabled( child_to_return, "enabled_in_world", false );
@@ -94,18 +94,18 @@ function generate_gun( cost, level, force_unshuffle )
         elseif HasFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
-                local item = FindFirstComponentByType( child, "ItemComponent" );
+                local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
                 local permanent_action = false;
                 if item ~= nil then
-                    if ComponentGetValue( item, "permanently_attached" ) == "1" then
+                    if ComponentGetValue2( item, "permanently_attached" ) == true then
                         permanent_action = true;
                     end
                 end
                 EntityRemoveFromParent( child );
                 local child_to_return = child;
-                local components = EntityGetAllComponents( child );
-                for _, component in ipairs( components ) do
-                    local action_id = ComponentGetValue( component, "action_id" );
+                local item_action = EntityGetFirstComponentIncludingDisabled( child, "ItemActionComponent" );
+                if item_action then
+                    local action_id = ComponentGetValue2( item_action, "action_id" );
                     if action_id ~= nil and action_id ~= "" and Random() <= chance_to_replace then
                         -- TODO an assert will fail if the action type pool is empty
                         -- not too much that can be done about this right now, doesn't show up outside of dev
@@ -115,7 +115,7 @@ function generate_gun( cost, level, force_unshuffle )
                             local item = EntityGetFirstComponent( child_to_return, "ItemComponent" );
                             if item ~= nil then
                                 if permanent_action == true  then
-                                    ComponentSetValue( item, "permanently_attached", "1" );
+                                    ComponentSetValue2( item, "permanently_attached", true );
                                 end
                             end
                             EntitySetComponentsWithTagEnabled( child_to_return, "enabled_in_world", false );
@@ -131,9 +131,9 @@ function generate_gun( cost, level, force_unshuffle )
 
         if ability ~= nil then
             if GameHasFlagRun( FLAGS.OrderWandsOnly ) then
-                ability_component_set_stat( ability, "shuffle_deck_when_empty", "0" );
+                ability_component_set_stat( ability, "shuffle_deck_when_empty", false );
             elseif GameHasFlagRun( FLAGS.ShuffleWandsOnly ) then
-                ability_component_set_stat( ability, "shuffle_deck_when_empty", "1" );
+                ability_component_set_stat( ability, "shuffle_deck_when_empty", true );
             end
 
             if wandsmith_stacks > 0 then

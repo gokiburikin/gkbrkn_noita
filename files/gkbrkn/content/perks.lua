@@ -1,10 +1,10 @@
 dofile_once( "data/scripts/lib/utilities.lua" );
-dofile_once("data/scripts/gun/procedural/gun_procedural.lua" );
+dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
-dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 
 
 table.insert( perk_list,
@@ -28,9 +28,9 @@ table.insert( perk_list,
         local damage_models = EntityGetComponent( entity_who_picked, "DamageModelComponent" );
         for index,damage_model in pairs( damage_models ) do
             for damage_type,adjustment in pairs( adjustments ) do
-                local multiplier = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                local multiplier = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
                 multiplier = multiplier * adjustment;
-                ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( multiplier ) );
+                ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, multiplier );
             end
         end
 	end, true
@@ -46,15 +46,15 @@ table.insert( perk_list,
     generate_perk_entry( "GKBRKN_DIPLOMATIC_IMMUNITY", "diplomatic_immunity", false, function( entity_perk_item, entity_who_picked, item_name )
         GameAddFlagRun( FLAGS.CalmGods );
         GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", "0" );
-	end
+	end, nil, nil, false
 ) );
 
 function does_wand_have_an_always_cast( wand )
     local children = EntityGetAllChildren( wand ) or {};
     for _,action in pairs( children ) do
-        local item_component = FindFirstComponentByType( action, "ItemComponent" );
+        local item_component = EntityGetFirstComponentIncludingDisabled( action, "ItemComponent" );
         if item_component ~= nil then
-            if ComponentGetValue( item_component, "permanently_attached" ) == "1" then
+            if ComponentGetValue2( item_component, "permanently_attached" ) == true then
                 return true;
             end
         end
@@ -82,7 +82,7 @@ table.insert( perk_list,
             if #filtered_wands > 0 then
                 wands = filtered_wands;
                 local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
-                local active_item = tonumber( ComponentGetValue( inventory2, "mActiveItem" ) );
+                local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
                 for _,wand in pairs( wands ) do
                     if wand == active_item then
                         base_wand = wand;
@@ -99,24 +99,24 @@ table.insert( perk_list,
             --[[ TODO this is probably fine to not run since the slot should exist already
             local ability_component = WandGetAbilityComponent( base_wand );
                 if ability_component ~= nil then
-                local deck_capacity = tonumber( ComponentObjectGetValue( ability_component, "gun_config", "deck_capacity" ) );
-                ComponentObjectSetValue( ability_component, "gun_config", "deck_capacity", tostring( deck_capacity - 1 ) );
+                local deck_capacity = ComponentObjectGetValue2( ability_component, "gun_config", "deck_capacity" );
+                ComponentObjectSetValue2( ability_component, "gun_config", "deck_capacity", deck_capacity - 1 );
             end
             ]]
 
             local actions = {};
             for i,v in ipairs( children ) do
-                local components = EntityGetAllComponents( v );
-                for _,component in pairs(components) do
-                    if ComponentGetValue( component, "permanently_attached" ) == "1" then
-                        table.insert( actions, component );
+                local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" )
+                for _,item in pairs( items or {}) do
+                    if ComponentGetValue2( item, "permanently_attached" ) == true then
+                        table.insert( actions, item );
                     end
                 end
             end
             if #actions > 0 then
                 local to_attach = random_from_array( actions );
                 if to_attach ~= nil then
-                    ComponentSetValue( to_attach, "permanently_attached", "0" );
+                    ComponentSetValue2( to_attach, "permanently_attached", false );
                 end
             end
         end
@@ -130,10 +130,10 @@ table.insert( perk_list,
         if base_wand ~= nil then
             local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/placeholder_wand.xml", x, y-8 );
             EntitySetVariableNumber( copy_wand, "gkbrkn_duplicate_wand", 1 );
-            CopyWand( base_wand, copy_wand );
+            wand_copy( base_wand, copy_wand );
             local item = EntityGetFirstComponent( copy_wand, "ItemComponent" );
             if item ~= nil then
-                ComponentSetValue( item, "play_hover_animation", "1" );
+                ComponentSetValue2( item, "play_hover_animation", true );
             end
         end
 	end
@@ -173,11 +173,11 @@ table.insert( perk_list,
         local damagemodels = EntityGetComponent( entity_who_picked, "DamageModelComponent" );
         if damagemodels ~= nil then
             for i,damagemodel in ipairs( damagemodels ) do
-                ComponentSetValue( damagemodel, "blood_material", "gold" );
-                ComponentSetValue( damagemodel, "blood_spray_material", "gold" );
-                ComponentSetValue( damagemodel, "blood_multiplier", "0.2" );
-                ComponentSetValue( damagemodel, "blood_sprite_directional", "data/particles/bloodsplatters/bloodsplatter_directional_yellow_$[1-3].xml" );
-                ComponentSetValue( damagemodel, "blood_sprite_large", "data/particles/bloodsplatters/bloodsplatter_yellow_$[1-3].xml" );
+                ComponentSetValue2( damagemodel, "blood_material", "gold" );
+                ComponentSetValue2( damagemodel, "blood_spray_material", "gold" );
+                ComponentSetValue2( damagemodel, "blood_multiplier", 0.2 );
+                ComponentSetValue2( damagemodel, "blood_sprite_directional", "data/particles/bloodsplatters/bloodsplatter_directional_yellow_$[1-3].xml" );
+                ComponentSetValue2( damagemodel, "blood_sprite_large", "data/particles/bloodsplatters/bloodsplatter_yellow_$[1-3].xml" );
             end
         end
 	end, true
@@ -192,7 +192,7 @@ table.insert( perk_list,
 table.insert( perk_list, 
     generate_perk_entry( "GKBRKN_HYPER_CASTING", "hyper_casting", false, function( entity_perk_item, entity_who_picked, item_name )
         EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_hyper_casting", 0, function( value ) return tonumber( value ) + 1; end );
-	end
+	end, nil, nil, false
 ));
 
 table.insert( perk_list,
@@ -207,16 +207,16 @@ table.insert( perk_list,
         local components = EntityGetComponent( entity_who_picked, "DamageModelComponent" );
         if components ~= nil then
             for i,dataComponent in pairs( components ) do
-                ComponentSetValue( dataComponent, "minimum_knockback_force", "100000" );
+                ComponentSetValue2( dataComponent, "minimum_knockback_force", 100000 );
             end
         end
-	end
+	end, nil, nil, false
 ));
 
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_LEAD_BOOTS", "lead_boots", false, function( entity_perk_item, entity_who_picked, item_name )
         EntitySetVariableNumber( entity_who_picked, "gkbrkn_lead_boots", 1 );
-	end
+	end, nil, nil, false
 ) );
 
 
@@ -235,14 +235,14 @@ table.insert( perk_list,
         if #valid_wands > 0 then
             local base_wand = random_from_array( valid_wands );
             GameKillInventoryItem( entity_who_picked, base_wand );
-            EntityAddChild( entity_who_picked, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/living_wand/anchor.xml" ) );
+            EntityAddChild( entity_who_picked, EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/living_wand/anchor.xml" ) );
 
-            local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/living_wand/ghost.xml", x, y );
+            local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/living_wand/ghost.xml", x, y );
             local living_wand = EntityGetWithTag( "gkbrkn_living_wand_"..tostring(copy_wand) )[1];
-            CopyWand( base_wand, living_wand );
+            wand_copy( base_wand, living_wand );
 
         end
-	end, true
+	end, true, nil, false
 ) );
 
 local tracker_variable = "gkbrkn_lost_treasure_tracker";
@@ -252,16 +252,16 @@ table.insert( perk_list,
         local tracker = EntityGetFirstComponent( entity_who_picked, "VariableStorageComponent", tracker_variable );
         if tracker ~= nil then
             local spawner = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/spawner.xml", 0, 0 );
-            local current_lost_treasure_count = tonumber(ComponentGetValue( tracker, "value_string" ));
+            local current_lost_treasure_count = tonumber(ComponentGetValue2( tracker, "value_string" ));
             EntityAddComponent( spawner, "VariableStorageComponent", {
                 _tags=tracker_variable,
                 name=tracker_variable,
                 value_string=tostring(current_lost_treasure_count)
             });
-            ComponentSetValue( tracker, "value_string", "0" )
+            ComponentSetValue2( tracker, "value_string", "0" )
             EntityAddChild( entity_who_picked, spawner );
         end
-	end
+	end, nil, nil, false
 ) );
 
 table.insert( perk_list,
@@ -298,14 +298,14 @@ table.insert( perk_list,
                 value_string="0"
             });
         end
-        ComponentSetValue( succ_bonus, "value_string", tostring( tonumber( ComponentGetValue( succ_bonus, "value_string" ) + 1 ) ) );
+        ComponentSetValue2( succ_bonus, "value_string", tostring( tonumber( ComponentGetValue2( succ_bonus, "value_string" ) + 1 ) ) );
 	end
 ) );
 
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_MEGACAST", "megacast", false, function( entity_perk_item, entity_who_picked, item_name )
         EntitySetVariableNumber( entity_who_picked, "gkbrkn_draw_remaining", 1 );
-	end
+	end, nil, nil, false
 ) );
 
 table.insert( perk_list, 
@@ -313,6 +313,7 @@ table.insert( perk_list,
         local x, y = EntityGetTransform( entity_who_picked );
 
         local held_wands = {};
+        local first_wand = nil;
         local active_wand = nil;
         local children = EntityGetAllChildren( entity_who_picked ) or {};
         local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
@@ -324,29 +325,36 @@ table.insert( perk_list,
                 end
             end
             for _,wand in pairs( held_wands ) do
-                local active_item = tonumber( ComponentGetValue( inventory2, "mActiveItem" ) );
+                local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
                 if wand == active_item then
                     active_wand = wand;
+                end
+                if first_wand == nil then
+                    first_wand = wand;
                 end
             end
         end
 
+        if active_wand == nil then
+            active_wand = first_wand;
+        end
+
         if #held_wands > 0 then
             local comparisons = {
-                shuffle_deck_when_empty=function( current_value, previous_value ) if current_value == "false" then return current_value; end end,
-                actions_per_round=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-                speed_multiplier=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-                deck_capacity=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-                reload_time=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
-                fire_rate_wait=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
-                spread_degrees=function( current_value, previous_value ) if tonumber(previous_value) > tonumber(current_value) then return current_value; end end,
-                mana_charge_speed=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-                mana_max=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
-                mana=function( current_value, previous_value ) if tonumber(previous_value) < tonumber(current_value) then return current_value; end end,
+                shuffle_deck_when_empty     = function( current_value, previous_value ) if current_value == false then return current_value; end end,
+                actions_per_round           = function( current_value, previous_value ) if previous_value < current_value then return current_value; end end,
+                speed_multiplier            = function( current_value, previous_value ) if previous_value < current_value then return current_value; end end,
+                deck_capacity               = function( current_value, previous_value ) if previous_value < current_value then return current_value; end end,
+                reload_time                 = function( current_value, previous_value ) if previous_value > current_value then return current_value; end end,
+                fire_rate_wait              = function( current_value, previous_value ) if previous_value > current_value then return current_value; end end,
+                spread_degrees              = function( current_value, previous_value ) if previous_value > current_value then return current_value; end end,
+                mana_charge_speed           = function( current_value, previous_value ) if previous_value < current_value then return current_value; end end,
+                mana_max                    = function( current_value, previous_value ) if previous_value < current_value then return current_value; end end,
+                mana                        = function( current_value, previous_value ) if previous_value < current_value then return current_value; end end,
             }
 
             local best_values = {
-                shuffle_deck_when_empty="true",
+                shuffle_deck_when_empty=true,
                 actions_per_round=1,
                 speed_multiplier=1,
                 deck_capacity=0,
@@ -391,8 +399,8 @@ table.insert( perk_list,
             if inventory2 ~= nil then
                 local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
                 if inventory2 ~= nil then
-                    ComponentSetValue( inventory2, "mInitialized", 0 );
-                    ComponentSetValue( inventory2, "mForceRefresh", 1 );
+                    ComponentSetValue2( inventory2, "mInitialized", false );
+                    ComponentSetValue2( inventory2, "mForceRefresh", true );
                 end
             end
 
@@ -407,10 +415,10 @@ table.insert( perk_list,
 
             local item = EntityGetFirstComponent( copy_wand, "ItemComponent" );
             if item ~= nil then
-                ComponentSetValue( item, "play_hover_animation", "1" );
+                ComponentSetValue2( item, "play_hover_animation", true );
             end
         end
-	end
+	end, nil, nil, false
 ) );
 
 table.insert( perk_list,
@@ -425,6 +433,7 @@ table.insert( perk_list,
 	end, true
 ) );
 
+-- TODO this is borken
 table.insert( perk_list, 
     generate_perk_entry( "GKBRKN_PROMOTE_SPELL", "promote_spell", false, function( entity_perk_item, entity_who_picked, item_name )
         local base_wand = nil;
@@ -446,7 +455,7 @@ table.insert( perk_list,
             if #filtered_wands > 0 then
                 wands = filtered_wands;
                 local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" );
-                local active_item = tonumber( ComponentGetValue( inventory2, "mActiveItem" ) );
+                local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
                 for _,wand in pairs( wands ) do
                     if wand == active_item then
                         base_wand = wand;
@@ -462,23 +471,23 @@ table.insert( perk_list,
             local children = EntityGetAllChildren( base_wand );
             local ability_component = WandGetAbilityComponent( base_wand );
                 if ability_component ~= nil then
-                local deck_capacity = tonumber( ComponentObjectGetValue( ability_component, "gun_config", "deck_capacity" ) );
-                ComponentObjectSetValue( ability_component, "gun_config", "deck_capacity", tostring( deck_capacity + 1 ) );
+                local deck_capacity = ComponentObjectGetValue2( ability_component, "gun_config", "deck_capacity" );
+                ComponentObjectSetValue2( ability_component, "gun_config", "deck_capacity", deck_capacity + 1 );
             end
 
             local actions = {};
             for i,v in ipairs( children ) do
-                local components = EntityGetAllComponents( v );
-                for _,component in pairs(components) do
-                    if ComponentGetValue( component, "permanently_attached" ) == "0" then
-                        table.insert( actions, component );
+                local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" )
+                for _,item in pairs( items or {}) do
+                    if ComponentGetValue2( item, "permanently_attached" ) == true then
+                        table.insert( actions, item );
                     end
                 end
             end
             if #actions > 0 then
                 local to_attach = random_from_array( actions );
                 if to_attach ~= nil then
-                    ComponentSetValue( to_attach, "permanently_attached", "1" );
+                    ComponentSetValue2( to_attach, "permanently_attached", true );
                 end
             end
             --wand_lock( base_wand );
@@ -509,12 +518,12 @@ table.insert( perk_list,
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_RESILIENCE", "resilience", true, function( entity_perk_item, entity_who_picked, item_name )
         TryAdjustDamageMultipliers( entity_who_picked, {
-            fire=0.33,
-            radioactive=0.33,
-            poison=0.33,
-            electricity=0.33,
+            fire=0.5,
+            radioactive=0.5,
+            poison=0.5,
+            electricity=0.5,
         } );
-	end, true
+	end
 ) );
 
 table.insert( perk_list,
@@ -522,6 +531,12 @@ table.insert( perk_list,
         EntityAddComponent( entity_who_picked, "LuaComponent", {
             script_damage_received="mods/gkbrkn_noita/files/gkbrkn/perks/short_temper/damage_received.lua"
         });
+    end, nil, nil, false
+) );
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MAGIC_FOCUS", "magic_focus", true, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_magic_focus_stacks", 0.0, function( value ) return value + 1; end );
     end
 ) );
 
@@ -536,7 +551,7 @@ table.insert( perk_list,
         EntityAddComponent( entity_who_picked, "LuaComponent", {
             script_damage_received="mods/gkbrkn_noita/files/gkbrkn/perks/swapper/damage_received.lua"
         });
-	end
+	end, nil, nil, false
 ) );
 
 table.insert( perk_list,
@@ -552,7 +567,7 @@ table.insert( perk_list,
             script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/treasure_radar/update.lua",
             execute_every_n_frame = "1",
         } );
-	end
+	end, nil, nil, false
 ) );
 
 table.insert( perk_list,

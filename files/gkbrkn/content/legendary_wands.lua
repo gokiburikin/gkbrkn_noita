@@ -29,7 +29,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 2, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -63,7 +63,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -97,7 +97,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -131,7 +131,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -160,7 +160,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -189,7 +189,7 @@ legendary_wands = {
     wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
             },
@@ -222,7 +222,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -259,7 +259,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -295,7 +295,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -330,7 +330,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -357,7 +357,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -389,7 +389,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -422,7 +422,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 9, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -452,7 +452,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -487,7 +487,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -518,7 +518,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 12, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -566,7 +566,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -601,7 +601,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -638,7 +638,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -674,7 +674,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -714,7 +714,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -753,7 +753,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -792,7 +792,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -826,7 +826,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -865,7 +865,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -906,7 +906,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -944,7 +944,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -974,7 +974,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -1009,7 +1009,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -1041,7 +1041,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 5, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -1073,7 +1073,7 @@ legendary_wands = {
         wand = {
             name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 1, -- shuffle
+                shuffle_deck_when_empty = true, -- shuffle
                 actions_per_round = 2, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -1110,7 +1110,7 @@ legendary_wands = {
         wand = {
             name = "Projectile Thrower",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 1, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },

@@ -4,17 +4,16 @@ local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local keep = false;
-    local shooter = tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) or 0;
-    local components = EntityGetAllComponents( shooter ) or {};
-    for _,component in pairs( components ) do
-        if ComponentGetTypeName( component ) == "ControlsComponent" then
-        local shooter = tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) or 0;
-            local handle = true;
-            --if ComponentGetValue( component, "mButtonDownFire" ) == "1" then
-            --    handle = true;
-            --end
-            if handle then
-                local ax, ay = ComponentGetValueVector2( component, "mAimingVector" );
+    local shooter = ComponentGetValue2( projectile, "mWhoShot" ) or 0;
+    local control = EntityGetFirstComponentIncludingDisabled( shooter,"ControlsComponent" );
+    if control then
+        local handle = true;
+        --if ComponentGetValue( component, "mButtonDownFire" ) == "1" then
+        --    handle = true;
+        --end
+        if handle then
+            local ax, ay = ComponentGetValue2( control, "mAimingVectorNormalized" );
+            if ax ~= 0 and ay ~= 0 then
                 local aim_angle = math.atan2( ay, ax );
                 local angle_offset = EntityGetVariableNumber( entity, "gkbrkn_magic_hand_angle_offset", 0 );
 
@@ -29,7 +28,9 @@ if projectile ~= nil then
 
                 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
                 if velocity ~= nil then
-                    ComponentSetValueVector2( velocity, "mVelocity", math.cos( aim_angle + angle_offset ), math.sin( aim_angle + angle_offset ) );
+                    local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
+                    local magnitude =  EntityGetVariableNumber( entity, "gkbrkn_magic_hand_magnitude", math.sqrt( vx * vx + vy * vy ) );
+                    ComponentSetValue2( velocity, "mVelocity", math.cos( aim_angle + angle_offset ) * magnitude , math.sin( aim_angle + angle_offset ) * magnitude );
                 end
             end
         end

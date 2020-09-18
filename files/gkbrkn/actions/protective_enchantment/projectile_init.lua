@@ -4,7 +4,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
-    EntitySetVariableNumber( entity, "gkbrkn_shooter", tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) );
+    EntitySetVariableNumber( entity, "gkbrkn_shooter", ComponentGetValue2( projectile, "mWhoShot" ) );
     make_projectile_not_damage_shooter( entity );
     adjust_entity_damage( entity,
         function( current_damage ) return current_damage * 0.3; end,

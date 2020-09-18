@@ -12,9 +12,9 @@ local edit_callbacks = {
 			
 			local damagemodels = EntityGetComponent( entity_who_picked, "DamageModelComponent" ) or {};
             for _,damagemodel in pairs( damagemodels ) do
-                local projectile_resistance = tonumber( ComponentObjectGetValue( damagemodel, "damage_multipliers", "projectile" ) );
+                local projectile_resistance = ComponentObjectGetValue2( damagemodel, "damage_multipliers", "projectile" );
                 projectile_resistance = projectile_resistance * 1.26;
-                ComponentObjectSetValue( damagemodel, "damage_multipliers", "projectile", tostring( projectile_resistance ) );
+                ComponentObjectSetValue2( damagemodel, "damage_multipliers", "projectile", projectile_resistance );
             end
 		end
     end,
@@ -57,16 +57,16 @@ local edit_callbacks = {
             local damage_models = EntityGetComponent( entity_who_picked, "DamageModelComponent" );
             for index,damage_model in pairs( damage_models ) do
                 for damage_type,adjustment in pairs( adjustments ) do
-                    local multiplier = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                    local multiplier = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
                     multiplier = multiplier * adjustment;
-                    ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( multiplier ) );
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, multiplier );
                 end
             end
             EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_damage_multiplier", 1.0, function( amount ) return amount * 3; end );
             local kicks = EntityGetComponent( entity_who_picked, "KickComponent" ) or {};
             for _,model in pairs( kicks ) do
-                local kick_damage = tonumber( ComponentGetMetaCustom( model, "kick_damage" ) ) * 3;
-                ComponentSetMetaCustom( model, "kick_damage", kick_damage );
+                local kick_damage = tonumber( ComponentGetValue2( model, "kick_damage" ) ) * 3;
+                ComponentsetValue2( model, "kick_damage", kick_damage );
             end
 		end
     end

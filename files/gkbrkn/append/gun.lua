@@ -92,6 +92,12 @@ function deck_snapshot()
 end
 
 function peek_draw_action( shot, instant_reload_if_empty )
+    --local _deck = deck;
+    --local _hand = hand;
+    --local _discarded = discarded;
+    --deck = deck_from_actions( deck );
+    --hand = deck_from_actions( hand );
+    --discarded = deck_from_actions( discarded );
     local action = nil;
 
     state_cards_drawn = state_cards_drawn + 1;
@@ -130,6 +136,10 @@ function peek_draw_action( shot, instant_reload_if_empty )
         play_action( action );
     end
 
+    --deck = _deck;
+    --hand = _hand;
+    --discarded = _discarded;
+
     return true;
 end
 
@@ -163,6 +173,12 @@ function peek_draw_actions( how_many, instant_reload_if_empty, remove_tail )
     end
 
     gkbrkn.draw_actions_capture = old_capture;
+
+    --if gkbrkn.draw_actions_capture then
+    --    for _,action in pairs( capture ) do
+    --        table.insert( gkbrkn.draw_actions_capture, action );
+    --    end
+    --end
 
     gkbrkn._draw_action = _draw_action;
     gkbrkn._add_projectile = _add_projectile;
@@ -255,7 +271,7 @@ function order_deck()
                 local components = (EntityGetAllComponents( wand_child, "ItemActionComponent" ) or {});
                 for _,component in pairs(components) do
                     if ComponentGetTypeName( component ) == "ItemActionComponent" then
-                        if ComponentGetValue( component, "action_id" ) == "GKBRKN_ORDER_DECK" then
+                        if ComponentGetValue2( component, "action_id" ) == "GKBRKN_ORDER_DECK" then
                             force_sorted = true;
                         end
                     end
@@ -326,8 +342,8 @@ function play_action( action )
             local used_mana = action.mana;
             local damage_models = EntityGetComponent( player, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-                ComponentSetValue( damage_model, "hp", tostring( hp - blood_to_mana_ratio * used_mana ) );
+                local hp = tonumber( ComponentGetValue2( damage_model, "hp" ) );
+                ComponentSetValue2( damage_model, "hp", hp - blood_to_mana_ratio * used_mana );
             end
         end
     end
@@ -392,8 +408,8 @@ function draw_action( instant_reload_if_empty )
             mana = old_mana;
             local damage_models = EntityGetComponent( player, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
-                ComponentSetValue( damage_model, "hp", tostring( hp - used_mana / 25 ) );
+                local hp = ComponentGetValue2( damage_model, "hp" );
+                ComponentSetValue2( damage_model, "hp", hp - used_mana / 25 );
             end
         else
             result = gkbrkn._draw_action( instant_reload_if_empty );
@@ -418,6 +434,10 @@ function draw_action( instant_reload_if_empty )
     end
     
     if gkbrkn.draw_action_stack_size == 0 then
+        local calibration_level = EntityGetVariableNumber( player, "gkbrkn_magic_focus_stacks", 0 );
+        local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );
+        local last_calibration_percent = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_percent", 0 );
+        local calibration_multiplier = get_magic_focus_multiplier( last_calibration_shot, last_calibration_percent );
         local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
         local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
         if #deck == 0 then
@@ -425,10 +445,13 @@ function draw_action( instant_reload_if_empty )
         end
         c.fire_rate_wait = math.min( c.fire_rate_wait, c.fire_rate_wait * math.pow( 0.5, rapid_fire_level ) );
         c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
+        c.spread_degrees = c.spread_degrees - c.spread_degrees * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 10;
+        c.fire_rate_wait = c.fire_rate_wait - c.fire_rate_wait * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
+        current_reload_time = current_reload_time - current_reload_time * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
         if lead_boots > 0 then
             local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );
             if character_data ~= nil then
-                if ComponentGetValue( character_data, "is_on_ground" ) == "1" then
+                if ComponentGetValue2( character_data, "is_on_ground" ) == true then
                     shot_effects.recoil_knockback = shot_effects.recoil_knockback - 10000;
                 end
             end
@@ -489,7 +512,7 @@ function add_projectile( filepath )
     end
 
     if gkbrkn.skip_projectiles ~= true then
-        if gkbrkn.add_projectile_capture_callback ~= nil then
+        if gkbrkn.add_projectile_capture_callback ~= nil and gkbrkn.peeking == 0 then
             gkbrkn.add_projectile_capture_callback( filepath, trigger_action_draw_count, trigger_delay_frames );
         elseif trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
             gkbrkn._add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );

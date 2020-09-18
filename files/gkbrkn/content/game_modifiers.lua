@@ -72,7 +72,7 @@ game_modifiers = {
                     end);
                     EntitySetComponentIsEnabled( player_entity, damage_model, true );
                     local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-                    ComponentSetValue( polymorph, "frames", 1 );
+                    ComponentSetValue2( polymorph, "frames", 1 );
                 end
 
                 local x, y = EntityGetTransform( player_entity );
@@ -103,7 +103,7 @@ game_modifiers = {
                     end);
                     EntitySetComponentIsEnabled( player_entity, damage_model, true );
                     local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-                    ComponentSetValue( polymorph, "frames", 1 );
+                    ComponentSetValue2( polymorph, "frames", 1 );
                 end
 
                 local x, y = EntityGetTransform( player_entity );
@@ -134,7 +134,7 @@ game_modifiers = {
                     end);
                     EntitySetComponentIsEnabled( player_entity, damage_model, true );
                     local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-                    ComponentSetValue( polymorph, "frames", 1 );
+                    ComponentSetValue2( polymorph, "frames", 1 );
                 end
 
                 local x, y = EntityGetTransform( player_entity );

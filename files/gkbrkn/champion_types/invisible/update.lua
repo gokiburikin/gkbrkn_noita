@@ -18,5 +18,5 @@ for _,child in pairs( children ) do
 end
 
 for _,sprite in pairs( sprites ) do
-    ComponentSetValue( sprite, "alpha", "0.17" );
+    ComponentSetValue2( sprite, "alpha", 0.17 );
 end

@@ -1,5 +1,5 @@
 local entity = GetUpdatedEntityID();
 local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
 if projectile ~= nil then
-    ComponentSetValue( projectile, "penetrate_entities", 1 );
+    ComponentSetValue2( projectile, "penetrate_entities", true );
 end

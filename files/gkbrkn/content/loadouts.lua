@@ -53,7 +53,7 @@ loadouts = {
             {
                 name = "Speed Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
                 },
@@ -102,7 +102,7 @@ loadouts = {
             {
                 name = "Hero's Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -127,7 +127,7 @@ loadouts = {
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
             { { {"alcohol", 1000} } },
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             {"GKBRKN_PROTAGONIST"},
@@ -144,7 +144,7 @@ loadouts = {
             {
                 name = "Unstable Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -166,7 +166,7 @@ loadouts = {
             {
                 name = "Unstable Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -207,7 +207,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -230,7 +230,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -271,7 +271,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -295,7 +295,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -336,7 +336,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
                 },
@@ -360,7 +360,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -402,7 +402,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -426,7 +426,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -449,7 +449,7 @@ loadouts = {
         potions ={ -- potions
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "CRITICAL_HIT" }
@@ -466,7 +466,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 2.0 -- projectile speed multiplier (hidden)
                 },
@@ -489,7 +489,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 3, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -517,7 +517,7 @@ loadouts = {
             { { {"water", 2000} }, { { "oil", 2000 } }, { { "blood", 2000 } }, { { "alcohol", 2000 } }, { { "slime", 2000 } } },
             { { {"water", 2000} }, { { "oil", 2000 } }, { { "blood", 2000 } }, { { "alcohol", 2000 } }, { { "slime", 2000 } } },
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "GKBRKN_MATERIAL_COMPRESSION" },
@@ -535,7 +535,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -560,7 +560,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 2, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -590,7 +590,7 @@ loadouts = {
         potions ={ -- potions
             { { {"magic_liquid_teleportation", 200}, {"magic_liquid_charm", 200}, {"magic_liquid_movement_faster", 200}, {"magic_liquid_invisibility", 200}, {"water", 200} } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "EXTRA_MONEY_TRICK_KILL" },
@@ -607,7 +607,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -629,7 +629,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 2, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -653,7 +653,7 @@ loadouts = {
         potions ={ -- potions
             { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "ATTRACT_ITEMS" },
@@ -672,7 +672,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -696,7 +696,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -720,7 +720,7 @@ loadouts = {
         potions ={ -- potions
             { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "PROTECTION_FIRE" },
@@ -738,7 +738,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -764,7 +764,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -803,7 +803,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -829,7 +829,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -869,7 +869,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -896,7 +896,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -919,7 +919,7 @@ loadouts = {
         potions ={ -- potions
             { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
         }
@@ -935,7 +935,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -978,7 +978,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1073,7 +1073,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1096,7 +1096,7 @@ loadouts = {
         potions ={ -- potions
             { { {"water", 1000}  } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
             { "data/entities/items/starting_wand.xml" },
             { "data/entities/items/starting_bomb_wand.xml" },
         },
@@ -1115,7 +1115,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1140,7 +1140,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 2, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1182,7 +1182,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1212,7 +1212,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 2, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1252,7 +1252,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1282,7 +1282,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 2, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1340,7 +1340,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1367,7 +1367,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 2, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1407,7 +1407,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1436,7 +1436,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1460,7 +1460,7 @@ loadouts = {
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
             { { {"gunpowder_unstable", 1000} } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "GKBRKN_HYPER_CASTING" }
@@ -1477,7 +1477,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -1503,7 +1503,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1542,7 +1542,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1566,7 +1566,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
                 },
@@ -1608,7 +1608,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1636,7 +1636,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
                 },
@@ -1662,7 +1662,7 @@ loadouts = {
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
             { { {"radioactive_liquid", 1000} } },
         },
-        item ={ -- items
+        items ={ -- items
         },
         perks ={ -- perks
             { "PROTECTION_RADIOACTIVITY" }
@@ -1679,7 +1679,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 3, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1702,7 +1702,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.5 -- projectile speed multiplier (hidden)
                 },
@@ -1746,7 +1746,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1769,7 +1769,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1810,7 +1810,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1833,7 +1833,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1857,7 +1857,7 @@ loadouts = {
         potions ={ -- potions
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
         },
-        item ={ -- items
+        items ={ -- items
             { "data/entities/misc/custom_cards/bomb_holy.xml" },
         },
         perks ={ -- perks
@@ -1875,7 +1875,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1921,7 +1921,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -1944,7 +1944,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -1987,7 +1987,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 0.5 -- projectile speed multiplier (hidden)
                 },
@@ -2011,7 +2011,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2054,7 +2054,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 5, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2077,7 +2077,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2119,7 +2119,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2143,7 +2143,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2185,7 +2185,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2212,7 +2212,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2256,7 +2256,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2279,7 +2279,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 1, -- shuffle
+                    shuffle_deck_when_empty = true, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2321,7 +2321,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2343,7 +2343,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2385,7 +2385,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
                 },
@@ -2408,7 +2408,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2450,7 +2450,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2476,7 +2476,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2516,7 +2516,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 4, -- spells per cast
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
@@ -2547,7 +2547,7 @@ loadouts = {
             {
                 name = "Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -2587,7 +2587,7 @@ loadouts = {
             {
                 name = "Debug Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -2612,7 +2612,7 @@ loadouts = {
             {
                 name = "Debug Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -2637,7 +2637,7 @@ loadouts = {
             {
                 name = "Debug Wand",
                 stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
+                    shuffle_deck_when_empty = false, -- shuffle
                     actions_per_round = 1, -- spells per cast
                     speed_multiplier = 1 -- projectile speed multiplier (hidden)
                 },
@@ -2659,7 +2659,7 @@ loadouts = {
             {
                 name = "Wand",
             stats = {
-                shuffle_deck_when_empty = 0, -- shuffle
+                shuffle_deck_when_empty = false, -- shuffle
                 actions_per_round = 2, -- spells per cast
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
@@ -2713,10 +2713,10 @@ loadouts = {
             local x, y = EntityGetTransform( player );
             local target_dummy = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x + 500, y - 80 );
             local effect = GetGameEffectLoadTo( player, "EDIT_WANDS_EVERYWHERE", true );
-            if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
+            if effect ~= nil then ComponentSetValue2( effect, "frames", -1 ); end
             local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
             if inventory2 ~= nil then
-                ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
+                ComponentSetValue2( inventory2, "full_inventory_slots_y", 5 );
             end
             EntityLoad( "data/entities/items/pickup/goldnugget_10000.xml", x + 50, y - 30 );
             --EntityAddComponent( player, "LuaComponent", {

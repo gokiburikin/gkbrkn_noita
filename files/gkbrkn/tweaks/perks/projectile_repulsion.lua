@@ -11,7 +11,7 @@ if #projectiles > 0 then
     local direction_random = math.rad( Random( -30, 30 ) );
 	for _,projectile_entity in pairs( projectiles ) do
         local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
-        if tonumber( ComponentGetValue( projectile, "mWhoShot" ) ) ~= entity_id then
+        if ComponentGetValue2( projectile, "mWhoShot" ) ~= entity_id then
             local px, py = EntityGetTransform( projectile_entity );
             local distance_squared = ( x - px ) ^ 2 + ( y - py ) ^ 2;
             
@@ -24,7 +24,7 @@ if #projectiles > 0 then
                 local gravity_percent = math.max( ( distance_full_squared - distance_squared ) / distance_full_squared, 0.01 );
                 
                 for _,velocity in pairs( velocity_components ) do
-                    local vx,vy = ComponentGetValueVector2( velocity, "mVelocity", vx, vy );
+                    local vx,vy = ComponentGetValue2( velocity, "mVelocity", vx, vy );
                     
                     local offset_x = math.cos( direction + direction_random ) * ( gravity_coeff * gravity_percent );
                     local offset_y = 0 - math.sin( direction + direction_random ) * ( gravity_coeff * gravity_percent );
@@ -32,7 +32,7 @@ if #projectiles > 0 then
                     vx = vx + offset_x;
                     vy = vy + offset_y;
 
-                    ComponentSetValueVector2( velocity, "mVelocity", vx, vy );
+                    ComponentSetValue2( velocity, "mVelocity", vx, vy );
                 end
             end
         end

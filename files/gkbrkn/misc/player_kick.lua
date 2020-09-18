@@ -11,7 +11,7 @@ function kick( is_electric )
             if action_parent == nil or action_parent == 0 then
                 local ax, ay = EntityGetTransform( action );
                 local dx = ax - x;
-                ComponentSetValueVector2( EntityGetFirstComponent( action, "VelocityComponent" ), "mVelocity", dx * 8, Random( -100, -50 ) );
+                ComponentSetValue2( EntityGetFirstComponent( action, "VelocityComponent" ), "mVelocity", dx * 8, Random( -100, -50 ) );
             end
         end
     end
@@ -21,7 +21,7 @@ function kick( is_electric )
         local nearby_wands = EntityGetInRadiusWithTag( x, y, 16, "wand" ) or {};
         for _,wand in pairs( nearby_wands ) do
             local item_cost = EntityGetFirstComponent( wand, "ItemCostComponent" );
-            if item_cost == nil or tonumber( ComponentGetValue( item_cost, "cost" ) ) <= 0 then
+            if item_cost == nil or ComponentGetValue2( item_cost, "cost" ) <= 0 then
                 local wand_parent = EntityGetParent( wand );
                 if wand_parent == nil or wand_parent == 0 then
                     wand_explode_random_action( wand, false );

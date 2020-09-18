@@ -28,8 +28,8 @@ if GameHasFlagRun( init_check_flag ) == false then
     -- random cape colour
     if HasFlagPersistent( MISC.RandomStart.RandomCapeColorFlag ) and cape ~= nil then
         local verlet_physics = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
-        ComponentSetValue( verlet_physics, "cloth_color",  Random( 0xFF000000, 0xFFFFFFFF ) );
-        ComponentSetValue( verlet_physics, "cloth_color_edge",  Random( 0xFF000000, 0xFFFFFFFF ) );
+        ComponentSetValue2( verlet_physics, "cloth_color",  Random( 0xFF000000, 0xFFFFFFFF ) );
+        ComponentSetValue2( verlet_physics, "cloth_color_edge",  Random( 0xFF000000, 0xFFFFFFFF ) );
     end
 
     -- randomize starting hp
@@ -38,8 +38,8 @@ if GameHasFlagRun( init_check_flag ) == false then
         if damage_models ~= nil then
             for i,v in pairs(damage_models) do
                 local total = rand( MISC.RandomStart.MinimumHP * 0.04, MISC.RandomStart.MaximumHP * 0.04 );
-                ComponentSetValue( v, "max_hp", total );
-                ComponentSetValue( v, "hp", total );
+                ComponentSetValue2( v, "max_hp", total );
+                ComponentSetValue2( v, "hp", total );
             end
         end
     end
@@ -76,7 +76,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                 else
                     local wand = EntityLoad( "data/entities/items/wand_level_01.xml", Random( -1000, 1000 ), Random( -1000, 1000 ) );
                     local item = EntityGetFirstComponent( wand, "ItemComponent" );
-                    ComponentSetValue( item, "play_hover_animation", "0" );
+                    ComponentSetValue2( item, "play_hover_animation", false );
                     EntityAddChild( inventory, wand );
                 end
             end

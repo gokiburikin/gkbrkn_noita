@@ -30,9 +30,6 @@ end
 local register_content = function( content_table, content_type, key, display_name, description, options, enabled_by_default, deprecated, init_function, development_mode_only, tags )
     local content_id = #content_table + 1;
     local complete_display_name = display_name or ("missing display name: "..key);
-    if deprecated then
-        complete_display_name = complete_display_name .. " (D)";
-    end
     local complete_description = description or ("missing description: "..key);
     local content = {
         id = content_id,
@@ -146,7 +143,7 @@ end
             register_option_localized( MISC.ChampionEnemies.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
             register_option_localized( MISC.ChampionEnemies.SuperChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
             register_option_localized( MISC.ChampionEnemies.AlwaysChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
-            register_option_localized( MISC.ChampionEnemies.MiniBossesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {ultimate_challenge = true} )
+            register_option_localized( MISC.ChampionEnemies.MiniBossesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} )
         ),
         register_option_group_localized( "gkbrkn_random_start",
             register_option_localized( MISC.RandomStart.RandomWandsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),

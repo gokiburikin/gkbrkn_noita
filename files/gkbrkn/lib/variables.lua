@@ -8,7 +8,7 @@ end
 function EntityGetVariableString( entity, variable_tag, default )
     local variable = EntityGetFirstComponent( entity, "VariableStorageComponent", variable_tag );
     if variable ~= nil then
-        return ComponentGetValue( variable, "value_string" );
+        return ComponentGetValue2( variable, "value_string" );
     end
     return default;
 end
@@ -21,7 +21,7 @@ function EntitySetVariableString( entity, variable_tag, value )
             value_string=tostring(value)
         } );
     else
-        ComponentSetValue( current_variable, "value_string", tostring( value ) );
+        ComponentSetValue2( current_variable, "value_string", value );
     end
 end
 
@@ -40,45 +40,45 @@ function EntityAdjustVariableNumber( entity, variable_tag, default, callback )
 end
 
 function ComponentAdjustValue( component, member, callback )
-    local new_value = callback( ComponentGetValue( component, member ) );
-    ComponentSetValue( component, member, tostring( new_value ) );
+    local new_value = callback( ComponentGetValue2( component, member ) );
+    ComponentSetValue2( component, member, new_value );
     return new_value;
 end
 
 function ComponentSetValues( component, member_value_table )
     for member,new_value in pairs(member_value_table) do
-        ComponentSetValue( component, member, tostring( new_value ) );
+        ComponentSetValue2( component, member, new_value );
     end
 end
 
 function ComponentAdjustValues( component, member_callback_table )
     for member,callback in pairs(member_callback_table) do
-        ComponentSetValue( component, member, tostring( callback( ComponentGetValue( component, member ) ) ) );
+        ComponentSetValue2( component, member, callback( ComponentGetValue2( component, member ) ) );
     end
 end
 
 function ComponentObjectSetValues( component, object, member_value_table )
     for member,new_value in pairs(member_value_table) do
-        ComponentObjectSetValue( component, object, member, tostring( new_value ) );
+        ComponentObjectSetValue2( component, object, member, new_value );
     end
 end
 
 function ComponentObjectAdjustValues( component, object, member_callback_table )
     for member,callback in pairs(member_callback_table) do
-        ComponentObjectSetValue( component, object, member, tostring( callback( ComponentObjectGetValue( component, object, member ) ) ) );
+        ComponentObjectSetValue2( component, object, member, callback( ComponentObjectGetValue2( component, object, member ) ) );
     end
 end
 
-function ComponentSetMetaCustoms( component, member_value_table )
+function ComponentsetValue2s( component, member_value_table )
     for member,new_value in pairs(member_value_table) do
-        ComponentSetMetaCustom( component, member, tostring( new_value ) );
+        ComponentSetValue2( component, member, new_value );
     end
 end
 
 function ComponentAdjustMetaCustoms( component, member_callback_table )
     for member,callback in pairs(member_callback_table) do
-        local current_value = ComponentGetMetaCustom( component, member );
+        local current_value = ComponentGetValue2( component, member );
         local new_value = callback( current_value );
-        ComponentSetMetaCustom( component, member, tostring( new_value ) );
+        ComponentSetValue2( component, member, new_value );
     end
 end

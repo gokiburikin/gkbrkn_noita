@@ -1,3 +1,4 @@
+local MISC = dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/options.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 --[[
 #define ENUM_DAMAGE_TYPES(_)                  
@@ -53,9 +54,9 @@ function load_dynamic_badge ( key, append_bool_table )
     if badge ~= nil then
         local ui_icon = EntityGetFirstComponent( badge, "UIIconComponent" );
         if ui_icon ~= nil then
-            ComponentSetValue( ui_icon, "icon_sprite_file", GameTextGetTranslatedOrNot("$"..badge_image) );
-            ComponentSetValue( ui_icon, "name", GameTextGetTranslatedOrNot("$"..badge_name) );
-            ComponentSetValue( ui_icon, "description", GameTextGetTranslatedOrNot("$"..badge_description) );
+            ComponentSetValue2( ui_icon, "icon_sprite_file", GameTextGetTranslatedOrNot("$"..badge_image) );
+            ComponentSetValue2( ui_icon, "name", GameTextGetTranslatedOrNot("$"..badge_name) );
+            ComponentSetValue2( ui_icon, "description", GameTextGetTranslatedOrNot("$"..badge_description) );
         end
     end
     return badge;
@@ -69,6 +70,9 @@ function add_update_time( amount ) GlobalsSetValue( "gkbrkn_update_time", get_up
 function add_frame_time( amount ) GlobalsSetValue( "gkbrkn_frame_time", get_frame_time() + amount ); end
 
 function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, deprecated, author, stackable )
+    if stackable == nil then
+        stackable = true;
+    end
     return {
         id                  = perk_id,
         ui_name             = "$perk_name_gkbrkn_"..key,
@@ -107,10 +111,19 @@ end
 
 function spawn_gold_nuggets( gold_value, x, y )
     local sizes = { 10000, 1000, 200, 50, 10 };
+    local world_entity_id = GameGetWorldStateEntity();
+    local world_state = EntityGetFirstComponent( world_entity_id, "WorldStateComponent" );
+    local is_gold_forever = false;
+    if world_state ~= nil then
+        is_gold_forever = ComponentGetValue2( world_state, "perk_gold_is_forever" );
+    end
     for _,size in pairs(sizes) do
         while gold_value >= size do
             gold_value = gold_value - size;
-            EntityLoad( "data/entities/items/pickup/goldnugget_"..size..".xml", x, y );
+            local gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..size..".xml", x, y );
+            if is_gold_forever then
+                EntityRemoveComponent( gold_nugget, EntityGetFirstComponent( gold_nugget, "LifetimeComponent" ) );
+            end
         end
     end
 end
@@ -118,7 +131,7 @@ end
 function does_entity_drop_gold( entity )
     local drops_gold = false;
     for _,component in pairs( EntityGetComponent( entity, "LuaComponent" ) or {} ) do
-        if ComponentGetValue( component, "script_death" ) == "data/scripts/items/drop_money.lua" then
+        if ComponentGetValue2( component, "script_death" ) == "data/scripts/items/drop_money.lua" then
             drops_gold = true;
             break;
         end
@@ -205,14 +218,14 @@ function get_projectile_root_shooter( entity )
     local root_shooter = entity;
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     if projectile ~= nil then
-        local shooter = tonumber( ComponentGetValue( projectile, "mWhoShot" ) );
+        local shooter = ComponentGetValue2( projectile, "mWhoShot" );
         while shooter ~= nil and shooter ~= 0 do
             root_shooter = shooter;
             local shooter_projectile = EntityGetFirstComponent( shooter, "ProjectileComponent" );
             if shooter_projectile == nil then
                 break;
             end
-            shooter = tonumber( ComponentGetValue( shooter_projectile, "mWhoShot" ) );
+            shooter = ComponentGetValue2( shooter_projectile, "mWhoShot" );
         end
     end
     return root_shooter;
@@ -221,16 +234,16 @@ end
 function make_projectile_not_damage_shooter( entity, force_shooter )
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     if projectile ~= nil then
-        ComponentSetValue( projectile, "explosion_dont_damage_shooter", "1" );
-        ComponentSetValue( projectile, "friendly_fire", "0" );
+        ComponentSetValue2( projectile, "explosion_dont_damage_shooter", true );
+        ComponentSetValue2( projectile, "friendly_fire", false );
         local shooter = force_shooter or get_projectile_root_shooter( entity );
         if shooter ~= nil and shooter ~= 0 then
             ComponentObjectSetValue( projectile, "config_explosion", "dont_damage_this", tostring( shooter ) );
             EntityIterateComponentsByType( entity, "AreaDamageComponent", function(component)
                 if EntityHasTag( shooter, "player_unit" ) then
-                    ComponentSetValue( component, "entities_with_tag", "enemy" );
+                    ComponentSetValue2( component, "entities_with_tag", "enemy" );
                 else
-                    ComponentSetValue( component, "entities_with_tag", "player_unit" );
+                    ComponentSetValue2( component, "entities_with_tag", "player_unit" );
                 end
             end );
 
@@ -249,49 +262,49 @@ function adjust_entity_damage( entity, projectile_damage_callback, typed_damage_
 
     if projectile ~= nil then
         if projectile_damage_callback ~= nil then
-            local current_damage = tonumber( ComponentGetValue( projectile, "damage" ) );
+            local current_damage = ComponentGetValue2( projectile, "damage" );
             local new_damage = projectile_damage_callback( current_damage );
             if current_damage ~= new_damage then
-                ComponentSetValue( projectile, "damage", tostring( new_damage ) );
+                ComponentSetValue2( projectile, "damage", new_damage );
             end
             if typed_damage_callback ~= nil then
                 local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
                 local damage_by_types_fixed = {};
                 for type,_ in pairs( damage_by_types ) do
-                    damage_by_types_fixed[type] = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
+                    damage_by_types_fixed[type] = ComponentObjectGetValue2( projectile, "damage_by_type", type );
                 end
                 local damage_by_types_adjusted = typed_damage_callback( damage_by_types_fixed );
                 for type,amount in pairs( damage_by_types_adjusted ) do
                     if amount ~= nil then
-                        ComponentObjectSetValue( projectile, "damage_by_type", type, tonumber( amount ) or damage_by_types_fixed[type] or 0 );
+                        ComponentObjectSetValue2( projectile, "damage_by_type", type, amount or damage_by_types_fixed[type] or 0 );
                     end
                 end
             end
             if explosive_damage_callback ~= nil then
-                local current_damage = ComponentObjectGetValue( projectile, "config_explosion", "damage" );
+                local current_damage = ComponentObjectGetValue2( projectile, "config_explosion", "damage" );
                 local new_damage = explosive_damage_callback( current_damage );
                 if current_damage ~= new_damage then
-                    ComponentObjectSetValue( projectile, "config_explosion", "damage", tostring( new_damage ) );
+                    ComponentObjectSetValue2( projectile, "config_explosion", "damage", new_damage );
                 end
             end
         end
         if lightning_damage_callback ~= nil then
             local lightning = EntityGetFirstComponent( entity, "LightningComponent" );
             if lightning ~= nil then
-                local current_damage = tonumber( ComponentObjectGetValue( lightning, "config_explosion", "damage" ) );
+                local current_damage = tonumber( ComponentObjectGetValue2( lightning, "config_explosion", "damage" ) );
                 local new_damage = lightning_damage_callback( current_damage );
                 if current_damage ~= new_damage then
-                    ComponentObjectSetValue( lightning, "config_explosion", "damage", tostring( new_damage ) );
+                    ComponentObjectSetValue2( lightning, "config_explosion", "damage", new_damage );
                 end
             end
         end
         if area_damage_callback ~= nil then
             local area_damage = EntityGetFirstComponent( entity, "AreaDamageComponent" );
             if area_damage ~= nil then
-                local current_damage = tonumber( ComponentGetValue( area_damage, "damage_per_frame" ) );
+                local current_damage = ComponentGetValue2( area_damage, "damage_per_frame" );
                 local new_damage = area_damage_callback( current_damage );
                 if current_damage ~= new_damage then
-                    ComponentSetValue( area_damage, "damage_per_frame", tostring( new_damage ) );
+                    ComponentSetValue2( area_damage, "damage_per_frame", new_damage );
                 end
             end
         end
@@ -342,11 +355,11 @@ function entity_adjust_health( entity, callback )
     local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
     if damage_models ~= nil then
         for _,damage_model in pairs( damage_models ) do
-            local hp = ComponentGetValue( damage_model, "hp" );
-            local max_hp = ComponentGetValue( damage_model, "max_hp" );
+            local hp = ComponentGetValue2( damage_model, "hp" );
+            local max_hp = ComponentGetValue2( damage_model, "max_hp" );
             local new_max_hp, new_hp = callback( max_hp, hp );
-            ComponentSetValue( damage_model, "hp", new_hp or hp );
-            ComponentSetValue( damage_model, "max_hp", new_max_hp or max_hp );
+            ComponentSetValue2( damage_model, "hp", new_hp or hp );
+            ComponentSetValue2( damage_model, "max_hp", new_max_hp or max_hp );
         end
     end
 end
@@ -356,11 +369,11 @@ function entity_get_health_ratio( entity )
     local current_max_hp = 0;
     local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
     for _,damage_model in pairs( damage_models ) do
-        local hp = tonumber( ComponentGetValue( damage_model, "hp" ) );
+        local hp = ComponentGetValue2( damage_model, "hp" );
         if hp > current_hp then
             current_hp = hp;
         end
-        local max_hp = tonumber( ComponentGetValue( damage_model, "max_hp" ) );
+        local max_hp = ComponentGetValue2( damage_model, "max_hp" );
         if max_hp > current_max_hp then
             current_max_hp = max_hp;
         end
@@ -401,33 +414,33 @@ function reduce_particles( entity, disable )
     local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
     if not disable then
         for _,emitter in pairs( particle_emitters ) do
-            if ComponentGetValue( emitter, "emit_cosmetic_particles" ) == "1" and ComponentGetValue( emitter, "create_real_particles" ) == "0" and ComponentGetValue( emitter, "emit_real_particles" ) == "0" then
-                ComponentSetValue( emitter, "count_min", "1" );
-                ComponentSetValue( emitter, "count_max", "1" );
-                ComponentSetValue( emitter, "collide_with_grid", "0" );
-                ComponentSetValue( emitter, "is_trail", "0" );
-                local lifetime_min = tonumber( ComponentGetValue( emitter, "lifetime_min" ) );
-                ComponentSetValue( emitter, "lifetime_min", tostring( math.min( lifetime_min * 0.5, 0.1 ) ) );
-                local lifetime_max = tonumber( ComponentGetValue( emitter, "lifetime_max" ) );
-                ComponentSetValue( emitter, "lifetime_max", tostring( math.min( lifetime_max * 0.5, 0.5 ) ) );
+            if ComponentGetValue2( emitter, "emit_cosmetic_particles" ) == true and ComponentGetValue2( emitter, "create_real_particles" ) == false and ComponentGetValue2( emitter, "emit_real_particles" ) == false then
+                ComponentSetValue2( emitter, "count_min", 1 );
+                ComponentSetValue2( emitter, "count_max", 1 );
+                ComponentSetValue2( emitter, "collide_with_grid", false );
+                ComponentSetValue2( emitter, "is_trail", false );
+                local lifetime_min = tonumber( ComponentGetValue2( emitter, "lifetime_min" ) );
+                ComponentSetValue2( emitter, "lifetime_min", math.min( lifetime_min * 0.5, 0.1 ) );
+                local lifetime_max = tonumber( ComponentGetValue2( emitter, "lifetime_max" ) );
+                ComponentSetValue2( emitter, "lifetime_max", math.min( lifetime_max * 0.5, 0.5 ) );
             end
         end
         for _,emitter in pairs( sprite_particle_emitters ) do
-            if ComponentGetValue( emitter, "entity_file" ) == "" then
-                ComponentSetValue( emitter, "count_max", "1" );
-                ComponentSetValue( emitter, "emission_interval_min_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_min_frames" ) ) * 2 ) ) );
-                ComponentSetValue( emitter, "emission_interval_max_frames", tostring( math.ceil( tonumber( ComponentGetValue( emitter, "emission_interval_max_frames" ) ) * 2 ) ) );
+            if ComponentGetValue2( emitter, "entity_file" ) == "" then
+                ComponentSetValue2( emitter, "count_max", 1 );
+                ComponentSetValue2( emitter, "emission_interval_min_frames", math.ceil( ComponentGetValue2( emitter, "emission_interval_min_frames" ) * 2 ) );
+                ComponentSetValue2( emitter, "emission_interval_max_frames", math.ceil( ComponentGetValue2( emitter, "emission_interval_max_frames" ) * 2 ) );
             end
         end
         if projectile ~= nil then
             ComponentObjectAdjustValues( projectile, "config_explosion", {
-                sparks_count_min=function( value ) return math.min( tonumber( value ) or 0, 1 ); end,
-                sparks_count_max=function( value ) return math.min( tonumber( value ) or 0, 2 ); end,
+                sparks_count_min=function( value ) return math.min( value, 1 ); end,
+                sparks_count_max=function( value ) return math.min( value, 2 ); end,
             });
         end
     else
         for _,emitter in pairs( particle_emitters ) do
-            if ComponentGetValue( emitter, "emit_cosmetic_particles" ) == "1" and ComponentGetValue( emitter, "create_real_particles" ) == "0" and ComponentGetValue( emitter, "emit_real_particles" ) == "0" then
+            if ComponentGetValue2( emitter, "emit_cosmetic_particles" ) == true and ComponentGetValue2( emitter, "create_real_particles" ) == false and ComponentGetValue2( emitter, "emit_real_particles" ) == false then
                 EntitySetComponentIsEnabled( entity, emitter, false );
             end
         end
@@ -436,8 +449,8 @@ function reduce_particles( entity, disable )
         end
         if projectile ~= nil then
             ComponentObjectSetValues( projectile, "config_explosion", {
-                sparks_count_min="0",
-                sparks_count_max="0",
+                sparks_count_min=0,
+                sparks_count_max=0,
             });
         end
     end
@@ -449,7 +462,7 @@ function find_polymorphed_players()
     for _,entity in pairs( nearby_polymorph ) do
         local game_stats = EntityGetFirstComponent( entity, "GameStatsComponent" );
         if game_stats ~= nil then
-            if ComponentGetValue( game_stats, "is_player" ) == "1" then
+            if ComponentGetValue2( game_stats, "is_player" ) == true then
                 --GamePrint( "entity ".. entity .. "is likely a polymorphed player" );
                 table.insert( polymorphed_players, entity );
             end
@@ -475,7 +488,7 @@ function projectile_change_particle_colors( projectile_entity, color )
     local b = bit.rshift( bit.band( 0xFF0000, color ), 16 );
     local particle_emitters = EntityGetComponent( projectile_entity, "ParticleEmitterComponent" ) or {};
     for _,particle_emitter in pairs( particle_emitters ) do
-        ComponentSetValue( particle_emitter, "color", tostring( color ) );
+        ComponentSetValue2( particle_emitter, "color", color );
     end
     local sprite_particle_emitters = EntityGetComponent( projectile_entity, "SpriteParticleEmitterComponent" ) or {};
     for _,sprite_particle_emitter in pairs( sprite_particle_emitters ) do
@@ -502,8 +515,8 @@ function get_protagonist_bonus( player )
     local damage_models = EntityGetComponent( player, "DamageModelComponent" );
     if damage_models ~= nil then
         for i,damage_model in ipairs( damage_models ) do
-            local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
-            local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+            local current_hp = ComponentGetValue2( damage_model, "hp" );
+            local max_hp = ComponentGetValue2( damage_model, "max_hp" );
             local ratio = current_hp / max_hp;
             if ratio < health_ratio then
                 health_ratio = ratio;
@@ -554,29 +567,49 @@ function update_sprite_image( entity, sprite_component, new_image_filepath )
         EntityRemoveComponent( sprite_component );
     end
     ]]
-    local new_sprite = EntityAddComponent2( entity, "SpriteComponent", {
-        image_file=new_image_filepath,
-        ui_is_parent=ComponentGetValue2(sprite_component,"ui_is_parent"),
-        is_text_sprite=ComponentGetValue2(sprite_component,"is_text_sprite"),
-        offset_x=ComponentGetValue2(sprite_component,"offset_x"),
-        offset_y=ComponentGetValue2(sprite_component,"offset_y"),
-        alpha=ComponentGetValue2(sprite_component,"alpha"),
-        visible=ComponentGetValue2(sprite_component,"visible"),
-        emissive=ComponentGetValue2(sprite_component,"emissive"),
-        additive=ComponentGetValue2(sprite_component,"additive"),
-        fog_of_war_hole=ComponentGetValue2(sprite_component,"fog_of_war_hole"),
-        smooth_filtering=ComponentGetValue2(sprite_component,"smooth_filtering"),
-        rect_animation=ComponentGetValue2(sprite_component,"rect_animation"),
-        next_rect_animation=ComponentGetValue2(sprite_component,"next_rect_animation"),
-        text=ComponentGetValue2(sprite_component,"text"),
-        z_index=ComponentGetValue2(sprite_component,"z_index"),
-        update_transform=ComponentGetValue2(sprite_component,"update_transform"),
-        update_transform_rotation=ComponentGetValue2(sprite_component,"update_transform_rotation"),
-        kill_entity_after_finished=ComponentGetValue2(sprite_component,"kill_entity_after_finished"),
-        has_special_scale=ComponentGetValue2(sprite_component,"has_special_scale"),
-        special_scale_x=ComponentGetValue2(sprite_component,"special_scale_x"),
-        special_scale_y=ComponentGetValue2(sprite_component,"special_scale_y"),
-        never_ragdollify_on_death=ComponentGetValue2(sprite_component,"never_ragdollify_on_death")
+    local new_sprite                             = EntityAddComponent2( entity, "SpriteComponent", {
+        image_file                               = new_image_filepath,
+        ui_is_parent                             = ComponentGetValue2(sprite_component,"ui_is_parent"),
+        is_text_sprite                           = ComponentGetValue2(sprite_component,"is_text_sprite"),
+        offset_x                                 = ComponentGetValue2(sprite_component,"offset_x"),
+        offset_y                                 = ComponentGetValue2(sprite_component,"offset_y"),
+        alpha                                    = ComponentGetValue2(sprite_component,"alpha"),
+        visible                                  = ComponentGetValue2(sprite_component,"visible"),
+        emissive                                 = ComponentGetValue2(sprite_component,"emissive"),
+        additive                                 = ComponentGetValue2(sprite_component,"additive"),
+        fog_of_war_hole                          = ComponentGetValue2(sprite_component,"fog_of_war_hole"),
+        smooth_filtering                         = ComponentGetValue2(sprite_component,"smooth_filtering"),
+        rect_animation                           = ComponentGetValue2(sprite_component,"rect_animation"),
+        next_rect_animation                      = ComponentGetValue2(sprite_component,"next_rect_animation"),
+        text                                     = ComponentGetValue2(sprite_component,"text"),
+        z_index                                  = ComponentGetValue2(sprite_component,"z_index"),
+        update_transform                         = ComponentGetValue2(sprite_component,"update_transform"),
+        update_transform_rotation                = ComponentGetValue2(sprite_component,"update_transform_rotation"),
+        kill_entity_after_finished               = ComponentGetValue2(sprite_component,"kill_entity_after_finished"),
+        has_special_scale                        = ComponentGetValue2(sprite_component,"has_special_scale"),
+        special_scale_x                          = ComponentGetValue2(sprite_component,"special_scale_x"),
+        special_scale_y                          = ComponentGetValue2(sprite_component,"special_scale_y"),
+        never_ragdollify_on_death                = ComponentGetValue2(sprite_component,"never_ragdollify_on_death")
     } );
     EntityRemoveComponent( entity, sprite_component );
+end
+
+function sort_keyed_table( keyed_table, sort_function )
+    local h = {};
+    for k,v in pairs( keyed_table ) do
+        table.insert( h, { key=k, value=v })
+    end
+    table.sort( h, sort_function );
+    return h;
+end
+
+function get_magic_focus_multiplier( last_calibration_shot_frame, last_calibration_percent )
+    local multiplier = 1.0;
+    local current_frame = GameGetFrameNum();
+    local difference = current_frame - last_calibration_shot_frame;
+    if difference < MISC.PerkOptions.MagicFocus.DecayFrames then
+        return ( 1 - (difference / MISC.PerkOptions.MagicFocus.DecayFrames) ) * last_calibration_percent;
+    else
+        return math.min( 1, (difference - MISC.PerkOptions.MagicFocus.DecayFrames) / MISC.PerkOptions.MagicFocus.ChargeFrames);
+    end
 end

@@ -17,10 +17,10 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         local components = EntityGetComponent( entity, "DamageModelComponent" );
         if components ~= nil and entity_thats_responsible ~= 0 then
             for _,data_component in pairs( components ) do
-                local current_invincibility_frames = tonumber( ComponentGetValue( data_component, "invincibility_frames" ) );
+                local current_invincibility_frames = ComponentGetValue2( data_component, "invincibility_frames" );
                 -- only add invincibility frames if we are not currently invincible
                 if current_invincibility_frames <= 0 then
-                    ComponentSetValue( data_component, "invincibility_frames", tostring( invincibility_duration ) );
+                    ComponentSetValue2( data_component, "invincibility_frames", invincibility_duration );
                 end
             end
         end

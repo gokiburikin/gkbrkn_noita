@@ -9,7 +9,7 @@ for _,nearby in pairs( nearby_entities ) do
     local shimmer = false;
     local item = EntityGetFirstComponent( nearby, "ItemComponent" );
     if item ~= nil then
-        shimmer = ComponentGetValue( item, "auto_pickup" ) == "1";
+        shimmer = ComponentGetValue2( item, "auto_pickup" ) == true;
         if shimmer == false then
             if EntityGetParent( nearby ) == 0 then
                 shimmer = true;

@@ -12,10 +12,10 @@ local entity = GetUpdatedEntityID();
 local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
 if velocity ~= nil then
 
-    local vx,vy = ComponentGetValueVector2( velocity, "mVelocity", vx, vy );
+    local vx,vy = ComponentGetValue2( velocity, "mVelocity", vx, vy );
     local magnitude = math.max( math.sqrt( vx * vx + vy * vy ), 50 );
     local angle = math.atan2( vy, vx );
     local new_angle = ease_angle( angle, EntityGetVariableNumber( entity, "gkbrkn_persistent_shot_angle", angle ), 0.15 );
 
-    ComponentSetValueVector2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
+    ComponentSetValue2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );
 end

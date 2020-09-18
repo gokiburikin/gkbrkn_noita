@@ -23,7 +23,7 @@ local _perk_pickup = perk_pickup;
 function perk_pickup( entity_item, entity_who_picked, item_name, do_cosmetic_fx, kill_other_perks )
     local perk_id = ""
 	edit_component( entity_item, "VariableStorageComponent", function(comp,vars)
-		perk_id = ComponentGetValue( comp, "value_string" )
+		perk_id = ComponentGetValue2( comp, "value_string" )
 	end)
 
 	local perk_data = get_perk_with_id( perk_list, perk_id )

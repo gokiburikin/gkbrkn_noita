@@ -11,6 +11,6 @@ for index,player in pairs( players ) do
         });
     end
     tracker = EntityGetFirstComponent( player, "VariableStorageComponent", tracker_variable );
-    local current_lost_treasure_count = tonumber(ComponentGetValue( tracker, "value_string" ));
-    ComponentSetValue( tracker, "value_string", tostring(current_lost_treasure_count + 1) );
+    local current_lost_treasure_count = tonumber(ComponentGetValue2( tracker, "value_string" ));
+    ComponentSetValue2( tracker, "value_string", tostring(current_lost_treasure_count + 1) );
 end

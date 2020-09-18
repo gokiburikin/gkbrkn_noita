@@ -5,10 +5,9 @@ local x,y = EntityGetTransform( entity );
 last_use_frame = last_use_frame or 0;
 
 function update_amount_stored()
-    for _,component in pairs( EntityGetAllComponents( entity ) or {} ) do
-        if ComponentGetValue( component, "uses_remaining" ) ~= "" then
-            ComponentSetValue( component, "uses_remaining", #( EntityGetAllChildren(spell_storage) or {} ) );
-        end
+    local item = EntityGetFirstComponentIncludingDisabled( entity, "ItemComponent" );
+    if item then
+        ComponentSetValue2( item, "uses_remaining", #( EntityGetAllChildren(spell_storage) or {} ) );
     end
 end
 
@@ -18,10 +17,10 @@ if holder ~= nil then
     local now = GameGetFrameNum();
     local controls = EntityGetFirstComponent( holder, "ControlsComponent" );
     if controls ~= nil then
-        local use_button = ComponentGetValue( controls, "mButtonDownFire" );
-        local use_button_frame = ComponentGetValue( controls, "mButtonFrameFire" );
-        if use_button == "1" and tonumber(use_button_frame) == now then
-            last_use_frame = tonumber(use_button_frame);
+        local use_button = ComponentGetValue2( controls, "mButtonDownFire" );
+        local use_button_frame = ComponentGetValue2( controls, "mButtonFrameFire" );
+        if use_button == 1 and use_button_frame == now then
+            last_use_frame = use_button_frame;
             local children = EntityGetAllChildren( spell_storage ) or {};
             if #children > 0 then
                 local random_child = children[ math.ceil( math.random() * #children )];
@@ -30,7 +29,7 @@ if holder ~= nil then
                 EntitySetComponentsWithTagEnabled( random_child,  "item_unidentified", false );
                 local velocity = EntityGetFirstComponent( random_child, "VelocityComponent" );
                 if velocity ~= nil then
-                    ComponentSetValueVector2( velocity, "mVelocity", Random( -100, 100 ), -100 );
+                    ComponentSetValue2( velocity, "mVelocity", Random( -100, 100 ), -100 );
                 end
                 EntitySetTransform( random_child, x, y );
                 update_amount_stored();
@@ -41,7 +40,7 @@ if holder ~= nil then
             for _,card in pairs( nearby_entities ) do
                 if EntityGetParent( card ) == 0 then
                     local item_cost = EntityGetFirstComponent( card, "ItemCostComponent" );
-                    if item_cost == nil or tonumber( ComponentGetValue( item_cost, "cost" ) ) <= 0 then
+                    if item_cost == nil or ComponentGetValue2( item_cost, "cost" ) <= 0 then
                         EntityAddChild( spell_storage, card );
                         EntitySetComponentsWithTagEnabled( card,  "enabled_in_world", false );
                         update_amount_stored();

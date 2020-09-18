@@ -42,12 +42,12 @@ champion_types = {
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for index,damage_model in pairs( damage_models ) do
                 for damage_type,multiplier in pairs( resistances ) do
-                    local resistance = tonumber( ComponentObjectGetValue( damage_model, "damage_multipliers", damage_type ) );
+                    local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
                     resistance = resistance * multiplier;
-                    ComponentObjectSetValue( damage_model, "damage_multipliers", damage_type, tostring( resistance ) );
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
                 end
-                local minimum_knockback_force = tonumber( ComponentGetValue( damage_model, "minimum_knockback_force" ) );
-                ComponentSetValue( damage_model, "minimum_knockback_force", "99999" );
+                local minimum_knockback_force = ComponentGetValue2( damage_model, "minimum_knockback_force" );
+                ComponentSetValue2( damage_model, "minimum_knockback_force", 99999 );
             end
         end
     },
@@ -101,11 +101,11 @@ champion_types = {
             local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue( ai, "attack_melee_damage_min", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_min" ) ) * 2 ) );
-                    ComponentSetValue( ai, "attack_melee_damage_max", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_max" ) ) * 2 ) );
-                    --ComponentSetValue( ai, "attack_melee_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_melee_frames_between" ) ) / 2 ) ) );
-                    ComponentSetValue( ai, "attack_dash_damage", tostring( tonumber( ComponentGetValue( ai, "attack_dash_damage" ) ) * 2 ) );
-                    --ComponentSetValue( ai, "attack_dash_frames_between", tostring( tonumber( ComponentGetValue( ai, "attack_dash_frames_between" ) ) / 2 ) );
+                    ComponentSetValue2( ai, "attack_melee_damage_min", ComponentGetValue2( ai, "attack_melee_damage_min" ) * 2 );
+                    ComponentSetValue2( ai, "attack_melee_damage_max", ComponentGetValue2( ai, "attack_melee_damage_max" ) * 2 );
+                    --ComponentSetValue2( ai, "attack_melee_frames_between", eil( tonumber( ComponentGetValue2( ai, "attack_melee_frames_between" ) / 2 ) );
+                    ComponentSetValue2( ai, "attack_dash_damage", ComponentGetValue2( ai, "attack_dash_damage" ) * 2 );
+                    --ComponentSetValue2( ai, "attack_dash_frames_between", ComponentGetValue2( ai, "attack_dash_frames_between" ) / 2 );
                 end
             end
             EntityAddComponent( entity, "LuaComponent", {
@@ -126,7 +126,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
                         has_projectile_attack = true;
                         break;
                     end
@@ -154,7 +154,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
                         has_projectile_attack = true;
                         break;
                     end
@@ -167,13 +167,13 @@ champion_types = {
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
                     ComponentSetValues( ai, {
-                        attack_ranged_action_frame="4",
-                        attack_ranged_min_distance="0",
-                        attack_ranged_max_distance="120",
+                        attack_ranged_action_frame=4,
+                        attack_ranged_min_distance=0,
+                        attack_ranged_max_distance=120,
                         attack_ranged_entity_file="data/entities/projectiles/tongue.xml",
-                        attack_ranged_offset_x="0",
-                        attack_ranged_offset_y="0",
-                        attack_ranged_enabled="1",
+                        attack_ranged_offset_x=0,
+                        attack_ranged_offset_y=0,
+                        attack_ranged_enabled=true,
                     });
                 end
             end
@@ -235,12 +235,12 @@ champion_types = {
                 ComponentSetValueValueRange( emitter, "area_circle_radius", radius, radius );
             end
             local energy_shield = EntityGetFirstComponent( shield, "EnergyShieldComponent" );
-            ComponentSetValue( energy_shield, "radius", tostring( radius ) );
+            ComponentSetValue2( energy_shield, "radius", radius );
 
             local hotspot = EntityAddComponent( entity, "HotspotComponent",{
                 _tags="gkbrkn_center"
             } );
-            ComponentSetValueVector2( hotspot, "offset", 0, -height * 0.3 );
+            ComponentSetValue2( hotspot, "offset", 0, -height * 0.3 );
 
             if shield ~= nil then EntityAddChild( entity, shield ); end
         end
@@ -296,7 +296,7 @@ champion_types = {
     },
     { id = "tremor",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/tremor/badge.xml",
         name = "$champion_type_name_tremor",
         description = "$champion_type_desc_tremor",
         author = "$ui_author_name_goki_dev",
@@ -312,7 +312,7 @@ champion_types = {
     },
     { id = "poison_blood",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poison_blood/badge.xml",
         name = "$champion_type_name_poison_blood",
         description = "$champion_type_desc_poison_blood",
         author = "$ui_author_name_goki_dev",
@@ -322,8 +322,8 @@ champion_types = {
         apply = function( entity )
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                ComponentSetValue( damage_model, "blood_material", "poison" );
-                ComponentSetValue( damage_model, "blood_spray_material", "poison" );
+                ComponentSetValue2( damage_model, "blood_material", "poison" );
+                ComponentSetValue2( damage_model, "blood_spray_material", "poison" );
             end
         end
     },
@@ -339,8 +339,8 @@ champion_types = {
         apply = function( entity )
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                ComponentSetValue( damage_model, "blood_material", "blood_cold" );
-                ComponentSetValue( damage_model, "blood_spray_material", "blood_cold" );
+                ComponentSetValue2( damage_model, "blood_material", "blood_cold" );
+                ComponentSetValue2( damage_model, "blood_spray_material", "blood_cold" );
             end
         end
     },
@@ -356,8 +356,8 @@ champion_types = {
         apply = function( entity )
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                ComponentSetValue( damage_model, "blood_material", "gunpowder_unstable" );
-                ComponentSetValue( damage_model, "blood_spray_material", "gunpowder_unstable" );
+                ComponentSetValue2( damage_model, "blood_material", "gunpowder_unstable" );
+                ComponentSetValue2( damage_model, "blood_spray_material", "gunpowder_unstable" );
             end
         end
     },
@@ -373,12 +373,12 @@ champion_types = {
         apply = function( entity )
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
             for index,damage_model in pairs( damage_models ) do
-                local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
-                local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
+                local current_hp = ComponentGetValue2( damage_model, "hp" );
+                local max_hp = ComponentGetValue2( damage_model, "max_hp" );
                 local new_max = max_hp * 1.5;
                 local regained = new_max - current_hp;
-                ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
-                ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
+                ComponentSetValue2( damage_model, "max_hp", new_max );
+                ComponentSetValue2( damage_model, "hp", current_hp + regained );
             end
         end,
         deprecated = true
@@ -395,15 +395,15 @@ champion_types = {
         apply = function( entity )
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                ComponentSetValue( damage_model, "blood_material", "lava" );
-                ComponentSetValue( damage_model, "blood_spray_material", "lava" );
-                ComponentSetValue( damage_model, "blood_multiplier", "2" );
+                ComponentSetValue2( damage_model, "blood_material", "lava" );
+                ComponentSetValue2( damage_model, "blood_spray_material", "lava" );
+                ComponentSetValue2( damage_model, "blood_multiplier", 2 );
             end
         end
     },
     { id = "poly_blood",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poly_blood/badge.xml",
         name = "$champion_type_name_poly_blood",
         description = "$champion_type_desc_poly_blood",
         author = "$ui_author_name_goki_dev",
@@ -413,15 +413,15 @@ champion_types = {
         apply = function( entity )
             local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
             for _,damage_model in pairs( damage_models ) do
-                ComponentSetValue( damage_model, "blood_material", "magic_liquid_random_polymorph" );
-                ComponentSetValue( damage_model, "blood_spray_material", "magic_liquid_random_polymorph" );
-                ComponentSetValue( damage_model, "blood_multiplier", "2" );
+                ComponentSetValue2( damage_model, "blood_material", "magic_liquid_random_polymorph" );
+                ComponentSetValue2( damage_model, "blood_spray_material", "magic_liquid_random_polymorph" );
+                ComponentSetValue2( damage_model, "blood_multiplier", 0.3 );
             end
         end
     },
     { id = "blood_spray",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/blood_spray/badge.xml",
         name = "$champion_type_name_blood_spray",
         description = "$champion_type_desc_blood_spray",
         author = "$ui_author_name_goki_dev",
@@ -480,7 +480,7 @@ champion_types = {
     },
     { id = "intangibility_frames",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/badge.xml",
         name = "$champion_type_name_intangibility_frames",
         description = "$champion_type_desc_intangibility_frames",
         author = "$ui_author_name_goki_dev",
@@ -539,7 +539,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "can_fly" ) == "1" then
+                    if ComponentGetValue2( ai, "can_fly" ) == true then
                         can_fly = true;
                         break;
                     end
@@ -550,12 +550,11 @@ champion_types = {
         apply = function( entity )
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             for _,ai in pairs( animal_ais ) do
-                ComponentSetValues( ai, {can_fly="1"});
+                ComponentSetValues( ai, {can_fly=true});
             end
             local path_finding = EntityGetFirstComponent( entity, "PathFindingComponent" );
             if path_finding ~= nil then
-
-                ComponentSetValues( path_finding, { can_fly="1" } );
+                ComponentSetValues( path_finding, { can_fly=true } );
             end
             
             local jetpack_particles = EntityAddComponent( entity, "ParticleEmitterComponent", {
@@ -594,7 +593,7 @@ champion_types = {
             local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue( ai, "attack_knockback_multiplier", tostring( tonumber( ComponentGetValue( ai, "attack_knockback_multiplier" ) ) * 2.5 ) );
+                    ComponentSetValue2( ai, "attack_knockback_multiplier", ComponentGetValue2( ai, "attack_knockback_multiplier" ) * 2.5 );
                 end
             end
             EntityAddComponent( entity, "LuaComponent", {
@@ -615,7 +614,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_dash_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_dash_enabled" ) == true then
                         has_dash_attack = true;
                         break;
                     end
@@ -628,7 +627,7 @@ champion_types = {
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
                     ComponentSetValues( ai, {
-                        attack_dash_enabled="1",
+                        attack_dash_enabled=true,
                     });
                     ComponentAdjustValues( ai, {
                         attack_dash_distance=function(value) return math.max( tonumber( value ), 150 ) end,
@@ -650,7 +649,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
                         has_projectile_attack = true;
                         break;
                     end
@@ -678,7 +677,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
                         has_projectile_attack = true;
                         break;
                     end
@@ -690,10 +689,10 @@ champion_types = {
             local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue( ai, "attack_ranged_min_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_min_distance" ) * 1.33 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_max_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_max_distance" ) * 1.33 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_entity_count_max", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_max" ) + 2 ) ) );
+                    ComponentSetValue2( ai, "attack_ranged_min_distance", ComponentGetValue2( ai, "attack_ranged_min_distance" ) * 1.33 ) ;
+                    ComponentSetValue2( ai, "attack_ranged_max_distance", ComponentGetValue2( ai, "attack_ranged_max_distance" ) * 1.33 ) ;
+                    ComponentSetValue2( ai, "attack_ranged_entity_count_min", ComponentGetValue2( ai, "attack_ranged_entity_count_min" ) + 1 ) ;
+                    ComponentSetValue2( ai, "attack_ranged_entity_count_max", ComponentGetValue2( ai, "attack_ranged_entity_count_max" ) + 2 ) ;
                 end
             end
         end
@@ -798,7 +797,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
                         has_projectile_attack = true;
                         break;
                     end
@@ -809,9 +808,9 @@ champion_types = {
         apply = function( entity )
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             for _, animal_ai in pairs( animal_ais ) do
-                ComponentSetValue( animal_ai, "attack_ranged_enabled", "1" );
-                ComponentSetValue( animal_ai, "attack_landing_ranged_enabled", "1" );
-                ComponentSetValue( animal_ai, "attack_ranged_entity_file", "data/entities/projectiles/deck/light_bullet.xml" );
+                ComponentSetValue2( animal_ai, "attack_ranged_enabled", true );
+                ComponentSetValue2( animal_ai, "attack_landing_ranged_enabled", true );
+                ComponentSetValue2( animal_ai, "attack_ranged_entity_file", "data/entities/projectiles/deck/light_bullet.xml" );
             end
         end
     },
@@ -848,7 +847,7 @@ champion_types = {
             local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ais > 0 then
                 for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
                         has_projectile_attack = true;
                         break;
                     end

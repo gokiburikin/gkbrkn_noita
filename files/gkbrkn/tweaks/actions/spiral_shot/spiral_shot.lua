@@ -20,6 +20,6 @@ for i,child in ipairs( EntityGetAllChildren( entity ) or {} ) do
         local tx = x + math.cos( theta + angle_inc * ( i - 1 ) ) * distance;
         local ty = y + math.sin( theta + angle_inc * ( i - 1 ) ) * distance;
 
-        ComponentSetValueVector2( velocity, "mVelocity", ( tx - cx ) * 60, ( ty - cy ) * 60 );
+        ComponentSetValue2( velocity, "mVelocity", ( tx - cx ) * 60, ( ty - cy ) * 60 );
     end
 end

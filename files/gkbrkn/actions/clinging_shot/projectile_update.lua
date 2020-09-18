@@ -21,7 +21,7 @@ if projectile ~= nil then
     local soft_parent = EntityGetVariableNumber( entity, "gkbrkn_clinging_shot_target", nil );
     if soft_parent ~= nil and EntityGetIsAlive( soft_parent ) then
         local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
-        local vx, vy = ComponentGetValueVector2( velocity, "mVelocity" );
+        local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
         local px, py = EntityGetTransform( soft_parent );
         local distance = math.sqrt( ( px - x ) ^ 2 + ( py - y ) ^ 2 );
         if distance < 48 then
@@ -30,13 +30,13 @@ if projectile ~= nil then
                 local parent_velocity = EntityGetFirstComponent( soft_parent, "VelocityComponent" );
                 local parent_vx, parent_vy = 0, 0;
                 if parent_velocity ~= nil then
-                    parent_vx, parent_vy = ComponentGetValueVector2( parent_velocity, "mVelocity" );
+                    parent_vx, parent_vy = ComponentGetValue2( parent_velocity, "mVelocity" );
                 end
                 local distance = math.sqrt( math.pow( px - x, 2 ) + math.pow( py - y, 2 ) );
                 if distance > 1 then
-                    ComponentSetValueVector2( velocity, "mVelocity", ( px - x ) * 60 + parent_vx, ( py - y ) * 60 + parent_vy );
+                    ComponentSetValue2( velocity, "mVelocity", ( px - x ) * 60 + parent_vx, ( py - y ) * 60 + parent_vy );
                 else
-                    ComponentSetValueVector2( velocity, "mVelocity", 0, 0 );
+                    ComponentSetValue2( velocity, "mVelocity", 0, 0 );
                 end
             end
         else

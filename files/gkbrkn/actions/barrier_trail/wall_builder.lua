@@ -7,5 +7,5 @@ local now = GameGetFrameNum();
 local wall_piece = shoot_projectile_from_projectile( entity_id, "data/entities/projectiles/deck/wall_piece.xml", pos_x, pos_y, 0, 0 );
 local projectile = EntityGetFirstComponent( wall_piece, "ProjectileComponent" );
 if projectile ~= nil then
-    ComponentSetValue( projectile, "lifetime", "60" );
+    ComponentSetValue2( projectile, "lifetime", 60 );
 end

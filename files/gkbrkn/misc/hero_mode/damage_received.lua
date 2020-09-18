@@ -8,7 +8,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
         if damage_models ~= nil then
             local total_health = 0;
             for i,damage_model in ipairs( damage_models ) do
-                total_health = total_health + ComponentGetValue( damage_model, "max_hp" );
+                total_health = total_health + ComponentGetValue2( damage_model, "max_hp" );
             end
             local x, y = EntityGetTransform( entity );
             local gold_reward = math.ceil( total_health / 6 ) * 10;

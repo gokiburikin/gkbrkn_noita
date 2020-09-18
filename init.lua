@@ -1,10 +1,26 @@
 --[[
-changelog
+changelog 
+    -m "Add missing champion type icons"
+    -m "Add Perk: Magic Focus"
+    -m "Fix Action: Magic Hand (broke at some point)"
+    -m "Fix Randomize options in the Info button not being randomly seeded"
+    -m "Fix some Loadouts with typos in their definitions"
+    -m "Update Action: Burst Fire (allow stacking)"
+    -m "Update Action: Fracture (update icon, still needs work, deprecated for now)"
+    -m "Update Action: Magic Light (mana cost 3 -> 0)"
+    -m "Update Action: Seeker Shot (fixed description)"
+    -m "Update Action: Trigger - Repeat (kill repeat is parent isn't found, still needs work, deprecated for now)"
+    -m "Update gold management to support Gold is Forever perk"
+    -m "Update gui to remember last screen"
+    -m "Update Option: Champion Enemies (polymorphed entities no longer gain champion modifiers, poly blood champion spills less blood)"
+    -m "Update Option: Hero Mode (no longer has cheaty aggression, stats growth rebalanced for an easier early game and a more difficult late game)"
+    -m "Update Perk: Diplomatic Immunity (don't collapse the final holy mountain)"
+    -m "Update Perk: Wand Fusion (choose first wand to take spells instead of no wand if no wand is selected, fixes Wand Fusion as a starting perk)"
 
 BUG
-    trigger repeat is not retaining modifiers for the main projectile
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
     zenti is finding "infinite" mana wands
+    zenti: Apparently your circle of wand editing damages the player if it has freeze field or damage modifiers on it
 
 TODO
     Wand Upgrades
@@ -86,6 +102,7 @@ ModLuaFileAppend( "data/scripts/biomes/temple_altar_left.lua", "mods/gkbrkn_noit
 --[[ Workshop ]]
 ModLuaFileAppend( "data/scripts/buildings/temple_check_for_leaks.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_check_for_leaks.lua" );
 ModLuaFileAppend( "data/scripts/buildings/workshop_exit.lua", "mods/gkbrkn_noita/files/gkbrkn/append/workshop_exit.lua" );
+ModLuaFileAppend( "data/scripts/buildings/workshop_exit_final.lua", "mods/gkbrkn_noita/files/gkbrkn/append/workshop_exit_final.lua" );
 
 --[[ Chest Extensions ]]
 ModLuaFileAppend( "data/scripts/items/chest_random.lua", "mods/gkbrkn_noita/files/gkbrkn/append/chest_random.lua" );
@@ -185,6 +202,7 @@ ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/slow_polymorph.xm
 ]]
 
 function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
+    append_translations("mods/gkbrkn_noita/files/gkbrkn/append/common.csv");
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
     ModTextFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/content/perks.lua" );
 
@@ -228,13 +246,10 @@ function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where
         ModTextFileSetContent( "mods/gkbrkn_noita/files/gkbrkn/scratch/projectile_depth_"..i..".lua","dofile_once( \"mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua\" ); local entity = GetUpdatedEntityID(); EntitySetVariableNumber( entity, \"gkbrkn_projectile_depth\", "..i.." );" );
     end
 
-    append_translations("mods/gkbrkn_noita/files/gkbrkn/append/common.csv");
-
     GKBRKN_CONFIG.disable_content();
 
     dofile( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua");
     if find_game_modifier("limited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/limited_ammo.lua" ); end
     if find_game_modifier("unlimited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/unlimited_ammo.lua" ); end
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_actions.lua" );
-    print (ModTextFileGetContent("mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua"))
 end

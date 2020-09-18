@@ -2,11 +2,11 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local parent_wand = EntityGetParent( GetUpdatedEntityID() );
 local ability = WandGetAbilityComponent( parent_wand, "AbilityComponent" );
 if ability ~= nil then
-    local mana = tonumber( ComponentGetValue( ability, "mana" ) );
-    local max_mana = tonumber( ComponentGetValue( ability, "mana_max" ) );
+    local mana = ComponentGetValue2( ability, "mana" );
+    local max_mana = ComponentGetValue2( ability, "mana_max" );
     if mana < max_mana then
-        ComponentSetValue( ability, "mana", tostring( mana + 0.625 ) );
+        ComponentSetValue2( ability, "mana", mana + 0.625 );
     else
-        ComponentSetValue( ability, "mana", tostring( max_mana ) );
+        ComponentSetValue2( ability, "mana", max_mana );
     end
 end

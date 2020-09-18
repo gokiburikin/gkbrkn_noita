@@ -1,7 +1,7 @@
 <Entity tags="gkbrkn_trigger_repeat" >
 	<_Transform rotation="0" scale.x="1" scale.y="1" ></_Transform>
 	<VelocityComponent updates_velocity="1"></VelocityComponent>
-	<HitboxComponent aabb_max_x="200" aabb_max_y="200" aabb_min_x="-200" aabb_min_y="-200"> </HitboxComponent>
+	<HitboxComponent aabb_max_x="5" aabb_max_y="5" aabb_min_x="-5" aabb_min_y="-5"> </HitboxComponent>
 	<InheritTransformComponent _tags="enabled_in_world" ></InheritTransformComponent>
 	<VariableStorageComponent _tags="gkbrkn_trigger_repeat,enabled_in_world,enabled_in_hand,enabled_in_inventory"></VariableStorageComponent>
 </Entity>

@@ -5,6 +5,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "data/scripts/lib/coroutines.lua" );
+SetRandomSeed( 137, 931 );
 -- TODO: this is a temporary solution, fix this later
 local CONTENT = {};
 GKBRKN_CONFIG.parse_content( false, true, CONTENT );
@@ -18,7 +19,7 @@ local SCREEN = {
     ContentSelection = 3,
     ContentTypeSelection = 4,
 }
-local options = {}
+local options = {};
 local gui = gui or GuiCreate();
 local gui_id = 1707;
 local gui_required_activation = CONTENT_ACTIVATION_TYPE.Immediate;
@@ -279,7 +280,7 @@ function do_gui()
                         end
                     end
                     if tab_data.content_type ~= nil then
-                        content_type = tab_data.content_type;
+                        change_content_type( tab_data.content_type );
                     end
                 end
                 if tab_index % 7 == 0 then
@@ -465,16 +466,32 @@ function change_page( new_page )
     page = new_page;
 end
 
+function change_content_type( new_content_type )
+    content_type = new_content_type;
+end
+
 function change_screen( new_screen )
+    local new_page = 1;
     if new_screen == 0 then
+        GlobalsSetValue( "gkbrkn_gui_screen", tostring( screen ) );
+        GlobalsSetValue( "gkbrkn_gui_page", tostring( page ) );
+        GlobalsSetValue( "gkbrkn_gui_content_type", tostring( content_type ) );
         GameRemoveFlagRun( FLAGS.ConfigMenuOpen );
         local tip_index = math.ceil( Random() * #MISC.ShowModTips.Tips );
         tip = GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip_index] );
     else
+        if screen == 0 then
+            local saved_screen = tonumber(GlobalsGetValue( "gkbrkn_gui_screen", tostring(new_screen)));
+            if saved_screen ~= 0 then
+                new_screen = saved_screen;
+            end
+            new_page = tonumber(GlobalsGetValue( "gkbrkn_gui_page", tostring(page) ));
+            content_type = GlobalsGetValue( "gkbrkn_gui_content_type", content_type or "" );
+        end
         GameAddFlagRun( FLAGS.ConfigMenuOpen );
     end
     screen = new_screen;
-    change_page(1);
+    change_page( new_page );
 end
 
 function do_required_activation()
