@@ -25,14 +25,14 @@ local extended_types = {
     ACTION_TYPE_PASSIVE
 };
 local action_type_weights  = {
-    [ACTION_TYPE_STATIC_PROJECTILE]=3,
-    [ACTION_TYPE_PROJECTILE]=30,
-    [ACTION_TYPE_MODIFIER]=15,
-    [ACTION_TYPE_DRAW_MANY]=5,
-    [ACTION_TYPE_MATERIAL]=1,
-    [ACTION_TYPE_OTHER]=1,
-    [ACTION_TYPE_UTILITY]=1,
-    [ACTION_TYPE_PASSIVE]=1
+    [ACTION_TYPE_STATIC_PROJECTILE] = 3,
+    [ACTION_TYPE_PROJECTILE] = 30,
+    [ACTION_TYPE_MODIFIER] = 15,
+    [ACTION_TYPE_DRAW_MANY] = 5,
+    [ACTION_TYPE_MATERIAL] = 1,
+    [ACTION_TYPE_OTHER] = 1,
+    [ACTION_TYPE_UTILITY] = 1,
+    [ACTION_TYPE_PASSIVE] = 1
 }
 local chance_to_replace = 0.03;
 local _generate_gun = generate_gun;
@@ -150,8 +150,10 @@ function generate_gun( cost, level, force_unshuffle )
             if mana_mastery_stacks > 0 then
                 local mana_max = ability_component_get_stat( ability, "mana_max" );
                 local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
-                ability_component_set_stat( ability, "mana_max", (mana_charge_speed + mana_max) / 2 * ( 1.0 + mana_mastery_stacks * 0.1 ) );
-                ability_component_set_stat( ability, "mana_charge_speed", (mana_charge_speed + mana_max) / 2 * ( 1.0 + mana_mastery_stacks * 0.1 ) );
+                local stats = mana_max + mana_charge_speed;
+                local rand = Random();
+                ability_component_set_stat( ability, "mana_max", (stats * rand) * ( 1.0 + mana_mastery_stacks * 0.1 ) );
+                ability_component_set_stat( ability, "mana_charge_speed", (stats * (1 - rand)) * ( 1.0 + mana_mastery_stacks * 0.1 ) );
             end
         end
     end

@@ -17,6 +17,9 @@ local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
 if velocity ~= nil then
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
     local velocity_angle = math.atan2( vy, vx );
+    if vx == 0 and vy == 0 then
+        nearest_angle = math.pi * 2;
+    end
 
     for _,test_entity in pairs( nearby_entities ) do
         --[[
@@ -51,9 +54,13 @@ if velocity ~= nil then
                 local lifetime_multiplier = math.pow( math.min( 1, ( GameGetFrameNum() - EntityGetVariableNumber( entity, "gkbrkn_spawn_frame", 0 ) ) / 30  ), 2 );
                 local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
                 local aim_angle = math.atan2( ty - y, tx - x );
-                local magnitude = math.sqrt( vx * vx + vy * vy );
                 local angle = math.atan2( vy, vx );
-                local difference = math.abs( math.pow( angle_difference( angle, aim_angle ), 2 ) );
+                local magnitude = math.sqrt( vx * vx + vy * vy );
+                if magnitude == 0 then
+                    angle = aim_angle;
+                end
+                magnitude = magnitude + 1;
+                local difference = math.abs( angle_difference( angle, aim_angle ) );
                 local new_angle = ease_angle( angle, aim_angle + (Random(-1.0, 1.0) * 15 / 180 * math.pi), ( 0.06 + 0.27 * lifetime_multiplier ) ) + (Random(-1.0, 1.0) * 3 / 180 * math.pi);
 
                 ComponentSetValue2( velocity, "mVelocity", math.cos( new_angle ) * magnitude, math.sin( new_angle ) * magnitude );

@@ -25,6 +25,15 @@ function EntitySetVariableString( entity, variable_tag, value )
     end
 end
 
+function EntityHasNamedVariable( entity, name )
+    for k,component in pairs( EntityGetComponent( entity, "VariableStorageComponent" ) or {} ) do
+        if ComponentGetValue2( component, "name") == name then
+            return true;
+        end
+    end
+    return false;
+end
+
 function EntityGetVariableNumber( entity, variable_tag, default )
     return tonumber( EntityGetVariableString( entity, variable_tag, default ) );
 end
@@ -69,7 +78,7 @@ function ComponentObjectAdjustValues( component, object, member_callback_table )
     end
 end
 
-function ComponentsetValue2s( component, member_value_table )
+function ComponentSetValues( component, member_value_table )
     for member,new_value in pairs(member_value_table) do
         ComponentSetValue2( component, member, new_value );
     end

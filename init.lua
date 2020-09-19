@@ -1,26 +1,17 @@
 --[[
-changelog 
-    -m "Add missing champion type icons"
-    -m "Add Perk: Magic Focus"
-    -m "Fix Action: Magic Hand (broke at some point)"
-    -m "Fix Randomize options in the Info button not being randomly seeded"
-    -m "Fix some Loadouts with typos in their definitions"
-    -m "Update Action: Burst Fire (allow stacking)"
-    -m "Update Action: Fracture (update icon, still needs work, deprecated for now)"
-    -m "Update Action: Magic Light (mana cost 3 -> 0)"
-    -m "Update Action: Seeker Shot (fixed description)"
-    -m "Update Action: Trigger - Repeat (kill repeat is parent isn't found, still needs work, deprecated for now)"
-    -m "Update gold management to support Gold is Forever perk"
-    -m "Update gui to remember last screen"
-    -m "Update Option: Champion Enemies (polymorphed entities no longer gain champion modifiers, poly blood champion spills less blood)"
-    -m "Update Option: Hero Mode (no longer has cheaty aggression, stats growth rebalanced for an easier early game and a more difficult late game)"
-    -m "Update Perk: Diplomatic Immunity (don't collapse the final holy mountain)"
-    -m "Update Perk: Wand Fusion (choose first wand to take spells instead of no wand if no wand is selected, fixes Wand Fusion as a starting perk)"
+changelog
+    -m "Fix Action: Divine Blessing (no longer friendly fire)"
+    -m "Fix general gold drop logic (should be better forward compatible)"
+    -m "Fix Option: Combine Gold (works with blood money, happens more often)"
+    -m "Update Action: Lock Shot (rename Lock Shot -> Lock)"
+    -m "Update Action: Arcane Bouquet (mana cost 25 -> 5, mana multiplier 1x -> 5x)"
+    -m "Update Action: Protective Enchantment (rename Protective Enchantment -> Protection, no longer reduces damage, mana multiplier 1x -> 3x)"
+    -m "Update Info Screen (reorganize for more consistency)"
+    -m "Update Perk: Mana Manipulation (reallocate mana max and mana recharge instead of swapping or equalizing them)"
 
 BUG
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
     zenti is finding "infinite" mana wands
-    zenti: Apparently your circle of wand editing damages the player if it has freeze field or damage modifiers on it
 
 TODO
     Wand Upgrades
@@ -32,7 +23,6 @@ TODO
         Trigger on Bounce
         Trigger on Kick
         Trigger while Flying
-
 
     mana focus (reduce mana cost of your next spell cast every second up to 10 seconds. resets every cast)
     charged spell (increase damage your next spell cast every second up to 10 seconds. resets every cast)
@@ -76,8 +66,6 @@ PERKS
 
 ABANDONED
     Lava, Acid, Poison (Material) Immunities (works if you're willing to polymorph the player for a frame. i'm not)
-
-the exit to the boss holy mountain still crumbles diplomatic immunity
 
 Champion Type Ideas
     Pilfer (steal gold on hit)

@@ -28,7 +28,7 @@ function perk_pickup( entity_item, entity_who_picked, item_name, do_cosmetic_fx,
 
 	local perk_data = get_perk_with_id( perk_list, perk_id )
     local can_recurse = false;
-	if perk_data ~= nil and perk_data.stackable == true then
+	if perk_data ~= nil and perk_data.stackable ~= false then
 		can_recurse = true;
 	end
 

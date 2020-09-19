@@ -332,7 +332,7 @@ if gold_tracker_world or gold_tracker_message then
     end
 end
 
-if now % 10 == 0 then
+if now % 1 == 0 then
 	local world_entity_id = GameGetWorldStateEntity();
     local world_state = EntityGetFirstComponent( world_entity_id, "WorldStateComponent" );
     local is_gold_forever = false;
@@ -368,97 +368,97 @@ if now % 10 == 0 then
     end
 
     --[[ Combine Gold ]]
-    if HasFlagPersistent( MISC.CombineGold.EnabledFlag ) then
+     if HasFlagPersistent( MISC.CombineGold.EnabledFlag ) then
         local nugget_sizes = { 10, 50, 200, 1000, 10000 };
+        SetRandomSeed( GameGetFrameNum(), GameGetFrameNum() );
         for _,gold_nugget in pairs( gold_nuggets ) do
-            if EntityHasTag( gold_nugget, "gkbrkn_special_goldnugget" ) == false then
-                local average_kill_frame = 0;
-                local average_creation_frame = 0;
-                if EntityGetIsAlive( gold_nugget ) then
-                    local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-                    if lifetime ~= nil then
-                        average_kill_frame  = average_kill_frame + ComponentGetValue2( lifetime, "kill_frame" );
-                        average_creation_frame  = average_creation_frame + ComponentGetValue2( lifetime, "creation_frame" );
+            if EntityGetIsAlive( gold_nugget ) then
+                local x, y = EntityGetTransform( gold_nugget );
+                local nearby_gold_nuggets = EntityGetInRadiusWithTag( x, y, 64, "gold_nugget" );
+                if #nearby_gold_nuggets > 1 then
+                    local nearby_gold_nugget = EntityGetInRadiusWithTag( x, y, 64, "gold_nugget" )[1];
+                    while nearby_gold_nugget == gold_nugget and #nearby_gold_nuggets > 1 do
+                        nearby_gold_nugget = nearby_gold_nuggets[ Random() ];
                     end
-                    local gx, gy = EntityGetTransform( gold_nugget );
-                    local check_radius = MISC.CombineGold.Radius or 48;
-                    local nearby_gold_nuggets = EntityGetInRadiusWithTag( gx, gy, check_radius, "gold_nugget" ) or {};
-                    local merge_sum = 0;
-                    for _,nearby in pairs(nearby_gold_nuggets) do
-                        if EntityHasTag( nearby, "gkbrkn_special_goldnugget" ) == false then
-                            if tonumber(nearby) ~= tonumber(gold_nugget) then
-                                local lifetime = EntityGetFirstComponent( nearby, "LifetimeComponent" );
-                                if lifetime ~= nil then
-                                    average_kill_frame  = average_kill_frame + ComponentGetValue2( lifetime, "kill_frame" );
-                                    average_creation_frame  = average_creation_frame + ComponentGetValue2( lifetime, "creation_frame" );
-                                end
-                                local components = EntityGetComponent( nearby, "VariableStorageComponent" ) or {};
-                                for _,component in pairs( components ) do 
-                                    if ComponentGetValue2( component, "name" ) == "gold_value" then
-                                        local gold_value = ComponentGetValueInt( component, "value_int" );
-                                        merge_sum = merge_sum + gold_value;
-                                        clear_lost_treasure( nearby );
-                                        clear_gold_decay( nearby );
-                                        EntityKill( nearby );
-                                        break;
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    average_kill_frame = math.ceil( average_kill_frame / #nearby_gold_nuggets );
-                    average_creation_frame = math.ceil( average_creation_frame / #nearby_gold_nuggets );
-                    if merge_sum > 0 then
-                        local new_size = nil;
-                        local new_gold_value = nil;
-                        local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
-                        for _,component in pairs( components ) do 
-                            if ComponentGetValue2( component, "name" ) == "gold_value" then
-                                local gold_value = tonumber(ComponentGetValueInt( component, "value_int" ));
-                                new_gold_value = merge_sum + gold_value;
-                                for i=2,#nugget_sizes do
-                                    local size = nugget_sizes[i];
-                                    local previous_size = nugget_sizes[i - 1];
-                                    if gold_value < size and new_gold_value >= size then
-                                        new_size = size;
-                                    end
-                                end
-                                ComponentSetValue2( component, "value_int", new_gold_value );
-                            end
-                        end
-                        if new_size ~= nil and new_gold_value ~= nil then
-                            clear_lost_treasure( gold_nugget );
-                            clear_gold_decay( gold_nugget );
-                            EntityKill( gold_nugget );
-                            gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..new_size..".xml", gx, gy );
-                            local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
+                    if nearby_gold_nugget ~= gold_nugget and EntityGetIsAlive( nearby_gold_nugget ) then
+                        local gold_value = 0;
+                        local hp_value = 0;
+                        local creation_frame = 0;
+                        local kill_frame = 0;
+                        local nuggets_to_combine = { gold_nugget, nearby_gold_nugget };
+                        for _,nugget in pairs(nuggets_to_combine) do
+                            local components = EntityGetComponent( nugget, "VariableStorageComponent" ) or {};
                             for _,component in pairs( components ) do 
                                 if ComponentGetValue2( component, "name" ) == "gold_value" then
-                                    ComponentSetValue2( component, "value_int", new_gold_value );
+                                    gold_value = gold_value + ComponentGetValue2( component, "value_int" );
                                 end
+                                if ComponentGetValue2( component, "name" ) == "hp_value" then
+                                    hp_value = hp_value + ComponentGetValue2( component, "value_float" );
+                                end
+                            end
+                            local lifetime = EntityGetFirstComponent( nugget, "LifetimeComponent" );
+                            if lifetime ~= nil then
+                                kill_frame  = kill_frame + ComponentGetValue2( lifetime, "kill_frame" );
+                                creation_frame  = creation_frame + ComponentGetValue2( lifetime, "creation_frame" );
+                            end
+                            clear_lost_treasure( nugget );
+                            clear_gold_decay( nugget );
+                            EntityKill( nugget );
+                        end
+                        gold_value = gold_value;
+                        hp_value = hp_value;
+                        creation_frame = math.ceil( creation_frame / 2 );
+                        kill_frame = math.ceil( kill_frame / 2 );
+                        local new_size = 10;
+                        for i=2,#nugget_sizes do
+                            local size = nugget_sizes[i];
+                            if gold_value >= size then
+                                new_size = size;
+                            end
+                        end
+                        -- make new nug
+                        if hp_value > 0 then
+                            gold_nugget = EntityLoad( "data/entities/items/pickup/bloodmoney_"..new_size..".xml", x, y );
+                        else
+                            gold_nugget = EntityLoad( "data/entities/items/pickup/goldnugget_"..new_size..".xml", x, y );
+                        end
+                        local components = EntityGetComponent( gold_nugget, "VariableStorageComponent" ) or {};
+                        for _,component in pairs( components ) do 
+                            if gold_value and ComponentGetValue2( component, "name" ) == "gold_value" then
+                                ComponentSetValue2( component, "value_int", gold_value );
+                            end
+                            if hp_value and ComponentGetValue2( component, "name" ) == "hp_value" then
+                                ComponentSetValue2( component, "value_float", hp_value );
                             end
                         end
                         local lifetime = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
-                        if is_gold_forever then
-                            EntityRemoveComponent( gold_nugget, lifetime );
-                        else 
-                            if lifetime ~= nil and average_kill_frame ~= 0 and average_creation_frame ~= 0 then
-                                local old_kill_frame = ComponentGetValue2( lifetime, "kill_frame" );
-                                local old_creation_frame = ComponentGetValue2( lifetime, "creation_frame" );
-                                ComponentSetValue2( lifetime, "kill_frame", average_kill_frame );
-                                ComponentSetValue2( lifetime, "creation_frame", average_creation_frame );
+                        if lifetime then
+                            if is_gold_forever then
+                                EntityRemoveComponent( gold_nugget, lifetime );
+                            else 
+                                if kill_frame and creation_frame then
+                                    ComponentSetValue2( lifetime, "kill_frame", kill_frame );
+                                    ComponentSetValue2( lifetime, "creation_frame", creation_frame );
+                                end
                             end
                         end
                         local item = EntityGetFirstComponent( gold_nugget, "ItemComponent" );
                         if item ~= nil then
-                            ComponentSetValue2( item, "item_name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..new_gold_value..")" );
+                            if hp_value > 0 then
+                                ComponentSetValue2( item, "item_name", GameTextGetTranslatedOrNot("$item_bloodmoney").." ("..gold_value..")" );
+                            else
+                                ComponentSetValue2( item, "item_name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..gold_value..")" );
+                            end
                         end
 
                         local ui_info = EntityGetFirstComponent( gold_nugget, "UIInfoComponent" );
                         if ui_info ~= nil then
-                            ComponentSetValue2( ui_info, "name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..new_gold_value..")" );
+                            if hp_value > 0 then
+                                ComponentSetValue2( ui_info, "name", GameTextGetTranslatedOrNot("$item_bloodmoney").." ("..gold_value..")" );
+                            else
+                                ComponentSetValue2( ui_info, "name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..gold_value..")" );
+                            end
                         end
-                        break;
                     end
                 end
             end
@@ -564,7 +564,7 @@ if now % 10 == 0 then
             SetRandomSeed( now, x + y + nearby );
 
             --SetRandomSeed( x, y );
-            if EntityHasTag( nearby, "polymorphed" ) == false then
+            if EntityHasTag( nearby, "polymorphed" ) == false and EntityHasNamedVariable( nearby, "goki_health" ) == false then
                 if ( EntityHasTag( nearby, "gkbrkn_champions" ) == false or EntityHasTag( nearby, "gkbrkn_force_champion" ) == true ) and EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and does_entity_drop_gold( nearby ) == true then
                     if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                         EntityAddTag( nearby, "gkbrkn_champions" );
@@ -824,7 +824,7 @@ if now % 10 == 0 then
         end
         
         for _,nearby in pairs( nearby_enemies ) do
-            if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 then
+            if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 and EntityHasNamedVariable( nearby, "goki_health" ) == false then
                 EntitySetVariableNumber( nearby, "gkbrkn_hero_mode", 1.0 );
                 local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
                 if damage_models ~= nil then
@@ -839,7 +839,7 @@ if now % 10 == 0 then
                         slice = general_resistances,
                         projectile = general_resistances,
                         --healing = general_resistances,
-                        physics_hit = general_resistances,
+                        physics_hit = general_resistances * 0.2,
                         explosion = general_resistances,
                         poison = general_resistances,
                         melee = general_resistances,
@@ -972,7 +972,9 @@ if now % 10 == 0 then
         for _,boss in pairs( EntityGetWithTag( "boss_centipede" ) or {} ) do
             if EntityGetVariableNumber( boss, "gkbrkn_hero_mode_boss", 0 ) == 0 then
                 EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );
+                print( StatsGetValue("enemies_killed") )
                 local health_bonus = math.pow( tonumber( StatsGetValue("enemies_killed") ) * 100, 1.1 ) / 25;
+                print( health_bonus )
                 TryAdjustMaxHealth( boss, function( max, current ) return tonumber( max ) + health_bonus; end );
             end
         end

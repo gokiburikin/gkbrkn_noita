@@ -19,7 +19,7 @@ if holder ~= nil then
     if controls ~= nil then
         local use_button = ComponentGetValue2( controls, "mButtonDownFire" );
         local use_button_frame = ComponentGetValue2( controls, "mButtonFrameFire" );
-        if use_button == 1 and use_button_frame == now then
+        if use_button == true and use_button_frame == now then
             last_use_frame = use_button_frame;
             local children = EntityGetAllChildren( spell_storage ) or {};
             if #children > 0 then

@@ -1,5 +1,6 @@
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once("mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
+dofile_once( "data/scripts/items/drop_money.lua" );
 
 function damage_received( damage, message, entity_thats_responsible, is_fatal  )
     local entity = GetUpdatedEntityID();
@@ -11,11 +12,13 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
                 total_health = total_health + ComponentGetValue2( damage_model, "max_hp" );
             end
             local x, y = EntityGetTransform( entity );
-            local gold_reward = math.ceil( total_health + 0.5 ) * 4 * EntityGetVariableNumber( entity, "gkbrkn_champion_modifier_amount", 0 );
-            gold_reward = math.ceil( gold_reward / 10 ) * 10;
+            --local gold_reward = math.ceil( total_health + 0.5 ) * 4 * EntityGetVariableNumber( entity, "gkbrkn_champion_modifier_amount", 0 );
+            --gold_reward = math.ceil( gold_reward / 10 ) * 10;
             --GamePrint( "[goki's things] champion bonus was "..gold_reward.." gold for "..(total_health * 25).. " health");
-            if gold_reward > 0 then
-                spawn_gold_nuggets( gold_reward, x, y );
+            local gold_multiplier = math.floor( total_health / 4 ) + EntityGetVariableNumber( entity, "gkbrkn_champion_modifier_amount", 0 );
+            if gold_multiplier > 0 then
+                do_money_drop( gold_multiplier );
+                --spawn_gold_nuggets( gold_reward, x, y );
             end
         end
     end

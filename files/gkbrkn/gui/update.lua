@@ -302,21 +302,36 @@ function do_gui()
         GuiText( gui, 0, 0, " ");
         GuiText( gui, 0, 0, "Press one of the buttons below to select a preset. Be careful, you can't undo this!");
         GuiText( gui, 0, 0, " ");
-        if GuiButton( gui, 0, 0, "[Vanilla] Turn off all custom Goki's Things content", next_id() ) then
-            toggle_vanilla();
-        end
         if GuiButton( gui, 0, 0, "[Default] Reset Goki's Things to default settings", next_id() ) then
             toggle_default();
+            GamePrint( "Reset Goki's Things to its default settings" );
         end
-        if GuiButton( gui, 0, 0, "[Goki Mode] Apply the settings Goki prefers to use", next_id() ) then
-            toggle_default();
-            toggle_content_by_tag("goki_thing");
+        if GuiButton( gui, 0, 0, "[Vanilla] Turn off all custom Goki's Things content", next_id() ) then
+            toggle_vanilla();
+            GamePrint( "Disabled all custom content" );
+        end
+        GuiText( gui, 0, 0, " ");
+        if GuiButton( gui, 0, 0, "[Champions Mode] Enemies have special modifiers that change up the combat", next_id() ) then
+            toggle_content_by_tag("champions_mode");
+            GamePrint( "Enabled Champions Mode options" );
+        end
+        if GuiButton( gui, 0, 0, "[Hero Mode] Enemies are tougher and the final boss has a higher minimum health", next_id() ) then
+            toggle_content_by_tag("hero_mode");
+            GamePrint( "Enabled Hero Mode options" );
         end
         if GuiButton( gui, 0, 0, "[Ultimate Challenge Mode] Enable the Ultimate Hero + Ultimate Champion game modes", next_id() ) then
             toggle_content_by_tag("ultimate_challenge");
+            GamePrint( "Enabled Ultimate Challenge Mode options" );
         end
-        if GuiButton( gui, 0, 0, "[Random Start] Start runs with random equipment", next_id() ) then
+        if GuiButton( gui, 0, 0, "[Goki Mode] Apply the settings Goki prefers to use (this is a difficult mode)", next_id() ) then
+            toggle_default();
+            toggle_content_by_tag("goki_thing");
+            GamePrint( "Enabled Goki Mode options" );
+        end
+        GuiText( gui, 0, 0, " ");
+        if GuiButton( gui, 0, 0, "[Random Starts] Start runs with random equipment", next_id() ) then
             toggle_content_by_tag("random_starts");
+            GamePrint( "Enabled Random Starts options" );
         end
         if GuiButton( gui, 0, 0, "[Loadouts] Allow Goki's Things to manage loadouts and start runs with a random loadout", next_id() ) then
             toggle_content_by_tag("loadouts");
@@ -325,8 +340,9 @@ function do_gui()
                     content.toggle( true );
                 end
             end
+            GamePrint( "Enabled loadout management and all loadouts" );
         end
-        if GuiButton( gui, 0, 0, "[Randomize] Randomize all of the options (this is probably a bad idea)", next_id() ) then
+        if GuiButton( gui, 0, 0, "[Randomize] Randomize all of the options (this is a bad idea)", next_id() ) then
             for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
                 if option.SubOptions ~= nil then
                     for _,sub_option in pairs(option.SubOptions) do
@@ -352,6 +368,7 @@ function do_gui()
                 end
             end
             RemoveFlagPersistent( MISC.AutoHide.EnabledFlag );
+            GamePrint( "All settings have been randomized" );
         end
         GuiText( gui, 0, 0, " ");
         GuiText( gui, 0, 0, "Goki Says: "..tip);
@@ -541,14 +558,14 @@ function do_content( content )
             text = text .. " " .. GameTextGetTranslatedOrNot( content.options.menu_note );
         end
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-            if HasFlagPersistent( MISC.VerboseMenus.EnabledFlag ) and content.options ~= nil then
-                if content.description ~= nil then
-                    if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
-                        for word in string.gmatch( content.description, '([^\n]+)' ) do
-                            GamePrint( word );
-                        end
+            if content.description ~= nil then
+                if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
+                    for word in string.gmatch( content.description, '([^\n]+)' ) do
+                        GamePrint( word );
                     end
                 end
+            end
+            if HasFlagPersistent( MISC.VerboseMenus.EnabledFlag ) and content.options ~= nil then
                 if content.options.preview_callback ~= nil then
                     if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_preview_button_gkbrkn"), next_id() ) then
                         content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );

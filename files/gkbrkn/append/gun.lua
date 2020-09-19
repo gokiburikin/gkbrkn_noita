@@ -593,10 +593,6 @@ function set_trigger_instant( action_draw_count )
     });
 end
 
-function extra_projectiles( amount )
-    gkbrkn.extra_projectiles = gkbrkn.extra_projectiles + amount;
-end
-
 function delete_cloned_actions()
     for _,clear_table in pairs( { deck, discarded, hand } ) do
         for i=#clear_table,1,-1 do

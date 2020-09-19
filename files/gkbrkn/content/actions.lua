@@ -35,16 +35,6 @@ table.insert( actions, generate_action_entry(
 ) );
 
 table.insert( actions, generate_action_entry(
-    "GKBRKN_BOUND_SHOT", "bound_shot", ACTION_TYPE_OTHER,
-    "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 150, 90, -1,
-    nil,
-    function()
-        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/bound_shot/projectile_extra_entity.xml,";
-        draw_actions( 1, true );
-    end
-) );
-
-table.insert( actions, generate_action_entry(
     "GKBRKN_BREAK_CAST", "break_cast", ACTION_TYPE_UTILITY,
     "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 50, 2, -1,
     nil,
@@ -52,7 +42,7 @@ table.insert( actions, generate_action_entry(
         c.fire_rate_wait = c.fire_rate_wait - 10.2;
         current_reload_time = current_reload_time - 10.2;
         skip_cards();
-    end
+    end, true
 ));
 
 table.insert( actions, generate_action_entry(
@@ -198,17 +188,6 @@ table.insert( actions, generate_action_entry(
 ) );
 
 table.insert( actions, generate_action_entry(
-    "GKBRKN_CLINGING_SHOT", "clinging_shot", ACTION_TYPE_MODIFIER,
-    "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 150, 13, -1,
-    nil,
-    function()
-        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/clinging_shot/projectile_extra_entity.xml,";
-        c.speed_multiplier = 0;
-        draw_actions( 1, true );
-    end
-) );
-
-table.insert( actions, generate_action_entry(
     "GKBRKN_COLLISION_DETECTION", "collision_detection", ACTION_TYPE_MODIFIER,
     "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 90, 4, -1,
     nil,
@@ -236,7 +215,7 @@ table.insert( actions, generate_action_entry(
         if drawn == false then
             draw_actions( 1, true );
         end
-    end
+    end, true
 ) );
 
 table.insert( actions, generate_action_entry(
@@ -301,12 +280,13 @@ table.insert( actions, generate_action_entry(
 
 table.insert( actions, generate_action_entry(
     "GKBRKN_DUPLICAST", "duplicast", ACTION_TYPE_OTHER,
-    "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 100, 25, -1,
+    "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 100, 5, -1,
     nil,
     function()
+        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 5.00;
         current_reload_time = current_reload_time + 30;
         c.pattern_degrees = c.pattern_degrees + 180;
-        extra_projectiles( 7 );
+        gkbrkn.extra_projectiles = gkbrkn.extra_projectiles + 7;
         draw_actions( 1, true );
     end
 ) );
@@ -744,7 +724,7 @@ table.insert( actions, generate_action_entry(
         c.fire_rate_wait = c.fire_rate_wait + 6;
         current_reload_time = current_reload_time + 6;
         c.spread_degrees = c.spread_degrees + 2;
-        extra_projectiles( 1 );
+        gkbrkn.extra_projectiles = gkbrkn.extra_projectiles + 1;
         draw_actions( 1 , true );
     end
 ) );
@@ -758,7 +738,7 @@ table.insert( actions, generate_action_entry(
         c.fire_rate_wait = c.fire_rate_wait + 12;
         current_reload_time = current_reload_time + 12;
         c.spread_degrees = c.spread_degrees + 5;
-        extra_projectiles( 4 );
+        gkbrkn.extra_projectiles = gkbrkn.extra_projectiles + 4;
         draw_actions( 1, true );
     end
 ) );
@@ -791,6 +771,7 @@ table.insert( actions, generate_action_entry(
     "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 200, 23, -1,
     nil,
     function()
+        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3;
         c.fire_rate_wait = c.fire_rate_wait + 17;
         current_reload_time = current_reload_time + 17;
         c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/protective_enchantment/projectile_extra_entity.xml,";
@@ -1055,18 +1036,6 @@ table.insert( actions, generate_action_entry(
 ) );
 
 table.insert( actions, generate_action_entry(
-    "GKBRKN_TIME_SPLIT", "time_split", ACTION_TYPE_OTHER, 
-    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 140, 3, -1,
-    nil,
-    function()
-        local sum = (c.fire_rate_wait + current_reload_time) * 0.5;
-        c.fire_rate_wait = sum;
-        current_reload_time = sum;
-        draw_actions( 1, true );
-    end
-) );
-
-table.insert( actions, generate_action_entry(
     "GKBRKN_TRAILING_SHOT", "trailing_shot", ACTION_TYPE_DRAW_MANY, 
     "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 10, 5, -1,
     nil,
@@ -1233,18 +1202,6 @@ table.insert( actions, generate_action_entry(
     end
 ) );
 
-table.insert( actions, generate_action_entry(
-    "GKBRKN_FOCUSED_SHOT", "focused_shot", ACTION_TYPE_MODIFIER,
-    "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 500, -5, -1,
-    nil,
-    function()
-        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.0;
-        c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/focused_shot/projectile_extra_entity.xml,";
-        draw_actions( 1, true );
-        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier / 3.0;
-    end
-) );
-
 --[[
 table.insert( actions, generate_action_entry(
     "GKBRKN_TRIGGER_REPEAT", "trigger_repeat", ACTION_TYPE_MODIFIER,
@@ -1353,5 +1310,51 @@ table.insert( actions, generate_action_entry(
         end
         c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_take_damage/projectile_extra_entity.xml,";
         add_projectile_trigger_hit_world( "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_take_damage/projectile.xml", 1 );
+    end
+) );
+
+--[[ SUPERS ]]
+
+table.insert( actions, generate_action_entry(
+    "GKBRKN_CLINGING_SHOT", "clinging_shot", ACTION_TYPE_MODIFIER,
+    "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 150, 30, -1,
+    nil,
+    function()
+        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/clinging_shot/projectile_extra_entity.xml,";
+        draw_actions( 1, true );
+    end
+) );
+
+table.insert( actions, generate_action_entry(
+    "GKBRKN_FOCUSED_SHOT", "focused_shot", ACTION_TYPE_MODIFIER,
+    "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 500, 20, -1,
+    nil,
+    function()
+        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.0;
+        c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/focused_shot/projectile_extra_entity.xml,";
+        draw_actions( 1, true );
+        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier / 3.0;
+    end
+) );
+
+table.insert( actions, generate_action_entry(
+    "GKBRKN_TIME_SPLIT", "time_split", ACTION_TYPE_OTHER, 
+    "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 140, 4, -1,
+    nil,
+    function()
+        local sum = (c.fire_rate_wait + current_reload_time) * 0.5;
+        c.fire_rate_wait = c.fire_rate_wait / 3;
+        current_reload_time = current_reload_time / 3;
+        draw_actions( 1, true );
+    end
+) );
+
+table.insert( actions, generate_action_entry(
+    "GKBRKN_BOUND_SHOT", "bound_shot", ACTION_TYPE_OTHER,
+    "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 150, 90, -1,
+    nil,
+    function()
+        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/bound_shot/projectile_extra_entity.xml,";
+        draw_actions( 1, true );
     end
 ) );

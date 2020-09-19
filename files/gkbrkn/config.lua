@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c99rc8"
+    Version = "c99rc9"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -125,13 +125,13 @@ end
             register_option_localized( MISC.AutoHide.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
         ),
         register_option_group_localized( "gkbrkn_hero_mode",
-            register_option_localized( MISC.HeroMode.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
+            register_option_localized( MISC.HeroMode.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, hero_mode = true} ),
             register_option_localized( MISC.HeroMode.OrbsDifficultyFlag, CONTENT_ACTIVATION_TYPE.NewGame, function( enabled )
                 if not enabled then RemoveFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ); end
-            end, nil, {goki_thing = true, ultimate_challenge = true} ),
+            end, nil, {goki_thing = true, ultimate_challenge = true, hero_mode = true} ),
             register_option_localized( MISC.HeroMode.DistanceDifficultyFlag, CONTENT_ACTIVATION_TYPE.NewGame, function( enabled )
                 if not enabled then RemoveFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ); end
-            end, nil, {goki_thing = true, ultimate_challenge = true} ),
+            end, nil, {goki_thing = true, ultimate_challenge = true, hero_mode = true} ),
             register_option_localized( MISC.HeroMode.CarnageDifficultyFlag, CONTENT_ACTIVATION_TYPE.NewGame, function( enabled )
                 if enabled then
                     AddFlagPersistent( MISC.HeroMode.OrbsDifficultyEnabled );
@@ -140,10 +140,10 @@ end
             end )
         ),
         register_option_group_localized( "gkbrkn_champion_enemies",
-            register_option_localized( MISC.ChampionEnemies.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
-            register_option_localized( MISC.ChampionEnemies.SuperChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
-            register_option_localized( MISC.ChampionEnemies.AlwaysChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} ),
-            register_option_localized( MISC.ChampionEnemies.MiniBossesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true} )
+            register_option_localized( MISC.ChampionEnemies.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true} ),
+            register_option_localized( MISC.ChampionEnemies.SuperChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true} ),
+            register_option_localized( MISC.ChampionEnemies.AlwaysChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true} ),
+            register_option_localized( MISC.ChampionEnemies.MiniBossesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true} )
         ),
         register_option_group_localized( "gkbrkn_random_start",
             register_option_localized( MISC.RandomStart.RandomWandsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),

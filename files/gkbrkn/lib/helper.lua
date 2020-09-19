@@ -109,7 +109,7 @@ function generate_action_entry( action_id, key, action_type, spawn_level, spawn_
     };
 end
 
-function spawn_gold_nuggets( gold_value, x, y )
+function spawn_gold_nuggets( gold_value, x, y, blood_money )
     local sizes = { 10000, 1000, 200, 50, 10 };
     local world_entity_id = GameGetWorldStateEntity();
     local world_state = EntityGetFirstComponent( world_entity_id, "WorldStateComponent" );
