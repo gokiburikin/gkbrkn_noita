@@ -371,7 +371,9 @@ table.insert( perk_list,
                 for stat,comparison in pairs( comparisons ) do
                     local current_value = best_values[stat];
                     local outcome = comparison( ability_component_get_stat( ability, stat ), current_value );
-                    best_values[stat] = outcome or current_value;
+                    if outcome ~= nil then
+                        best_values[stat] = outcome;
+                    end
                 end
             end
 
@@ -573,6 +575,26 @@ table.insert( perk_list,
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_WANDSMITH", "wandsmith", false, function( entity_perk_item, entity_who_picked, item_name )
         EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_wandsmith_stacks", 0.0, function( value ) return value + 1; end );
+	end
+) );
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_UPGRADE_WAND", "upgrade_wand", false, function( entity_perk_item, entity_who_picked, item_name )
+        local wand = get_entity_first_or_random_wand( entity_who_picked );
+        if wand ~= 0 then
+            local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
+            if ability ~= 0 then
+                ability_component_adjust_stats( ability, {
+                    mana_max=function(value) return tonumber( value ) * ( Random() * 0.25 + 1.0 ); end,
+                    mana_charge_speed=function(value) return ( tonumber( value ) + Random( 10, 20 ) ) * ( Random() * 0.25 + 1.0 ); end,
+                    deck_capacity=function(value) return math.min( 26, math.floor( tonumber( value ) + Random( 2, 4 ) ) ); end,
+                    reload_time=function(value) return tonumber( value ) - Random( 8, 16 ); end,
+                    fire_rate_wait=function(value) return tonumber( value ) - Random( 4, 8 ); end,
+                    spread_degrees=function(value) return tonumber( value ) - Random( 2, 4 ); end,
+                } );
+                initialize_wand( wand, { name="upgraded wand", stats=ability_component_get_stats( ability ) } );
+            end
+        end
 	end
 ) );
 

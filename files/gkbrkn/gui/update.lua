@@ -565,7 +565,7 @@ function do_content( content )
                     end
                 end
             end
-            if HasFlagPersistent( MISC.VerboseMenus.EnabledFlag ) and content.options ~= nil then
+            if content.options ~= nil then
                 if content.options.preview_callback ~= nil then
                     if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_preview_button_gkbrkn"), next_id() ) then
                         content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );

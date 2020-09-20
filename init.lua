@@ -1,17 +1,19 @@
 --[[
 changelog
-    -m "Fix Action: Divine Blessing (no longer friendly fire)"
-    -m "Fix general gold drop logic (should be better forward compatible)"
-    -m "Fix Option: Combine Gold (works with blood money, happens more often)"
-    -m "Update Action: Lock Shot (rename Lock Shot -> Lock)"
-    -m "Update Action: Arcane Bouquet (mana cost 25 -> 5, mana multiplier 1x -> 5x)"
-    -m "Update Action: Protective Enchantment (rename Protective Enchantment -> Protection, no longer reduces damage, mana multiplier 1x -> 3x)"
-    -m "Update Info Screen (reorganize for more consistency)"
-    -m "Update Perk: Mana Manipulation (reallocate mana max and mana recharge instead of swapping or equalizing them)"
+    -m "Add Perk: Upgrade Wand"
+    -m "Fix Option: Combine Gold (works with Persistent Gold again)"
+    -m "Fix Action: Protection (properly remove damage reduction)"
+    -m "Update Option: Hero Mode (boss now has at least 50k hp)"
+    -m "Update Perk: Wandsmith (reduced recharge time 8-20 -> 8-16)"
+    -m "Remove Option: Verbose Menus (people refuse to read)"
+    -m "Fix Perk: Wand Fusion (no longer prefers shuffle: yes)"
 
 BUG
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
     zenti is finding "infinite" mana wands
+    WE ARE finding too many extremely similar wands, check the RNG state
+    remove polyblood from minibosses
+    grimoires should not include deprecated spells
 
 TODO
     Wand Upgrades

@@ -613,3 +613,29 @@ function get_magic_focus_multiplier( last_calibration_shot_frame, last_calibrati
         return math.min( 1, (difference - MISC.PerkOptions.MagicFocus.DecayFrames) / MISC.PerkOptions.MagicFocus.ChargeFrames);
     end
 end
+
+function get_entity_first_or_random_wand( entity )
+    local base_wand = nil;
+    local wands = {};
+    local children = EntityGetAllChildren( entity );
+    for key,child in pairs( children ) do
+        if EntityGetName( child ) == "inventory_quick" then
+            wands = EntityGetChildrenWithTag( child, "wand" );
+            break;
+        end
+    end
+    if #wands > 0 then
+        local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+        local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
+        for _,wand in pairs( wands ) do
+            if wand == active_item then
+                base_wand = wand;
+                break;
+            end
+        end
+        if base_wand == nil then
+            base_wand =  random_from_array( wands );
+        end
+    end
+    return base_wand;
+end

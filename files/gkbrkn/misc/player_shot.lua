@@ -59,7 +59,7 @@ function shot( projectile_entity )
         end
     end
 
-    local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casting", 0.0 );
+local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casting", 0.0 );
     if hyper_casting_bonus > 0 then
         local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then

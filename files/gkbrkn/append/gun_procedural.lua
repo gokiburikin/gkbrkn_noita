@@ -141,7 +141,7 @@ function generate_gun( cost, level, force_unshuffle )
                     mana_max=function(value) return tonumber( value ) * ( 1.1 ^ wandsmith_stacks ); end,
                     mana_charge_speed=function(value) return ( tonumber( value ) + Random( 10, 20 ) ) * ( 1.1 ^ wandsmith_stacks ); end,
                     deck_capacity=function(value) return math.min( 26, math.floor( tonumber( value ) + wandsmith_stacks * 2 ) ); end,
-                    reload_time=function(value) return tonumber( value ) - Random( 8, 20 ) * wandsmith_stacks; end,
+                    reload_time=function(value) return tonumber( value ) - Random( 8, 16 ) * wandsmith_stacks; end,
                     fire_rate_wait=function(value) return tonumber( value ) - Random( 4, 8 ) * wandsmith_stacks; end,
                     spread_degrees=function(value) return tonumber( value ) - 2 * wandsmith_stacks; end,
                 } );

@@ -133,6 +133,14 @@ function ability_component_adjust_stat( ability, stat, callback )
     end
 end
 
+function ability_component_get_stats( ability, stat )
+    local stats = {};
+    for k,v in pairs( WAND_STAT_SETTERS ) do
+        stats[k] = ability_component_get_stat( ability, k );
+    end
+    return stats;
+end
+
 function ability_component_set_stats( ability, stat_value_table )
     for stat,value in pairs(stat_value_table) do
         ability_component_set_stat( ability, stat, value );
@@ -146,7 +154,7 @@ function ability_component_adjust_stats( ability, stat_callback_table )
 end
 
 function initialize_wand( wand, wand_data )
-    local ability = EntityGetFirstComponent( wand, "AbilityComponent" );
+    local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
     if wand_data.name ~= nil then
         ComponentSetValue2( ability, "ui_name", wand_data.name );
     end
@@ -235,15 +243,15 @@ function initialize_wand( wand, wand_data )
         end
     else
         local gun = {
-            deck_capacity               = ability_component_get_stat( ability,"deck_capacity" ),
-            actions_per_round           = ability_component_get_stat( ability,"actions_per_round" ),
-            reload_time                 = ability_component_get_stat( ability,"reload_time" ),
-            shuffle_deck_when_empty     = ability_component_get_stat( ability,"shuffle_deck_when_empty" ) and 1 or 0,
-            fire_rate_wait              = ability_component_get_stat( ability,"fire_rate_wait" ),
-            spread_degrees              = ability_component_get_stat( ability,"spread_degrees" ),
-            speed_multiplier            = ability_component_get_stat( ability,"speed_multiplier" ),
-            mana_charge_speed           = ability_component_get_stat( ability,"mana_charge_speed" ),
-            mana_max                    = ability_component_get_stat( ability,"mana_max" ),
+            deck_capacity               = ability_component_get_stat( ability, "deck_capacity" ),
+            actions_per_round           = ability_component_get_stat( ability, "actions_per_round" ),
+            reload_time                 = ability_component_get_stat( ability, "reload_time" ),
+            shuffle_deck_when_empty     = ability_component_get_stat( ability, "shuffle_deck_when_empty" ) and 1 or 0,
+            fire_rate_wait              = ability_component_get_stat( ability, "fire_rate_wait" ),
+            spread_degrees              = ability_component_get_stat( ability, "spread_degrees" ),
+            speed_multiplier            = ability_component_get_stat( ability, "speed_multiplier" ),
+            mana_charge_speed           = ability_component_get_stat( ability, "mana_charge_speed" ),
+            mana_max                    = ability_component_get_stat( ability, "mana_max" ),
         };
         local dynamic_wand = GetWand( gun );
         SetWandSprite( wand, ability, dynamic_wand.file, dynamic_wand.grip_x, dynamic_wand.grip_y, ( dynamic_wand.tip_x - dynamic_wand.grip_x ), ( dynamic_wand.tip_y - dynamic_wand.grip_y ) );

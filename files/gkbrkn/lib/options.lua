@@ -100,7 +100,6 @@ local options = {
         DontKillOtherPerks=true,
     },
     ManageExternalContent = { EnabledFlag = "gkbrkn_manage_external_content", },
-    VerboseMenus = { EnabledFlag = "gkbrkn_verbose_menus", },
     ShowModTips = {
         EnabledFlag = "gkbrkn_mod_tips",
         Tips = {

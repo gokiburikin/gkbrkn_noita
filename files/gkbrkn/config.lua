@@ -121,7 +121,6 @@ end
         register_option_group_localized( "gkbrkn_mod_core",
             register_option_localized( MISC.ManageExternalContent.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),
             register_option_localized( MISC.ShowModTips.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, true ),
-            register_option_localized( MISC.VerboseMenus.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.AutoHide.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
         ),
         register_option_group_localized( "gkbrkn_hero_mode",
@@ -255,7 +254,7 @@ local cache_content = function()
     end
 
     has_content_been_cached = true;
-    print("[goki's things] content cached");
+    print( "[goki's things] content cached" );
 end
 
 -- NOTE first_parse should only ever be true ONE time in goki's things. do not use it
@@ -347,14 +346,14 @@ local parse_content = function( first_parse, force_cached, content_table )
                 end
             end
         else
-            print("[goki's things] no cache or content table found for "..index);
+            print( "[goki's things] no cache or content table found for "..index );
         end
     end
 end
 
 -- This function is to be called once by init.lua at the very latest it can be to ensure that disabled content is properly removed from their files
 local disable_content = function( content_table )
-    print("[goki's things] disable content");
+    print( "[goki's things] disable content" );
     if content_table == nil then content_table = CONTENT; end
     local disable_strings = {};
     for i = #content_table, 1, -1 do

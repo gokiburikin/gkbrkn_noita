@@ -436,9 +436,11 @@ if now % 1 == 0 then
                             if is_gold_forever then
                                 EntityRemoveComponent( gold_nugget, lifetime );
                             else 
-                                if kill_frame and creation_frame then
+                                if kill_frame ~= 0 and creation_frame ~= 0 then
                                     ComponentSetValue2( lifetime, "kill_frame", kill_frame );
                                     ComponentSetValue2( lifetime, "creation_frame", creation_frame );
+                                else
+                                    EntityRemoveComponent( gold_nugget, lifetime );
                                 end
                             end
                         end
@@ -969,13 +971,10 @@ if now % 10 == 0 then
             ]]
         end
         
-        for _,boss in pairs( EntityGetWithTag( "boss_centipede" ) or {} ) do
+        for _,boss in pairs( EntityGetWithTag( "boss_centipede_active" ) or {} ) do
             if EntityGetVariableNumber( boss, "gkbrkn_hero_mode_boss", 0 ) == 0 then
                 EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );
-                print( StatsGetValue("enemies_killed") )
-                local health_bonus = math.pow( tonumber( StatsGetValue("enemies_killed") ) * 100, 1.1 ) / 25;
-                print( health_bonus )
-                TryAdjustMaxHealth( boss, function( max, current ) return tonumber( max ) + health_bonus; end );
+                TryAdjustMaxHealth( boss, function( max, current ) return math.max( tonumber( max ), 2000 ); end );
             end
         end
     end

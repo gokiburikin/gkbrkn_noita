@@ -32,9 +32,6 @@ if velocity ~= nil then
         local ex, ey = EntityGetTransform( test_entity );
         local target_angle = math.atan2( ey - y, ex - x );
         local angle = math.abs(angle_difference( target_angle, velocity_angle ));
-        --print("\ntarget angle "..tostring(target_angle * 180 / math.pi));
-        --print("velocity angle "..tostring(velocity_angle * 180 / math.pi));
-        --print("outcome angle "..tostring(angle * 180 / math.pi));
         if angle < nearest_angle then
             nearest_angle = angle;
             target = test_entity;
