@@ -1,7 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local shooter = ComponentGetValue2( projectile, "mWhoShot" ) or 0;
     local aim_angle = 0;

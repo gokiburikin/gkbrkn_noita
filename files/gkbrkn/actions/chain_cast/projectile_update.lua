@@ -8,7 +8,7 @@ local radius = 24;
 local default_teleport_radius = 15;
 
 
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
     local angle = 0 - math.atan2( vy, vx );

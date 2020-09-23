@@ -1,6 +1,6 @@
 local entity = GetUpdatedEntityID();
 
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local penetration = ComponentGetValue2( projectile, "ground_penetration_coeff" );
     local bounces = ComponentGetValue2( projectile, "bounces_left" );
@@ -9,7 +9,7 @@ if projectile ~= nil then
     end
 end
 
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
     local mass = ComponentGetValue2( velocity, "mass" );
     ComponentSetValue2( velocity, "mass", math.max( 0.5, mass ) );

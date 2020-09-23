@@ -5,7 +5,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     local entity = GetUpdatedEntityID();
     local take_damage_triggers = EntityGetWithTag("gkbrkn_trigger_take_damage_projectile") or {};
     for _,trigger in pairs( take_damage_triggers ) do
-        local projectile = EntityGetFirstComponent( trigger, "ProjectileComponent" );
+        local projectile = EntityGetFirstComponentIncludingDisabled( trigger, "ProjectileComponent" );
         if projectile then
             ComponentSetValue2( projectile, "on_collision_die", false );
             ComponentSetValue2( projectile, "collide_with_world", false );

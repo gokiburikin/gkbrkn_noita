@@ -463,7 +463,6 @@ function find_polymorphed_players()
         local game_stats = EntityGetFirstComponent( entity, "GameStatsComponent" );
         if game_stats ~= nil then
             if ComponentGetValue2( game_stats, "is_player" ) == true then
-                --GamePrint( "entity ".. entity .. "is likely a polymorphed player" );
                 table.insert( polymorphed_players, entity );
             end
         end

@@ -220,7 +220,7 @@ for _,damage_model in pairs( damage_models ) do
             gained_hp = math.min( gained_hp, hp_difference );
             ComponentSetValue2( damage_model, "hp", current_hp + gained_hp );
             if math.ceil( gained_hp ) ~= 0 then
-                GamePrint("Regained "..math.ceil(gained_hp * 25).." health");
+                GamePrint( "Regained "..math.ceil( gained_hp * 25 ).." health" );
             end
         end
         last_max_hp[ damage_model ] = max_hp;
@@ -974,7 +974,7 @@ if now % 10 == 0 then
         for _,boss in pairs( EntityGetWithTag( "boss_centipede_active" ) or {} ) do
             if EntityGetVariableNumber( boss, "gkbrkn_hero_mode_boss", 0 ) == 0 then
                 EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );
-                TryAdjustMaxHealth( boss, function( max, current ) return math.max( tonumber( max ), 2000 ); end );
+                TryAdjustMaxHealth( boss, function( max, current ) return math.max( tonumber( max ), 400 ); end );
             end
         end
     end

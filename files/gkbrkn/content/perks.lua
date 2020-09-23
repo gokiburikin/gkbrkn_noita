@@ -165,7 +165,7 @@ table.insert( perk_list,
             script_damage_received="mods/gkbrkn_noita/files/gkbrkn/perks/fragile_ego/damage_received.lua",
             execute_every_n_frame="-1"
         })
-	end
+	end, nil, nil, false
 ));
 
 table.insert( perk_list,
@@ -604,3 +604,12 @@ table.insert( perk_list,
         TryAdjustMaxHealth( entity_who_picked, function( max_health ) return max_health * 0.67; end );
     end
 ) );
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_POLY_TO_ACID", "poly_to_acid", true, function( entity_perk_item, entity_who_picked, item_name )
+        local x,y = EntityGetTransform( entity_who_picked )
+        local child_id = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/poly_to_acid/poly_to_acid.xml", x, y );
+        EntityAddChild( entity_who_picked, child_id );
+    end
+) );
+

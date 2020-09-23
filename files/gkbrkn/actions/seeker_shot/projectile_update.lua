@@ -13,7 +13,7 @@ local nearest_angle = math.pi / 3;
 function angle_difference( target_angle, starting_angle )
     return math.atan2( math.sin( target_angle - starting_angle ), math.cos( target_angle - starting_angle ) );
 end
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
     local velocity_angle = math.atan2( vy, vx );
@@ -37,11 +37,11 @@ if velocity ~= nil then
             target = test_entity;
         end
     end
-    local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     if velocity ~= nil then
         SetRandomSeed( x, y );
         if target ~= nil then
-            local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+            local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
             if projectile ~= nil then
                 --local tx, ty = EntityGetTransform( target );
                 local tx, ty = EntityGetFirstHitboxCenter( target );

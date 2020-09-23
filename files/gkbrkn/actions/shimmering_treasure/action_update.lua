@@ -7,7 +7,7 @@ for _,nearby in pairs( nearby_entities ) do
     -- TODO  this is technically safer since disabled components don't show up, but if it's disabled then
     -- we probably don't want to consider this nugget anyway
     local shimmer = false;
-    local item = EntityGetFirstComponent( nearby, "ItemComponent" );
+    local item = EntityGetFirstComponentIncludingDisabled( nearby, "ItemComponent" );
     if item ~= nil then
         shimmer = ComponentGetValue2( item, "auto_pickup" ) == true;
         if shimmer == false then

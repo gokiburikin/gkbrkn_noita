@@ -1,21 +1,19 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 local entity = GetUpdatedEntityID();
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local keep = false;
     local shooter = ComponentGetValue2( projectile, "mWhoShot" ) or 0;
     local active_wand = WandGetActive( shooter );
     if active_wand ~= nil then
         local aim_angle = 0;
-        local components = EntityGetAllComponents( shooter ) or {};
-        for _,component in pairs( components ) do
-            if ComponentGetTypeName( component ) == "ControlsComponent" then
-                local ax, ay = ComponentGetValue2( component, "mAimingVector" );
-                aim_angle = math.atan2( ay, ax );
-            end
+        local controls = EntityGetFirstComponentIncludingDisabled( entity, "ControlsComponent" );
+        if controls then
+            local ax, ay = ComponentGetValue2( component, "mAimingVector" );
+            aim_angle = math.atan2( ay, ax );
         end
-        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+        local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
         local magnitude = 0;
         if velocity ~= nil then
             local vx, vy = ComponentGetValue2( velocity, "mVelocity" );

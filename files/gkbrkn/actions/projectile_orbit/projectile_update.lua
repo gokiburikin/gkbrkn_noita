@@ -6,13 +6,13 @@ local entity = GetUpdatedEntityID();
 local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
 
 if parent ~= 0 and EntityGetIsAlive(parent) then
-    local orbit = EntityGetFirstComponent( entity, "VariableStorageComponent", "gkbrkn_orbit" );
+    local orbit = EntityGetFirstComponentIncludingDisabled( entity, "VariableStorageComponent", "gkbrkn_orbit" );
     local orbit_index = ComponentGetValue2( orbit, "value_int" );
     local orbit_total = tonumber( ComponentGetValue2( orbit, "value_string" ) ) - 1;
     local frame = GameGetFrameNum();
-    local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
-    local parent_velocity = EntityGetFirstComponent( parent, "VelocityComponent" );
+    local parent_velocity = EntityGetFirstComponentIncludingDisabled( parent, "VelocityComponent" );
     local parent_velocity_x, parent_velocity_y = ComponentGetValue2( parent_velocity, "mVelocity" );
     local x,y = EntityGetTransform( entity );
     local parent_x, parent_y = EntityGetTransform( parent );

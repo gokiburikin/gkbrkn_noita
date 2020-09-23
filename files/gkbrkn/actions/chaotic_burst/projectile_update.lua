@@ -1,7 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 local entity = GetUpdatedEntityID();
 
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
     local vx,vy = ComponentGetValue2( velocity, "mVelocity", vx, vy );
     local magnitude = math.sqrt( vx * vx + vy * vy );

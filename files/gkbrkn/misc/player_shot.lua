@@ -7,7 +7,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 function shot( projectile_entity )
     local current_frame = GameGetFrameNum();
-    local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
+    local projectile = EntityGetFirstComponentIncludingDisabled( projectile_entity, "ProjectileComponent" );
     local player = GetUpdatedEntityID();
     local damage_multiplier =  EntityGetVariableNumber( player, "gkbrkn_damage_multiplier", 1.0 );
     local projectile_damage_multiplier =  EntityGetVariableNumber( projectile_entity, "gkbrkn_damage_multiplier", 1.0 );
@@ -41,7 +41,7 @@ function shot( projectile_entity )
             cell_explosion_power_ragdoll_coeff=function( value ) return tonumber( value ) * explosion_multiplier; end,
         });
 
-        local lightning = EntityGetFirstComponent( projectile_entity, "LightningComponent" );
+        local lightning = EntityGetFirstComponentIncludingDisabled( projectile_entity, "LightningComponent" );
         if lightning ~= nil then
             ComponentObjectAdjustValues( lightning, "config_explosion", {
                 knockback_force=function( value ) return tonumber( value ) * explosion_multiplier; end,
@@ -61,7 +61,7 @@ function shot( projectile_entity )
 
 local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casting", 0.0 );
     if hyper_casting_bonus > 0 then
-        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
+        local velocity = EntityGetFirstComponentIncludingDisabled( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then
             ComponentAdjustValues( velocity, {
                 air_friction=function( value ) return math.min( tonumber( value ), -25 ); end,
@@ -100,6 +100,11 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
         if #active_types > 0 then
             EntitySetVariableString( projectile_entity, "gkbrkn_initial_damage_types", table.concat( active_types, "," ) );
         end
+        --for k,v in pairs( ComponentObjectGetMembers( projectile,"config" ) or {}) do
+        --    print(k.."/"..tostring(v));
+        --end
+        --print( "ex "..tostring( ComponentObjectGetValue2( projectile,"config", "damage_explosion_add")))
+        --print( "aa "..tostring( ComponentObjectGetValue2( projectile,"config", "projectile_file")))
     end
 
     EntityAddComponent( projectile_entity, "LuaComponent", {
@@ -113,9 +118,9 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
     end
 
     if EntityGetVariableNumber( projectile_entity, "gkbrkn_guided_shot", 0 ) == 1 then
-        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
+        local velocity = EntityGetFirstComponentIncludingDisabled( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then
-            local projectile = EntityGetFirstComponent( projectile_entity, "ProjectileComponent" );
+            local projectile = EntityGetFirstComponentIncludingDisabled( projectile_entity, "ProjectileComponent" );
             if projectile ~= nil then
                 local aim_angle = 0;
                 local components = EntityGetAllComponents( player ) or {};
@@ -142,7 +147,7 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
         local initial_angle = nil;
         local aim_angle = 0;
 
-        local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
+        local velocity = EntityGetFirstComponentIncludingDisabled( projectile_entity, "VelocityComponent" );
         if velocity ~= nil then
             local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
             local magnitude = math.sqrt( vx * vx + vy * vy );

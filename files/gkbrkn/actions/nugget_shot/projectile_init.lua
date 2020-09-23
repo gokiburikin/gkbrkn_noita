@@ -9,12 +9,12 @@ for _,comp_id in pairs( components ) do
 end
 
 if gold_value ~= nil then
-    local item = EntityGetFirstComponent( entity, "ItemComponent" );
+    local item = EntityGetFirstComponentIncludingDisabled( entity, "ItemComponent" );
     if item ~= nil then
         ComponentSetValue2( item, "item_name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..gold_value..")" );
     end
 
-    local ui_info = EntityGetFirstComponent( entity, "UIInfoComponent" );
+    local ui_info = EntityGetFirstComponentIncludingDisabled( entity, "UIInfoComponent" );
     if ui_info ~= nil then
         ComponentSetValue2( ui_info, "name", GameTextGetTranslatedOrNot("$item_goldnugget").." ("..gold_value..")" );
     end

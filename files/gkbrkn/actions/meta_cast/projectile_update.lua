@@ -1,7 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 local entity = GetUpdatedEntityID();
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local x, y = EntityGetTransform( entity );
 
@@ -20,14 +20,14 @@ if projectile ~= nil then
 
     local soft_parent = EntityGetVariableNumber( entity, "gkbrkn_clinging_shot_target", nil );
     if soft_parent ~= nil and EntityGetIsAlive( soft_parent ) then
-        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+        local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
         local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
         local px, py = EntityGetTransform( soft_parent );
         local distance = math.sqrt( ( px - x ) ^ 2 + ( py - y ) ^ 2 );
         if distance < 48 then
             px, py = EntityGetFirstHitboxCenter( soft_parent );
             if px ~= nil and py ~= nil then
-                local parent_velocity = EntityGetFirstComponent( soft_parent, "VelocityComponent" );
+                local parent_velocity = EntityGetFirstComponentIncludingDisabled( soft_parent, "VelocityComponent" );
                 local parent_vx, parent_vy = 0, 0;
                 if parent_velocity ~= nil then
                     parent_vx, parent_vy = ComponentGetValue2( parent_velocity, "mVelocity" );

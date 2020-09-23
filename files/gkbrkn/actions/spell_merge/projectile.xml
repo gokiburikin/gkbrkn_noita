@@ -1,7 +1,5 @@
 <Entity 
-  name="$projectile_default" tags="projectile_player"
-   >
-
+  name="$projectile_default" tags="projectile_player">
 	<Base file="data/entities/base_projectile.xml" >
 		<VelocityComponent
 			gravity_y="0"
@@ -12,8 +10,6 @@
 		>
 		</VelocityComponent>
 	</Base>
-
-  <LifetimeComponent lifetime="0"></LifetimeComponent>
 
   <ProjectileComponent 
     _enabled="1" 
@@ -50,5 +46,7 @@
     >
     </config_explosion>
   </ProjectileComponent>
+
+  <LuaComponent execute_on_added="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/kill_entity.lua"></LuaComponent>
 
 </Entity>

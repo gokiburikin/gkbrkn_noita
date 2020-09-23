@@ -40,11 +40,12 @@ gkbrkn = {
     draw_actions_capture = nil,
     capture_draw_actions = true,
     draw_action_stack_size = 0,
-    spell_merge_groups = 0,
+    iteration_groups = {},
     did_action_add_projectile = false,
     mana_multiplier = 1.0,
     skip_projectiles = false,
     added_projectiles = 0,
+    register_action_callback = nil,
     _create_shot = create_shot,
     _draw_actions = draw_actions,
     _set_current_action = set_current_action,
@@ -57,19 +58,39 @@ gkbrkn = {
     _add_projectile_trigger_timer = add_projectile_trigger_timer,
     _add_projectile_trigger_death = add_projectile_trigger_death,
     _add_projectile_trigger_hit_world = add_projectile_trigger_hit_world,
-    _BeginProjectile = BeginProjectile
+    _BeginProjectile = BeginProjectile,
+    _register_action = register_action
 }
+
+function register_action( state )
+    if gkbrkn.register_action_callback ~= nil then
+        local callback_state = {};
+        for k,v in pairs(state) do
+            callback_state[k] = v;
+        end
+        gkbrkn.register_action_callback( callback_state );
+        gkbrkn._register_action( callback_state );
+    else
+        gkbrkn._register_action( state );
+    end
+end
 
 function BeginProjectile( filepath )
     gkbrkn.added_projectiles = gkbrkn.added_projectiles + 1;
     gkbrkn._BeginProjectile( filepath );
 end
 
+function iterate_group( id )
+    local current_id = gkbrkn.iteration_groups[id] or 0;
+    gkbrkn.iteration_groups[id] = ( gkbrkn.iteration_groups[id] or 0 ) + 1;
+    return id.."_"..current_id;
+end
+
 function state_per_cast( state )
     -- empty out the trigger queue since it's per cast
     gkbrkn.trigger_queue = {};
     gkbrkn.extra_projectiles = 0;
-    gkbrkn.spell_merge_groups = 0;
+    gkbrkn.iteration_groups = {};
     gkbrkn.skip_projectiles = false;
     gkbrkn.mana_multiplier = 1.0;
     gkbrkn.added_projectiles = 0;
@@ -606,6 +627,7 @@ function delete_cloned_actions()
         end
     end
 end
+
 
 -- TODO this should not set variables on actions and instead keep a local table of which
 -- actions have been cloned and which actions are clones to avoid potential issues

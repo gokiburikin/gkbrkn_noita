@@ -165,7 +165,8 @@ end
             register_option_localized( MISC.Loadouts.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
             register_option_localized( MISC.Loadouts.CapeColorFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
             register_option_localized( MISC.Loadouts.PlayerSpritesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
-            register_option_localized( MISC.Loadouts.SelectableClassesIntegrationFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} )
+            register_option_localized( MISC.Loadouts.SelectableClassesIntegrationFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
+            register_option_localized( MISC.Loadouts.UnlockLoadouts, CONTENT_ACTIVATION_TYPE.NewGame )
         ),
         register_option_group_localized( "gkbrkn_gold",
             register_option_localized( MISC.GoldPickupTracker.ShowMessageFlag, CONTENT_ACTIVATION_TYPE.Immediate ),

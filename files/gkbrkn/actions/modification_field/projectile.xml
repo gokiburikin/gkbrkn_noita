@@ -126,7 +126,8 @@
 
 		<ProjectileComponent 
 			damage_game_effect_entities="mods/gkbrkn_noita/files/gkbrkn/actions/modification_field/projectile_effect.xml,"
-			friendly_fire="0"
+			friendly_fire="1"
+      dcollide_with_shooter_frames="0"
 			>
 		</ProjectileComponent>
 	</Base>

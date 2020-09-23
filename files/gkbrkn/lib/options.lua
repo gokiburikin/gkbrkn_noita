@@ -81,6 +81,7 @@ local options = {
     Loadouts = {
         ManageFlag = "gkbrkn_loadouts_manage",
         EnabledFlag = "gkbrkn_loadouts_enabled",
+        UnlockLoadouts = "gkbrkn_unlock_loadouts",
         CapeColorFlag = "gkbrkn_loadouts_cape_color",
         PlayerSpritesFlag = "gkbrkn_loadouts_player_sprites",
         SelectableClassesIntegrationFlag = "gkbrkn_selectable_classes_integration",
@@ -111,6 +112,7 @@ local options = {
             "$mod_tips_gkbrkn_tip_6",
             "$mod_tips_gkbrkn_tip_7",
             "$mod_tips_gkbrkn_tip_8",
+            "$mod_tips_gkbrkn_tip_9",
         }
     },
     Badges = { EnabledFlag = "gkbrkn_show_badges", },

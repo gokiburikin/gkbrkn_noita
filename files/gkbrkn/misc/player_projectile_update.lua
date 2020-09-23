@@ -1,6 +1,6 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 local entity = GetUpdatedEntityID();
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile ~= nil then
     local damage_plus_bounce_stacks = EntityGetVariableNumber( entity, "gkbrkn_damage_plus_bounce_stacks", 0 );
     if damage_plus_bounce_stacks > 0 then

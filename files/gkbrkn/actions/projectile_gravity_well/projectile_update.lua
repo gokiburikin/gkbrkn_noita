@@ -7,8 +7,8 @@ local x, y = EntityGetTransform( entity );
 
 local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
 if parent ~= 0 and EntityGetIsAlive(parent) then
-    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
-    local parent_projectile = EntityGetFirstComponent( parent, "ProjectileComponent" );
+    local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
+    local parent_projectile = EntityGetFirstComponentIncludingDisabled( parent, "ProjectileComponent" );
     local px, py = EntityGetTransform( parent );
     px = px + Random( -random_offset, random_offset );
     py = py + Random( -random_offset, random_offset );

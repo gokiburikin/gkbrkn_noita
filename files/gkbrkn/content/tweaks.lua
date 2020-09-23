@@ -20,21 +20,21 @@ tweaks = {
         name = "$tweak_name_gkbrkn_chainsaw",
         description = "$tweak_desc_gkbrkn_chainsaw",
         author = "$ui_author_name_goki_dev",
-        options = { action_id="CHAINSAW" }
+        options = { action_id="CHAINSAW" },
     },
     {
         id = "heavy_shot",
         name = "$tweak_name_gkbrkn_heavy_shot",
         description = "$tweak_desc_gkbrkn_heavy_shot",
         author = "$ui_author_name_goki_dev",
-        options = { action_id="HEAVY_SHOT" }
+        options = { action_id="HEAVY_SHOT" },
     },
     {
         id = "damage",
         name = "$tweak_name_gkbrkn_damage",
         description = "$tweak_desc_gkbrkn_damage",
         author = "$ui_author_name_goki_dev",
-        options = { action_id="DAMAGE" }
+        options = { action_id="DAMAGE" },
     },
     {
         id = "freeze",

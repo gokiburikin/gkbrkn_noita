@@ -1,9 +1,9 @@
 local entity = GetUpdatedEntityID();
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile ~= nil then
     ComponentSetValue2( projectile, "lifetime", -1 );
 end
-local lifetime = EntityGetFirstComponent( entity, "LifetimeComponent" );
+local lifetime = EntityGetFirstComponentIncludingDisabled( entity, "LifetimeComponent" );
 if lifetime ~= nil then
     EntityRemoveComponent( entity, lifetime );
 end

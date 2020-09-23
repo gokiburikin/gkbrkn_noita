@@ -5,13 +5,13 @@ local x, y = EntityGetTransform( entity );
 local correctionDistance = 200;
 local angleEasing = 1.00;
 
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 local shooter = ComponentGetValue2( projectile, "mWhoShot" );
 if shooter then
     local sx, sy = EntityGetTransform( shooter );
     local distanceFromShooter = math.sqrt( math.pow( sx - x, 2 ) + math.pow( sy - y, 2 )  );
     if distanceFromShooter >= correctionDistance then
-        local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+        local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
         local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
         local angle = math.atan2( vy, vx );
         local targetAngle = math.atan2( sy - y, sx - x );

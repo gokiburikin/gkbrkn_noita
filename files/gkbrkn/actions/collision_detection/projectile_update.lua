@@ -8,7 +8,7 @@ function angle_difference( target_angle, starting_angle )
     return math.atan2( math.sin( target_angle - starting_angle ), math.cos( target_angle - starting_angle ) );
 end
 
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
     local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
     if velocity_x ~= 0 and velocity_y ~= 0 and velocity_x == velocity_x and velocity_y == velocity_y then

@@ -1,12 +1,5 @@
 --[[
 changelog
-    -m "Add Perk: Upgrade Wand"
-    -m "Fix Option: Combine Gold (works with Persistent Gold again)"
-    -m "Fix Action: Protection (properly remove damage reduction)"
-    -m "Update Option: Hero Mode (boss now has at least 50k hp)"
-    -m "Update Perk: Wandsmith (reduced recharge time 8-20 -> 8-16)"
-    -m "Remove Option: Verbose Menus (people refuse to read)"
-    -m "Fix Perk: Wand Fusion (no longer prefers shuffle: yes)"
 
 BUG
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
@@ -16,6 +9,9 @@ BUG
     grimoires should not include deprecated spells
 
 TODO
+    Player Orbitals - projectiles orbits around the player
+    Formation - Stack - try to incorporate spread degrees??????????
+
     Wand Upgrades
         1 wand upgrade token per standard biome replacing an enemy
         wand upgrade tokens used to upgrade held wand
@@ -73,12 +69,15 @@ Champion Type Ideas
     Pilfer (steal gold on hit)
     Pickpocket/Fumbling (remove the item in your hand)
     Fear (line of sight causes a debuff)
+    Fire Trail (like the one that drops the particles)
+    Melee Immunity
+    Explosion
 
 ]]
-
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
+append_translations( "mods/gkbrkn_noita/files/gkbrkn/append/common.csv" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua");
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
@@ -123,7 +122,6 @@ ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/hot_goo.xml" );
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/poly_goo.xml" );
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" );
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
-
 
 local selectable_classes_integration = false;
 if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
@@ -192,7 +190,6 @@ ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/slow_polymorph.xm
 ]]
 
 function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
-    append_translations("mods/gkbrkn_noita/files/gkbrkn/append/common.csv");
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
     ModTextFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/content/perks.lua" );
 
@@ -227,13 +224,6 @@ function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where
                 content.init_function();
             end
         end
-    end
-
-
-    -- Spell Merge Grouping Dynamic Files
-    for i=0,31 do
-        ModTextFileSetContent( "mods/gkbrkn_noita/files/gkbrkn/scratch/projectile_depth_"..i..".xml","<Entity><LuaComponent remove_after_executed=\"1\" execute_on_added=\"1\" script_source_file=\"mods/gkbrkn_noita/files/gkbrkn/scratch/projectile_depth_"..i..".lua\"></LuaComponent></Entity>" );
-        ModTextFileSetContent( "mods/gkbrkn_noita/files/gkbrkn/scratch/projectile_depth_"..i..".lua","dofile_once( \"mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua\" ); local entity = GetUpdatedEntityID(); EntitySetVariableNumber( entity, \"gkbrkn_projectile_depth\", "..i.." );" );
     end
 
     GKBRKN_CONFIG.disable_content();

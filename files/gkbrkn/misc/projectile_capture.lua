@@ -59,6 +59,25 @@ function mean_angle ( angles, magnitudes )
     return math.atan2( sum_sin, sum_cos );
 end
 
+local get_tag_groups = function( id, projectiles )
+    local groups = {};
+    for _,projectile in pairs( projectiles ) do
+        local projectile_data = EntityGetFirstComponentIncludingDisabled( projectile, "ProjectileComponent" );
+        if projectile_data then
+            local depth = ComponentObjectGetValue2( projectile_data, "config", "action_unidentified_sprite_filename" );
+            if depth then
+                local _,_,depth = depth:find(id.."_(%d+)");
+                if depth then
+                    depth = tonumber( depth );
+                    groups[depth] = groups[depth] or {}
+                    table.insert( groups[depth], projectile );
+                end
+            end
+        end
+    end
+    return groups;
+end
+
 local spell_merge_projectiles = {};
 local projectile_gravity_well_projectiles = {};
 local projectile_orbit_projectiles = {};
@@ -120,13 +139,8 @@ if #formation_stack_projectiles > 0 then
 end
 
 if #spell_merge_projectiles > 0 then
-    local groups = {};
-    for _,projectile in pairs(spell_merge_projectiles) do
-        local depth = EntityGetVariableNumber( projectile, "gkbrkn_projectile_depth", 1 );
-        groups[depth] = groups[depth] or {}
-        table.insert( groups[depth], projectile );
-    end
-    for _,group in pairs(groups) do
+    local groups = get_tag_groups( "spell_merge", spell_merge_projectiles );
+    for _,group in pairs( groups ) do
         local leader = group[1];
         
         EntitiesAverageMemberList( group, "ProjectileComponent", {
@@ -178,44 +192,47 @@ if #spell_merge_projectiles > 0 then
 end
 
 if #projectile_orbit_projectiles > 0 then
-    local leader = projectile_orbit_projectiles[1];
-    local velocity = EntityGetFirstComponent( leader, "VelocityComponent" );
-    if velocity ~= nil then
-        local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
-        local previous_projectile = nil;
-        local leader = nil;
-        for i,projectile in pairs( projectile_orbit_projectiles ) do
-            EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) );
-            if previous_projectile ~= nil then
-                EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
-                EntityAddComponent( projectile, "VariableStorageComponent", {
-                    _tags="gkbrkn_orbit",
-                    name="gkbrkn_orbit",
-                    value_string=tostring(#projectile_orbit_projectiles);
-                    value_int=tostring(i-1);
-                } );
-                EntityAddComponent( projectile, "LuaComponent", {
-                    execute_on_added="1",
-                    execute_every_n_frame="1",
-                    script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
-                });
-                if projectile ~= leader then
-                    local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
-                    local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
-                    --ComponentSetValue2( velocity, "mVelocity", 0, 0 );
+    local groups = get_tag_groups( "projectile_orbit", projectile_orbit_projectiles );
+    for _,group in pairs( groups ) do
+        local leader = group[1];
+        local velocity = EntityGetFirstComponent( leader, "VelocityComponent" );
+        if velocity ~= nil then
+            local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
+            local previous_projectile = nil;
+            local leader = nil;
+            for i,projectile in pairs( group ) do
+                EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) );
+                if previous_projectile ~= nil then
+                    EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
+                    EntityAddComponent( projectile, "VariableStorageComponent", {
+                        _tags="gkbrkn_orbit",
+                        name="gkbrkn_orbit",
+                        value_string=tostring(#group);
+                        value_int=tostring(i-1);
+                    } );
+                    EntityAddComponent( projectile, "LuaComponent", {
+                        execute_on_added="1",
+                        execute_every_n_frame="1",
+                        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_update.lua",
+                    });
+                    if projectile ~= leader then
+                        local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
+                        local velocity_x, velocity_y = ComponentGetValue2( velocity, "mVelocity" );
+                        --ComponentSetValue2( velocity, "mVelocity", 0, 0 );
 
-                    local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
-                    local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
-                    if projectile ~= nil and leader_projectile ~= nil then
-                        local leader_lifetime = ComponentGetValue2( leader_projectile, "lifetime" );
-                        local projectile_lifetime = ComponentGetValue2( projectile, "lifetime" );
-                        ComponentSetValue2( projectile, "lifetime", leader_lifetime + projectile_lifetime );
+                        local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
+                        local projectile = EntityGetFirstComponent( projectile, "ProjectileComponent" );
+                        if projectile ~= nil and leader_projectile ~= nil then
+                            local leader_lifetime = ComponentGetValue2( leader_projectile, "lifetime" );
+                            local projectile_lifetime = ComponentGetValue2( projectile, "lifetime" );
+                            ComponentSetValue2( projectile, "lifetime", leader_lifetime + projectile_lifetime );
+                        end
                     end
+                else
+                    leader = projectile;
                 end
-            else
-                leader = projectile;
+                previous_projectile = projectile;
             end
-            previous_projectile = projectile;
         end
     end
 end

@@ -9,7 +9,7 @@ function ease_angle( angle, target_angle, easing )
 end
 
 local entity = GetUpdatedEntityID();
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
 
     local vx,vy = ComponentGetValue2( velocity, "mVelocity", vx, vy );

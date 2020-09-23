@@ -1,6 +1,7 @@
 dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 
 local WAND_STAT_SETTER = {
     Direct = 1,
@@ -198,7 +199,7 @@ function initialize_wand( wand, wand_data )
                             local action_entity = CreateItemActionEntity( random_action.action );
                             if action_entity then
                                 local item = EntityGetFirstComponentIncludingDisabled( action_entity, "ItemComponent" );
-                                if random_action.locked then
+                                if HasFlagPersistent( MISC.Loadouts.UnlockLoadouts ) ~= true and random_action.locked then
                                     ComponentSetValue2( item, "is_frozen", true );
                                 end
                                 if random_action.permanent then

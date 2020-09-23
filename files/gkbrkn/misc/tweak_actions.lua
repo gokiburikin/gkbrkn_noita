@@ -9,8 +9,6 @@ local edit_callbacks = {
         action.action = function()
             c.damage_projectile_add = c.damage_projectile_add + 0.8
             c.damage_critical_chance = c.damage_critical_chance + 24
-			c.fire_rate_wait    = c.fire_rate_wait + 30
-			current_reload_time    = current_reload_time + 20
 			c.gore_particles    = c.gore_particles + 10
 			c.speed_multiplier = c.speed_multiplier * 0.3
 			shot_effects.recoil_knockback = shot_effects.recoil_knockback + 50.0
@@ -23,8 +21,6 @@ local edit_callbacks = {
         action.action = function()
 			c.damage_projectile_add = c.damage_projectile_add + 0.4
 			c.gore_particles    = c.gore_particles + 5
-			c.fire_rate_wait    = c.fire_rate_wait + 10
-			current_reload_time    = current_reload_time + 15
 			c.extra_entities    = c.extra_entities .. "data/entities/particles/tinyspark_yellow.xml,"
 			shot_effects.recoil_knockback = shot_effects.recoil_knockback + 10.0
 			draw_actions( 1, true );
@@ -34,7 +30,7 @@ local edit_callbacks = {
         action.mana = 3;
         action.action = function()
             add_projectile("data/entities/projectiles/deck/chainsaw.xml");
-			c.fire_rate_wait = math.min( c.fire_rate_wait, 5 );
+			c.fire_rate_wait = c.fire_rate_wait - 17;
 			c.spread_degrees = c.spread_degrees + 3.0;
 			current_reload_time = current_reload_time - ACTION_DRAW_RELOAD_TIME_INCREASE - 10;
         end

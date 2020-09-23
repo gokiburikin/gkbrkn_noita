@@ -2,11 +2,11 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 local shooter = ComponentGetValue2( projectile, "mWhoShot" );
 if shooter ~= nil then
-    local shooter_velocity = EntityGetFirstComponent( shooter, "VelocityComponent" );
-    local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    local shooter_velocity = EntityGetFirstComponentIncludingDisabled( shooter, "VelocityComponent" );
+    local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     if shooter_velocity ~= nil and velocity ~= nil then
         local multiplier = EntityGetVariableNumber( entity, "gkbrkn_follow_shot_multiplier", 0 );
         local svx, svy = ComponentGetValue2( shooter_velocity, "mVelocity" );

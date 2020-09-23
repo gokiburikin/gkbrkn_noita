@@ -9,9 +9,9 @@ function ease_angle( angle, target_angle, easing )
 end
 
 local entity = GetUpdatedEntityID();
-local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
 if velocity ~= nil then
-    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
     if projectile ~= nil then
         local shooter = ComponentGetValue2( projectile, "mWhoShot" ) or 0;
         local aim_angle = 0;

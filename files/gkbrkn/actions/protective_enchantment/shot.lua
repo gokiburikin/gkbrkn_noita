@@ -9,7 +9,7 @@ function shot( entity )
         force_shooter = EntityGetVariableNumber( shooter_entity, "gkbrkn_shooter", nil );
     end
 
-    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
     if projectile ~= nil then
         make_projectile_not_damage_shooter( entity, force_shooter );
         EntityAddComponent2( entity, "LuaComponent", {

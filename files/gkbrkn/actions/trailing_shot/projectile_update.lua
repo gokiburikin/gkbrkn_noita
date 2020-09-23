@@ -5,7 +5,7 @@ local link_distance = 8;
 
 local parent = tonumber( EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ) );
 if parent ~= 0 and EntityGetIsAlive( parent ) then
-    local velocity = EntityGetFirstComponent( entity, "VelocityComponent" );
+    local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
     local px, py = EntityGetTransform( parent );
     local distance = math.sqrt( math.pow( px - x, 2 ) + math.pow( py - y, 2 ) );

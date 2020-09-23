@@ -6,7 +6,7 @@ local now = GameGetFrameNum();
 for _,nearby in pairs( nearby_entities ) do
     if ( now + nearby * 381723 ) % 300 == 0 then
         local shimmer = false;
-        local item = EntityGetFirstComponent( nearby, "ItemComponent" );
+        local item = EntityGetFirstComponentIncludingDisabled( nearby, "ItemComponent" );
         if item ~= nil and EntityHasTag( nearby, "gold_nugget" ) == false then
             shimmer = ComponentGetValue2( item, "auto_pickup" ) == true;
             if shimmer == false then

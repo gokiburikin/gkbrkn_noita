@@ -57,9 +57,6 @@ local tabs = {
 }
 
 for index,content in pairs( CONTENT ) do
-    if content.options == nil  then
-    print("missing options "..content.name)
-    end
     if content.visible() then
         table.insert( sorted_content, {
             id=index,
@@ -394,6 +391,9 @@ function do_gui()
         --[[]]
         GuiText( gui, 0, 0, " ");
         local pages_info = do_pagination( filtered_content, wrap_threshold,  wrap_limit, page );
+        if page > #pages_info then
+            page = 1;
+        end
         local break_index = 1;
         local breaks_hit = 0;
         if pages_info[page].size > 0 then
@@ -628,7 +628,6 @@ function do_pagination( list, rows, columns, page )
     local page_size = 0;
     local page_breaks = {};
     for i=1,#list,1 do
-        -- NOTE this logic is stupid and i'm tired, fix this later
         local entry_height = (list[i].height or 1);
         if page_rows + entry_height >= rows then
             page_columns = page_columns + 1;
@@ -637,8 +636,10 @@ function do_pagination( list, rows, columns, page )
                 page_breaks = {};
                 page_columns = 1;
                 page_size = 0;
+                page_rows = 0;
+            else
+                table.insert( page_breaks, page_rows );
             end
-            table.insert( page_breaks, page_rows );
             page_rows = entry_height;
         else
             page_rows = page_rows + entry_height;
@@ -667,7 +668,13 @@ if gui then
     async_loop(function()
         if gui then
             if HasFlagPersistent( MISC.AutoHide.EnabledFlag ) == false or GameGetFrameNum() - hide_menu_frame < 0 then
-                do_gui();
+                local status, err = pcall( do_gui );
+                if err then
+                    GamePrint("Goki Says: PLEASE LET ME KNOW ABOUT THIS");
+                    GamePrint(err);
+                    print(err);
+                    print_error(err);
+                end
             elseif auto_hide_message_shown == false then
                 auto_hide_message_shown = true;
                 GamePrint( GameTextGetTranslatedOrNot("$ui_auto_hide_message_gkbrkn") );

@@ -108,7 +108,7 @@ loadouts = {
                 },
                 stat_ranges = {
                     deck_capacity = {4,4}, -- capacity
-                    reload_time = {20,20}, -- recharge time in frames
+                    reload_time = {18,18}, -- recharge time in frames
                     fire_rate_wait = {4,4}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
                     mana_charge_speed = {60,60}, -- mana charge speed
@@ -353,6 +353,7 @@ loadouts = {
                 },
                 actions = {
                     { "GRAVITY" },
+                    { "SPREAD_REDUCE" },
                     { "BUBBLESHOT_TRIGGER" },
                     { "MATERIAL_WATER" },
                 }
@@ -706,7 +707,7 @@ loadouts = {
                     fire_rate_wait = {45,45}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
                     mana_charge_speed = {150,150}, -- mana charge speed
-                    mana_max = {200,200}, -- mana max
+                    mana_max = {300,300}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -748,16 +749,16 @@ loadouts = {
                     fire_rate_wait = {20,20}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
                     mana_charge_speed = {300,300}, -- mana charge speed
-                    mana_max = {100,100}, -- mana max
+                    mana_max = {200,200}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
                 },
                 actions = {
                     { "GKBRKN_PERSISTENT_SHOT" },
-                    { "GKBRKN_PROTECTIVE_ENCHANTMENT" },
                     { "GKBRKN_DESTRUCTIVE_SHOT" },
                     { "GKBRKN_GLITTERING_TRAIL" },
+                    { "GKBRKN_PROTECTIVE_ENCHANTMENT" },
                     { "GKBRKN_STORED_SHOT" },
                 }
             },
@@ -813,7 +814,7 @@ loadouts = {
                     fire_rate_wait = {9,9}, -- cast delay in frames
                     spread_degrees = {2,2}, -- spread
                     mana_charge_speed = {60,60}, -- mana charge speed
-                    mana_max = {200,200}, -- mana max
+                    mana_max = {500,500}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -874,12 +875,12 @@ loadouts = {
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {8,8}, -- capacity
+                    deck_capacity = {9,9}, -- capacity
                     reload_time = {13,13}, -- recharge time in frames
                     fire_rate_wait = {11,11}, -- cast delay in frames
                     spread_degrees = {4,4}, -- spread
                     mana_charge_speed = {50,50}, -- mana charge speed
-                    mana_max = {90,90}, -- mana max
+                    mana_max = {120,120}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -887,6 +888,7 @@ loadouts = {
                 },
                 actions = {
                     { "GKBRKN_PERSISTENT_SHOT" },
+                    { "GKBRKN_SEEKER_SHOT" },
                     { "BOUNCE" },
                     { "AVOIDING_ARC" },
                     { "DIGGER" },
@@ -965,7 +967,8 @@ loadouts = {
         items = { -- items
         },
         perks = { -- perks
-        }
+        },
+        enabled_by_default = false
     },
     { -- Event Horizon
         id = "gkbrkn_event_horizon", -- unique identifier
@@ -1009,7 +1012,8 @@ loadouts = {
         items = { -- items
         },
         perks = { -- perks
-        }
+        },
+        enabled_by_default = false
     },
     { -- Wandsmith
         id = "gkbrkn_wandsmith", -- unique identifier
@@ -1031,13 +1035,13 @@ loadouts = {
             { "EDIT_WANDS_EVERYWHERE" }
         },
         -- actions
-        nil,
+        actions = nil,
         -- sprites
-        nil,
+        sprites = nil,
         -- custom message
-        nil,
+        custom_message = nil,
         -- callback
-        function( player_entity )
+        callback = function( player_entity )
             local x, y = EntityGetTransform( player_entity );
             local full_inventory = nil;
             local player_child_entities = EntityGetAllChildren( player_entity );
@@ -1124,8 +1128,8 @@ loadouts = {
                     reload_time = {20,20}, -- recharge time in frames
                     fire_rate_wait = {20,20}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {60,60}, -- mana charge speed
-                    mana_max = {150,150}, -- mana max
+                    mana_charge_speed = {80,80}, -- mana charge speed
+                    mana_max = {160,160}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -1192,7 +1196,7 @@ loadouts = {
                     fire_rate_wait = {120,120}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
                     mana_charge_speed = {30,30}, -- mana charge speed
-                    mana_max = {150,150}, -- mana max
+                    mana_max = {200,200}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -1203,7 +1207,7 @@ loadouts = {
                     { "CHAOTIC_ARC" },
                     { "SINEWAVE" },
                     { "GKBRKN_GUIDED_SHOT" },
-                    { "GKBRKN_CLINGING_SHOT" },
+                    { "GKBRKN_AREA_SHOT" },
                     { "AVOIDING_ARC" },
                     { "GKBRKN_POWER_SHOT" },
                     { "GKBRKN_FALSE_SPELL" },
@@ -1257,11 +1261,11 @@ loadouts = {
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {10,10}, -- capacity
+                    deck_capacity = {12,12}, -- capacity
                     reload_time = {40,40}, -- recharge time in frames
                     fire_rate_wait = {40,40}, -- cast delay in frames
                     spread_degrees = {-3,-3}, -- spread
-                    mana_charge_speed = {70,70}, -- mana charge speed
+                    mana_charge_speed = {90,90}, -- mana charge speed
                     mana_max = {210,210}, -- mana max
                 },
                 stat_randoms = {},
@@ -1270,6 +1274,7 @@ loadouts = {
                 actions = {
                     { { action="GKBRKN_TRIGGER_HIT", locked=true} },
                     { { action="LIGHT_BULLET", locked=false} },
+                    { { action="GKBRKN_BURST_FIRE", locked=true} },
                     { { action="GKBRKN_BURST_FIRE", locked=true} },
                     { { action="HEAVY_SPREAD", locked=true} },
                     { { action="GKBRKN_SPEED_DOWN", locked=true} },
@@ -1486,8 +1491,8 @@ loadouts = {
                     reload_time = {30,30}, -- recharge time in frames
                     fire_rate_wait = {30,30}, -- cast delay in frames
                     spread_degrees = {5,5}, -- spread
-                    mana_charge_speed = {140,140}, -- mana charge speed
-                    mana_max = {480,480}, -- mana max
+                    mana_charge_speed = {280,280}, -- mana charge speed
+                    mana_max = {280,280}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -2095,7 +2100,7 @@ loadouts = {
                 },
                 actions = {
                     { "GKBRKN_PASSIVE_RECHARGE" },
-                    { "GKBRKN_FOLLOW_SHOT" },
+                    { "HOMING_SHOOTER" },
                 }
             },
         },
@@ -2265,7 +2270,7 @@ loadouts = {
                     reload_time = {18,18}, -- recharge time in frames
                     fire_rate_wait = {11,11}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {30,30}, -- mana charge speed
+                    mana_charge_speed = {45,45}, -- mana charge speed
                     mana_max = {180,180}, -- mana max
                 },
                 stat_randoms = {},
@@ -2359,8 +2364,6 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    {"LIFETIME_DOWN"},
-                    {"PINGPONG_PATH"},
                     {"DYNAMITE"},
                 }
             },
@@ -2532,15 +2535,10 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    -- TODO if they remove gravity from long distance cast, zero gravity won't be necessary
-                    { { action="GKBRKN_ZERO_GRAVITY",locked=true } },
-                    { { action="GKBRKN_TRIGGER_DEATH",locked=false } },
-                    { { action="GKBRKN_FALSE_SPELL",locked=false } },
-                    { { action="HEAVY_SHOT",locked=true } },
-                    { { action="GKBRKN_SPEED_DOWN",locked=true } },
-                    { { action="LONG_DISTANCE_CAST",locked=true } },
-                    { { action="GKBRKN_FALSE_SPELL",locked=false } },
                     { { action="DAMAGE",locked=true } },
+                    { { action="LONG_DISTANCE_CAST",locked=true } },
+                    { { action="GKBRKN_SPEED_DOWN",locked=true } },
+                    { { action="HEAVY_SHOT",locked=true } },
                     { { action="LONG_DISTANCE_CAST",locked=true } },
                 }
             },
@@ -2723,6 +2721,7 @@ loadouts = {
             --    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/regen.lua"
             --});
         end,
-        condition_callback = function() return HasFlagPersistent( FLAGS.DebugMode ) end
+        condition_callback = function() return HasFlagPersistent( FLAGS.DebugMode ) end,
+        enabled_by_default = false
     }
 }
