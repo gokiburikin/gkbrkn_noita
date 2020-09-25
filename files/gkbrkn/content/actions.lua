@@ -342,14 +342,14 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         end
     ) );
 
-    table.insert( actions, generate_action_entry(
-        "GKBRKN_TEST_SHOT", "test_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 100, 1, -1,
-        nil,
-        function()
-            add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/test_shot/projectile.xml" );
-        end
-    ) );
+    --table.insert( actions, generate_action_entry(
+    --    "GKBRKN_TEST_SHOT", "test_shot", ACTION_TYPE_MODIFIER, 
+    --    "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 100, 1, -1,
+    --    nil,
+    --    function()
+    --        add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/test_shot/projectile.xml" );
+    --    end
+    --) );
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FOLLOW_SHOT", "follow_shot", ACTION_TYPE_MODIFIER,
