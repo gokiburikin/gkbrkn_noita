@@ -68,9 +68,7 @@ if GameHasFlagRun( init_check_flag ) == false then
     });
 
     --[[ Hero Mode ]]
-    GamePrint("WE GO TO SSSSSSSSSSSSSSSSSS MODE")
     if HasFlagPersistent( MISC.HeroMode.EnabledFlag ) then
-    GamePrint("WE GO TO HERO MODE")
         GameAddFlagRun( MISC.HeroMode.EnabledFlag );
         if HasFlagPersistent( MISC.HeroMode.OrbsDifficultyFlag ) then
             GameAddFlagRun( MISC.HeroMode.OrbsDifficultyFlag );

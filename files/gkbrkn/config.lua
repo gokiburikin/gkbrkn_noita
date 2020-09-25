@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c99rc11"
+    Version = "c99b"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
