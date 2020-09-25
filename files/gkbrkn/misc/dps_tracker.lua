@@ -15,8 +15,8 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
     for _,damage_model in pairs(damage_models) do
         local max_hp = ComponentGetValue2( damage_model, "max_hp" );
-        ComponentSetValue2( damage_model, "max_hp", 1 );
-        ComponentSetValue2( damage_model, "hp", damage + 1 );
+        ComponentSetValue2( damage_model, "max_hp", 4 );
+        ComponentSetValue2( damage_model, "hp", math.max( 4, damage * 1.1 ) );
     end
     if entity_thats_responsible == 0 and HasFlagPersistent( MISC.TargetDummy.AllowEnvironmentalDamage ) == false then return; end
     

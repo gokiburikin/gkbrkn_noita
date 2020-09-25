@@ -103,6 +103,9 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
         --for k,v in pairs( ComponentObjectGetMembers( projectile,"config" ) or {}) do
         --    print(k.."/"..tostring(v));
         --end
+        --for k,v in pairs( ComponentObjectGetMembers( projectile,"damage_critical" ) or {}) do
+        --    print(k.."/"..tostring(v));
+        --end
         --print( "ex "..tostring( ComponentObjectGetValue2( projectile,"config", "damage_explosion_add")))
         --print( "aa "..tostring( ComponentObjectGetValue2( projectile,"config", "projectile_file")))
     end

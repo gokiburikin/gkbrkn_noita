@@ -1,4 +1,3 @@
-print("[goki's things] Disabling Random Spells")
 local blacklist = {
     LIGHT_BULLET = true
 }

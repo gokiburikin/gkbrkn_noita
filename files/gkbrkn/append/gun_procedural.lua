@@ -37,13 +37,17 @@ local action_type_weights  = {
 local chance_to_replace = 0.03;
 local _generate_gun = generate_gun;
 function generate_gun( cost, level, force_unshuffle )
-    local pull = tonumber( GlobalsGetValue( "gkbrkn_shop_rerolls", "0" ) );
-    local _SetRandomSeed = SetRandomSeed;
-    SetRandomSeed = function( x, y )
-        return _SetRandomSeed( x + pull * 13, y + pull * 127 );
+    if GlobalsGetValue( "gkbrkn_rerolling_shop", "0" ) == "1" then
+        local pull = tonumber( GlobalsGetValue( "gkbrkn_shop_rerolls", "0" ) );
+        local _SetRandomSeed = SetRandomSeed;
+        SetRandomSeed = function( x, y )
+            return _SetRandomSeed( x + pull * 13, y + pull * 127 );
+        end
+        _generate_gun( cost, level, force_unshuffle );
+        SetRandomSeed = _SetRandomSeed;
+    else
+        _generate_gun( cost, level, force_unshuffle );
     end
-    _generate_gun( cost, level, force_unshuffle );
-    SetRandomSeed = _SetRandomSeed;
     local entity = GetUpdatedEntityID();
     local x,y = EntityGetTransform( entity );
     local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};

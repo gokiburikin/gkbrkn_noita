@@ -58,10 +58,9 @@
 		aabb_max_y="0"
 	>
 	</HitboxComponent>
-    <LuaComponent
-        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
-    >
-    </LuaComponent>
+    <LuaComponent script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"></LuaComponent>
+    <LuaComponent script_death="mods/gkbrkn_noita/files/gkbrkn/misc/respawn_dummy.lua"></LuaComponent>
+	
 	<GenomeDataComponent 
 		herd_id="orcs"
 		food_chain_rank="9"
@@ -69,4 +68,6 @@
 	</GenomeDataComponent>
     <SpriteAnimatorComponent>
 	</SpriteAnimatorComponent>
+	<StatusEffectDataComponent>
+	</StatusEffectDataComponent>
 </Entity>

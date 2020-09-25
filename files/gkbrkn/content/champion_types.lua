@@ -49,7 +49,30 @@ champion_types = {
                 local minimum_knockback_force = ComponentGetValue2( damage_model, "minimum_knockback_force" );
                 ComponentSetValue2( damage_model, "minimum_knockback_force", 99999 );
             end
-        end
+        end,
+        deprecated = true
+    },
+    { id = "melee_immune",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/melee_immune/badge.xml",
+        name = "$champion_type_name_melee_immune",
+        description = "$champion_type_desc_melee_immune",
+        author = "$ui_author_name_goki_dev",
+        game_effects = {"PROTECTION_MELEE"},
+        validator = function( entity ) return true end,
+        apply = function( entity ) end
+    },
+    { id = "explosion_immune",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/explosion_immune/badge.xml",
+        name = "$champion_type_name_explosion_immune",
+        description = "$champion_type_desc_explosion_immune",
+        author = "$ui_author_name_goki_dev",
+        game_effects = {"PROTECTION_EXPLOSION"},
+        validator = function( entity ) return true end,
+        apply = function( entity ) end
     },
     { id = "burning",
         particle_material = nil,
@@ -491,7 +514,8 @@ champion_types = {
             EntityAddComponent( entity, "LuaComponent", {
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/damage_received.lua",
             });
-        end
+        end,
+        deprecated = true
     },
     { id = "invincibility_frames",
         particle_material = nil,
@@ -811,6 +835,9 @@ champion_types = {
                 ComponentSetValue2( animal_ai, "attack_ranged_enabled", true );
                 ComponentSetValue2( animal_ai, "attack_landing_ranged_enabled", true );
                 ComponentSetValue2( animal_ai, "attack_ranged_entity_file", "data/entities/projectiles/deck/light_bullet.xml" );
+                ComponentSetValue2( animal_ai, "attack_ranged_predict", false );
+                ComponentSetValue2( animal_ai, "attack_ranged_aim_rotation_speed", 0.5 );
+                
             end
         end
     },

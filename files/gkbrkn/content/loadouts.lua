@@ -2723,5 +2723,67 @@ loadouts = {
         end,
         condition_callback = function() return HasFlagPersistent( FLAGS.DebugMode ) end,
         enabled_by_default = false
-    }
+    },
+    { id = "gkbrkn_gunner", -- unique identifier
+        name = "$loadout_gunner", -- displayed loadout name
+        description = "A default loadout description",
+        author = "$ui_author_name_goki_dev",
+        cape_color = 0xFF333333, -- cape color (ABGR)
+        cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
+        wands = { -- wands
+            {
+                name = "Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {5,5}, -- capacity
+                    reload_time = {14,14}, -- recharge time in frames
+                    fire_rate_wait = {22,22}, -- cast delay in frames
+                    spread_degrees = {3,3}, -- spread
+                    mana_charge_speed = {50,50}, -- mana charge speed
+                    mana_max = {100,100}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                },
+                actions = {
+                    { { action="GKBRKN_BURST_FIRE", locked=false } },
+                    { { action="LIGHT_BULLET", locked=false } },
+                }
+            },
+            {
+                name = "Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 2, -- spells per cast
+                    speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {3,3}, -- capacity
+                    reload_time = {15,15}, -- recharge time in frames
+                    fire_rate_wait = {15,15}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {20,20}, -- mana charge speed
+                    mana_max = {80,80}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                },
+                actions = {
+                    { "BOMB" },
+                }
+            },
+        },
+        potions = { -- potions
+            { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+        },
+        items = { -- items
+        },
+        perks = { -- perks
+            { "GKBRKN_LEAD_BOOTS" }
+        }
+    },
 }

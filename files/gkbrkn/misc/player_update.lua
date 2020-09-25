@@ -790,14 +790,19 @@ if now % 10 == 0 then
     if GameHasFlagRun( MISC.HeroMode.EnabledFlag ) then
         local is_carnage_mode = GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag );
         local speed_multiplier = 1.25;
+        local critical_damage_resistance = 0.50;
 
         if is_carnage_mode then
             speed_multiplier = 2.0;
+            critical_damage_resistance = 0.75;
         end
 
+        local places_visited_multiplier = 1;
         local distance_multiplier = 1;
         if GameHasFlagRun( MISC.HeroMode.DistanceDifficultyFlag ) then
-            distance_multiplier = math.min( 1, math.pow( 0.85, tonumber( StatsGetValue("places_visited") ) - 1 ) );
+            places_visited_multiplier = tonumber( StatsGetValue("places_visited") );
+            speed_multiplier = speed_multiplier + 0.05 * places_visited_multiplier;
+            distance_multiplier = math.min( 1, math.pow( 0.85, places_visited_multiplier - 1 ) );
         end
 
         local orb_multiplier =  1;
@@ -824,12 +829,11 @@ if now % 10 == 0 then
         if player_genome ~= nil then
             player_herd = ComponentGetValue2( player_genome, "herd_id" );
         end
-        
         for _,nearby in pairs( nearby_enemies ) do
             if EntityGetVariableNumber( nearby, "gkbrkn_hero_mode", 0.0 ) == 0 and EntityHasNamedVariable( nearby, "goki_health" ) == false then
                 EntitySetVariableNumber( nearby, "gkbrkn_hero_mode", 1.0 );
-                local damage_models = EntityGetComponent( nearby, "DamageModelComponent" );
-                if damage_models ~= nil then
+                local damage_models = EntityGetComponent( nearby, "DamageModelComponent" ) or {};
+                if #damage_models > 0 then
 
                     local general_resistances = 1.00;
                     if is_carnage_mode then general_resistances = 0.50; end
@@ -856,10 +860,13 @@ if now % 10 == 0 then
                             resistance = resistance * multiplier * resistance_multiplier;
                             ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
                         end
+                        if critical_damage_resistance ~= 1.0 then
+                            ComponentSetValue2( damage_model, "critical_damage_resistance", critical_damage_resistance );
+                        end
                     end
 
-                    local attack_speed_divisor = 1.5;
-                    if is_carnage_mode then attack_speed_divisor = 2.00; end
+                    local attack_speed_divisor = 1.15 + 0.1 * places_visited_multiplier;
+                    if is_carnage_mode then attack_speed_divisor = 1.80 + 0.2 * places_visited_multiplier; end
 
                     local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
                     if #animal_ais > 0 then
@@ -881,53 +888,6 @@ if now % 10 == 0 then
                                 attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / attack_speed_divisor ) end,
                                 attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / attack_speed_divisor ) end,
                             });
-
-                            if is_carnage_mode then
-                                local carnage_effects = { "PROTECTION_FIRE" };
-                                for _,game_effect in pairs( carnage_effects ) do
-                                    local effect = GetGameEffectLoadTo( nearby, game_effect, true );
-                                    if effect ~= nil then ComponentSetValue2( effect, "frames", -1 ); end
-                                end
-                                ComponentSetValues( ai, {
-                                    attack_dash_enabled=true,
-                                    can_fly=true,
-                                });
-                                ComponentAdjustValues( ai, {
-                                    attack_dash_distance=function(value) return math.max( tonumber( value ), 50 ) end,
-                                });
-                                local animal_ais = EntityGetComponent( nearby, "AnimalAIComponent" ) or {};
-                                for _,ai in pairs( animal_ais ) do
-                                    ComponentSetValues( ai, {} );
-                                end
-                                local path_finding = EntityGetFirstComponent( nearby, "PathFindingComponent" );
-                                if path_finding ~= nil then
-                                    ComponentSetValues( path_finding, {
-                                        can_fly=true
-                                    } );
-                                end
-                                
-                                local jetpack_particles = EntityAddComponent( nearby, "ParticleEmitterComponent", {
-                                    _tags="jetpack",
-                                    emitted_material_name="rocket_particles",
-                                    x_pos_offset_min="-1",
-                                    x_pos_offset_max="1",
-                                    y_pos_offset_min="",
-                                    y_pos_offset_max="0",
-                                    x_vel_min="-7",
-                                    x_vel_max="7",
-                                    y_vel_min="80",
-                                    y_vel_max="180",
-                                    count_min="3",
-                                    count_max="7",
-                                    lifetime_min="0.1",
-                                    lifetime_max="0.2",
-                                    create_real_particles="0",
-                                    emit_cosmetic_particles="1",
-                                    emission_interval_min_frames="0",
-                                    emission_interval_max_frames="1",
-                                    is_emitting="1",
-                                } );
-                            end
                         end
                     end
                 end
@@ -974,7 +934,7 @@ if now % 10 == 0 then
         for _,boss in pairs( EntityGetWithTag( "boss_centipede_active" ) or {} ) do
             if EntityGetVariableNumber( boss, "gkbrkn_hero_mode_boss", 0 ) == 0 then
                 EntitySetVariableNumber( boss, "gkbrkn_hero_mode_boss", 1 );
-                TryAdjustMaxHealth( boss, function( max, current ) return math.max( tonumber( max ), 400 ); end );
+                TryAdjustMaxHealth( boss, function( max, current ) return max + 400; end );
             end
         end
     end

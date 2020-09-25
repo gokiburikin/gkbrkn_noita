@@ -25,6 +25,7 @@ function item_pickup( entity_item, entity_who_picked, item_name )
     --for shop_item in pairs( shop_items )
     local pull = tonumber( GlobalsGetValue( "gkbrkn_shop_rerolls", "0" ) );
     GlobalsSetValue( "gkbrkn_shop_rerolls", pull + 1 );
+    GlobalsSetValue( "gkbrkn_rerolling_shop", "1" );
     local _SetRandomSeed = SetRandomSeed;
     SetRandomSeed = function( x, y )
         return _SetRandomSeed( x + pull * 13, y + pull * 127 );
@@ -46,11 +47,12 @@ function item_pickup( entity_item, entity_who_picked, item_name )
     end
     SetRandomSeed = _SetRandomSeed;
     GetRandomAction = _GetRandomAction;
+    GlobalsSetValue( "gkbrkn_rerolling_shop", "0" );
 
 	EntityKill( entity_item );
     EntityLoad( "data/entities/particles/perk_reroll.xml", x, y );
     local break_roll = math.random();
-    if break_roll < 1.25 - 0.05 * pull then
+    if break_roll < 1.25 - math.min( 1.0, 0.05 * pull ) then
         EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/shop_reroll/shop_reroll.xml", x, y );
     else
         EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/shop_reroll/shop_reroll_broken.xml", x, y );

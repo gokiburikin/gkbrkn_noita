@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c99rc9"
+    Version = "c99rc11"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -202,7 +202,7 @@ end
         ),
         register_option_group_localized( "gkbrkn_target_dummy",
             register_option_localized( MISC.TargetDummy.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, true, {goki_thing = true} ),
-            register_option_localized( MISC.TargetDummy.AllowEnvironmentalDamage, CONTENT_ACTIVATION_TYPE.Immediate, nil, true )
+            register_option_localized( MISC.TargetDummy.AllowEnvironmentalDamage, CONTENT_ACTIVATION_TYPE.Immediate )
         ),
         register_option_group_localized( "gkbrkn_misc",
             register_option_localized( MISC.PackShops.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),

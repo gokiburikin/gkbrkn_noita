@@ -68,7 +68,9 @@ if GameHasFlagRun( init_check_flag ) == false then
     });
 
     --[[ Hero Mode ]]
+    GamePrint("WE GO TO SSSSSSSSSSSSSSSSSS MODE")
     if HasFlagPersistent( MISC.HeroMode.EnabledFlag ) then
+    GamePrint("WE GO TO HERO MODE")
         GameAddFlagRun( MISC.HeroMode.EnabledFlag );
         if HasFlagPersistent( MISC.HeroMode.OrbsDifficultyFlag ) then
             GameAddFlagRun( MISC.HeroMode.OrbsDifficultyFlag );
@@ -86,60 +88,37 @@ if GameHasFlagRun( init_check_flag ) == false then
                 {_carnage=GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag )},
             } );
             EntityAddChild( player_entity, badge );
+        end
 
-            if GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag ) == false then
-                local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
-                if character_platforming ~= nil then
-                    local speed_multiplier = 1.25;
-                    local fly_velocity_x = ComponentGetValue2( character_platforming, "fly_velocity_x" );
-                    ComponentAdjustValues( character_platforming, {
-                        jump_velocity_x         = function(value) return value * speed_multiplier; end,
-                        jump_velocity_y         = function(value) return value * speed_multiplier; end,
-                        fly_smooth_y            = function(value) return false; end,
-                        fly_speed_mult          = function(value) return fly_velocity_x * speed_multiplier; end,
-                        fly_speed_max_up        = function(value) return fly_velocity_x * 1.5; end,
-                        fly_speed_max_down      = function(value) return fly_velocity_x * 1.5; end,
-                        fly_speed_change_spd    = function(value) return fly_velocity_x * speed_multiplier; end,
-                        fly_velocity_x          = function(value) return fly_velocity_x * speed_multiplier; end,
-                        run_velocity            = function(value) return value * speed_multiplier; end,
-                        --velocity_min_x        = function(value) return value * speed_multiplier; end,
-                        velocity_max_x          = function(value) return value * speed_multiplier; end,
-                        velocity_max_y          = function(value) return value * speed_multiplier; end,
-                    });
-                end
-            else
-                local cursed_player = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/cursed_player.xml" );
-                EntityAddChild( player_entity, cursed_player );
-                GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", 1 );
-                GlobalsSetValue( "TEMPLE_PERK_COUNT", 2 );
-                GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", 3 );
-                GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/sampo_pick/create", x, y );
-                GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/orb_distant_monster/create", x, y );
-                GameScreenshake( 500 );
-		        EntityAddChild( player_entity, child_id );
-		        GamePrintImportant( "$ui_carnage_warning_gkbrkn", "$ui_carnage_warning_note_gkbrkn" );
-                local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
-                if damage_models ~= nil then
-                    local resistances = {
-                        ice = 2.0,
-                        electricity = 2.0,
-                        radioactive = 2.0,
-                        slice = 2.0,
-                        projectile = 2.0,
-                        healing = 0.5,
-                        physics_hit = 2.0,
-                        explosion = 2.0,
-                        poison = 2.0,
-                        melee = 3.0,
-                        drill = 2.0,
-                        fire = 2.0,
-                    };
-                    for index,damage_model in pairs( damage_models ) do
-                        for damage_type,multiplier in pairs( resistances ) do
-                            local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
-                            resistance = resistance * multiplier;
-                            ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
-                        end
+        if GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag ) == true then
+            GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", 1 );
+            GlobalsSetValue( "TEMPLE_PERK_COUNT", 2 );
+            GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", 3 );
+            GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/sampo_pick/create", x, y );
+            GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/orb_distant_monster/create", x, y );
+            GameScreenshake( 500 );
+            GamePrintImportant( "$ui_carnage_warning_gkbrkn", "$ui_carnage_warning_note_gkbrkn" );
+            local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
+            if damage_models ~= nil then
+                local resistances = {
+                    ice = 2.0,
+                    electricity = 2.0,
+                    radioactive = 2.0,
+                    slice = 2.0,
+                    projectile = 2.0,
+                    healing = 0.5,
+                    physics_hit = 2.0,
+                    explosion = 2.0,
+                    poison = 2.0,
+                    melee = 3.0,
+                    drill = 2.0,
+                    fire = 2.0,
+                };
+                for index,damage_model in pairs( damage_models ) do
+                    for damage_type,multiplier in pairs( resistances ) do
+                        local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
+                        resistance = resistance * multiplier;
+                        ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
                     end
                 end
             end

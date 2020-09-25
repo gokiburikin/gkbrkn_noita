@@ -610,6 +610,6 @@ table.insert( perk_list,
         local x,y = EntityGetTransform( entity_who_picked )
         local child_id = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/poly_to_acid/poly_to_acid.xml", x, y );
         EntityAddChild( entity_who_picked, child_id );
-    end
+    end, nil, nil, false
 ) );
 
