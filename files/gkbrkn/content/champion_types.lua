@@ -1,3 +1,5 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
+
 local memoize_champion_types = {};
 function find_champion_type( id )
     local champion_type = nil;
@@ -50,7 +52,8 @@ champion_types = {
                 ComponentSetValue2( damage_model, "minimum_knockback_force", 99999 );
             end
         end,
-        deprecated = true
+        deprecated = true,
+        stackable = true
     },
     { id = "melee_immune",
         particle_material = nil,
@@ -134,7 +137,8 @@ champion_types = {
             EntityAddComponent( entity, "LuaComponent", {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/shot.lua"
             });
-        end
+        end,
+        stackable = true
     },
     { id = "digging",
         particle_material = nil,
@@ -289,7 +293,8 @@ champion_types = {
                 ComponentSetValue2( character_platforming, "fly_smooth_y", false );
                 ComponentSetValue2( character_platforming, "accel_x_air", 1.0 );
             end
-        end
+        end,
+        stackable = true
     },
     { id = "freezing",
         particle_material = nil,
@@ -404,7 +409,8 @@ champion_types = {
                 ComponentSetValue2( damage_model, "hp", current_hp + regained );
             end
         end,
-        deprecated = true
+        deprecated = true,
+        stackable = true
     },
     { id = "hot_blooded",
         particle_material = nil,
@@ -499,7 +505,8 @@ champion_types = {
                 execute_every_n_frame="-1",
                 script_death="mods/gkbrkn_noita/files/gkbrkn/champion_types/infested/death.lua",
             });
-        end
+        end,
+        stackable = true
     },
     { id = "intangibility_frames",
         particle_material = nil,
@@ -623,7 +630,8 @@ champion_types = {
             EntityAddComponent( entity, "LuaComponent", {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/shot.lua"
             });
-        end
+        end,
+        stackable = true
     },
     { id = "leaping",
         particle_material = nil,
@@ -685,7 +693,8 @@ champion_types = {
             EntityAddComponent( entity, "LuaComponent", {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_bounce/shot.lua",
             });
-        end
+        end,
+        stackable = true
     },
     { id = "projectile_buff",
         badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_buff/badge.xml",
@@ -719,7 +728,8 @@ champion_types = {
                     ComponentSetValue2( ai, "attack_ranged_entity_count_max", ComponentGetValue2( ai, "attack_ranged_entity_count_max" ) + 2 ) ;
                 end
             end
-        end
+        end,
+        stackable = true
     },
     { id = "projectile_repulsion_field",
         particle_material = nil,
@@ -756,7 +766,8 @@ champion_types = {
                     });
                 end
             end
-        end
+        end,
+        stackable = true
     },
     { id = "regenerating",
         particle_material = "spark_green",
@@ -887,5 +898,104 @@ champion_types = {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/toxic_trail/shot.lua",
             });
         end
-    }
+    },
+    --[[{ id = "lukki",
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
+        name = "$champion_type_name_lukki",
+        description = "$champion_type_desc_lukki",
+        author = "$ui_author_name_goki_dev",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_physics_ai = false;
+            local physics_ais = EntityGetComponent( entity, "PhysicsAIComponent" ) or {};
+            if #physics_ais > 0 then has_physics_ai = true; end
+            return has_physics_ai == false;
+        end,
+        apply = function( entity )
+            EntityAddComponent2( entity, "PhysicsAIComponent", {
+                target_vec_max_len = 15.0,
+                force_coeff = 7.0,
+                force_balancing_coeff = 0.8,
+                force_max = 50,
+                torque_coeff = 50,
+                torque_balancing_coeff = 4,
+                torque_max = 30.0,
+                damage_deactivation_probability = 0,
+                damage_deactivation_time_min = 2,
+                damage_deactivation_time_max = 10,
+            } );
+
+            EntityAddComponent2( entity, "PhysicsBodyComponent", {
+                force_add_update_areas = true,
+                allow_sleep = true,
+                angular_damping = 0.02,
+                fixed_rotation = true,
+                is_bullet = false,
+                linear_damping = 0,
+            } );
+
+            EntityAddComponent2( entity, "PhysicsShapeComponent", {
+                is_circle = true,
+                radius_x = 8,
+                radius_y = 8,
+                friction = 0.0,
+                restitution = 0.3,
+            } );
+
+            --EntityAddComponent2( entity, "PathFindingGridMarkerComponent", {
+            --    marker_work_flag = 16,
+            --} );
+
+            EntityAddComponent2( entity, "LimbBossComponent", {
+                state = 1,
+            } );
+
+            EntityAddComponent2( entity, "HitboxComponent", {
+                aabb_min_x=-10 ,
+                aabb_max_x=10 ,
+                aabb_min_y=-10 ,
+                aabb_max_y=10,
+                damage_multiplier=1.0,
+            } );
+
+            local path_finding = EntityGetFirstComponent( entity, "PathFindingComponent" );
+            if path_finding then
+                ComponentSetValues( path_finding, {
+                    can_dive = true,
+                    can_fly = true,
+                    can_jump = false,
+                    can_swim_on_surface = true,
+                    can_walk = true,
+                    cost_of_flying = 500,
+                    distance_to_reach_node_x = 20,
+                    distance_to_reach_node_y = 20,
+                    frames_between_searches = 20,
+                    frames_to_get_stuck = 9999999,
+                    iterations_max_no_goal = 9999999,
+                    iterations_max_with_goal = 145000,
+                    search_depth_max_no_goal = 1000,
+                    search_depth_max_with_goal = 145000,
+                    y_walking_compensation = 8,
+                } );
+            end
+
+            local animal_ai = EntityGetFirstComponent( entity, "AnimalAIComponent" );
+            if animal_ai then
+                ComponentSetValues( animal_ai, {
+                    escape_if_damaged_probability = 0,
+                    attack_melee_enabled = true,
+                    attack_melee_max_distance = 8,
+                    attack_dash_enabled = true,
+                    attack_dash_distance = 30,
+                    attack_dash_damage = 0,
+                    creature_detection_range_x = 1000,
+                    creature_detection_range_y = 1000,
+                    needs_food = false,
+                    can_fly = true,
+                } );
+            end
+        end
+    }]]
 }

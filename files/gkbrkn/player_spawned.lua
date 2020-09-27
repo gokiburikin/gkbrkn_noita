@@ -146,6 +146,11 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
     end
 
+    if GameHasFlagRun( FLAGS.EnemyIntangibilityFrames ) then
+        local badge = load_dynamic_badge( "intangibility_mode", nil );
+        if badge ~= nil then EntityAddChild( player_entity, badge ); end
+    end
+
     if find_tweak("stun_lock") then 
         local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
         if character_platforming ~= nil then

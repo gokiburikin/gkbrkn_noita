@@ -10,7 +10,8 @@ BUG
 
 TODO
     Player Orbitals - projectiles orbits around the player
-    Formation - Stack - try to incorporate spread degrees??????????
+    lukki leg champion
+    valour champion mode - +2-3 base mods, can stack stackable mods
 
     Wand Upgrades
         1 wand upgrade token per standard biome replacing an enemy

@@ -435,7 +435,6 @@ table.insert( perk_list,
 	end, true
 ) );
 
--- TODO this is borken
 table.insert( perk_list, 
     generate_perk_entry( "GKBRKN_PROMOTE_SPELL", "promote_spell", false, function( entity_perk_item, entity_who_picked, item_name )
         local base_wand = nil;
@@ -479,9 +478,9 @@ table.insert( perk_list,
 
             local actions = {};
             for i,v in ipairs( children ) do
-                local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" )
-                for _,item in pairs( items or {}) do
-                    if ComponentGetValue2( item, "permanently_attached" ) == true then
+            local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" ) or {};
+                for _,item in pairs(items) do
+                    if ComponentGetValue2( item, "permanently_attached" ) == false then
                         table.insert( actions, item );
                     end
                 end
@@ -492,7 +491,6 @@ table.insert( perk_list,
                     ComponentSetValue2( to_attach, "permanently_attached", true );
                 end
             end
-            --wand_lock( base_wand );
         end
 	end
 ));

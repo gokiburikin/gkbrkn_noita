@@ -264,6 +264,42 @@ if HasFlagPersistent( MISC.QuickSwap.EnabledFlag ) then
     end
 end
 
+--[[
+if false then
+    local controls = EntityGetFirstComponent( player_entity, "ControlsComponent" );
+    if controls ~= nil then
+        local VELOCITY_MAPPING = {
+            mButtonDownLeft = {x = -1.0, y=0.0},
+            mButtonDownRight = {x = 1.0, y=0.0},
+            mButtonDownUp = {x = 0.0, y=-1.0},
+            mButtonDownDown = {x = 0.0, y=1.0},
+        }
+        local fly_button = ComponentGetValue2( controls, "mButtonDownJump" );
+        local fly_button_frame = ComponentGetValue2( controls, "mButtonFrameJump" );
+        if fly_button and fly_button_frame == GameGetFrameNum() then
+            local character_platforming = EntityGetFirstComponent( player_entity, "CharacterPlatformingComponent" );
+            if character_platforming then
+                ComponentSetValue2( character_platforming, "fly_speed_max_up", 0 );
+                ComponentSetValue2( character_platforming, "fly_model_player", false );
+            end
+            local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
+            if character_data then
+                local vx, vy = ComponentGetValue2( character_data, "mVelocity" );
+                local intended_movement_vector = { x=0, y=0 };
+                for button,vector in pairs(VELOCITY_MAPPING) do
+                    local is_down = ComponentGetValue2( controls, button );
+                    if is_down then
+                        intended_movement_vector.x = intended_movement_vector.x + vector.x;
+                        intended_movement_vector.y = intended_movement_vector.y + vector.y;
+                    end
+                end
+                ComponentSetValue2( character_data, "mVelocity", vx + intended_movement_vector.x * 300, vy + intended_movement_vector.y * 300 );
+            end
+        end
+    end
+end
+]]
+
 --[[ Auto-collect Gold ]]
 if HasFlagPersistent( MISC.AutoPickupGold.EnabledFlag ) then
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
@@ -1054,6 +1090,14 @@ end
 
 if now % 60 == 0 then
     local world_wands = EntityGetWithTag( "wand" );
+
+    --[[ Remove annoying edit wand prompt ]]
+    if HasFlagPersistent( MISC.RemoveEditPrompt.EnabledFlag ) then
+        local workshops = EntityGetWithTag( "workshop_untouched" );
+        for _,workshop in pairs(workshops or {}) do
+            EntityRemoveTag( workshop, "workshop_untouched" );
+        end
+    end
 
     --[[ Remove wands that aren't marked as special ]]
     if GameHasFlagRun( FLAGS.RemoveGenericWands ) then

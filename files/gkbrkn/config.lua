@@ -209,10 +209,11 @@ end
             register_option_localized( MISC.RainbowProjectiles.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.QuickSwap.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.ChestsContainPerks.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
-            register_option_localized( MISC.SlotMachine.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, nil, {goki_thing = true} ),
+            register_option_localized( MISC.SlotMachine.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.ShopReroll.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, nil, {goki_thing = true} ),
             register_option_localized( MISC.Events.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.FixedCamera.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
+            register_option_localized( MISC.RemoveEditPrompt.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, nil, {goki_thing = true} ),
             register_option_localized( FLAGS.DebugMode, CONTENT_ACTIVATION_TYPE.Restart ),
             register_option_localized( FLAGS.ShowDeprecatedContent, CONTENT_ACTIVATION_TYPE.Restart )
         )

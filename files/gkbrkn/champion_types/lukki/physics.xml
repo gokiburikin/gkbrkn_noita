@@ -1,0 +1,31 @@
+<Entity tags="teleportable_NOT">	
+    <PhysicsAIComponent
+		target_vec_max_len="15.0"
+		force_coeff="7.0"
+		force_balancing_coeff="0.8"
+		force_max="50"
+		torque_coeff="50"
+		torque_balancing_coeff="4"
+		torque_max="30.0"
+		damage_deactivation_probability="0"
+		damage_deactivation_time_min="2"
+		damage_deactivation_time_max="10" >
+	</PhysicsAIComponent>
+
+	<PhysicsBodyComponent 
+		force_add_update_areas="1"
+		allow_sleep="1" 
+		angular_damping="0.02" 
+		fixed_rotation="1" 
+		is_bullet="0" 
+		linear_damping="0"  >
+	</PhysicsBodyComponent>
+
+	<PhysicsShapeComponent
+		is_circle="1"
+		radius_x="4"
+		radius_y="4"
+		friction="0.0"
+		restitution="0.3" >
+	</PhysicsShapeComponent>
+</Entity>

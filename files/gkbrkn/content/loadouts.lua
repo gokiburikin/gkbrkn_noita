@@ -1191,12 +1191,12 @@ loadouts = {
                     speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
                 },
                 stat_ranges = {
-                    deck_capacity = {9,9}, -- capacity
+                    deck_capacity = {12,12}, -- capacity
                     reload_time = {180,180}, -- recharge time in frames
                     fire_rate_wait = {120,120}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {30,30}, -- mana charge speed
-                    mana_max = {200,200}, -- mana max
+                    mana_charge_speed = {50,50}, -- mana charge speed
+                    mana_max = {100,100}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
@@ -1207,6 +1207,7 @@ loadouts = {
                     { "CHAOTIC_ARC" },
                     { "SINEWAVE" },
                     { "GKBRKN_GUIDED_SHOT" },
+                    { "GKBRKN_AREA_SHOT" },
                     { "GKBRKN_AREA_SHOT" },
                     { "AVOIDING_ARC" },
                     { "GKBRKN_POWER_SHOT" },

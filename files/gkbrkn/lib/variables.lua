@@ -61,7 +61,7 @@ function ComponentSetValues( component, member_value_table )
 end
 
 function ComponentAdjustValues( component, member_callback_table )
-    for member,callback in pairs(member_callback_table) do
+    for member,callback in pairs( member_callback_table ) do
         ComponentSetValue2( component, member, callback( ComponentGetValue2( component, member ) ) );
     end
 end

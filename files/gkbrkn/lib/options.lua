@@ -122,6 +122,7 @@ local options = {
     FixedCamera = { EnabledFlag = "gkbrkn_fixed_camera", },
     Events = { EnabledFlag = "gkbrkn_events", },
     AutoHide = { EnabledFlag = "gkbrkn_auto_hide", },
+    RemoveEditPrompt = { EnabledFlag = "gkbrkn_remove_edit_prompt", },
     PerkOptions = {
         MagicFocus = {
             DecayFrames = 60,
