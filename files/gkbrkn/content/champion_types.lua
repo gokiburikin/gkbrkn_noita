@@ -412,6 +412,27 @@ champion_types = {
         deprecated = true,
         stackable = true
     },
+    { id = "mini_boss",
+        particle_material = nil,
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml",
+        name = "$champion_type_name_mini_boss",
+        description = "$champion_type_desc_mini_boss",
+        author = "$ui_author_name_goki_dev",
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return false end,
+        apply = function( entity )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
+            for index,damage_model in pairs( damage_models ) do
+                local current_hp = ComponentGetValue2( damage_model, "hp" );
+                local max_hp = ComponentGetValue2( damage_model, "max_hp" );
+                local new_max = max_hp * 2 + 2;
+                local regained = new_max - current_hp;
+                ComponentSetValue2( damage_model, "max_hp", new_max );
+                ComponentSetValue2( damage_model, "hp", current_hp + regained );
+            end
+        end,
+    },
     { id = "hot_blooded",
         particle_material = nil,
         badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/hot_blooded/badge.xml",

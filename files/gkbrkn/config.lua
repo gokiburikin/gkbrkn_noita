@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c99b"
+    Version = "c100"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -157,6 +157,7 @@ end
             register_option_localized( MISC.LooseSpellGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
             register_option_localized( MISC.ExtendedWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
             register_option_localized( MISC.ChaoticWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),
+            register_option_localized( MISC.AlternativeWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),
             register_option_localized( MISC.NoPregenWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true} ),
             register_option_localized( MISC.PassiveRecharge.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
         ),

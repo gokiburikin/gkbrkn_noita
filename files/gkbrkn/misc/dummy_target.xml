@@ -1,5 +1,5 @@
 <Entity  tags="prop,hittable,mortal,homing_target,enemy" >
-	<VelocityComponent />
+	<VelocityComponent gravity_y="0"/>
     <SimplePhysicsComponent/>
 	<SpriteComponent 
 		z_index="1"
@@ -16,7 +16,8 @@
     >
 	</AnimalAIComponent>
 	<DamageModelComponent
-		air_in_lungs="5" 
+		air_in_lungs="5"
+		wait_for_kill_flag_on_death="1" 
 		air_in_lungs_max="5" 
 		air_lack_of_damage="0.2" 
 		air_needed="1" 
@@ -66,8 +67,7 @@
 		food_chain_rank="9"
 		is_predator="1" >
 	</GenomeDataComponent>
-    <SpriteAnimatorComponent>
-	</SpriteAnimatorComponent>
-	<StatusEffectDataComponent>
-	</StatusEffectDataComponent>
+    <SpriteAnimatorComponent/>
+	<StatusEffectDataComponent/>
+	<VariableStorageComponent name="gkbrkn_no_health_bar"/>
 </Entity>

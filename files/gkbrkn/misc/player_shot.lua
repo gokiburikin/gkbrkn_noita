@@ -11,11 +11,15 @@ function shot( projectile_entity )
     local player = GetUpdatedEntityID();
     local damage_multiplier =  EntityGetVariableNumber( player, "gkbrkn_damage_multiplier", 1.0 );
     local projectile_damage_multiplier =  EntityGetVariableNumber( projectile_entity, "gkbrkn_damage_multiplier", 1.0 );
-    adjust_all_entity_damage( projectile_entity, function( current_damage ) return current_damage * projectile_damage_multiplier; end )
+    adjust_all_entity_damage( projectile_entity, function( current_damage ) return (current_damage ) * projectile_damage_multiplier; end )
 
     local current_protagonist_bonus = get_protagonist_bonus( player );
     if current_protagonist_bonus ~= 0 then
-        adjust_all_entity_damage( projectile_entity, function( current_damage ) return current_damage * current_protagonist_bonus; end );
+    end
+
+    local empower_stacks = EntityGetVariableNumber( projectile_entity, "gkbrkn_empower_stacks", 0 );
+    if empower_stacks > 0 then
+        adjust_all_entity_damage( projectile_entity, function( current_damage ) return current_damage * empower_stacks * 5; end );
     end
 
     local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );

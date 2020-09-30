@@ -574,9 +574,8 @@ end
 if HasFlagPersistent( MISC.HealthBars.EnabledFlag ) then
     if HasFlagPersistent( MISC.HealthBars.PrettyHealthBarsFlag ) then
         local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
-        local t = GameGetRealWorldTimeSinceStarted();
         for _,nearby in pairs( nearby_mortal ) do
-            if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+            if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil and EntityHasNamedVariable( nearby, "gkbrkn_no_health_bar") == false then
                 entity_draw_health_bar( nearby, 1 );
             end
         end
@@ -584,7 +583,7 @@ if HasFlagPersistent( MISC.HealthBars.EnabledFlag ) then
         if now % 10 == 0 then
             local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
             for _,nearby in pairs( nearby_mortal ) do
-                if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil and EntityHasNamedVariable( nearby, "gkbrkn_no_health_bar") == false then
                     if entity_get_health_ratio( nearby ) < 1 then
                         add_entity_mini_health_bar( nearby );
                     end
@@ -603,7 +602,11 @@ if now % 10 == 0 then
 
             --SetRandomSeed( x, y );
             if EntityHasTag( nearby, "polymorphed" ) == false and EntityHasNamedVariable( nearby, "goki_health" ) == false then
-                if ( EntityHasTag( nearby, "gkbrkn_champions" ) == false or EntityHasTag( nearby, "gkbrkn_force_champion" ) == true ) and EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and EntityHasTag( nearby, "drone_friendly" ) == false and does_entity_drop_gold( nearby ) == true then
+                if ( EntityHasTag( nearby, "gkbrkn_champions" ) == false or EntityHasTag( nearby, "gkbrkn_force_champion" ) == true ) and 
+                EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and 
+                EntityHasTag( nearby, "drone_friendly" ) == false and 
+                EntityHasTag( nearby, "boss_tag" ) == false and 
+                does_entity_drop_gold( nearby ) == true then
                     if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag ) or Random() <= MISC.ChampionEnemies.ChampionChance then
                         EntityAddTag( nearby, "gkbrkn_champions" );
                         EntityRemoveTag( nearby, "gkbrkn_force_champion" );
@@ -656,8 +659,9 @@ if now % 10 == 0 then
                                 find_champion_type("jetpack"),
                                 find_champion_type("reward"),
                                 find_champion_type("burning"),
+                                find_champion_type("mini_boss"),
                             };
-                            add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml"};
+                            --add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml"};
                         end
 
                         for i=1,math.min(#valid_champion_types, champion_types_to_apply) do

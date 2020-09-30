@@ -1,6 +1,6 @@
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
-local correction_distance = 36;
+local correction_distance = 48;
 
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 

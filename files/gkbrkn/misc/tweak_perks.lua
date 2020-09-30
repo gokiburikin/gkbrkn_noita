@@ -66,7 +66,7 @@ local edit_callbacks = {
             local kicks = EntityGetComponent( entity_who_picked, "KickComponent" ) or {};
             for _,model in pairs( kicks ) do
                 local kick_damage = tonumber( ComponentGetValue2( model, "kick_damage" ) ) * 3;
-                ComponentsetValue2( model, "kick_damage", kick_damage );
+                ComponentSetValue2( model, "kick_damage", kick_damage );
             end
 		end
     end

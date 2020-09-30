@@ -26,14 +26,20 @@ local extended_types = {
 };
 local action_type_weights  = {
     [ACTION_TYPE_STATIC_PROJECTILE] = 3,
-    [ACTION_TYPE_PROJECTILE] = 30,
-    [ACTION_TYPE_MODIFIER] = 15,
-    [ACTION_TYPE_DRAW_MANY] = 5,
-    [ACTION_TYPE_MATERIAL] = 1,
+    [ACTION_TYPE_PROJECTILE] = 76,
+    [ACTION_TYPE_MODIFIER] = 23,
+    [ACTION_TYPE_DRAW_MANY] = 10,
+    [ACTION_TYPE_MATERIAL] = 2,
     [ACTION_TYPE_OTHER] = 1,
     [ACTION_TYPE_UTILITY] = 1,
-    [ACTION_TYPE_PASSIVE] = 1
+    [ACTION_TYPE_PASSIVE] = 4
 }
+
+local chaotic_actions = {};
+for _,action in pairs( actions ) do
+    chaotic_actions[ action.id ] = 1;
+end
+
 local chance_to_replace = 0.03;
 local _generate_gun = generate_gun;
 function generate_gun( cost, level, force_unshuffle )
@@ -61,7 +67,7 @@ function generate_gun( cost, level, force_unshuffle )
 
     for _,wand in pairs( local_wands ) do
         local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
-        if HasFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag ) then
+        if HasFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag ) then
             local children = EntityGetAllChildren( wand );
             for _,child in ipairs( children ) do
                 local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
@@ -81,6 +87,37 @@ function generate_gun( cost, level, force_unshuffle )
                         -- not too much that can be done about this right now, doesn't show up outside of dev
                         local weighted_type = WeightedRandomTable( action_type_weights );
                         local action = GetRandomActionWithType( x, y, level or Random(0,6), weighted_type, Random(0,1000)+_+x+y );
+                        if action ~= nil and action ~= "" then
+                            child_to_return = CreateItemActionEntity( action, x, y );
+                            local item = EntityGetFirstComponent( child_to_return, "ItemComponent" );
+                            if item ~= nil then
+                                if permanent_action == true  then
+                                    ComponentSetValue2( item, "permanently_attached", true );
+                                end
+                            end
+                            EntitySetComponentsWithTagEnabled( child_to_return, "enabled_in_world", false );
+                        end
+                    end
+                end
+                EntityAddChild( wand, child_to_return );
+            end
+        elseif HasFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag ) then
+            local children = EntityGetAllChildren( wand );
+            for _,child in ipairs( children ) do
+                local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
+                local permanent_action = false;
+                if item ~= nil then
+                    if ComponentGetValue2( item, "permanently_attached" ) == true then
+                        permanent_action = true;
+                    end
+                end
+                EntityRemoveFromParent( child );
+                local child_to_return = child;
+                local item_action = EntityGetFirstComponentIncludingDisabled( child, "ItemActionComponent" );
+                if item_action then
+                    local action_id = ComponentGetValue2( item_action, "action_id" );
+                    if action_id ~= nil and action_id ~= "" then
+                        local action = WeightedRandomTable( chaotic_actions );
                         if action ~= nil and action ~= "" then
                             child_to_return = CreateItemActionEntity( action, x, y );
                             local item = EntityGetFirstComponent( child_to_return, "ItemComponent" );
@@ -154,10 +191,12 @@ function generate_gun( cost, level, force_unshuffle )
             if mana_mastery_stacks > 0 then
                 local mana_max = ability_component_get_stat( ability, "mana_max" );
                 local mana_charge_speed = ability_component_get_stat( ability, "mana_charge_speed" );
-                local stats = mana_max + mana_charge_speed;
+                local reallocated = 0.42;
+                local retained = 0.33;
+                local stats = (mana_max + mana_charge_speed) * reallocated;
                 local rand = Random();
-                ability_component_set_stat( ability, "mana_max", (stats * rand) * ( 1.0 + mana_mastery_stacks * 0.1 ) );
-                ability_component_set_stat( ability, "mana_charge_speed", (stats * (1 - rand)) * ( 1.0 + mana_mastery_stacks * 0.1 ) );
+                ability_component_set_stat( ability, "mana_max", (stats * rand) + mana_max * retained );
+                ability_component_set_stat( ability, "mana_charge_speed", (stats * (1 - rand)) + mana_charge_speed * retained );
             end
         end
     end

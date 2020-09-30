@@ -1,5 +1,17 @@
 --[[
 changelog
+    -m "Add Action: Control"
+    -m "Add Action: Separator"
+    -m "Add Action: Target Shot"
+    -m "Fix Option: Champions - Minibosses (add the health bonus back in)"
+    -m "Fix Perk: Glass Cannon (no longer crash the game when you preview a tweaked Glass Cannon)"
+    -m "Update Action: Empower (damage +0 -> +2, fix damage being slightly off)"
+    -m "Update Action: Fracture (properly stackable, mana cost 1x -> 3x)"
+    -m "Update Action: Path Correction (update icon, increase correction range)"
+    -m "Update Action: Speed Down (speed multiplier 0.33x -> 0.4x)"
+    -m "Update Action: Seeker Shot (update icon)"
+    -m "Update Option: Target Dummy (no gravity so it doesn't fall through the holy mountain, don't show health bar)"
+    -m "Update Perk: Mana Manipulation (reallocates only a portion of each mana stat, no longer stackable)"
 
 BUG
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
@@ -12,6 +24,7 @@ TODO
     Player Orbitals - projectiles orbits around the player
     lukki leg champion
     valour champion mode - +2-3 base mods, can stack stackable mods
+    add champion type weightings
 
     Wand Upgrades
         1 wand upgrade token per standard biome replacing an enemy

@@ -2,6 +2,16 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 --[[ NORMAL ]]
     table.insert( actions, generate_action_entry(
+        "GKBRKN_DUMMY_SHOT", "dummy_shot", ACTION_TYPE_MODIFIER, 
+        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 10, 5, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/dummy_shot/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end
+    ) );
+
+    table.insert( actions, generate_action_entry(
         "GKBRKN_ARCANE_BUCKSHOT", "arcane_buckshot", ACTION_TYPE_PROJECTILE,
         "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 210, 12, -1,
         nil, 
@@ -12,6 +22,28 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
             c.fire_rate_wait = c.fire_rate_wait + 16;
             current_reload_time = current_reload_time + 42;
         end, true
+    ));
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_SEPARATOR", "separator", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.3,0.3,0.3,0.3,0.3,0.3,0.3", 210, 0, -1,
+        nil, 
+        function()
+            if reflecting then return; end
+            local old_c = c;
+            BeginProjectile( "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml" );
+                BeginTriggerDeath();
+                    c = {};
+                    for k,v in pairs(old_c) do
+                        c[k] = v;
+                    end
+                    draw_actions( 1, true );
+                    register_action( c );
+                    SetProjectileConfigs();
+                EndTrigger();
+            EndProjectile();
+            c = old_c;
+        end
     ));
 
     table.insert( actions, generate_action_entry(
@@ -361,75 +393,45 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         end, true
     ) );
 
-    --[[
-
-        fracture -> fracture -> spark bolt
-
-        single fracture: trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt  
-        double fracture:
-            trigger death -> sparkbolt -> triple cast ->
-                trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt ->
-                trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt ->
-                trigger death -> sparkbolt -> triple cast -> sparkbolt -> sparkbolt -> sparkbolt   
-    ]]
-
-    local do_print = false;
-    local _print = print;
-    local print = function(...)
-        if gkbrkn and gkbrkn.peeking == 0 then
-            _print(...);
-        end
-    end
-
-    --[[ TODO still not complete ]]
     table.insert( actions, generate_action_entry(
         "GKBRKN_FRACTURE", "fracture", ACTION_TYPE_MODIFIER,
         "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
         nil,    
         function()
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            
             local old_c = c;
             c = {};
-            reset_modifiers( c );
+            for k,v in pairs(old_c) do
+                c[k] = v;
+            end
             local old_capture = gkbrkn.add_projectile_capture_callback;
-            local deck_snapshot = peek_draw_actions( 1, true );
-            
-            if gkbrkn.peeking == 0 then
-                gkbrkn.add_projectile_capture_callback = function( filepath, trigger_action_draw_count, trigger_delay_frames )
-                    gkbrkn.add_projectile_capture_callback = old_capture;
-                    BeginProjectile( filepath );
+            gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.00;
+            gkbrkn._fractures = (gkbrkn._fractures or 0) + 1;
+            gkbrkn.add_projectile_capture_callback = function( filepath, trigger_action_draw_count, trigger_delay_frames )
+                BeginProjectile( filepath );
+                if gkbrkn.add_projectile_depth <= gkbrkn._fractures then
                     BeginTriggerDeath();
-                        for i=1,3 do
-                            c = {};
-                            reset_modifiers( c );
-                            for k,v in pairs(old_c) do
-                                c[k] = v;
-                            end
-                            c.spread_degrees = 45;
-                            --c.pattern_degrees = 45;
-                            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile_extra_entity.xml,";
-                            temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, deck_from_actions( deck_snapshot ), {}, {} );
-                            register_action( c );
-                            SetProjectileConfigs();
+                        add_projectile( filepath );
+                        add_projectile( filepath );
+                        add_projectile( filepath );
+                        c = {};
+                        for k,v in pairs(old_c) do
+                            c[k] = v;
                         end
+                        c.spread_degrees = 45;
+                        for i=1,gkbrkn.add_projectile_depth do
+                            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/fracture/projectile_extra_entity.xml,";
+                        end
+                        register_action( c );
+                        SetProjectileConfigs();
+                        c = old_c;
                     EndTrigger();
-                    EndProjectile();
                 end
+                EndProjectile();
             end
-            local temp = deck_from_actions( deck_snapshot );
-            for i=#temp,1,-1 do
-                if temp[i].id == "GKBRKN_FRACTURE" then
-                    table.remove(temp, i);
-                    break;
-                end
-            end
-            temporary_deck( function( deck, hand, discarded ) draw_actions( 1, true ); end, temp, {}, {} );
-
+            draw_actions( 1, true );
+            gkbrkn.add_projectile_capture_callback = old_capture;
+            gkbrkn._fractures = gkbrkn._fractures - 1;
+            gkbrkn.mana_multiplier = gkbrkn.mana_multiplier / 3.00;
             c = old_c;
         end
     ) );
@@ -820,7 +822,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 50, -3, -1,
         nil,
         function()
-            c.speed_multiplier = c.speed_multiplier * 0.33;
+            c.speed_multiplier = c.speed_multiplier * 0.40;
             draw_actions( 1, true );
         end
     ) );
@@ -1504,6 +1506,16 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
 --[[ SUPERS ]]
     table.insert( actions, generate_action_entry(
+        "GKBRKN_CONTROL", "control", ACTION_TYPE_MODIFIER, 
+        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 10, 3, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/control/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end
+    ) );
+
+    table.insert( actions, generate_action_entry(
         "GKBRKN_CLINGING_SHOT", "clinging_shot", ACTION_TYPE_MODIFIER,
         "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 30, -1,
         nil,
@@ -1519,6 +1531,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         nil,
         function()
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.0;
+			c.damage_projectile_add = c.damage_projectile_add + 0.08;
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/focused_shot/projectile_extra_entity.xml,";
             draw_actions( 1, true );
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier / 3.0;

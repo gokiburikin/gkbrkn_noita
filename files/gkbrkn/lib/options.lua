@@ -51,6 +51,7 @@ local options = {
     },
     ExtendedWandGeneration = { EnabledFlag = "gkbrkn_extended_wand_generation", },
     ChaoticWandGeneration = { EnabledFlag = "gkbrkn_chaotic_wand_generation", },
+    AlternativeWandGeneration = { EnabledFlag = "gkbrkn_alternative_wand_generation", },
     ShowFPS = { EnabledFlag = "gkbrkn_show_fps", },
     HealthBars = {
         EnabledFlag = "gkbrkn_health_bars",

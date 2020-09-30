@@ -45,6 +45,7 @@ gkbrkn = {
     mana_multiplier = 1.0,
     skip_projectiles = false,
     added_projectiles = 0,
+    add_projectile_depth = 0,
     register_action_callback = nil,
     _create_shot = create_shot,
     _draw_actions = draw_actions,
@@ -485,6 +486,7 @@ function draw_action( instant_reload_if_empty )
 end
 
 function add_projectile( filepath )
+    gkbrkn.add_projectile_depth = gkbrkn.add_projectile_depth + 1;
     if not gkbrkn.did_action_add_projectile then
         local player = GetUpdatedEntityID();
         local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
@@ -529,36 +531,35 @@ function add_projectile( filepath )
         if trigger_action_draw_count ~= nil then
             draw_actions( trigger_action_draw_count, true );
         end
-        return;
-    end
-
-    if gkbrkn.skip_projectiles ~= true then
-        if gkbrkn.add_projectile_capture_callback ~= nil and gkbrkn.peeking == 0 then
-            gkbrkn.add_projectile_capture_callback( filepath, trigger_action_draw_count, trigger_delay_frames );
-        elseif trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
-            gkbrkn._add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );
-        elseif trigger_type == gkbrkn.TRIGGER_TYPE.Death then
-            gkbrkn._add_projectile_trigger_death( filepath, trigger_action_draw_count );
-        elseif trigger_type == gkbrkn.TRIGGER_TYPE.Hit then
-            gkbrkn._add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
-        elseif trigger_type == gkbrkn.TRIGGER_TYPE.Instant then
-            if reflecting then 
-                Reflection_RegisterProjectile( filepath );
-                return;
-            end
-        
-            BeginProjectile( filepath );
-                draw_shot( create_shot( trigger_action_draw_count ), true );
-            EndProjectile()
-        else
-            local force_trigger_death = EntityGetVariableNumber( player, "gkbrkn_force_trigger_death", 0 );
-            if force_trigger_death ~= 1 then
-                gkbrkn._add_projectile( filepath );
+    else
+        if gkbrkn.skip_projectiles ~= true then
+            if gkbrkn.add_projectile_capture_callback ~= nil and gkbrkn.peeking == 0 then
+                gkbrkn.add_projectile_capture_callback( filepath, trigger_action_draw_count, trigger_delay_frames );
+            elseif trigger_type == gkbrkn.TRIGGER_TYPE.Timer then
+                gkbrkn._add_projectile_trigger_timer( filepath, trigger_delay_frames, trigger_action_draw_count );
+            elseif trigger_type == gkbrkn.TRIGGER_TYPE.Death then
+                gkbrkn._add_projectile_trigger_death( filepath, trigger_action_draw_count );
+            elseif trigger_type == gkbrkn.TRIGGER_TYPE.Hit then
+                gkbrkn._add_projectile_trigger_hit_world( filepath, trigger_action_draw_count );
+            elseif trigger_type == gkbrkn.TRIGGER_TYPE.Instant then
+                if reflecting then 
+                    Reflection_RegisterProjectile( filepath );
+                else
+                    BeginProjectile( filepath );
+                        draw_shot( create_shot( trigger_action_draw_count ), true );
+                    EndProjectile()
+                end
             else
-                gkbrkn._add_projectile_trigger_death( filepath, 1 );
+                local force_trigger_death = EntityGetVariableNumber( player, "gkbrkn_force_trigger_death", 0 );
+                if force_trigger_death ~= 1 then
+                    gkbrkn._add_projectile( filepath );
+                else
+                    gkbrkn._add_projectile_trigger_death( filepath, 1 );
+                end
             end
         end
     end
+    gkbrkn.add_projectile_depth = gkbrkn.add_projectile_depth - 1;
 end
 
 function add_projectile_trigger_timer( entity_filename, delay_frames, action_draw_count )
