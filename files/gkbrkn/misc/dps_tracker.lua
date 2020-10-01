@@ -18,7 +18,12 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         ComponentSetValue2( damage_model, "max_hp", 4 );
         ComponentSetValue2( damage_model, "hp", math.max( 4, damage * 1.1 ) );
     end
-    if entity_thats_responsible == 0 and HasFlagPersistent( MISC.TargetDummy.AllowEnvironmentalDamage ) == false then return; end
+    local x,y = EntityGetTransform( entity );
+    local did_hit, hit_x, hit_y = RaytracePlatforms( x, y - 1, x, y );
+    if did_hit then
+        EntityApplyTransform( entity, x, y - 5 );
+    end
+    if entity_thats_responsible == 0 and HasFlagPersistent( MISC.TargetDummy.AllowEnvironmentalDamage ) == false or damage < 0 then return; end
     
     if now >= reset_frame then
         total_damage = 0;
@@ -59,5 +64,5 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
         special_scale_y="0.6667",
         z_index="-9000",
         never_ragdollify_on_death="1"
-    });
+    });    
 end

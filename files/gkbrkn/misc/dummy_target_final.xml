@@ -1,5 +1,5 @@
 <Entity  tags="prop,hittable,mortal,homing_target,enemy" >
-	<VelocityComponent gravity_y="0"/>
+	<VelocityComponent/>
     <SimplePhysicsComponent/>
 	<SpriteComponent 
 		z_index="1"

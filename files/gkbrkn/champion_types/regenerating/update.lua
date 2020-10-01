@@ -7,9 +7,9 @@ if GameGetFrameNum() - last_damage_frame > 60 then
         for _,damage_model in pairs( damage_models ) do
             local max_hp = ComponentGetValue2( damage_model, "max_hp" );
             local current_hp = ComponentGetValue2( damage_model, "hp" );
-            -- heal up to full over 5 seconds (assuming this is called once every 60 frames )
+            -- heal up to full over 10 seconds (assuming this is called once every 60 frames )
             if current_hp < max_hp then
-                ComponentSetValue2( damage_model, "hp", math.min( max_hp, current_hp + max_hp * 0.2 ) );
+                ComponentSetValue2( damage_model, "hp", math.min( max_hp, current_hp + max_hp * 0.1 ) );
             end
         end
     end

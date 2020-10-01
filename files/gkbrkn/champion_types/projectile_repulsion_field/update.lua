@@ -5,7 +5,7 @@ local entity_id = GetUpdatedEntityID();
 local distance_full = 36;
 local distance_full_squared = distance_full ^ 2;
 local x, y = EntityGetTransform( entity_id );
-local gravity_coeff = 333;
+local gravity_coeff = 300;
 
 local projectiles = EntityGetInRadiusWithTag( x, y, distance_full, "projectile" ) or {};
 if #projectiles > 0 then

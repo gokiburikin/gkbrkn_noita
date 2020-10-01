@@ -112,7 +112,8 @@ champion_types = {
                 execute_every_n_frame="-1",
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/counter/damage_received.lua",
             });
-        end
+        end,
+        weight = 0.7
     },
     { id = "damage_buff",
         badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/badge.xml",
@@ -138,7 +139,8 @@ champion_types = {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/shot.lua"
             });
         end,
-        stackable = true
+        stackable = true,
+        weight = 1.1
     },
     { id = "digging",
         particle_material = nil,
@@ -204,7 +206,8 @@ champion_types = {
                     });
                 end
             end
-        end
+        end,
+        weight = 0.9
     },
     { id = "electric",
         particle_material = nil,
@@ -270,7 +273,8 @@ champion_types = {
             ComponentSetValue2( hotspot, "offset", 0, -height * 0.3 );
 
             if shield ~= nil then EntityAddChild( entity, shield ); end
-        end
+        end,
+        weight = 0.8
     },
     { id = "faster_movement",
         particle_material = nil,
@@ -336,7 +340,8 @@ champion_types = {
                 execute_every_n_frame="-1",
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/tremor/damage_received.lua",
             });
-        end
+        end,
+        weight = 0.3
     },
     { id = "poison_blood",
         particle_material = nil,
@@ -465,9 +470,9 @@ champion_types = {
             for _,damage_model in pairs( damage_models ) do
                 ComponentSetValue2( damage_model, "blood_material", "magic_liquid_random_polymorph" );
                 ComponentSetValue2( damage_model, "blood_spray_material", "magic_liquid_random_polymorph" );
-                ComponentSetValue2( damage_model, "blood_multiplier", 0.3 );
             end
-        end
+        end,
+        weight = 0.1
     },
     { id = "blood_spray",
         particle_material = nil,
@@ -510,7 +515,8 @@ champion_types = {
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/ice_burst/damage_received.lua",
             });
             TryAdjustDamageMultipliers( entity, { ice = 0.00 } );
-        end
+        end,
+        weight = 0.8
     },
     { id = "infested",
         particle_material = nil,
@@ -527,7 +533,8 @@ champion_types = {
                 script_death="mods/gkbrkn_noita/files/gkbrkn/champion_types/infested/death.lua",
             });
         end,
-        stackable = true
+        stackable = true,
+        weight = 0.8
     },
     { id = "intangibility_frames",
         particle_material = nil,
@@ -543,7 +550,8 @@ champion_types = {
                 script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/damage_received.lua",
             });
         end,
-        deprecated = true
+        deprecated = true,
+        weight = 0.5
     },
     { id = "invincibility_frames",
         particle_material = nil,
@@ -652,7 +660,8 @@ champion_types = {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/shot.lua"
             });
         end,
-        stackable = true
+        stackable = true,
+        weight = 1.2
     },
     { id = "leaping",
         particle_material = nil,
@@ -687,7 +696,8 @@ champion_types = {
                     });
                 end
             end
-        end
+        end,
+        weight = 1.1
     },
     { id = "projectile_bounce",
         particle_material = nil,
@@ -715,12 +725,13 @@ champion_types = {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_bounce/shot.lua",
             });
         end,
-        stackable = true
+        stackable = true,
+        weight = 0.9
     },
-    { id = "projectile_buff",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_buff/badge.xml",
-        name = "$champion_type_name_projectile_buff",
-        description = "$champion_type_desc_projectile_buff",
+    { id = "multi_shot",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/multi_shot/badge.xml",
+        name = "$champion_type_name_multi_shot",
+        description = "$champion_type_desc_multi_shot",
         author = "$ui_author_name_goki_dev",
 
         particle_material = nil,
@@ -743,14 +754,65 @@ champion_types = {
             local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue2( ai, "attack_ranged_min_distance", ComponentGetValue2( ai, "attack_ranged_min_distance" ) * 1.33 ) ;
-                    ComponentSetValue2( ai, "attack_ranged_max_distance", ComponentGetValue2( ai, "attack_ranged_max_distance" ) * 1.33 ) ;
                     ComponentSetValue2( ai, "attack_ranged_entity_count_min", ComponentGetValue2( ai, "attack_ranged_entity_count_min" ) + 1 ) ;
                     ComponentSetValue2( ai, "attack_ranged_entity_count_max", ComponentGetValue2( ai, "attack_ranged_entity_count_max" ) + 2 ) ;
+                    ComponentAdjustValues( ai, {
+                        attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) * 1.5 ) end,
+                        attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) * 1.5 ) end,
+                        attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) * 1.5 ) end,
+                    });
                 end
             end
         end,
-        stackable = true
+        stackable = true,
+        weight = 0.8
+    },
+    { id = "long_range",
+        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/long_range/badge.xml",
+        name = "$champion_type_name_long_range",
+        description = "$champion_type_desc_long_range",
+        author = "$ui_author_name_goki_dev",
+
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_ranged_min_distance", ComponentGetValue2( ai, "attack_ranged_min_distance" ) * 1.5 );
+                    ComponentSetValue2( ai, "attack_ranged_max_distance", ComponentGetValue2( ai, "attack_ranged_max_distance" ) * 1.5 );
+                    ComponentSetValue2( ai, "attack_ranged_use_laser_sight", true );
+                end
+            end
+            EntityAddComponent( entity, "SpriteComponent",{
+                _tags="laser_sight",
+                alpha="1",
+                image_file="data/particles/laser_red.png",
+                offset_x="5" ,
+                offset_y="1",
+                emissive="1",
+                additive="1",
+                visible="0",
+                update_transform="0",
+                next_rect_animation="" ,
+                rect_animation="default" ,
+            });
+        end,
+        stackable = true,
     },
     { id = "projectile_repulsion_field",
         particle_material = nil,
@@ -764,7 +826,8 @@ champion_types = {
         apply = function( entity )
             local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_repulsion_field/projectile_repulsion_field.xml" );
             if shield ~= nil then EntityAddChild( entity, shield ); end
-        end
+        end,
+        weight = 0.5
     },
     { id = "rapid_attack",
         badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/rapid_attack/badge.xml",
@@ -788,7 +851,8 @@ champion_types = {
                 end
             end
         end,
-        stackable = true
+        stackable = true,
+        weight = 0.9
     },
     { id = "regenerating",
         particle_material = "spark_green",
@@ -807,7 +871,8 @@ champion_types = {
             EntityAddComponent( entity, "LuaComponent", { 
                 script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/regenerating/damage_received.lua",
             } );
-        end
+        end,
+        weight = 0.5
     },
     { id = "revenge_explosion",
         particle_material = nil,
@@ -871,7 +936,8 @@ champion_types = {
                 ComponentSetValue2( animal_ai, "attack_ranged_aim_rotation_speed", 0.5 );
                 
             end
-        end
+        end,
+        weight = 0.8
     },
     { id = "teleporting",
         particle_material = "spark_white",
@@ -892,6 +958,7 @@ champion_types = {
                 execute_every_n_frame = "180",
             } );
         end,
+        weight = 0.7
     },
     { id = "toxic_trail",
         particle_material = nil,

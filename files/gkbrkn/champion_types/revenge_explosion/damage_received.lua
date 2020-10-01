@@ -9,5 +9,5 @@ function damage_received( damage, desc, entity_who_caused, is_fatal )
     local now = GameGetFrameNum();
 	if now - EntityGetVariableNumber( entity, "gkbrkn_rexplosion_last_proc", 0 ) < 5 then return; end
     EntitySetVariableNumber( entity, "gkbrkn_rexplosion_last_proc", now );
-	shoot_projectile( entity, "data/entities/misc/perks/revenge_explosion.xml", x, y, 0, 0 );
+	shoot_projectile( entity, "mods/gkbrkn_noita/files/gkbrkn/champion_types/revenge_explosion/projectile.xml", x, y, 0, 0 );
 end

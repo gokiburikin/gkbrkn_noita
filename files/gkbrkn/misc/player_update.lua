@@ -624,9 +624,12 @@ if now % 10 == 0 then
                         end
 
                         local valid_champion_types = {};
+                        local valid_champion_type_count = 0;
                         for index,champion_type_data in pairs( champion_types ) do
                             if (champion_type_data.validator == nil or champion_type_data.validator( nearby ) ~= false) then
-                                table.insert( valid_champion_types, champion_type_data );
+                                --table.insert( valid_champion_types, champion_type_data );
+                                valid_champion_types[index] = champion_type_data.weight;
+                                valid_champion_type_count = valid_champion_type_count + 1;
                             end
                         end
 
@@ -635,7 +638,7 @@ if now % 10 == 0 then
                         if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsFlag ) then
                             local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0012;
                             local random_roll = Random();
-                            while random_roll <= extra_type_chance and champion_types_to_apply < #valid_champion_types do
+                            while random_roll <= extra_type_chance and champion_types_to_apply < valid_champion_type_count do
                                 champion_types_to_apply = champion_types_to_apply + 1;
                                 extra_type_chance = extra_type_chance - random_roll;
                                 random_roll = Random();
@@ -664,9 +667,10 @@ if now % 10 == 0 then
                             --add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml"};
                         end
 
-                        for i=1,math.min(#valid_champion_types, champion_types_to_apply) do
-                            local champion_type_index = math.ceil( Random() * #valid_champion_types );
-                            table.insert( apply_these_champion_types, valid_champion_types[ champion_type_index ] );
+                        for i=1,math.min(valid_champion_type_count, champion_types_to_apply) do
+                            --local champion_type_index = math.ceil( Random() * valid_champion_type_count );
+                            local champion_type_index = WeightedRandomTable( valid_champion_types );
+                            table.insert( apply_these_champion_types, champion_types[tonumber(champion_type_index)] );
                             table.remove( valid_champion_types, champion_type_index );
                         end
 

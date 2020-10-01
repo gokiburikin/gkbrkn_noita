@@ -85,6 +85,7 @@ local edit_callbacks = {
     PIERCING_SHOT = function ( action, index )
         action.action = function()
 			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/piercing_shot.xml,"
+            c.friendly_fire = true;
 			draw_actions( 1, true );
 		end
     end,

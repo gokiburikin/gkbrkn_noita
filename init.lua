@@ -1,22 +1,8 @@
 --[[
 changelog
-    -m "Add Action: Control"
-    -m "Add Action: Separator"
-    -m "Add Action: Target Shot"
-    -m "Fix Option: Champions - Minibosses (add the health bonus back in)"
-    -m "Fix Perk: Glass Cannon (no longer crash the game when you preview a tweaked Glass Cannon)"
-    -m "Update Action: Empower (damage +0 -> +2, fix damage being slightly off)"
-    -m "Update Action: Fracture (properly stackable, mana cost 1x -> 3x)"
-    -m "Update Action: Path Correction (update icon, increase correction range)"
-    -m "Update Action: Speed Down (speed multiplier 0.33x -> 0.4x)"
-    -m "Update Action: Seeker Shot (update icon)"
-    -m "Update Option: Target Dummy (no gravity so it doesn't fall through the holy mountain, don't show health bar)"
-    -m "Update Perk: Mana Manipulation (reallocates only a portion of each mana stat, no longer stackable)"
 
 BUG
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
-    zenti is finding "infinite" mana wands
-    WE ARE finding too many extremely similar wands, check the RNG state
     remove polyblood from minibosses
     grimoires should not include deprecated spells
 
@@ -84,8 +70,6 @@ Champion Type Ideas
     Pickpocket/Fumbling (remove the item in your hand)
     Fear (line of sight causes a debuff)
     Fire Trail (like the one that drops the particles)
-    Melee Immunity
-    Explosion
 
 ]]
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");

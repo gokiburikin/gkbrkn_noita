@@ -8,7 +8,7 @@
 
     <EnergyShieldComponent 
         _tags="enabled_in_hand,item_identified__LEGACY"
-        recharge_speed="0.14"
+        recharge_speed="0.09"
         max_energy="0.30"
 		radius="18.0" >
     </EnergyShieldComponent>
