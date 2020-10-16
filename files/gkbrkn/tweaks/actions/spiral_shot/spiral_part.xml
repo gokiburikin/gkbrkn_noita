@@ -87,4 +87,13 @@
 		emit_cosmetic_particles="1"
 		is_emitting="1" >
 	</ParticleEmitterComponent>
+
+	<EnergyShieldComponent 
+        _tags="enabled_in_hand"
+        recharge_speed="0.25" 
+        max_energy="0.8"
+        energy="0.8"
+		radius="8"
+		>
+    </EnergyShieldComponent>
   </Entity>

@@ -48,6 +48,9 @@ game_modifiers = {
                 local x, y = EntityGetTransform( player_entity );
                 GameCreateParticle( "poly_goo", x - 50, y, 5, 0, 0, false, false );
             end,
+            init_callback = function()
+                ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/poly_goo.xml" );
+            end,
             run_flags = { FLAGS.PolyGooMode }
         }
     },
@@ -63,20 +66,13 @@ game_modifiers = {
                     perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
                 end
 
-                local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
-                for _,damage_model in pairs( damage_models ) do
-                    adjust_material_damage( damage_model, function( materials, damage )
-                        table.insert( materials, "hot_goo");
-                        table.insert( damage, "0.003");
-                        return materials, damage;
-                    end);
-                    EntitySetComponentIsEnabled( player_entity, damage_model, true );
-                    local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-                    ComponentSetValue2( polymorph, "frames", 1 );
-                end
+                change_materials_that_damage( player_entity, { hot_goo = 0.003 } );
 
                 local x, y = EntityGetTransform( player_entity );
                 GameCreateParticle( "hot_goo", x - 50, y, 5, 0, 0, false, false );
+            end,
+            init_callback = function()
+                ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/hot_goo.xml" );
             end,
             run_flags = { FLAGS.HotGooMode }
         }
@@ -92,22 +88,14 @@ game_modifiers = {
                 if perk_entity ~= nil then
                     perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
                 end
-                local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
-                for _,damage_model in pairs( damage_models ) do
-                    adjust_material_damage( damage_model, function( materials, damage )
-                        table.insert( materials, "killer_goo");
-                        table.insert( damage, "0.001");
-                        table.insert( materials, "corruption");
-                        table.insert( damage, "0.001");
-                        return materials, damage;
-                    end);
-                    EntitySetComponentIsEnabled( player_entity, damage_model, true );
-                    local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-                    ComponentSetValue2( polymorph, "frames", 1 );
-                end
+
+                change_materials_that_damage( player_entity, { killer_goo = 0.01, corruption=0.001 } );
 
                 local x, y = EntityGetTransform( player_entity );
                 GameCreateParticle( "killer_goo", x - 50, y, 5, 0, 0, false, false );
+            end,
+            init_callback = function()
+                ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" );
             end,
             run_flags = { FLAGS.KillerGooMode }
         }
@@ -123,22 +111,13 @@ game_modifiers = {
                 if perk_entity ~= nil then
                     perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
                 end
-                local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
-                for _,damage_model in pairs( damage_models ) do
-                    adjust_material_damage( damage_model, function( materials, damage )
-                        table.insert( materials, "alt_killer_goo");
-                        table.insert( damage, "0.001");
-                        table.insert( materials, "alt_corruption");
-                        table.insert( damage, "0.001");
-                        return materials, damage;
-                    end);
-                    EntitySetComponentIsEnabled( player_entity, damage_model, true );
-                    local polymorph = GetGameEffectLoadTo( player_entity, "POLYMORPH", true )
-                    ComponentSetValue2( polymorph, "frames", 1 );
-                end
+                change_materials_that_damage( player_entity, { alt_killer_goo = 0.01, alt_corruption = 0.001 } );
 
                 local x, y = EntityGetTransform( player_entity );
                 GameCreateParticle( "alt_killer_goo", x - 50, y, 5, 0, 0, false, false );
+            end,
+            init_callback = function()
+                ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
             end,
             run_flags = { FLAGS.AltKillerGooMode }
         }

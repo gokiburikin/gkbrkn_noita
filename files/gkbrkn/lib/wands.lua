@@ -156,13 +156,13 @@ end
 
 function initialize_wand( wand, wand_data )
     local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
+    local item = EntityGetFirstComponent( wand, "ItemComponent" );
     if wand_data.name ~= nil then
         ComponentSetValue2( ability, "ui_name", wand_data.name );
-    end
-
-    local item = EntityGetFirstComponent( wand, "ItemComponent" );
-    if item ~= nil then
-        ComponentSetValue2( item, "item_name", wand_data.name );
+        if item ~= nil then
+            ComponentSetValue2( item, "item_name", wand_data.name );
+            ComponentSetValue2( item, "always_use_item_name_in_ui", true );
+        end
     end
 
     for stat,value in pairs( wand_data.stats or {} ) do
@@ -234,6 +234,7 @@ function initialize_wand( wand, wand_data )
             local sprite = EntityGetFirstComponent( wand, "SpriteComponent", "item" );
             if sprite ~= nil then
                 ComponentSetValue2( sprite, "image_file", wand_data.sprite.file );
+                EntityRefreshSprite( wand, sprite );
             end
         end
         if wand_data.sprite.hotspot ~= nil then
@@ -256,6 +257,7 @@ function initialize_wand( wand, wand_data )
         };
         local dynamic_wand = GetWand( gun );
         SetWandSprite( wand, ability, dynamic_wand.file, dynamic_wand.grip_x, dynamic_wand.grip_y, ( dynamic_wand.tip_x - dynamic_wand.grip_x ), ( dynamic_wand.tip_y - dynamic_wand.grip_y ) );
+        EntityRefreshSprite( wand, EntityGetFirstComponent( wand, "SpriteComponent", "item" ) );
     end
 
     if wand_data.callback ~= nil then
@@ -422,6 +424,7 @@ function initialize_legendary_wand( base_wand, x, y, level, force )
         chosen_wand = valid_wands[Random( 1, #valid_wands )];
     end
     content_data = force or legendary_wands[chosen_wand];
+    content_data.wand.name = content_data.wand.name or GameTextGetTranslatedOrNot( content_data.name );
     if content_data == nil then print("[goki's things] legendary wand error: no wand data found"); return; end
     initialize_wand( base_wand, content_data.wand );
 end

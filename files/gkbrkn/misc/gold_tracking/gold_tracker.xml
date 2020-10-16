@@ -10,4 +10,19 @@
         script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/gold_tracking/gold_tracker_update.lua"
     >
     </LuaComponent>
+    <SpriteComponent
+        _tags="enabled_in_world"
+        image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_gold.xml" 
+        emissive="1"
+        is_text_sprite="1"
+        offset_x="0"
+        offset_y="-6" 
+        update_transform="1" 
+        update_transform_rotation="0"
+        text="$0123456789"
+        has_special_scale="1"
+        special_scale_x="0.6667"
+        special_scale_y="0.6667"
+        z_index="-9000"
+    ></SpriteComponent>
 </Entity>

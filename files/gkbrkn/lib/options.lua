@@ -22,10 +22,12 @@ local options = {
         SuperChampionsFlag = "gkbrkn_champion_enemies_super",
         AlwaysChampionsFlag = "gkbrkn_champion_enemies_always",
         MiniBossesFlag = "gkbrkn_champion_enemies_mini_bosses",
+        ValourFlag = "gkbrkn_champion_enemies_valour",
         ChampionChance = 0.20,
         MiniBossChance = 0.10, -- rolled after champion chance only if mini boss kill threshold has been met
         MiniBossThreshold = 50, -- the amount of enemies that must be killed before a miniboss can spawn
         ExtraTypeChance = 0.05,
+        ValourBonus = 3,
     },
     QuickSwap = { EnabledFlag = "gkbrkn_quick_swap", },
     LessParticles = {
@@ -47,7 +49,7 @@ local options = {
     },
     LegendaryWands = {
         EnabledFlag = "gkbrkn_legendary_wands",
-        SpawnWeighting = 0.025,
+        SpawnWeighting = 0.03,
     },
     ExtendedWandGeneration = { EnabledFlag = "gkbrkn_extended_wand_generation", },
     ChaoticWandGeneration = { EnabledFlag = "gkbrkn_chaotic_wand_generation", },
@@ -151,6 +153,9 @@ local options = {
         LivingWand = {
             TeleportDistance = 128
         }
+    },
+    TweakOptions = {
+        BloodAmountMultiplier = 0.98
     }
 }
 --# intercept this line

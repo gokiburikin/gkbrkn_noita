@@ -1,12 +1,52 @@
---[[
+--[[        
 changelog
+    -m "The 1.0 Update"
+    -m "Update goo mode game modifiers to not append materials to materials.xml if they aren't enabled"
+    -m "Update poison, cold, and hot blooded champion types to no longer take damage from their blood (thanks Horscht and Cerin)"
+    -m "Update Action: Lock (rework formula, no longer gently floats downward with no target)"
+    -m "Update Option: Unique Wands (uses a dynamic weighting system to ensure a roughly 3% chance to appear on an item altar)"
+    -m "Update Action: Target Shot (mana cost 5 -> 0)"
+    -m "Fix Action: Fracture (was not applying inside modifiers)"
+    -m "Fix an issue in gun.lua that applied Perk: Rapid Fire, Perk: Magic Focus and Perk: Lead Boots multiple times"
+    -m "Fix outdated randomness for chest_random and chest_random_super"
+    -m "Fix translation appends for 1.0"
+    -m "Fix Unique Wands not having their names"
+    -m "Fix wand sprites updating late"
+    -m "Update gold tracker, custom damage numbers, and dps tracker to use the same text sprites instead of creating new ones every hit"
+    -m "Add Loadout: Legacy (the early access loadout)"
+    -m "Deprecate Action: Trigger - Hit (superceded by Action: Add Trigger)"
+    -m "Deprecate Action: Trigger - Timer (superceded by Action: Add Timer Trigger)"
+    -m "Deprecate Action: Trigger - Death (superceded by Action: Add Expiration Trigger)"
+    -m "Add Tweak: Add Trigger (replace functionality with the deprecated Trigger - Hit)"
+    -m "Add Tweak: Add Timer (replace functionality with the deprecated Trigger - Timer)"
+    -m "Add Tweak: Add Expiration Trigger (replace functionality with the deprecated Trigger - Death)"
+    -m "Update Tweak: Spiral Shot (update to new sounds)"
+    
+
+some issues with noita (for if Nolla ever cares)
+    explosive projectile (c.damage_explosion_add) is broken; damage is based on explosion radius
+    add timer trigger, add trigger, and expiration trigger are fundamentally incorrectly implemented
+    new statues can be killed and physically destroyed so they aren't good replacements to target dummy
+    unlimited spells should work on all spells since there are infinite forms of healing and blackholes anyway
+    far too many base game spells don't support modifiers in any interesting or meaningful way; very antithetical to the design of the gun system
+    timer triggers should not also activate on hit / expiration--the other triggers exists for those reasons
+    there should be a repeat timer trigger (that also doesn't activate on hit / expiration) so that self replicating / larpa triggers can be properly implemented
+    projectile_file and related_projectiles should be implemented dynamically instead of manually (applied during Begin Projectile / parsed during action)
+    damage modifiers are egregiously imbalanced compared to other modifiers (i.g. 7 mana drain for 44 damage: heavy shot)
+    summon fly swarm is cheaper 5x piercing shots without friendly fire; certain spells and perks betray any understanding of the games previous balance / design
+    certain functions don't return useful information
+    certain functions contain local variables instead of accessible information
+    persistent flags don't use a single file and instead use individuals files leading to hundreds (and potentially thousands) of files when dealing with many flags
+    there is no simple config file serialization
 
 BUG
+    the sparkler unique wand is broken (this is almost 100% a projectile capture issue)
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
     remove polyblood from minibosses
     grimoires should not include deprecated spells
 
 TODO
+    optimize dps tracker and custom damage numbers and gold tracker to update one time after the stored value has changed instead of every time
     Player Orbitals - projectiles orbits around the player
     lukki leg champion
     valour champion mode - +2-3 base mods, can stack stackable mods
@@ -116,10 +156,13 @@ if HasFlagPersistent( MISC.LooseSpellGeneration.EnabledFlag ) then ModLuaFileApp
 ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/append/perk_list.lua" );
 ModLuaFileAppend( "data/scripts/perks/perk.lua", "mods/gkbrkn_noita/files/gkbrkn/append/perk.lua" );
 ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noita/files/gkbrkn/append/generate_shop_item.lua" );
-ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/hot_goo.xml" );
-ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/poly_goo.xml" );
-ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" );
-ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
+
+-- TODO only enable these when they need to be disabled
+-- can't trivially do right now because ModMaterialsFileAdd doesn't work in OnMagicNumbersAndWorldSeedInitialized
+--ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/poly_goo.xml" );
+--ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/hot_goo.xml" );
+--ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" );
+--ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
 
 local selectable_classes_integration = false;
 if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
@@ -187,7 +230,10 @@ ModLuaFileAppend( "data/scripts/status_effects/status_list.lua", "mods/gkbrkn_no
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/slow_polymorph.xml" );
 ]]
 
-function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
+local _ModMaterialsFileAdd = ModMaterialsFileAdd;
+
+--function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
+function OnModPostInit() -- TODO this was done to allow init_function to call ModMaterialsFileAdd
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
     ModTextFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/content/perks.lua" );
 
@@ -216,6 +262,7 @@ function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where
     end
 
     -- Run any enabled content's init functions
+    ModMaterialsFileAdd = _ModMaterialsFileAdd;
     for content_id,content in pairs( GKBRKN_CONFIG.CONTENT ) do
         if content.init_function ~= nil then
             if content.enabled() then
@@ -227,6 +274,12 @@ function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where
     GKBRKN_CONFIG.disable_content();
 
     dofile( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua");
+
+    for _,game_modifier in pairs( game_modifiers ) do
+        if game_modifier.options and game_modifier.options.init_callback then
+            game_modifier.options.init_callback();
+        end
+    end
     if find_game_modifier("limited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/limited_ammo.lua" ); end
     if find_game_modifier("unlimited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/unlimited_ammo.lua" ); end
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_actions.lua" );

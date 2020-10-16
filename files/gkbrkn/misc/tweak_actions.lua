@@ -96,6 +96,32 @@ local edit_callbacks = {
 			current_reload_time = current_reload_time + 40;
 			draw_actions( 1, true );
 		end
+    end,
+    CLIPPING_SHOT = function ( action, index )
+        action.action = function()
+			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/clipping_shot.xml,"
+            c.fire_rate_wait = c.fire_rate_wait + 50;
+			current_reload_time = current_reload_time + 40;
+			draw_actions( 1, true );
+		end
+    end,
+    ADD_TRIGGER = function ( action, index )
+        action.action = function()
+			set_trigger_hit_world( 1 );
+            draw_actions( 1, true );
+		end
+    end,
+    ADD_TIMER = function ( action, index )
+        action.action = function()
+			set_trigger_timer( 10, 1 );
+            draw_actions( 1, true );
+		end
+    end,
+    ADD_DEATH_TRIGGER = function ( action, index )
+        action.action = function()
+			set_trigger_death( 1 );
+            draw_actions( 1, true );
+		end
     end
 }
 

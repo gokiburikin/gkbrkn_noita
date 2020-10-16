@@ -52,8 +52,14 @@
 	</LuaComponent>
 	
   <AudioComponent
-      file="data/audio/Desktop/projectiles.snd"
-      event_root="player_projectiles/bullet_smg">
+      file="data/audio/Desktop/projectiles.bank"
+      event_root="player_projectiles/spiral_shot">
   </AudioComponent>
+  
+  <AudioLoopComponent
+		file="data/audio/Desktop/projectiles.bank"
+		event_name="player_projectiles/spiral_shot/loop"
+		auto_play="1">
+	</AudioLoopComponent>
 
 </Entity>

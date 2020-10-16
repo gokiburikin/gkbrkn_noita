@@ -305,6 +305,10 @@ if #trailing_shot_projectiles > 0 then
 
             if previous_projectile ~= nil then
                 EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( previous_projectile ) );
+                local projectile_component = EntityGetFirstComponentIncludingDisabled( projectile, "ProjectileComponent" );
+                if projectile_component then
+                    ComponentSetValue2( projectile_component, "die_on_low_velocity", false );
+                end
             end
             EntityAddComponent( projectile, "LuaComponent", {
                 execute_on_added="1",

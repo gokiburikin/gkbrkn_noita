@@ -34,6 +34,12 @@ dev_options = {
         author = "$ui_author_name_goki_dev",
     },
     {
+        id = "invincibility",
+        name = "$dev_option_name_gkbrkn_invincibility",
+        description = "$dev_option_desc_gkbrkn_invincibility",
+        author = "$ui_author_name_goki_dev",
+    },
+    {
         id = "infinite_money",
         name = "$dev_option_name_gkbrkn_infinite_money",
         description = "$dev_option_desc_gkbrkn_infinite_money",

@@ -199,7 +199,7 @@ champion_types = {
                         attack_ranged_action_frame=4,
                         attack_ranged_min_distance=0,
                         attack_ranged_max_distance=120,
-                        attack_ranged_entity_file="data/entities/projectiles/tongue.xml",
+                        attack_ranged_entity_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/eldritch/tongue.xml",
                         attack_ranged_offset_x=0,
                         attack_ranged_offset_y=0,
                         attack_ranged_enabled=true,
@@ -358,6 +358,9 @@ champion_types = {
                 ComponentSetValue2( damage_model, "blood_material", "poison" );
                 ComponentSetValue2( damage_model, "blood_spray_material", "poison" );
             end
+            TryAdjustDamageMultipliers( entity, { poison = 0.00 } );
+            
+            change_materials_that_damage( entity, { poison = 0, poison_gas = 0 } );
         end
     },
     { id = "frozen_blood",
@@ -375,6 +378,7 @@ champion_types = {
                 ComponentSetValue2( damage_model, "blood_material", "blood_cold" );
                 ComponentSetValue2( damage_model, "blood_spray_material", "blood_cold" );
             end
+            change_materials_that_damage( entity, { blood_cold_vapour = 0, blood_cold = 0 } );
         end
     },
     { id = "gunpowder_blood",
@@ -454,6 +458,7 @@ champion_types = {
                 ComponentSetValue2( damage_model, "blood_spray_material", "lava" );
                 ComponentSetValue2( damage_model, "blood_multiplier", 2 );
             end
+            change_materials_that_damage( entity, { lava = 0 } );
         end
     },
     { id = "poly_blood",

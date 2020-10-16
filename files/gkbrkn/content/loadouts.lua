@@ -42,6 +42,28 @@ loadouts = {
         condition_callback = nil,
         menu_note = nil
     },
+    { -- Legacy
+        id = "nolla_legacy", -- unique identifier
+        name = "$loadout_legacy", -- displayed loadout name
+        description = "The original loadout",
+        author = "Nolla",
+        cape_color = nil,
+        cape_color_edge = nil,
+        wands = {},
+        potions = {},
+        items = {
+            {"data/entities/items/starting_wand.xml"},
+            {"data/entities/items/starting_bomb_wand.xml"},
+            {"data/entities/items/pickup/potion_water.xml"}
+        },
+        perks = nil,
+        actions = nil,
+        sprites = nil,
+        custom_message = nil,
+        callback = nil,
+        condition_callback = nil,
+        menu_note = nil
+    },
     { -- Speedrunner
         id = "gkbrkn_speedrunner", -- unique identifier
         name = "$loadout_speedrunner", -- displayed loadout name

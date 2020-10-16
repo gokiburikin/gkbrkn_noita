@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 --[[ NORMAL ]]
     table.insert( actions, generate_action_entry(
         "GKBRKN_DUMMY_SHOT", "dummy_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 10, 5, -1,
+        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 10, 0, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/dummy_shot/projectile_extra_entity.xml,";
@@ -403,6 +403,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
             for k,v in pairs(old_c) do
                 c[k] = v;
             end
+            local inside_c = nil;
             local old_capture = gkbrkn.add_projectile_capture_callback;
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.00;
             gkbrkn._fractures = (gkbrkn._fractures or 0) + 1;
@@ -410,11 +411,12 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
                 BeginProjectile( filepath );
                 if gkbrkn.add_projectile_depth <= gkbrkn._fractures then
                     BeginTriggerDeath();
+                        inside_c = c;
                         add_projectile( filepath );
                         add_projectile( filepath );
                         add_projectile( filepath );
                         c = {};
-                        for k,v in pairs(old_c) do
+                        for k,v in pairs(inside_c) do
                             c[k] = v;
                         end
                         c.spread_degrees = 45;
@@ -433,6 +435,11 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
             gkbrkn._fractures = gkbrkn._fractures - 1;
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier / 3.00;
             c = old_c;
+            if inside_c then
+                for k,v in pairs(inside_c) do
+                    c[k] = v;
+                end
+            end
         end
     ) );
 
@@ -963,7 +970,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         function()
             set_trigger_death( 1 );
             draw_actions( 1, true );
-        end
+        end, true
     ) );
 
     table.insert( actions, generate_action_entry(
@@ -973,7 +980,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         function()
             set_trigger_hit_world( 1 );
             draw_actions( 1, true );
-        end
+        end, true
     ) );
 
     table.insert( actions, generate_action_entry(
@@ -983,7 +990,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         function()
             set_trigger_timer( 10, 1 );
             draw_actions( 1, true );
-        end
+        end, true
     ) );
 
     table.insert( actions, generate_action_entry(
@@ -1286,40 +1293,41 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
     ) );
 
 --[[ CAPTURES ]]
+    local capture_projectile_draw = function( capture_id, amount )
+        if reflecting then return; end
+        local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml";
+        local old_c = c;
+        local new_cast_delay = c.fire_rate_wait;
+        c = {};
+        reset_modifiers( c );
+        for k,v in pairs(old_c) do
+            c[k] = v;
+        end
+        BeginProjectile( projectile_path );
+            BeginTriggerDeath();
+                c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/"..capture_id.."/projectile_extra_entity.xml,";
+                c.lifetime_add = c.lifetime_add + 1;
+                draw_actions( amount, true );
+                local old_register_action_callback = gkbrkn.register_action_callback;
+                gkbrkn.register_action_callback = function( state )
+                    gkbrkn.register_action_callback = old_register_action_callback;
+                    state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group(capture_id)..",";
+                end
+                new_cast_delay = c.fire_rate_wait;
+                register_action( c );
+                SetProjectileConfigs();
+            EndTrigger();
+        EndProjectile();
+        c = old_c;
+        c.fire_rate_wait = c.fire_rate_wait + new_cast_delay;
+    end
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FORMATION_STACK", "formation_stack", ACTION_TYPE_DRAW_MANY,
         "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 160, 2, -1,
         nil,
         function()
-            --c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/formation_stack/projectile_extra_entity.xml,"
-            --draw_actions( 3, true );
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            local old_c = c;
-            c = {};
-            reset_modifiers( c );
-            for k,v in pairs(old_c) do
-                c[k] = v;
-            end
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/formation_stack/projectile_extra_entity.xml,";
-                    c.lifetime_add = c.lifetime_add + 1;
-                    draw_actions( 3, true );
-                    local old_register_action_callback = gkbrkn.register_action_callback;
-                    gkbrkn.register_action_callback = function( state )
-                        gkbrkn.register_action_callback = old_register_action_callback;
-                        state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group("formation_stack")..",";
-                    end
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            EndProjectile();
-            c = old_c;
+            capture_projectile_draw( "formation_stack", 3 );
         end
     ));
 
@@ -1328,34 +1336,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 190, 7, -1,
         nil,
         function()
-            --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/projectile_extra_entity.xml,";
-            --draw_actions( 2, true );
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            local old_c = c;
-            c = {};
-            reset_modifiers( c );
-            for k,v in pairs(old_c) do
-                c[k] = v;
-            end
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/projectile_extra_entity.xml,";
-                    c.lifetime_add = c.lifetime_add + 1;
-                    draw_actions( 2, true );
-                    local old_register_action_callback = gkbrkn.register_action_callback;
-                    gkbrkn.register_action_callback = function( state )
-                        gkbrkn.register_action_callback = old_register_action_callback;
-                        state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group("link_shot")..",";
-                    end
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            EndProjectile();
-            c = old_c;
+            capture_projectile_draw( "link_shot", 2 );
         end
     ) );
 
@@ -1364,32 +1345,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 190, 14, -1,
         nil,
         function()
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            local old_c = c;
-            c = {};
-            reset_modifiers( c );
-            for k,v in pairs(old_c) do
-                c[k] = v;
-            end
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile_extra_entity.xml,";
-                    c.lifetime_add = c.lifetime_add + 1;
-                    draw_actions( 2, true );
-                    local old_register_action_callback = gkbrkn.register_action_callback;
-                    gkbrkn.register_action_callback = function( state )
-                        gkbrkn.register_action_callback = old_register_action_callback;
-                        state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group("spell_merge")..",";
-                    end
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            EndProjectile();
-            c = old_c;
+            capture_projectile_draw( "spell_merge", 2 );
         end
     ) );
 
@@ -1398,39 +1354,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.1,0.1,0.1,0.1,0.1,0.1,0.1", 210, 5, -1,
         nil,
         function()
-            --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/projectile_extra_entity.xml,";
-            --c.speed_multiplier = c.speed_multiplier * 0.75;
-            --c.lifetime_add = c.lifetime_add + 1;
-            --draw_actions( 3, true );
-            --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/projectile_extra_entity.xml,";
-            --draw_actions( 2, true );
             c.speed_multiplier = c.speed_multiplier * 0.75;
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            local old_c = c;
-            c = {};
-            reset_modifiers( c );
-            for k,v in pairs(old_c) do
-                c[k] = v;
-            end
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/projectile_extra_entity.xml,";
-                    c.lifetime_add = c.lifetime_add + 1;
-                    draw_actions( 3, true );
-                    local old_register_action_callback = gkbrkn.register_action_callback;
-                    gkbrkn.register_action_callback = function( state )
-                        gkbrkn.register_action_callback = old_register_action_callback;
-                        state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group("projectile_gravity_well")..",";
-                    end
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            EndProjectile();
-            c = old_c;
+            capture_projectile_draw( "projectile_gravity_well", 3 );
         end
     ) );
 
@@ -1439,32 +1364,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.1,0.1,0.1,0.1,0.1,0.1,0.1", 100, 12, -1,
         nil,
         function()
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            local old_c = c;
-            c = {};
-            reset_modifiers( c );
-            for k,v in pairs(old_c) do
-                c[k] = v;
-            end
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_extra_entity.xml,";
-                    c.lifetime_add = c.lifetime_add + 1;
-                    draw_actions( 5, true );
-                    local old_register_action_callback = gkbrkn.register_action_callback;
-                    gkbrkn.register_action_callback = function( state )
-                        gkbrkn.register_action_callback = old_register_action_callback;
-                        state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group("projectile_orbit")..",";
-                    end
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            EndProjectile();
-            c = old_c;
+            capture_projectile_draw( "projectile_orbit", 5 );
         end
     ) );
 
@@ -1473,34 +1373,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 10, 5, -1,
         nil,
         function()
-            --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/trailing_shot/projectile_extra_entity.xml,";
-            --draw_actions( 4, true );
-            local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml";
-            if reflecting then 
-                Reflection_RegisterProjectile( projectile_path );
-                return;
-            end
-            local old_c = c;
-            c = {};
-            reset_modifiers( c );
-            for k,v in pairs(old_c) do
-                c[k] = v;
-            end
-            BeginProjectile( projectile_path );
-                BeginTriggerDeath();
-                    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/trailing_shot/projectile_extra_entity.xml,";
-                    c.lifetime_add = c.lifetime_add + 1;
-                    draw_actions( 4, true );
-                    local old_register_action_callback = gkbrkn.register_action_callback;
-                    gkbrkn.register_action_callback = function( state )
-                        gkbrkn.register_action_callback = old_register_action_callback;
-                        state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group("trailing_shot")..",";
-                    end
-                    register_action( c );
-                    SetProjectileConfigs();
-                EndTrigger();
-            EndProjectile();
-            c = old_c;
+            capture_projectile_draw( "trailing_shot", 4 );
         end
     ) );
 

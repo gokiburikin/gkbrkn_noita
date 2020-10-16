@@ -325,6 +325,11 @@ function do_gui()
             toggle_content_by_tag("goki_thing");
             GamePrint( "Enabled Goki Mode options" );
         end
+        if GuiButton( gui, 0, 0, "[???? Mode] An intense untested difficulty mode (taking name suggestions)", next_id() ) then
+            toggle_default();
+            toggle_content_by_tag("carnage");
+            GamePrint( "Enabled ???? Mode options" );
+        end
         GuiText( gui, 0, 0, " ");
         if GuiButton( gui, 0, 0, "[Random Starts] Start runs with random equipment", next_id() ) then
             toggle_content_by_tag("random_starts");

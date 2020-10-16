@@ -158,7 +158,6 @@ tweaks = {
         name = "$tweak_name_gkbrkn_blood_amount",
         description = "$tweak_desc_gkbrkn_blood_amount",
         author = "$ui_author_name_goki_dev",
-        options = { Multiplier = 0.98 }
     },
     {
         id = "allow_negative_mana_always_cast",
@@ -181,5 +180,26 @@ tweaks = {
         author = "$ui_author_name_goki_dev",
         enabled_by_default = true,
         tags = {goki_thing = true}
-    }
+    },
+    {
+        id = "add_trigger",
+        name = "$tweak_name_gkbrkn_add_trigger",
+        description = "$tweak_desc_gkbrkn_add_trigger",
+        author = "$ui_author_name_goki_dev",
+        options = { action_id="ADD_TRIGGER" },
+    },
+    {
+        id = "add_timer",
+        name = "$tweak_name_gkbrkn_add_timer",
+        description = "$tweak_desc_gkbrkn_add_timer",
+        author = "$ui_author_name_goki_dev",
+        options = { action_id="ADD_TIMER" },
+    },
+    {
+        id = "add_death_trigger",
+        name = "$tweak_name_gkbrkn_add_death_trigger",
+        description = "$tweak_desc_gkbrkn_add_death_trigger",
+        author = "$ui_author_name_goki_dev",
+        options = { action_id="ADD_DEATH_TRIGGER" },
+    },
 }

@@ -132,6 +132,14 @@ if is_debug_mode_enabled and find_dev_option( "infinite_spells" ) then
     GameRegenItemActionsInPlayer( player_entity );
 end
 
+--[[ Invincibility ]]
+if is_debug_mode_enabled and find_dev_option( "invincibility" ) then
+    local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
+    for _,damage_model in pairs( damage_models ) do
+        ComponentSetValue2( damage_model, "invincibility_frames", 100 );
+    end
+end
+
 --[[ Health Recovery ]]
 local health_recovery = 0;
 if is_debug_mode_enabled and find_dev_option( "recover_health" ) then
@@ -322,7 +330,7 @@ if gold_tracker_world or gold_tracker_message then
 
     local wallet = EntityGetFirstComponent( player_entity, "WalletComponent" );
     if wallet ~= nil then
-        local money = ComponentGetValue2( wallet, "money" );
+        local money = ComponentGetValue( wallet, "money" ) or 0;
         if money - last_money > 0 then
             money_picked_total = money_picked_total + money - last_money;
             money_picked_time_last = now;
@@ -335,34 +343,25 @@ if gold_tracker_world or gold_tracker_message then
         if gold_tracker_world then
             if update_tracker then
                 local gold_trackers = EntityGetWithTag( "gkbrkn_gold_tracker" ) or {};
-                for _,gold_tracker in pairs( gold_trackers ) do
-                    EntityKill( gold_tracker );
+                local gold_tracker = gold_trackers[1];
+                if #gold_trackers == 0 then
+                    local x,y = EntityGetTransform( player_entity );
+                    gold_tracker = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/gold_tracking/gold_tracker.xml", x, y );
+                    EntityAddChild( player_entity, gold_tracker );
                 end
-                local x,y = EntityGetTransform( player_entity );
-                local text = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/gold_tracking/gold_tracker.xml", x, y );
-                local amount_text = "$"..tostring( thousands_separator(money_picked_total) );
-                EntityAddChild( player_entity, text );
-                EntityAddComponent( text, "SpriteComponent", {
-                    _tags="enabled_in_world",
-                    image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_gold.xml" ,
-                    emissive="1",
-                    is_text_sprite="1",
-                    offset_x=tostring( #amount_text * 2 ),
-                    offset_y="-6" ,
-                    update_transform="1" ,
-                    update_transform_rotation="0",
-                    text=amount_text,
-                    has_special_scale="1",
-                    special_scale_x="0.6667",
-                    special_scale_y="0.6667",
-                    z_index="-9000",
-                });
+                if gold_tracker then
+                    local sprite = EntityGetFirstComponentIncludingDisabled( gold_tracker, "SpriteComponent" );
+                    if sprite then
+                        local amount_text = "$"..tostring( thousands_separator(money_picked_total) );
+                        ComponentSetValue2( sprite, "offset_x", #amount_text * 2 );
+                        ComponentSetValue2( sprite, "text", amount_text );
+                        EntityRefreshSprite( gold_tracker, sprite );
+                    end
+                end
             end
         end
         if now - money_picked_time_last >= MISC.GoldPickupTracker.TrackDuration then
-            if gold_tracker_message then
-                GamePrint( "Picked up $"..money_picked_total );
-            end
+            if gold_tracker_message then GamePrint( "Picked up $"..money_picked_total ); end
             money_picked_total = 0;
         end
     end
@@ -628,12 +627,15 @@ if now % 10 == 0 then
                         for index,champion_type_data in pairs( champion_types ) do
                             if (champion_type_data.validator == nil or champion_type_data.validator( nearby ) ~= false) then
                                 --table.insert( valid_champion_types, champion_type_data );
-                                valid_champion_types[index] = champion_type_data.weight;
+                                valid_champion_types[index] = champion_type_data.weight or 1;
                                 valid_champion_type_count = valid_champion_type_count + 1;
                             end
                         end
 
                         local champion_types_to_apply = 1;
+                        if GameHasFlagRun( MISC.ChampionEnemies.ValourFlag ) then
+                            champion_types_to_apply = champion_types_to_apply + MISC.ChampionEnemies.ValourBonus;
+                        end
                         local champions_encountered = tonumber( GlobalsGetValue( "gkbrkn_champion_enemies_encountered" ) ) or 0;
                         if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsFlag ) then
                             local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0012;
@@ -664,14 +666,13 @@ if now % 10 == 0 then
                                 find_champion_type("burning"),
                                 find_champion_type("mini_boss"),
                             };
-                            --add_these_badges = {"mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml"};
                         end
 
                         for i=1,math.min(valid_champion_type_count, champion_types_to_apply) do
-                            --local champion_type_index = math.ceil( Random() * valid_champion_type_count );
                             local champion_type_index = WeightedRandomTable( valid_champion_types );
-                            table.insert( apply_these_champion_types, champion_types[tonumber(champion_type_index)] );
-                            table.remove( valid_champion_types, champion_type_index );
+                            local champion_type = champion_types[tonumber(champion_type_index)];
+                            table.insert( apply_these_champion_types, champion_type );
+                            valid_champion_types[champion_type_index] = nil;
                         end
 
                         --[[ Per champion type ]]

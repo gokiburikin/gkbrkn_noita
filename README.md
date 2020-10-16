@@ -1,6 +1,8 @@
 # Goki's Things
 **Do not click the Clone or download button. Check the Releases tab (https://github.com/gokiburikin/gkbrkn_noita/releases).**
 
+**This readme is outdated. Descriptions can be found in game.**
+
 A collection of changes and additions to Noita. **This mod contains an in-game config menu. Click the button found at the top right of the screen in-game to open the configuration menu** and use it to toggle options and custom content. **To install just download the latest release zip (not the Source code) from https://github.com/gokiburikin/gkbrkn_noita/releases and extract the gkbrkn_noita folder to your Noita mods folder.**
 
 **I highly recommend taking the time to tailor the mod to your liking.** My intention is to offer a selection of options for the player to choose from, not for every option to be enabled. Every change this mod makes can be toggled on or off in the config menu.

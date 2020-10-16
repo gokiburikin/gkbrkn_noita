@@ -60,20 +60,49 @@ gkbrkn = {
     _add_projectile_trigger_death = add_projectile_trigger_death,
     _add_projectile_trigger_hit_world = add_projectile_trigger_hit_world,
     _BeginProjectile = BeginProjectile,
-    _register_action = register_action
+    _register_action = register_action,
 }
 
 function register_action( state )
+    local c = state;
     if gkbrkn.register_action_callback ~= nil then
         local callback_state = {};
-        for k,v in pairs(state) do
+        for k,v in pairs( state ) do
             callback_state[k] = v;
         end
         gkbrkn.register_action_callback( callback_state );
-        gkbrkn._register_action( callback_state );
+        c = callback_state;
+        --gkbrkn._register_action( callback_state );
     else
-        gkbrkn._register_action( state );
+        --gkbrkn._register_action( state );
     end
+    local player = GetUpdatedEntityID();
+    local calibration_level = EntityGetVariableNumber( player, "gkbrkn_magic_focus_stacks", 0 );
+    local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );
+    local last_calibration_percent = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_percent", 0 );
+    local calibration_multiplier = get_magic_focus_multiplier( last_calibration_shot, last_calibration_percent );
+    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+    local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
+    if #deck == 0 then
+        current_reload_time = math.min( current_reload_time, current_reload_time * math.pow( 0.5, rapid_fire_level ) );
+    end
+    c.fire_rate_wait = math.min( c.fire_rate_wait, c.fire_rate_wait * math.pow( 0.5, rapid_fire_level ) );
+    c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
+    c.spread_degrees = c.spread_degrees - c.spread_degrees * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 10;
+    c.fire_rate_wait = c.fire_rate_wait - c.fire_rate_wait * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
+    current_reload_time = current_reload_time - current_reload_time * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
+    if lead_boots > 0 then
+        local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );
+        if character_data ~= nil then
+            if ComponentGetValue2( character_data, "is_on_ground" ) == true then
+                shot_effects.recoil_knockback = shot_effects.recoil_knockback - 10000;
+            end
+        end
+    end
+
+    gkbrkn._register_action( c );
+    state_per_cast( c );
+    return state;
 end
 
 function BeginProjectile( filepath )
@@ -88,8 +117,6 @@ function iterate_group( id )
 end
 
 function state_per_cast( state )
-    -- empty out the trigger queue since it's per cast
-    gkbrkn.trigger_queue = {};
     gkbrkn.extra_projectiles = 0;
     gkbrkn.iteration_groups = {};
     gkbrkn.skip_projectiles = false;
@@ -456,28 +483,7 @@ function draw_action( instant_reload_if_empty )
     end
     
     if gkbrkn.draw_action_stack_size == 0 then
-        local calibration_level = EntityGetVariableNumber( player, "gkbrkn_magic_focus_stacks", 0 );
-        local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );
-        local last_calibration_percent = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_percent", 0 );
-        local calibration_multiplier = get_magic_focus_multiplier( last_calibration_shot, last_calibration_percent );
-        local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
-        local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
-        if #deck == 0 then
-            current_reload_time = math.min( current_reload_time, current_reload_time * math.pow( 0.5, rapid_fire_level ) );
-        end
-        c.fire_rate_wait = math.min( c.fire_rate_wait, c.fire_rate_wait * math.pow( 0.5, rapid_fire_level ) );
-        c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
-        c.spread_degrees = c.spread_degrees - c.spread_degrees * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 10;
-        c.fire_rate_wait = c.fire_rate_wait - c.fire_rate_wait * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
-        current_reload_time = current_reload_time - current_reload_time * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
-        if lead_boots > 0 then
-            local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );
-            if character_data ~= nil then
-                if ComponentGetValue2( character_data, "is_on_ground" ) == true then
-                    shot_effects.recoil_knockback = shot_effects.recoil_knockback - 10000;
-                end
-            end
-        end
+
         state_per_cast( c );
     else
         --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/misc/ephemeral.xml,"

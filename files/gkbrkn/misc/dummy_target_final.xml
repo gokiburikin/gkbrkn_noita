@@ -19,7 +19,10 @@
 	<DamageModelComponent 
 		hp="1"
 		wait_for_kill_flag_on_death="1"
-		air_needed="0" 
+		air_needed="1"
+		air_in_lungs="1"
+		air_in_lungs_max="1"
+		air_lack_of_damage="1" 
 		falling_damages="0" 
 		fire_damage_amount="0.1" 
 		fire_probability_of_ignition="0" 

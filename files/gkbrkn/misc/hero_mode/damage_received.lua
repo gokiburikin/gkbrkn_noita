@@ -15,7 +15,6 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal  )
             --local gold_reward = math.ceil( total_health / 6 ) * 10;
             local gold_multiplier = math.floor( total_health / 8 );
             if gold_multiplier > 0 then
-                print("hero bonus "..gold_multiplier)
                 do_money_drop( gold_multiplier );
             end
             --spawn_gold_nuggets( gold_reward, x, y );
