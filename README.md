@@ -1,6 +1,8 @@
 # Goki's Things
 A collection of changes and additions to Noita. This mod contains an in-game config menu found at the top right of the screen. Use it to toggle options and custom content. **To install just download the latest release (https://github.com/gokiburikin/gkbrkn_noita/releases) and extract the gkbrkn_noita folder to your Noita mods folder.**
 
+**This readme is outdated. Content is described in-game.**
+
 This mod has a loadout manager. Enable it to control loadouts, loadout skins (for player skin support) and the toggling of individual loadouts. Goki's Things must be loaded before (higher in the list than) other loadout mods!
 
 ### Loadouts
