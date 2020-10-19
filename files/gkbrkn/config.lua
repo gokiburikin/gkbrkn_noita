@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c101"
+    Version = "c102"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -176,7 +176,7 @@ end
             register_option_localized( MISC.GoldDecay.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.PersistentGold.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.AutoPickupGold.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
-            register_option_localized( MISC.CombineGold.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, nil, {goki_thing = true} )
+            register_option_localized( MISC.CombineGold.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
         ),
         register_option_group_localized( "gkbrkn_invincibility_frames",
             register_option_localized( MISC.InvincibilityFrames.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),

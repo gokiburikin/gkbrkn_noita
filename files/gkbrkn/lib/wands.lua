@@ -396,7 +396,7 @@ function force_always_cast( wand, amount )
         local random_child = children[ Random( 1,#children ) ];
         local item_component = EntityGetFirstComponentIncludingDisabled( random_child, "ItemComponent" );
         if item_component and ComponentGetValue2( item_component, "permanently_attached" ) ~= true then
-            ComponentSet2Value( item_component, "permanently_attached", true );
+            ComponentSetValue2( item_component, "permanently_attached", true );
             always_cast_count = always_cast_count + 1;
         end
     end

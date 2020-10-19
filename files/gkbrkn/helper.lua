@@ -106,6 +106,10 @@ function ModTextFileAppend( left, right )
     ModTextFileSetContent( left, (ModTextFileGetContent( left ) or "") .. "\r\n" .. (ModTextFileGetContent( right ) or "") );
 end
 
+function ModTextFilePrepend( left, right )
+    ModTextFileSetContent( left, (ModTextFileGetContent( right ) or "") .. "\r\n" .. (ModTextFileGetContent( left ) or "") );
+end
+
 function PackString( separator, ... )
 	local string = {};
 	for n=1,select( '#' , ... ) do

@@ -134,7 +134,6 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
                         EndTrigger();
                     EndProjectile();
                     reset_modifiers( c );
-                    c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/carry_shot/projectile_extra_entity.xml,";
                     c.lifetime_add = c.lifetime_add + burst_wait * 3;
                     register_action( c );
                     SetProjectileConfigs();
@@ -1293,7 +1292,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
     ) );
 
 --[[ CAPTURES ]]
-    local capture_projectile_draw = function( capture_id, amount )
+    local capture_projectile_draw = function( capture_id, amount, callback )
         if reflecting then return; end
         local projectile_path = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_projectile.xml";
         local old_c = c;
@@ -1312,6 +1311,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
                 gkbrkn.register_action_callback = function( state )
                     gkbrkn.register_action_callback = old_register_action_callback;
                     state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..iterate_group(capture_id)..",";
+                    if callback ~= nil then
+                        callback( projectile_path, state );
+                    end
                 end
                 new_cast_delay = c.fire_rate_wait;
                 register_action( c );
@@ -1364,7 +1366,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.1,0.1,0.1,0.1,0.1,0.1,0.1", 100, 12, -1,
         nil,
         function()
-            capture_projectile_draw( "projectile_orbit", 5 );
+            capture_projectile_draw( "projectile_orbit", 5, function( projectile_path, state ) state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename.."orbital_radius_"..state.spread_degrees..","; end );
         end
     ) );
 

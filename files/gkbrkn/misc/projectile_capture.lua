@@ -62,18 +62,23 @@ end
 local get_tag_groups = function( id, projectiles )
     local groups = {};
     for _,projectile in pairs( projectiles ) do
-        local projectile_data = EntityGetFirstComponentIncludingDisabled( projectile, "ProjectileComponent" );
-        if projectile_data then
-            local depth = ComponentObjectGetValue2( projectile_data, "config", "action_unidentified_sprite_filename" );
-            if depth then
-                local _,_,depth = depth:find(id.."_(%d+)");
+        if EntityGetIsAlive( projectile ) then
+            local projectile_data = EntityGetFirstComponentIncludingDisabled( projectile, "ProjectileComponent" );
+            if projectile_data then
+                local depth = ComponentObjectGetValue2( projectile_data, "config", "action_unidentified_sprite_filename" );
                 if depth then
-                    depth = tonumber( depth );
-                    groups[depth] = groups[depth] or {}
-                    table.insert( groups[depth], projectile );
+                    local _,_,depth = depth:find(id.."_(%d+)");
+                    if depth then
+                        depth = tonumber( depth );
+                        groups[depth] = groups[depth] or {}
+                        table.insert( groups[depth], projectile );
+                    end
                 end
             end
         end
+    end
+    for _,group in pairs(groups) do
+        table.sort( group, function( a, b ) return tonumber(tostring(a)) < tonumber(tostring(b)); end );
     end
     return groups;
 end
@@ -85,20 +90,23 @@ local link_shot_projectiles = {};
 local formation_stack_projectiles = {};
 local trailing_shot_projectiles = {};
 
-for _,player_projectile in pairs( EntityGetWithTag( "player_projectile" ) or {} ) do
+for _,player_projectile in pairs( EntityGetWithTag( "projectile_player" ) or {} ) do
     local projectile_capture = EntityGetVariableNumber( player_projectile, "gkbrkn_projectile_capture", 0 );
-    if bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) ~= 0 then
-        table.insert( spell_merge_projectiles, player_projectile );
-    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.ProjectileGravityWell ) ~= 0 then
-        table.insert( projectile_gravity_well_projectiles, player_projectile );
-    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) ~= 0 then
-        table.insert( projectile_orbit_projectiles, player_projectile );
-    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.LinkShot ) ~= 0 then
-        table.insert( link_shot_projectiles, player_projectile );
-    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.FormationStack ) ~= 0 then
-        table.insert( formation_stack_projectiles, player_projectile );
-    elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.TrailingShot ) ~= 0 then
-        table.insert( trailing_shot_projectiles, player_projectile );
+    if projectile_capture ~= 0 then
+        if bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) ~= 0 then
+            table.insert( spell_merge_projectiles, player_projectile );
+        elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.ProjectileGravityWell ) ~= 0 then
+            table.insert( projectile_gravity_well_projectiles, player_projectile );
+        elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) ~= 0 then
+            table.insert( projectile_orbit_projectiles, player_projectile );
+        elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.LinkShot ) ~= 0 then
+            table.insert( link_shot_projectiles, player_projectile );
+        elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.FormationStack ) ~= 0 then
+            table.insert( formation_stack_projectiles, player_projectile );
+        elseif bit.band( projectile_capture, GKBRKN_PROJECTILE_CAPTURE.TrailingShot ) ~= 0 then
+            table.insert( trailing_shot_projectiles, player_projectile );
+        end
+        EntitySetVariableNumber( player_projectile, "gkbrkn_projectile_capture", 0 );
     end
 end
 
@@ -111,7 +119,7 @@ if #formation_stack_projectiles > 0 then
         local magnitudes = {};
         local velocities = {};
         for i,projectile in pairs(group) do
-            EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.FormationStack ) );
+            --EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.FormationStack ) );
 
             local velocity = EntityGetFirstComponent( projectile, "VelocityComponent" );
             if velocity ~= nil then
@@ -159,8 +167,8 @@ if #spell_merge_projectiles > 0 then
         local angles = {};
         local magnitudes = {};
         for i,projectile_entity in pairs( group ) do
-            --EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
-            EntitySetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) );
+            ----EntitySetVariableNumber( projectile_entity, "gkbrkn_spell_merge", 0 );
+            --EntitySetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile_entity, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.SpellMerge ) );
             local velocity = EntityGetFirstComponent( projectile_entity, "VelocityComponent" );
             local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
             local angle = math.atan2( vy, vx );
@@ -194,7 +202,7 @@ end
 
 if #projectile_orbit_projectiles > 0 then
     local groups = get_tag_groups( "projectile_orbit", projectile_orbit_projectiles );
-    for _,group in pairs( groups ) do
+    for _,group in pairs( groups ) do        
         local leader = group[1];
         local velocity = EntityGetFirstComponent( leader, "VelocityComponent" );
         if velocity ~= nil then
@@ -202,7 +210,7 @@ if #projectile_orbit_projectiles > 0 then
             local previous_projectile = nil;
             local leader = nil;
             for i,projectile in pairs( group ) do
-                EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) );
+                --EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileOrbit ) );
                 if previous_projectile ~= nil then
                     EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring(leader) );
                     EntityAddComponent( projectile, "VariableStorageComponent", {
@@ -244,7 +252,7 @@ if #projectile_gravity_well_projectiles > 0 then
         local previous_projectile = nil;
         local leader = nil;
         for i,projectile in pairs( group ) do
-            EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileGravityWell ) );
+            --EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.ProjectileGravityWell ) );
             if previous_projectile ~= nil then
                 EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( leader ) );
                 local leader_projectile = EntityGetFirstComponent( leader, "ProjectileComponent" );
@@ -274,7 +282,7 @@ if #link_shot_projectiles > 0 then
         local previous_projectile = nil;
         local leader = nil;
         for i,projectile in pairs( group ) do
-            EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.LinkShot ) );
+            --EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.LinkShot ) );
 
             if previous_projectile ~= nil then
                 EntitySetVariableNumber( projectile, "gkbrkn_soft_parent", tonumber( leader ) );
@@ -301,7 +309,7 @@ if #trailing_shot_projectiles > 0 then
     for _,group in pairs( groups ) do
         local previous_projectile = nil;
         for i,projectile in pairs( group ) do
-            EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.TrailingShot ) );
+            --EntitySetVariableNumber( projectile, "gkbrkn_projectile_capture", bit.bxor( EntityGetVariableNumber( projectile, "gkbrkn_projectile_capture", 0 ), GKBRKN_PROJECTILE_CAPTURE.TrailingShot ) );
 
             if previous_projectile ~= nil then
                 EntitySetVariableString( projectile, "gkbrkn_soft_parent", tostring( previous_projectile ) );

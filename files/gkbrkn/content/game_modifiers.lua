@@ -17,6 +17,15 @@ end
 
 game_modifiers = {
     {
+        id = "uber_boss",
+        name = "$game_modifier_name_gkbrkn_uber_boss",
+        description = "$game_modifier_desc_gkbrkn_uber_boss",
+        author = "$ui_author_name_goki_dev",
+        options = {
+            run_flags = { FLAGS.UberBoss }
+        }
+    },
+    {
         id = "goo_mode",
         name = "$game_modifier_name_gkbrkn_goo_mode",
         description = "$game_modifier_desc_gkbrkn_goo_mode",

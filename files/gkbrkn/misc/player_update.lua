@@ -140,6 +140,11 @@ if is_debug_mode_enabled and find_dev_option( "invincibility" ) then
     end
 end
 
+--[[ Invincibility ]]
+if is_debug_mode_enabled and find_dev_option( "invincibility" ) then
+    EntityAddTag( player_entity, "polymorphable_NOT" );
+end
+
 --[[ Health Recovery ]]
 local health_recovery = 0;
 if is_debug_mode_enabled and find_dev_option( "recover_health" ) then
@@ -409,9 +414,9 @@ if now % 1 == 0 then
         for _,gold_nugget in pairs( gold_nuggets ) do
             if EntityGetIsAlive( gold_nugget ) then
                 local x, y = EntityGetTransform( gold_nugget );
-                local nearby_gold_nuggets = EntityGetInRadiusWithTag( x, y, 64, "gold_nugget" );
+                local nearby_gold_nuggets = EntityGetInRadiusWithTag( x, y, 32, "gold_nugget" );
                 if #nearby_gold_nuggets > 1 then
-                    local nearby_gold_nugget = EntityGetInRadiusWithTag( x, y, 64, "gold_nugget" )[1];
+                    local nearby_gold_nugget = EntityGetInRadiusWithTag( x, y, 32, "gold_nugget" )[1];
                     while nearby_gold_nugget == gold_nugget and #nearby_gold_nuggets > 1 do
                         nearby_gold_nugget = nearby_gold_nuggets[ Random() ];
                     end
@@ -801,6 +806,11 @@ if now % 10 == 0 then
                 EntitySetVariableNumber( target, "gkbrkn_custom_damage_numbers", 1 );
                 EntityAddComponent( target, "LuaComponent", {
                     script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua"
+                });
+                EntityLoadToEntity( "mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.xml", target );
+                EntityAddComponent( target, "LuaComponent", {
+                    execute_every_n_frame="1",
+                    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.lua",
                 });
             end
         end

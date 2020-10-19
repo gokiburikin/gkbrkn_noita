@@ -1,26 +1,18 @@
 --[[        
-changelog
-    -m "The 1.0 Update"
-    -m "Update goo mode game modifiers to not append materials to materials.xml if they aren't enabled"
-    -m "Update poison, cold, and hot blooded champion types to no longer take damage from their blood (thanks Horscht and Cerin)"
-    -m "Update Action: Lock (rework formula, no longer gently floats downward with no target)"
-    -m "Update Option: Unique Wands (uses a dynamic weighting system to ensure a roughly 3% chance to appear on an item altar)"
-    -m "Update Action: Target Shot (mana cost 5 -> 0)"
-    -m "Fix Action: Fracture (was not applying inside modifiers)"
-    -m "Fix an issue in gun.lua that applied Perk: Rapid Fire, Perk: Magic Focus and Perk: Lead Boots multiple times"
-    -m "Fix outdated randomness for chest_random and chest_random_super"
-    -m "Fix translation appends for 1.0"
-    -m "Fix Unique Wands not having their names"
-    -m "Fix wand sprites updating late"
-    -m "Update gold tracker, custom damage numbers, and dps tracker to use the same text sprites instead of creating new ones every hit"
-    -m "Add Loadout: Legacy (the early access loadout)"
-    -m "Deprecate Action: Trigger - Hit (superceded by Action: Add Trigger)"
-    -m "Deprecate Action: Trigger - Timer (superceded by Action: Add Timer Trigger)"
-    -m "Deprecate Action: Trigger - Death (superceded by Action: Add Expiration Trigger)"
-    -m "Add Tweak: Add Trigger (replace functionality with the deprecated Trigger - Hit)"
-    -m "Add Tweak: Add Timer (replace functionality with the deprecated Trigger - Timer)"
-    -m "Add Tweak: Add Expiration Trigger (replace functionality with the deprecated Trigger - Death)"
-    -m "Update Tweak: Spiral Shot (update to new sounds)"
+changelog 
+    -m "Update translations"
+    -m "Update Option: Target Dummy (no longer touch spellable or polymorphable, boss dummy hides health bar)"
+    -m "Update custom damage numbers and dps tracker to update every frame instead of every time they take damage (tiny optimization)"
+    -m "Add Game Modifier: Uber Boss"
+    -m "Update loadouts that used deprecated spells"
+    -m "Update Loadout: Gunner"
+    -m "Update Action: Burst Fire (remove magic hand logic)"
+    -m "Fix crash when using custom damage numbers"
+    -m "Update projectile capture spells so they no longer happen out of order"
+    -m "Update Action: Projectile Orbit to have orbit radius based on spread"
+    -m "Update Option: Combine Gold (reduce range)"
+    -m "Fix Game Modifier: Guaranteed Always Cast"
+    -m "Fix wand generation options to not effect held wands (fixes wands spawned directly on the player from shuffling held wands)"
     
 
 some issues with noita (for if Nolla ever cares)
@@ -46,11 +38,9 @@ BUG
     grimoires should not include deprecated spells
 
 TODO
-    optimize dps tracker and custom damage numbers and gold tracker to update one time after the stored value has changed instead of every time
     Player Orbitals - projectiles orbits around the player
     lukki leg champion
     valour champion mode - +2-3 base mods, can stack stackable mods
-    add champion type weightings
 
     Wand Upgrades
         1 wand upgrade token per standard biome replacing an enemy
@@ -141,6 +131,8 @@ ModLuaFileAppend( "data/scripts/gun/gun.lua", "mods/gkbrkn_noita/files/gkbrkn/ap
 ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_extra_modifiers.lua" );
 ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_procedural.lua" );
 
+ModTextFilePrepend( "data/entities/animals/boss_centipede/boss_centipede_update.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_centipede_update.lua" );
+
 if HasFlagPersistent( MISC.NoPregenWands.EnabledFlag ) then
     local pregen_wand_biomes = {
         "data/scripts/biomes/coalmine.lua",
@@ -230,8 +222,6 @@ ModLuaFileAppend( "data/scripts/status_effects/status_list.lua", "mods/gkbrkn_no
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/slow_polymorph.xml" );
 ]]
 
-local _ModMaterialsFileAdd = ModMaterialsFileAdd;
-
 --function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
 function OnModPostInit() -- TODO this was done to allow init_function to call ModMaterialsFileAdd
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
@@ -262,7 +252,6 @@ function OnModPostInit() -- TODO this was done to allow init_function to call Mo
     end
 
     -- Run any enabled content's init functions
-    ModMaterialsFileAdd = _ModMaterialsFileAdd;
     for content_id,content in pairs( GKBRKN_CONFIG.CONTENT ) do
         if content.init_function ~= nil then
             if content.enabled() then

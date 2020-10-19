@@ -1295,7 +1295,7 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    { { action="GKBRKN_TRIGGER_HIT", locked=true} },
+                    { { action="ADD_TRIGGER", locked=true} },
                     { { action="LIGHT_BULLET", locked=false} },
                     { { action="GKBRKN_BURST_FIRE", locked=true} },
                     { { action="GKBRKN_BURST_FIRE", locked=true} },
@@ -1524,7 +1524,7 @@ loadouts = {
                     { { action="GKBRKN_DOUBLE_CAST", locked=true } },
                     { { action="GKBRKN_TRIPLE_CAST", locked=true } },
                     { { action="GKBRKN_CARRY_SHOT", locked=true } },
-                    { { action="GKBRKN_TRIGGER_TIMER", locked=true } },
+                    { { action="ADD_TIMER", locked=true } },
                     { { action="RUBBER_BALL", locked=false } },
                 }
             },
@@ -1680,7 +1680,7 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    { "GKBRKN_TRIGGER_HIT" },
+                    { "ADD_TRIGGER" },
                     { "SLIMEBALL" },
                     { "MIST_RADIOACTIVE" },
                 }
@@ -2229,7 +2229,7 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    { "GKBRKN_TRIGGER_TIMER" },
+                    { "ADD_TIMER" },
                     { "SPEED" },
                     { "LASER" },
                     { "GKBRKN_FORMATION_STACK" },
@@ -2616,7 +2616,7 @@ loadouts = {
                     deck_capacity = {25,25}, -- capacity
                     reload_time = {10,10}, -- recharge time in frames
                     fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {30,30}, -- spread
+                    spread_degrees = {0,0}, -- spread
                     mana_charge_speed = {1000,1000}, -- mana charge speed
                     mana_max = {5000,5000}, -- mana max
                 },
@@ -2624,10 +2624,6 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    { "GKBRKN_TRIPLE_CAST" },
-                    nil,
-                    nil,
-                    { "BUBBLESHOT" },
                 }
             },
             {
@@ -2648,11 +2644,36 @@ loadouts = {
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "GKBRKN_TRIGGER_REPEAT" },
-                    { "SLOW_BULLET" },
-                    { "GKBRKN_DUPLICAST" },
-                    { "HEAVY_SPREAD" },
-                    { "LIGHT_BULLET" },
+                    { { action="HOMING_ROTATE", locked=false } },
+                    { { action="HOMING_ROTATE", locked=false } },
+                    { { action="ACCELERATING_SHOT", locked=false } },
+
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="CHAINSAW", locked=false } },
+
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+
+                    { { action="PIERCING_SHOT", locked=false } },
+                    { { action="CLIPPING_SHOT", locked=false } },
+                    { { action="MATERIAL_WATER", locked=false } },
+                    { { action="BURN_TRAIL", locked=false } },
+                    { { action="DIVIDE_10", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
                 }
             },
             {
@@ -2673,38 +2694,88 @@ loadouts = {
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { "GKBRKN_TRIPLE_CAST" },
-                    { "GKBRKN_TRIPLE_CAST" },
+                    { { action="HOMING_ROTATE", locked=false } },
+                    { { action="ACCELERATING_SHOT", locked=false } },
+
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+
+                    { { action="RUBBER_BALL", locked=false } },
+
+                    { { action="PIERCING_SHOT", locked=false } },
+                    { { action="HOMING", locked=false } },
+                    { { action="LIGHT_BULLET_TRIGGER", locked=false } },
+
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+                    { { action="OMEGA", locked=false } },
+
+                    { { action="PIERCING_SHOT", locked=false } },
+                    { { action="CLIPPING_SHOT", locked=false } },
+                    { { action="MATERIAL_WATER", locked=false } },
+                    { { action="BURN_TRAIL", locked=false } },
                 }
             },
             {
-                name = "Wand",
-            stats = {
-                shuffle_deck_when_empty = false, -- shuffle
-                actions_per_round = 2, -- spells per cast
-                speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
-            },
-            stat_ranges = {
-                deck_capacity = {8,8}, -- capacity
-                reload_time = {120,120}, -- recharge time in frames
-                fire_rate_wait = {30,30}, -- cast delay in frames
-                spread_degrees = {-1,-1}, -- spread
-                mana_charge_speed = {200,200}, -- mana charge speed
-                mana_max = {200,200}, -- mana max
-            },
-            stat_randoms = {},
-            permanent_actions = {
-            },
-            actions = {
-                { { action="LONG_DISTANCE_CAST", locked=false } },
-                { { action="LIFETIME_DOWN", locked=false } },
-                { { action="LIFETIME_DOWN", locked=false } },
-                { { action="TELEPORT_PROJECTILE", locked=false } },
-                { { action="DELAYED_SPELL", locked=false } },
-                { { action="LIFETIME_DOWN", locked=false } },
-                { { action="LIFETIME_DOWN", locked=false } },
-                { { action="TELEPORT_PROJECTILE", locked=false } },
-            }
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {0,0}, -- recharge time in frames
+                    fire_rate_wait = {0,0}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {0,0}, -- mana charge speed
+                    mana_max = {1000000,1000000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                },
+                actions = {
+                    { { action="CHAINSAW", locked=false } },
+                    { { action="HOMING_ROTATE", locked=false } },
+                    { { action="HOMING_ROTATE", locked=false } },
+                    { { action="ACCELERATING_SHOT", locked=false } },
+
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+
+                    { { action="DIVIDE_4", locked=false } },
+                    { { action="DIVIDE_10", locked=false } },
+                    { { action="DUPLICATE", locked=false } },
+
+                    { { action="PIERCING_SHOT", locked=false } },
+                    { { action="MATERIAL_WATER", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
+                }
             }
         },
         potions = { -- potions
@@ -2715,18 +2786,24 @@ loadouts = {
         items = { -- items
         },
         perks = { -- perks
+            {"UNLIMITED_SPELLS"},
+            {"ORBIT"},
+            {"SHIELD"},
+            {"PROJECTILE_REPULSION"},
         },
         actions = { -- actions
             {"LIGHT_BULLET"},
-            {"GKBRKN_MAGIC_LIGHT"},
-            {"LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET"},
+            {"LIGHT_BULLET_TRIGGER"},
+            {"BUBBLESHOT_TRIGGER"},
+            {"BLOOD_MAGIC"},
+            {"DIVIDE_2"},
+            {"DIVIDE_3"},
+            {"DIVIDE_4"},
+            {"DIVIDE_10"},
             {"CHAINSAW"},
-            {"DIGGER"},
-            {"POWERDIGGER"},
-            {"GKBRKN_SPELL_MERGE"},
             {"BURST_2"},
-            {"GKBRKN_GLITTERING_TRAIL"},
-            {"GKBRKN_STORED_SHOT"},
+            {"BURST_3"},
+            {"BURST_4"},
         },
         sprites = nil, -- sprites
         custom_message = "", -- custom message
@@ -2763,16 +2840,17 @@ loadouts = {
                 },
                 stat_ranges = {
                     deck_capacity = {5,5}, -- capacity
-                    reload_time = {14,14}, -- recharge time in frames
+                    reload_time = {22,22}, -- recharge time in frames
                     fire_rate_wait = {22,22}, -- cast delay in frames
                     spread_degrees = {3,3}, -- spread
-                    mana_charge_speed = {50,50}, -- mana charge speed
-                    mana_max = {100,100}, -- mana max
+                    mana_charge_speed = {60,60}, -- mana charge speed
+                    mana_max = {90,90}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
                 },
                 actions = {
+                    { { action="FIZZLE", locked=false } },
                     { { action="GKBRKN_BURST_FIRE", locked=false } },
                     { { action="LIGHT_BULLET", locked=false } },
                 }

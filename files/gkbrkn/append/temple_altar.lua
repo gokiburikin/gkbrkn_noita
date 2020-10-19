@@ -6,7 +6,7 @@ local _spawn_hp = spawn_hp;
 function spawn_hp( x, y )
 	_spawn_hp( x, y );
     if HasFlagPersistent( MISC.TargetDummy.EnabledFlag ) then
-        EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x - 228, y + 50 );
+        EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x - 198, y + 40 );
     end
 end
 

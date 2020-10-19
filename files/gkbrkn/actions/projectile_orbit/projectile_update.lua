@@ -1,9 +1,21 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
-TWO_PI = math.pi * 2;
-ORBIT_RADIUS = 8;
-ORBIT_SPEED = 8;
+local TWO_PI = math.pi * 2;
+local ORBIT_RADIUS = 8;
+local ORBIT_SPEED = 8;
 local entity = GetUpdatedEntityID();
 local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
+
+local projectile_data = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
+if projectile_data then
+    local radius = ComponentObjectGetValue2( projectile_data, "config", "action_unidentified_sprite_filename" );
+    if radius then
+        local _,_,radius = radius:find("orbital_radius_(%d+)");
+        if radius then
+            radius = tonumber( radius );
+            ORBIT_RADIUS = (radius ^ 0.6 + 8) or ORBIT_RADIUS;
+        end
+    end
+end
 
 if parent ~= 0 and EntityGetIsAlive(parent) then
     local orbit = EntityGetFirstComponentIncludingDisabled( entity, "VariableStorageComponent", "gkbrkn_orbit" );

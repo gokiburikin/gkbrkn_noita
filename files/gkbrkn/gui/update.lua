@@ -236,16 +236,16 @@ function do_gui()
     GuiLayoutEnd( gui ); -- fold vertical
 
     if HasFlagPersistent( FLAGS.DebugMode ) then
-        GuiLayoutBeginVertical( gui, 89, 91 );
-        GuiText( gui, 0, 0, "Development Mode" );
-        GuiLayoutEnd( gui );
-        GuiLayoutBeginVertical( gui, 92, 93 );
-        local update_time = get_update_time();
-        reset_update_time();
-        local frame_time = get_frame_time();
-        reset_frame_time();
-        GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
-        GuiText( gui, 0, 0, tostring( math.floor( frame_time * 100000 ) / 100 ).."ms/fr" );
+        GuiLayoutBeginVertical( gui, 89, 85 );
+            GuiText( gui, 0, 0, "Development Mode" );
+            local update_time = get_update_time();
+            reset_update_time();
+            local frame_time = get_frame_time();
+            reset_frame_time();
+            local cx, cy = GameGetCameraPos();
+            GuiText( gui, 0, 0, tostring( #(EntityGetInRadius( cx, cy, 100000000 ) or {}) ).."ents" );
+            GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
+            GuiText( gui, 0, 0, tostring( math.floor( frame_time * 100000 ) / 100 ).."ms/fr" );
         GuiLayoutEnd( gui );
     end
 

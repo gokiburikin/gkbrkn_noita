@@ -42,6 +42,8 @@ if GameHasFlagRun( init_check_flag ) == false then
         GamePrint( GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip] ) );
     end
 
+    EntityAddComponent( player_entity, "ShotEffectComponent", {  extra_modifier = "matran" } );
+
     --[[ Content Callbacks ]]
     for _,content in pairs( ACTIVE_CONTENT ) do
         if content.enabled() and content.options ~= nil then

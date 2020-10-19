@@ -40,6 +40,12 @@ dev_options = {
         author = "$ui_author_name_goki_dev",
     },
     {
+        id = "no_polymorph",
+        name = "$dev_option_name_gkbrkn_no_polymorph",
+        description = "$dev_option_desc_gkbrkn_no_polymorph",
+        author = "$ui_author_name_goki_dev",
+    },
+    {
         id = "infinite_money",
         name = "$dev_option_name_gkbrkn_infinite_money",
         description = "$dev_option_desc_gkbrkn_infinite_money",

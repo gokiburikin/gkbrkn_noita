@@ -33,5 +33,6 @@ FLAGS = {
     SkipGokiLoadouts = "gkbrkn_skip_goki_loadouts",
     DisableRandomSpells = "gkbrkn_game_modifier_disable_random_spells",
     GenerateRandomSpellbooks = "gkbrkn_game_modifier_generate_random_spellbooks",
-    RebalanceShops = "gkbrkn_rebalance_shops"
+    RebalanceShops = "gkbrkn_rebalance_shops",
+    UberBoss = "gkbrkn_uber_boss",
 }

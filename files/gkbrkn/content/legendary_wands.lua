@@ -82,7 +82,7 @@ legendary_wands = {
                 { { action="TELEPORT_CAST", locked=false } },
                 { { action="DAMAGE", locked=false } },
                 { { action="GKBRKN_TIME_COMPRESSION", locked=false } },
-                { { action="GKBRKN_TRIGGER_DEATH", locked=false } },
+                { { action="ADD_EXPIRATION_TRIGGER", locked=false } },
                 { { action="TELEPORT_PROJECTILE", locked=false } },
             }
         }
@@ -395,7 +395,7 @@ legendary_wands = {
             actions = {
                 { { action="GKBRKN_BOUND_SHOT", locked=true } },
                 { { action="GKBRKN_GUIDED_SHOT", locked=true } },
-                { { action="GKBRKN_TRIGGER_DEATH", locked=true } },
+                { { action="ADD_EXPIRATION_TRIGGER", locked=true } },
                 { { action="LIGHT", locked=true } },
                 { { action="SLIMEBALL", locked=true } },
                 { { action="EXPLOSION", locked=true } },
@@ -864,7 +864,7 @@ legendary_wands = {
                 { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
                 { { action="HORIZONTAL_ARC", locked=true } },
                 { { action="LONG_DISTANCE_CAST", locked=true } },
-                { { action="GKBRKN_TRIGGER_DEATH", locked=true } },
+                { { action="ADD_EXPIRATION_TRIGGER", locked=true } },
                 { { action="DIGGER", locked=true } },
                 { { action="GKBRKN_FORMATION_STACK", locked=false } },
                 { { action="LIGHT_BULLET", locked=false } },
