@@ -38,11 +38,10 @@ if GameHasFlagRun( init_check_flag ) == false then
         GamePrint( "Don't forget to adjust the settings by clicking the button in the top right." );
     end
     if HasFlagPersistent( MISC.ShowModTips.EnabledFlag ) then
+        SetRandomSeed( x, y );
         local tip = math.ceil( Random() * #MISC.ShowModTips.Tips );
         GamePrint( GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip] ) );
     end
-
-    EntityAddComponent( player_entity, "ShotEffectComponent", {  extra_modifier = "matran" } );
 
     --[[ Content Callbacks ]]
     for _,content in pairs( ACTIVE_CONTENT ) do

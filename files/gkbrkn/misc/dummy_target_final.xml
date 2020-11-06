@@ -1,12 +1,17 @@
 <Entity  tags="prop,hittable,mortal,homing_target,enemy,touchmagic_immunity,teleportable_NOT,polymorphable_NOT" >
-	<VelocityComponent/>
+	<VelocityComponent gravity_y="0"/>
     <SimplePhysicsComponent/>
 	<SpriteComponent 
 		z_index="1"
-		image_file="mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target_final_sprite.xml" 
-		offset_x="0"
-		offset_y="0" >
+		image_file="mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target_final_sprite.xml"
+	>
 	</SpriteComponent>
+	<SpriteOffsetAnimatorComponent
+        _tags="enabled_in_world"
+        y_amount="2"
+        y_speed="2.5"
+        sprite_id="0" >
+    </SpriteOffsetAnimatorComponent>
 	<AnimalAIComponent 
         attack_melee_enabled="0"
         needs_food="0"
@@ -53,17 +58,13 @@
 	</DamageModelComponent>
 
     <HitboxComponent
-		aabb_min_x="-8.5"
-		aabb_max_x="8.5"
-		aabb_min_y="-22"
-		aabb_max_y="0"
+		aabb_min_x="-10.5"
+		aabb_max_x="10.5"
+		aabb_min_y="-13"
+		aabb_max_y="13"
 	>
 	</HitboxComponent>
     <LuaComponent script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"></LuaComponent>
-    <LuaComponent
-        execute_every_n_frame="1"
-		script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker_text.lua"
-	></LuaComponent>
     <LuaComponent script_death="mods/gkbrkn_noita/files/gkbrkn/misc/respawn_dummy.lua"></LuaComponent>
 	<VariableStorageComponent name="gkbrkn_always_show_damage_numbers"/>
 	<VariableStorageComponent name="gkbrkn_no_health_bar"/>
@@ -73,8 +74,60 @@
 		food_chain_rank="9"
 		is_predator="1" >
 	</GenomeDataComponent>
-    <SpriteAnimatorComponent>
-	</SpriteAnimatorComponent>
-	<StatusEffectDataComponent>
-	</StatusEffectDataComponent>
+    <SpriteAnimatorComponent/>
+	<StatusEffectDataComponent/>
+	<Entity>
+		<InheritTransformComponent only_position="1"></InheritTransformComponent>
+		<SpriteComponent 
+			_tags="enabled_in_world,gkbrkn_dps_tracker"
+			image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers.xml"
+			emissive="1"
+			is_text_sprite="1"
+			offset_x="0"
+			offset_y="0"
+			update_transform="1" 
+			update_transform_rotation="0"
+			text=""
+			has_special_scale="1"
+			special_scale_x="0.6667"
+			special_scale_y="0.6667"
+			z_index="-9000"
+			never_ragdollify_on_death="1"
+		></SpriteComponent>
+		<SpriteComponent 
+			_tags="enabled_in_world,gkbrkn_dps_tracker_highest"
+			image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_grey.xml"
+			emissive="1"
+			is_text_sprite="1"
+			offset_x="0"
+			offset_y="0"
+			update_transform="1" 
+			update_transform_rotation="0"
+			text=""
+			has_special_scale="1"
+			special_scale_x="0.6667"
+			special_scale_y="0.6667"
+			z_index="-9000"
+			never_ragdollify_on_death="1"
+		></SpriteComponent>
+		<SpriteComponent 
+			_tags="enabled_in_world,gkbrkn_dps_tracker_true"
+			image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_true_damage.xml"
+			emissive="1"
+			is_text_sprite="1"
+			offset_x="0"
+			offset_y="0"
+			update_transform="1" 
+			update_transform_rotation="0"
+			text=""
+			has_special_scale="1"
+			special_scale_x="0.6667"
+			special_scale_y="0.6667"
+			z_index="-9000"
+			never_ragdollify_on_death="1"
+		></SpriteComponent>
+		<LuaComponent execute_every_n_frame="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker_text.lua" ></LuaComponent>
+		<LuaComponent execute_every_n_frame="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker_text_true.lua" ></LuaComponent>
+		<LuaComponent execute_every_n_frame="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker_text_highest.lua" ></LuaComponent>
+	</Entity>
 </Entity>

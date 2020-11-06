@@ -56,27 +56,12 @@ function generate_gun( cost, level, force_unshuffle )
     end
 
     -- NOTE: This can be done better by sorting the local wands array and taking in only the last one, but at least for now this works.
-    local held_wands = {};
     local players = EntityGetWithTag("player_unit") or {};
     local wandsmith_stacks = 0;
     local mana_mastery_stacks = 0;
     for _,player in pairs( players ) do
         wandsmith_stacks = wandsmith_stacks + EntityGetVariableNumber( player, "gkbrkn_wandsmith_stacks", 0 );
         mana_mastery_stacks = mana_mastery_stacks + EntityGetVariableNumber( player, "gkbrkn_mana_mastery", 0 );
-
-        local children = EntityGetAllChildren( player ) or {};
-        local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
-        if inventory2 ~= nil then
-            for key, child in pairs( children ) do
-                if EntityGetName( child ) == "inventory_quick" then
-                    local wands_in_hand = EntityGetChildrenWithTag( child, "wand" ) or {};
-                    for k,v in pairs( wands_in_hand ) do
-                        held_wands[tostring(v)] = true;
-                    end
-                    break;
-                end
-            end
-        end
     end
 
     local entity = GetUpdatedEntityID();
@@ -84,7 +69,9 @@ function generate_gun( cost, level, force_unshuffle )
     local local_wands = EntityGetInRadiusWithTag( x, y, 1, "wand" ) or {};
 
     for _,wand in pairs( local_wands ) do
-        if not held_wands[tostring(wand)] then
+        -- Make sure the wand is in the world, not the player's hand or inventory
+        if EntityGetRootEntity(wand) == wand and EntityGetVariableNumber( wand, "gkbrkn_altered_wand", 0 ) == 0 then
+            EntitySetVariableNumber( wand, "gkbrkn_altered_wand", 1 );
             local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
             if HasFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag ) then
                 local children = EntityGetAllChildren( wand );
@@ -190,12 +177,6 @@ function generate_gun( cost, level, force_unshuffle )
             end
 
             if ability ~= nil then
-                if GameHasFlagRun( FLAGS.OrderWandsOnly ) then
-                    ability_component_set_stat( ability, "shuffle_deck_when_empty", false );
-                elseif GameHasFlagRun( FLAGS.ShuffleWandsOnly ) then
-                    ability_component_set_stat( ability, "shuffle_deck_when_empty", true );
-                end
-
                 if wandsmith_stacks > 0 then
                     ability_component_adjust_stats( ability, {
                         mana_max=function(value) return tonumber( value ) * ( 1.1 ^ wandsmith_stacks ); end,

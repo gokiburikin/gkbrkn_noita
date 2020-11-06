@@ -247,7 +247,7 @@ if HasFlagPersistent( MISC.QuickSwap.EnabledFlag ) then
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if controls ~= nil and inventory2 ~= nil then
         local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
-        if active_item == nil or active_item == 0 or EntityHasTag( active_item, "wand" ) == true then
+        if active_item == nil or active_item == 0 or ( EntityHasTag( active_item, "wand" ) == true or EntityGetFirstComponent( active_item, "PotionComponent" ) == nil) then
             local use_button = ComponentGetValue2( controls, "mButtonDownThrow" );
             local use_button_frame = ComponentGetValue2( controls, "mButtonFrameThrow" );
             if use_button == true and now == use_button_frame then
@@ -598,6 +598,16 @@ if HasFlagPersistent( MISC.HealthBars.EnabledFlag ) then
 end
 
 if now % 10 == 0 then
+    --[[
+    if active_wand then
+        wand_shuffle_actions( active_wand );
+        local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
+        if inventory2 ~= nil then
+            ComponentSetValue2( inventory2, "mForceRefresh", true );
+            ComponentSetValue2( inventory2, "mActualActiveItem", 0 );
+        end
+    end
+    ]]
     local nearby_enemies = EntityGetWithTag( "enemy" );
     --[[ Champions ]]
     if GameHasFlagRun( MISC.ChampionEnemies.EnabledFlag ) then
@@ -753,16 +763,12 @@ if now % 10 == 0 then
                             EntityAddChild( nearby, badges );
                             for _,badge_filepath in pairs( add_these_badges ) do
                                 local badge = EntityCreateNew();
-                                
-                                local sprite = EntityAddComponent( badge, "SpriteComponent",{
-                                    z_index="-9000",
-                                    image_file=badge_filepath
+                                local sprite = EntityAddComponent2( badge, "SpriteComponent",{
+                                    z_index=-9000,
+                                    image_file=badge_filepath,
+                                    has_special_scale=true
                                 });
-                                ComponentSetValue2( sprite, "has_special_scale", true );
-                                ComponentSetValue2( sprite, "z_index", -9000 );
-                                EntityAddComponent( badge, "InheritTransformComponent",{
-                                    only_position="1"
-                                });
+                                EntityAddComponent( badge, "InheritTransformComponent",{ only_position="1"} );
                                 EntityAddChild( badges, badge );
                             end
                         end
@@ -802,16 +808,21 @@ if now % 10 == 0 then
     if HasFlagPersistent( MISC.ShowDamageNumbers.EnabledFlag ) then
         local nearby_targets = EntityGetWithTag( "homing_target" );
         for _,target in pairs( nearby_targets ) do
-            if EntityGetVariableNumber( target, "gkbrkn_custom_damage_numbers", 0 ) == 0 then
-                EntitySetVariableNumber( target, "gkbrkn_custom_damage_numbers", 1 );
-                EntityAddComponent( target, "LuaComponent", {
-                    script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua"
-                });
-                EntityLoadToEntity( "mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.xml", target );
-                EntityAddComponent( target, "LuaComponent", {
-                    execute_every_n_frame="1",
-                    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.lua",
-                });
+            if not EntityHasTag( target, "boss" ) then
+                if not EntityHasScript( target, "mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua" ,"script_damage_received" ) then
+                    EntityAddComponent( target, "LuaComponent", { script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua" });
+                end
+                if EntityGetVariableNumber( target, "gkbrkn_custom_damage_numbers", 0 ) == 0 then
+                    EntitySetVariableNumber( target, "gkbrkn_custom_damage_numbers", 1 );
+                    local container = EntityCreateNew();
+                    EntityAddComponent( container, "InheritTransformComponent",{ only_position="1"} );
+                    EntityAddChild( target, container );
+                    EntityLoadToEntity( "mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.xml", container );
+                    EntityAddComponent( container, "LuaComponent", {
+                        execute_every_n_frame="1",
+                        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.lua",
+                    });
+                end
             end
         end
     end
@@ -1147,6 +1158,18 @@ if now % 60 == 0 then
             local component = EntityGetFirstComponentIncludingDisabled( wand, "ItemComponent" );
             if component ~= nil then
                 ComponentSetValue2( component, "is_frozen", true );
+            end
+        end
+    end
+
+    for _,wand in pairs( world_wands ) do
+        for _,ability in pairs( EntityGetComponent( wand, "AbilityComponent") or {} ) do
+            --[[ Game Modifier - Order Wands Only ]]
+            if GameHasFlagRun( FLAGS.OrderWandsOnly ) then
+                ability_component_set_stat( ability, "shuffle_deck_when_empty", false );
+            --[[ Game Modifier - Shuffle Wands Only ]]
+            elseif GameHasFlagRun( FLAGS.ShuffleWandsOnly ) then
+                ability_component_set_stat( ability, "shuffle_deck_when_empty", true );
             end
         end
     end

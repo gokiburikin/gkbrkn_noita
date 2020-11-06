@@ -46,37 +46,56 @@ if GameHasFlagRun( init_check_flag ) == false then
 
     -- random wands
     if inventory ~= nil then
-        if HasFlagPersistent( MISC.RandomStart.RandomWandsFlag ) then
-            local inventory_items = EntityGetAllChildren( inventory );
-            if inventory_items ~= nil then
-                for i,item_entity in ipairs( inventory_items ) do
-                    if EntityHasTag( item_entity, "wand" ) then
-                        GameKillInventoryItem( player_entity, item_entity );
-                    end
+        local held_wands = {};
+        
+        local inventory_items = EntityGetAllChildren( inventory );
+        if inventory_items ~= nil then
+            for i,item_entity in ipairs( inventory_items ) do
+                if EntityHasTag( item_entity, "wand" ) then
+                    --GameKillInventoryItem( player_entity, item_entity );
+                    table.insert( held_wands, item_entity );
                 end
             end
+        end
 
-            local actions_pool = {
-                "projectile_actions",
-                "cost_actions"
-            }
-            for i=1,2 do
-                if HasFlagPersistent( MISC.RandomStart.CustomWandGenerationFlag ) == true then
-                    local item_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
-                    EntityAddComponent( item_entity, "VariableStorageComponent", {
-                        name = "random_start_actions_pool",
-                        value_string  = actions_pool[i],
-                    });
-                    EntityAddComponent( item_entity, "LuaComponent", {
-                        execute_on_added = "1",
-                        remove_after_executed = "1",
-                        script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/wand.lua"
-                    } );
-                    EntityAddChild( inventory, item_entity );
+        local generate_wands = {}
+        if HasFlagPersistent( MISC.RandomStart.RandomPrimaryWandFlag ) then
+            generate_wands[1] = { "projectile_actions"};
+        end
+        if HasFlagPersistent( MISC.RandomStart.RandomSecondaryWandFlag ) then
+            generate_wands[2] = {  "cost_actions" };
+        end
+        if HasFlagPersistent( MISC.RandomStart.RandomExtraWandFlag ) then
+            generate_wands[3] = { "projectile_actions" };
+        end
+
+        for i,v in pairs(generate_wands) do
+            local held_wand = held_wands[i];
+            local actions_pool = generate_wands[i][1];
+            if HasFlagPersistent( MISC.RandomStart.CustomWandGenerationFlag ) == true then
+                local item_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
+                EntityAddComponent( item_entity, "VariableStorageComponent", {
+                    name = "random_start_actions_pool",
+                    value_string  = actions_pool,
+                });
+                EntityAddComponent( item_entity, "LuaComponent", {
+                    execute_on_added = "1",
+                    remove_after_executed = "1",
+                    script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/wand.lua"
+                } );
+                if held_wand then
+                    wand_copy( item_entity, held_wand, true, true );
                 else
-                    local wand = EntityLoad( "data/entities/items/wand_level_01.xml", Random( -1000, 1000 ), Random( -1000, 1000 ) );
-                    local item = EntityGetFirstComponent( wand, "ItemComponent" );
-                    ComponentSetValue2( item, "play_hover_animation", false );
+                    EntityAddChild( inventory, item_entity );
+                end
+            else
+                local wand = EntityLoad( "data/entities/items/wand_level_01.xml", Random( -1000, 1000 ), Random( -1000, 1000 ) );
+                --local item = EntityGetFirstComponent( wand, "ItemComponent" );
+                --ComponentSetValue2( item, "play_hover_animation", false );
+                --EntityAddChild( inventory, wand );
+                if held_wand then
+                    wand_copy( wand, held_wand, true, true );
+                else
                     EntityAddChild( inventory, wand );
                 end
             end

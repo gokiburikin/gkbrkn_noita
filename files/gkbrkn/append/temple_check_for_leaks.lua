@@ -7,9 +7,7 @@ function material_area_checker_failed( x, y )
     	local h = math.floor( y / 512 );
         local leak_name = "TEMPLE_LEAKED_" .. tostring( h );
     	GlobalsSetValue( leak_name, "1" );
-        GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", "1" );
         _material_area_checker_failed( x, y );
-        GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", "0" );
     else
         _material_area_checker_failed( x, y );
     end

@@ -6,7 +6,7 @@ local _spawn_hp = spawn_hp;
 function spawn_hp( x, y )
 	_spawn_hp( x, y );
     if HasFlagPersistent( MISC.TargetDummy.EnabledFlag ) then
-        EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x - 198, y + 40 );
+        EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x - 198, y + 20 );
     end
 end
 
@@ -55,7 +55,7 @@ function spawn_all_shopitems( x, y )
                 if pack_data.image_filepath then
                     local sprite = EntityGetFirstComponent( pack_entity, "SpriteComponent" );
                     --if sprite then ComponentSetValue2( sprite, "image_file", pack_data.image_filepath ); end
-                    if sprite then update_sprite_image( pack_entity, sprite, pack_data.image_filepath ); end
+                    if sprite then EntityRefreshSprite( pack_entity, sprite ) end
                 end
                 local ui_info = EntityGetFirstComponent( pack_entity, "UIInfoComponent" );
                 if ui_info then ComponentSetValue2( ui_info, "name", GameTextGetTranslatedOrNot( pack_data.name ) ); end

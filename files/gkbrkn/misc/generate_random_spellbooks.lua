@@ -58,7 +58,7 @@ for i=1,10 do
                 callback();
             end
         end,
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         local_content = true
     });
 end

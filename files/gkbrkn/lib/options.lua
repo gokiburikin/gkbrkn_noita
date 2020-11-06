@@ -23,6 +23,7 @@ local options = {
         AlwaysChampionsFlag = "gkbrkn_champion_enemies_always",
         MiniBossesFlag = "gkbrkn_champion_enemies_mini_bosses",
         ValourFlag = "gkbrkn_champion_enemies_valour",
+        ShowIconsFlag = "gkbrkn_champion_enemies_show_icons",
         ChampionChance = 0.20,
         MiniBossChance = 0.10, -- rolled after champion chance only if mini boss kill threshold has been met
         MiniBossThreshold = 50, -- the amount of enemies that must be killed before a miniboss can spawn
@@ -38,6 +39,9 @@ local options = {
     RainbowProjectiles = { EnabledFlag = "gkbrkn_rainbow_projectiles" },
     RandomStart = {
         RandomWandsFlag = "gkbrkn_random_start_random_wands",
+        RandomPrimaryWandFlag = "gkbrkn_random_start_primary_wand",
+        RandomSecondaryWandFlag = "gkbrkn_random_start_secondary_wand",
+        RandomExtraWandFlag = "gkbrkn_random_start_extra_wand",
         RandomHealthFlag = "gkbrkn_random_start_random_health",
         MinimumHP = 50,
         MaximumHP = 150,
@@ -87,6 +91,7 @@ local options = {
         UnlockLoadouts = "gkbrkn_unlock_loadouts",
         CapeColorFlag = "gkbrkn_loadouts_cape_color",
         PlayerSpritesFlag = "gkbrkn_loadouts_player_sprites",
+        ClassyFrameworkIntegrationFlag = "gkbrkn_classy_framework_integration",
         SelectableClassesIntegrationFlag = "gkbrkn_selectable_classes_integration",
     },
     HeroMode = {

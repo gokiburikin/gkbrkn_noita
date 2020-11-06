@@ -9,6 +9,7 @@ function shot( projectile_entity )
     local current_frame = GameGetFrameNum();
     local projectile = EntityGetFirstComponentIncludingDisabled( projectile_entity, "ProjectileComponent" );
     local player = GetUpdatedEntityID();
+    --GamePrint( "Projectile Damage: " .. ComponentGetValue2( projectile, "damage" ) * 25 );
     local damage_multiplier =  EntityGetVariableNumber( player, "gkbrkn_damage_multiplier", 1.0 );
     local projectile_damage_multiplier =  EntityGetVariableNumber( projectile_entity, "gkbrkn_damage_multiplier", 1.0 );
     adjust_all_entity_damage( projectile_entity, function( current_damage ) return (current_damage ) * projectile_damage_multiplier; end )
@@ -108,8 +109,9 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
         --    print(k.."/"..tostring(v));
         --end
         --for k,v in pairs( ComponentObjectGetMembers( projectile,"damage_critical" ) or {}) do
-        --    print(k.."/"..tostring(v));
+        --    --print(k.."/"..tostring(v));
         --end
+        --GamePrint( "Projectile Crit Chance: ".. ComponentObjectGetMembers( projectile,"damage_critical" )["chance"])
         --print( "ex "..tostring( ComponentObjectGetValue2( projectile,"config", "damage_explosion_add")))
         --print( "aa "..tostring( ComponentObjectGetValue2( projectile,"config", "projectile_file")))
     end

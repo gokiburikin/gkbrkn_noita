@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c102"
+    Version = "c103"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -143,32 +143,18 @@ end
             register_option_localized( MISC.ChampionEnemies.SuperChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true, carnage = true} ),
             register_option_localized( MISC.ChampionEnemies.AlwaysChampionsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true, carnage = true} ),
             register_option_localized( MISC.ChampionEnemies.MiniBossesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true, ultimate_challenge = true, champions_mode = true, carnage = true} ),
-            register_option_localized( MISC.ChampionEnemies.ValourFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {carnage = true} )
+            register_option_localized( MISC.ChampionEnemies.ValourFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {carnage = true} ),
+            register_option_localized( MISC.ChampionEnemies.ShowIconsFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, true, {goki_thing = true, ultimate_challenge = true, champions_mode = true, carnage = true} )
         ),
         register_option_group_localized( "gkbrkn_random_start",
-            register_option_localized( MISC.RandomStart.RandomWandsFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),
+            register_option_localized( MISC.RandomStart.RandomPrimaryWandFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),
+            register_option_localized( MISC.RandomStart.RandomSecondaryWandFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),
+            register_option_localized( MISC.RandomStart.RandomExtraWandFlag, CONTENT_ACTIVATION_TYPE.NewGame ),
             register_option_localized( MISC.RandomStart.CustomWandGenerationFlag, CONTENT_ACTIVATION_TYPE.NewGame ),
             register_option_localized( MISC.RandomStart.RandomCapeColorFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),
             register_option_localized( MISC.RandomStart.RandomHealthFlag, CONTENT_ACTIVATION_TYPE.NewGame ),
             register_option_localized( MISC.RandomStart.RandomFlaskFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} ),
             register_option_localized( MISC.RandomStart.RandomPerkFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {random_starts = true} )
-        ),
-        register_option_group_localized( "gkbrkn_wands",
-            register_option_localized( MISC.LegendaryWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
-            register_option_localized( MISC.LooseSpellGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
-            register_option_localized( MISC.ExtendedWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
-            register_option_localized( MISC.ChaoticWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),
-            register_option_localized( MISC.AlternativeWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),
-            register_option_localized( MISC.NoPregenWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true} ),
-            register_option_localized( MISC.PassiveRecharge.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
-        ),
-        register_option_group_localized( "gkbrkn_loadouts",
-            register_option_localized( MISC.Loadouts.ManageFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true,loadouts = true} ),
-            register_option_localized( MISC.Loadouts.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
-            register_option_localized( MISC.Loadouts.CapeColorFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
-            register_option_localized( MISC.Loadouts.PlayerSpritesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
-            register_option_localized( MISC.Loadouts.SelectableClassesIntegrationFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
-            register_option_localized( MISC.Loadouts.UnlockLoadouts, CONTENT_ACTIVATION_TYPE.NewGame )
         ),
         register_option_group_localized( "gkbrkn_gold",
             register_option_localized( MISC.GoldPickupTracker.ShowMessageFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
@@ -178,6 +164,40 @@ end
             register_option_localized( MISC.AutoPickupGold.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.CombineGold.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
         ),
+        register_option_group_localized( "gkbrkn_wands",
+            register_option_localized( MISC.LegendaryWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
+            register_option_localized( MISC.LooseSpellGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
+            register_option_localized( MISC.ExtendedWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                if enabled then
+                    RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag );
+                    RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag );
+                end
+            end, nil, {goki_thing = true} ),
+            register_option_localized( MISC.ChaoticWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                if enabled then
+                    RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag );
+                    RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag );
+                end
+            end ),
+            register_option_localized( MISC.AlternativeWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                if enabled then
+                    RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag );
+                    RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag );
+                end
+            end ),
+            register_option_localized( MISC.NoPregenWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true} ),
+            register_option_localized( MISC.PassiveRecharge.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
+        ),
+        register_option_group_localized( "gkbrkn_loadouts",
+            register_option_localized( MISC.Loadouts.ManageFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true,loadouts = true} ),
+            register_option_localized( MISC.Loadouts.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
+            register_option_localized( MISC.Loadouts.CapeColorFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
+            register_option_localized( MISC.Loadouts.PlayerSpritesFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
+            register_option_localized( MISC.Loadouts.SelectableClassesIntegrationFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
+            register_option_localized( MISC.Loadouts.ClassyFrameworkIntegrationFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {loadouts = true} ),
+            register_option_localized( MISC.Loadouts.UnlockLoadouts, CONTENT_ACTIVATION_TYPE.NewGame )
+        ),
+        
         register_option_group_localized( "gkbrkn_invincibility_frames",
             register_option_localized( MISC.InvincibilityFrames.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate ),
             register_option_localized( MISC.InvincibilityFrames.FlashingFlag, CONTENT_ACTIVATION_TYPE.Immediate )
@@ -204,7 +224,15 @@ end
         ),
         register_option_group_localized( "gkbrkn_target_dummy",
             register_option_localized( MISC.TargetDummy.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate, nil, true, {goki_thing = true} ),
-            register_option_localized( MISC.TargetDummy.AllowEnvironmentalDamage, CONTENT_ACTIVATION_TYPE.Immediate )
+            register_option_localized( MISC.TargetDummy.AllowEnvironmentalDamage, CONTENT_ACTIVATION_TYPE.Immediate ),
+            register_option_localized( "gkbrkn_spawn_target_dummy", CONTENT_ACTIVATION_TYPE.Immediate, function( enabled )
+                local player = EntityGetWithTag( "player_unit")[1];
+                if player then
+                    local x,y = EntityGetTransform( player );
+                    EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x, y - 10 );
+                    RemoveFlagPersistent("gkbrkn_spawn_target_dummy");
+                end
+            end )
         ),
         register_option_group_localized( "gkbrkn_misc",
             register_option_localized( MISC.PackShops.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart ),

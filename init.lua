@@ -1,19 +1,27 @@
 --[[        
 changelog 
-    -m "Update translations"
-    -m "Update Option: Target Dummy (no longer touch spellable or polymorphable, boss dummy hides health bar)"
-    -m "Update custom damage numbers and dps tracker to update every frame instead of every time they take damage (tiny optimization)"
-    -m "Add Game Modifier: Uber Boss"
-    -m "Update loadouts that used deprecated spells"
-    -m "Update Loadout: Gunner"
-    -m "Update Action: Burst Fire (remove magic hand logic)"
-    -m "Fix crash when using custom damage numbers"
-    -m "Update projectile capture spells so they no longer happen out of order"
-    -m "Update Action: Projectile Orbit to have orbit radius based on spread"
-    -m "Update Option: Combine Gold (reduce range)"
-    -m "Fix Game Modifier: Guaranteed Always Cast"
-    -m "Fix wand generation options to not effect held wands (fixes wands spawned directly on the player from shuffling held wands)"
-    
+    -m "Add Action: Matra Magic"
+    -m "Add Option - Random Starts: Random Extra Wand"
+    -m "Add Option - Random Starts: Random Primary Wand"
+    -m "Add Option - Random Starts: Random Secondary Wand"
+    -m "Add Option - Champion Enemies: Show Icons"
+    -m "Add Tweak: Unlimited Spells (no spell exclusion)"
+    -m "Deprecate Perk: Knockback Immunity (superceded by No More Knockback)"
+    -m "Deprecate Perk: Mana Manipulation (superceded by new wand generation)"
+    -m "Deprecate Tweak: Allow Negative Mana Always Cast (added to base game)"
+    -m "Fix Option: Show Damage Numbers (no longer rotates with entities, no longer crashes when approaching the eel at the lake)"
+    -m "Remove Option - Random Starts: Random Starting Wands"
+    -m "Rename Option - Random Starts: Alternative Wand Generation -> Adjust Wand Generation"
+    -m "Update Action: Perforating Shot (damage 0 -> 3, gore 0 -> 20)"
+    -m "Update Game Modifier: Order/Shuffle Wands Only (affects all wands even wands that aren't generated, should fix some altar wands not being affected)"
+    -m "Update Option: Dummy Target (added real time DPS and highest DPS)"
+    -m "Update Option: Quick Swap (should work on items without the wand tag)"
+    -m "Update Option: Show Damage Numbers (don't apply on bosses, don't stop working after reload. need to figure out why it crashes bosses)"
+    -m "Update Option: Uber Boss (changed to 36 orbs)"
+    -m "Update Perk: Diplomatic Immunity (can anger the gods, but no temple collapse)"
+    -m "Update related_projectiles and projectile_file for relevant spells (adds support for returner, angry ghost, trigger support)"
+    -m "Update the types, spawn weightings, and spawn levels of many spells"
+    -m "Update Unique Wands that have deprecated spells"
 
 some issues with noita (for if Nolla ever cares)
     explosive projectile (c.damage_explosion_add) is broken; damage is based on explosion radius
@@ -117,7 +125,6 @@ ModLuaFileAppend( "data/scripts/biomes/boss_arena.lua", "mods/gkbrkn_noita/files
 ModLuaFileAppend( "data/scripts/biomes/temple_altar_left.lua", "mods/gkbrkn_noita/files/gkbrkn/append/goo_mode_temple_altar_left.lua" );
 
 --[[ Workshop ]]
-ModLuaFileAppend( "data/scripts/buildings/temple_check_for_leaks.lua", "mods/gkbrkn_noita/files/gkbrkn/append/temple_check_for_leaks.lua" );
 ModLuaFileAppend( "data/scripts/buildings/workshop_exit.lua", "mods/gkbrkn_noita/files/gkbrkn/append/workshop_exit.lua" );
 ModLuaFileAppend( "data/scripts/buildings/workshop_exit_final.lua", "mods/gkbrkn_noita/files/gkbrkn/append/workshop_exit_final.lua" );
 
@@ -137,6 +144,7 @@ if HasFlagPersistent( MISC.NoPregenWands.EnabledFlag ) then
     local pregen_wand_biomes = {
         "data/scripts/biomes/coalmine.lua",
         "data/scripts/biomes/coalmine_alt.lua",
+        "data/scripts/biomes/tower.lua",
     };
     for _,entry in pairs( pregen_wand_biomes ) do
         ModLuaFileAppend( entry, "mods/gkbrkn_noita/files/gkbrkn/append/no_preset_wands.lua" );
@@ -156,7 +164,7 @@ ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noit
 --ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/killer_goo.xml" );
 --ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
 
-local selectable_classes_integration = false;
+local skip_loadout = false;
 if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
     if ModIsEnabled("starting_loadouts") then
         ModTextFileAppend( "mods/starting_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/kill_player_spawned_event.lua" );
@@ -179,7 +187,15 @@ if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
         if HasFlagPersistent( MISC.Loadouts.SelectableClassesIntegrationFlag ) then
             ModTextFileAppend( "data/selectable_classes/classes/class_list.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_integration.lua" );
             ModTextFileAppend( "data/selectable_classes/classes/class_pickup.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_extension.lua" );
-            selectable_classes_integration = true;
+            skip_loadout = true;
+        end
+    end
+
+    if ModIsEnabled("classy_framework") then
+        if HasFlagPersistent( MISC.Loadouts.ClassyFrameworkIntegrationFlag ) then
+            ModTextFileAppend( "mods/classy_framework/classes/class_list.lua","mods/gkbrkn_noita/files/gkbrkn_loadouts/classy_framework_integration.lua" );
+            ModTextFileAppend( "mods/classy_framework/class_select/class_pickup.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/classy_framework_extension.lua" );
+            skip_loadout = true;
         end
     end
 end
@@ -192,7 +208,7 @@ if HasFlagPersistent( MISC.LegendaryWands.EnabledFlag ) then dofile( "mods/gkbrk
 if HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
 
 function OnPlayerSpawned( player_entity )
-    if selectable_classes_integration then
+    if skip_loadout then
         GameAddFlagRun( FLAGS.SkipGokiLoadouts );
     end
     if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then

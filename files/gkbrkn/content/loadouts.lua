@@ -68,7 +68,7 @@ loadouts = {
         id = "gkbrkn_speedrunner", -- unique identifier
         name = "$loadout_speedrunner", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xffeeeeee, -- cape color (ABGR) *can be nil
         cape_color_edge = 0xffffffff, -- cape edge color (ABGR) *can be nil
         wands = { -- wands
@@ -117,7 +117,7 @@ loadouts = {
         id = "gkbrkn_heroic", -- unique identifier
         name = "$loadout_heroic", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff11bbff, -- cape color (ABGR)
         cape_color_edge = 0xff55eeff, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -159,7 +159,7 @@ loadouts = {
         id = "gkbrkn_unstable", -- unique identifier
         name = "$loadout_unstable", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = bit.band( 0xFF000000, math.floor( math.random() * 0xFFFFFF ) ), -- cape color (ABGR)
         cape_color_edge = bit.band( 0xFF000000, math.floor( math.random() * 0xFFFFFF ) ), -- cape edge color (ABGR)
         wands = { -- wands
@@ -222,7 +222,7 @@ loadouts = {
         id = "gkbrkn_demolitionist", -- unique identifier
         name = "$loadout_demolitionist", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF103080, -- cape color (ABGR)
         cape_color_edge = 0xFF209090, -- cape edge color (ABGR)
         wands = { -- wands
@@ -286,7 +286,7 @@ loadouts = {
         id = "gkbrkn_spark", -- unique identifier
         name = "$loadout_spark", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFFFFFF00, -- cape color (ABGR)
         cape_color_edge = 0xFFFFFFFF, -- cape edge color (ABGR)
         wands = { -- wands
@@ -351,7 +351,7 @@ loadouts = {
         id = "gkbrkn_bubble", -- unique identifier
         name = "$loadout_bubble", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFFFF6600, -- cape color (ABGR)
         cape_color_edge = 0xFFFFAA66, -- cape edge color (ABGR)
         wands = { -- wands
@@ -418,7 +418,7 @@ loadouts = {
         id = "gkbrkn_charge", -- unique identifier
         name = "$loadout_charge", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -482,7 +482,7 @@ loadouts = {
         id = "gkbrkn_alchemist", -- unique identifier
         name = "$loadout_alchemist", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -551,7 +551,7 @@ loadouts = {
         id = "gkbrkn_trickster", -- unique identifier
         name = "$loadout_trickster", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -623,7 +623,7 @@ loadouts = {
         id = "gkbrkn_treasure_hunter", -- unique identifier
         name = "$loadout_treasure_hunter", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -688,7 +688,7 @@ loadouts = {
         id = "gkbrkn_kamikaze", -- unique identifier
         name = "$loadout_kamikaze", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -754,7 +754,7 @@ loadouts = {
         id = "gkbrkn_glitter", -- unique identifier
         name = "$loadout_glitter", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFFD755BE, -- cape color (ABGR)
         cape_color_edge = 0xFFF295E0, -- cape edge color (ABGR)
         wands = { -- wands
@@ -819,7 +819,7 @@ loadouts = {
         id = "gkbrkn_zoning", -- unique identifier
         name = "$loadout_zoning", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF666666, -- cape color (ABGR)
         cape_color_edge = 0xFF333333, -- cape edge color (ABGR)
         wands = { -- wands
@@ -885,7 +885,7 @@ loadouts = {
         id = "gkbrkn_seeker", -- unique identifier
         name = "$loadout_seeker", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF666666, -- cape color (ABGR)
         cape_color_edge = 0xFF333333, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -1041,7 +1041,7 @@ loadouts = {
         id = "gkbrkn_wandsmith", -- unique identifier
         name = "$loadout_wandsmith", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF666666, -- cape color (ABGR)
         cape_color_edge = 0xFF333333, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1092,7 +1092,7 @@ loadouts = {
         id = "gkbrkn_goo_mode", -- unique identifier
         name = "$loadout_goo_mode", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF2F3249, -- cape color (ABGR)
         cape_color_edge = 0xFF7D53B0, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -1134,7 +1134,7 @@ loadouts = {
         id = "gkbrkn_duplicator", -- unique identifier
         name = "$loadout_duplicator", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1159,6 +1159,7 @@ loadouts = {
                 actions = {
                     { "GKBRKN_TIME_COMPRESSION" },
                     { "GKBRKN_SPELL_DUPLICATOR" },
+                    { "ACCELERATING_SHOT" },
                     { "HORIZONTAL_ARC" },
                     { "LIGHT_BULLET" },
                 }
@@ -1201,7 +1202,7 @@ loadouts = {
         id = "gkbrkn_conjurer", -- unique identifier
         name = "$loadout_conjurer", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1272,7 +1273,7 @@ loadouts = {
         id = "gkbrkn_convergent", -- unique identifier
         name = "$loadout_convergent", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1342,7 +1343,7 @@ loadouts = {
         id = "gkbrkn_legendary", -- unique identifier
         name = "$loadout_legendary", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1361,7 +1362,7 @@ loadouts = {
         id = "gkbrkn_knockback", -- unique identifier
         name = "$loadout_knockback", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1428,7 +1429,7 @@ loadouts = {
         id = "gkbrkn_sniper", -- unique identifier
         name = "$loadout_sniper", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -1498,7 +1499,7 @@ loadouts = {
         id = "gkbrkn_spellsword", -- unique identifier
         name = "$loadout_spellsword", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1563,7 +1564,7 @@ loadouts = {
         id = "gkbrkn_grease", -- unique identifier
         name = "$loadout_grease", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff2c5e7b, -- cape color (ABGR)
         cape_color_edge = 0xff2b937a, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1629,7 +1630,7 @@ loadouts = {
         id = "gkbrkn_toxic", -- unique identifier
         name = "$loadout_toxic", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff27c28e, -- cape color (ABGR)
         cape_color_edge = 0xff11f2d4, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -1700,7 +1701,7 @@ loadouts = {
         id = "gkbrkn_vampire", -- unique identifier
         name = "$loadout_vampire", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff3d3d3d, -- cape color (ABGR)
         cape_color_edge = 0xff00007a, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1767,7 +1768,7 @@ loadouts = {
         id = "gkbrkn_poison", -- unique identifier
         name = "$loadout_poison", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff929292, -- cape color (ABGR)
         cape_color_edge = 0xfff0ea6d, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1831,7 +1832,7 @@ loadouts = {
         id = "gkbrkn_bomb", -- unique identifier
         name = "$loadout_bomb", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff727272, -- cape color (ABGR)
         cape_color_edge = 0xff4d8da8, -- cape edge color (ABGR)
         wands ={ -- wands
@@ -1896,7 +1897,7 @@ loadouts = {
         id = "gkbrkn_melting", -- unique identifier
         name = "$loadout_melting", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff2c7b50, -- cape color (ABGR)
         cape_color_edge = 0xff3f9b69, -- cape edge color (ABGR)
         wands = { -- wands
@@ -1942,7 +1943,7 @@ loadouts = {
         id = "gkbrkn_combustion", -- unique identifier
         name = "$loadout_combustion", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff2154a9, -- cape color (ABGR)
         cape_color_edge = 0xff3570d3, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2008,7 +2009,7 @@ loadouts = {
         id = "gkbrkn_hydromancy", -- unique identifier
         name = "$loadout_hydromancy", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff7b572c, -- cape color (ABGR)
         cape_color_edge = 0xff9b703f, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2075,7 +2076,7 @@ loadouts = {
         id = "gkbrkn_critical", -- unique identifier
         name = "$loadout_critical", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff1e1a87, -- cape color (ABGR)
         cape_color_edge = 0xff2f2aa9, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2140,7 +2141,7 @@ loadouts = {
         id = "gkbrkn_geomancer", -- unique identifier
         name = "$loadout_geomancer", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff526e50, -- cape color (ABGR)
         cape_color_edge = 0xff3a4d39, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2206,7 +2207,7 @@ loadouts = {
         id = "gkbrkn_light", -- unique identifier
         name = "$loadout_light", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff4da877, -- cape color (ABGR)
         cape_color_edge = 0xff29d277, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2277,7 +2278,7 @@ loadouts = {
         id = "gkbrkn_speed", -- unique identifier
         name = "$loadout_speed", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff0c00d4, -- cape color (ABGR)
         cape_color_edge = 0xff6059e2, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2342,7 +2343,7 @@ loadouts = {
         id = "gkbrkn_rapid", -- unique identifier
         name = "$loadout_rapid", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff0c00d4, -- cape color (ABGR)
         cape_color_edge = 0xff6059e2, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2404,7 +2405,7 @@ loadouts = {
         id = "gkbrkn_eldritch", -- unique identifier
         name = "$loadout_eldritch", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff7d4e53, -- cape color (ABGR)
         cape_color_edge = 0xff6b4144, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2469,7 +2470,7 @@ loadouts = {
         id = "gkbrkn_bouncy", -- unique identifier
         name = "$loadout_bouncy", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xff00FF00, -- cape color (ABGR)
         cape_color_edge = 0xff00FF00, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2535,7 +2536,7 @@ loadouts = {
         id = "gkbrkn_lancer", -- unique identifier
         name = "$loadout_lancer", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFFFFFFFF, -- cape color (ABGR)
         cape_color_edge = 0xFFFFFFFF, -- cape edge color (ABGR)
         wands = { -- wands
@@ -2600,7 +2601,7 @@ loadouts = {
         id = "gkbrkn_debug", -- unique identifier
         name = "$loadout_debug", -- displayed loadout name
         description = "A loadout useful for development.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = nil, -- cape color (ABGR)
         cape_color_edge = nil, -- cape edge color (ABGR)
         enabled_by_default = false,
@@ -2614,16 +2615,41 @@ loadouts = {
                 },
                 stat_ranges = {
                     deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    reload_time = {-21,-21}, -- recharge time in frames
+                    fire_rate_wait = {-21,-21}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
+                    mana_charge_speed = {5000,5000}, -- mana charge speed
                     mana_max = {5000,5000}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
                 },
                 actions = {
+                    { { action="HITFX_CRITICAL_WATER" } },--{ { action="SPEED" } },
+                    { { action="HITFX_CRITICAL_WATER" } },--{ { action="MU" } },
+                    { { action="HITFX_CRITICAL_WATER" } },--{ { action="MU" } },
+                    { { action="HITFX_CRITICAL_WATER" } },--{ { action="RUBBER_BALL" } },
+                    { { action="DUPLICATE" } },--{ { action="DUPLICATE" } },
+                    { { action="MU" } },--{ { action="MU" } },
+                    { { action="CHAOTIC_ARC" } },--{ { action="HOMING_ROTATE" } },
+                    { { action="MU" } },--{ { action="SPEED" } },
+                    { { action="DUPLICATE" } },--{ { action="HITFX_CRITICAL_WATER" } },
+                    { { action="HEAVY_SHOT" } },--{ { action="MU" } },
+                    { { action="DUPLICATE" } },--{ { action="MU" } },
+                    { { action="DUPLICATE" } },--{ { action="MU" } },
+                    { { action="MU" } },--{ { action="DUPLICATE" } },
+                    { { action="RUBBER_BALL" } },--{ { action="HEAVY_SHOT" } },
+                    { { action="MU" } },--{ { action="LIGHT_SHOT" } },
+                    { { action="LIGHT_SHOT" } },--{ { action="LIGHT_SHOT" } },
+                    { { action="HOMING_ROTATE" } },--{ { action="DUPLICATE" } },
+                    { { action="LIGHT_SHOT" } },--{ { action="HEAVY_SHOT" } },
+                    { { action="ACCELERATING_SHOT" } },--{ { action="MU" } },
+                    { { action="HEAVY_SHOT" } },--{ { action="ACCELERATING_SHOT" } },
+                    { { action="MU" } },--{ { action="MU" } },
+                    { { action="PIERCING_SHOT" } },--{ { action="HEAVY_SHOT" } },
+                    { { action="HEAVY_SHOT" } },--{ { action="PIERCING_SHOT" } },
+                    { { action="MU" } },--{ { action="HEAVY_SHOT" } },
+                    { { action="MU" } },--{ { action="DUPLICATE" } },
                 }
             },
             {
@@ -2635,96 +2661,64 @@ loadouts = {
                 },
                 stat_ranges = {
                     deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
+                    reload_time = {-21,-21}, -- recharge time in frames
+                    fire_rate_wait = {-21,-21}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
+                    mana_charge_speed = {5000,5000}, -- mana charge speed
                     mana_max = {5000,5000}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { { action="HOMING_ROTATE", locked=false } },
-                    { { action="HOMING_ROTATE", locked=false } },
-                    { { action="ACCELERATING_SHOT", locked=false } },
-
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-
-                    { { action="RUBBER_BALL", locked=false } },
-                    { { action="CHAINSAW", locked=false } },
-
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-
-                    { { action="PIERCING_SHOT", locked=false } },
-                    { { action="CLIPPING_SHOT", locked=false } },
+                    { { action="BLOOD_MAGIC", locked=false } },
+                    { { action="BURST_2", locked=false } },
                     { { action="MATERIAL_WATER", locked=false } },
-                    { { action="BURN_TRAIL", locked=false } },
+                    { { action="LIGHT_BULLET", locked=false } },
+                }
+            },
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {-21,-21}, -- recharge time in frames
+                    fire_rate_wait = {-21,-21}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {5000,5000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="DIVIDE_4", locked=false } },
                     { { action="DIVIDE_10", locked=false } },
+                    { { action="DUPLICATE", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },
+                    { { action="SPEED", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="MU", locked=false } },
+                    { { action="MU", locked=false } },
+                    { { action="MU", locked=false } },
+                    { { action="MU", locked=false } },
+                    { { action="MU", locked=false } },
+                    { { action="MU", locked=false } },
+                    { { action="MU", locked=false } },
                     { { action="RUBBER_BALL", locked=false } },
-                }
-            },
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = false, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
-                    mana_max = {5000,5000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {},
-                actions = {
-                    { { action="HOMING_ROTATE", locked=false } },
+                    { { action="LIGHT_SHOT", locked=false } },
+                    { { action="PIERCING_SHOT", locked=false } },
                     { { action="ACCELERATING_SHOT", locked=false } },
-
+                    { { action="SPEED", locked=false } },
+                    { { action="HOMING_ROTATE", locked=false } },
                     { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-
-                    { { action="RUBBER_BALL", locked=false } },
-
-                    { { action="PIERCING_SHOT", locked=false } },
-                    { { action="HOMING", locked=false } },
-                    { { action="LIGHT_BULLET_TRIGGER", locked=false } },
-
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-                    { { action="OMEGA", locked=false } },
-
-                    { { action="PIERCING_SHOT", locked=false } },
-                    { { action="CLIPPING_SHOT", locked=false } },
-                    { { action="MATERIAL_WATER", locked=false } },
-                    { { action="BURN_TRAIL", locked=false } },
+                    { { action="SPEED", locked=false } },
+                    { { action="MU", locked=false } },
                 }
             },
             {
@@ -2736,45 +2730,42 @@ loadouts = {
                 },
                 stat_ranges = {
                     deck_capacity = {25,25}, -- capacity
-                    reload_time = {0,0}, -- recharge time in frames
-                    fire_rate_wait = {0,0}, -- cast delay in frames
+                    reload_time = {-21,-21}, -- recharge time in frames
+                    fire_rate_wait = {-21,-21}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {0,0}, -- mana charge speed
-                    mana_max = {1000000,1000000}, -- mana max
+                    mana_charge_speed = {5000,5000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
                 },
                 actions = {
-                    { { action="CHAINSAW", locked=false } },
-                    { { action="HOMING_ROTATE", locked=false } },
-                    { { action="HOMING_ROTATE", locked=false } },
-                    { { action="ACCELERATING_SHOT", locked=false } },
-
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-
-                    { { action="DIVIDE_4", locked=false } },
-                    { { action="DIVIDE_10", locked=false } },
-                    { { action="DUPLICATE", locked=false } },
-
-                    { { action="PIERCING_SHOT", locked=false } },
-                    { { action="MATERIAL_WATER", locked=false } },
-                    { { action="RUBBER_BALL", locked=false } },
-                    { { action="RUBBER_BALL", locked=false } },
-                    { { action="RUBBER_BALL", locked=false } },
-                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="DIVIDE_10", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
+                    { { action="DUPLICATE", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="DUPLICATE", locked=false } },--{ { action="RUBBER_BALL", locked=false } },
+                    { { action="DUPLICATE", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="DUPLICATE", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="DUPLICATE", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="HOMING_ROTATE", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="SPEED", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
+                    { { action="LIGHT_SHOT", locked=false } },--{ { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="CHAOTIC_ARC", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="PIERCING_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="ACCELERATING_SHOT", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="PIERCING_SHOT", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },--{ { action="DUPLICATE", locked=false } },
+                    { { action="ACCELERATING_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="HOMING_ROTATE", locked=false } },--{ { action="DUPLICATE", locked=false } },
+                    { { action="LIGHT_SHOT", locked=false } },--{ { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="DUPLICATE", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    --{ { action="DUPLICATE", locked=false } },
                 }
             }
         },
@@ -2787,19 +2778,29 @@ loadouts = {
         },
         perks = { -- perks
             {"UNLIMITED_SPELLS"},
-            {"ORBIT"},
-            {"SHIELD"},
-            {"PROJECTILE_REPULSION"},
         },
         actions = { -- actions
             {"LIGHT_BULLET"},
             {"LIGHT_BULLET_TRIGGER"},
             {"BUBBLESHOT_TRIGGER"},
             {"BLOOD_MAGIC"},
+            {"RUBBER_BALL"},
             {"DIVIDE_2"},
             {"DIVIDE_3"},
             {"DIVIDE_4"},
             {"DIVIDE_10"},
+            {"DIVIDE_2"},
+            {"DIVIDE_3"},
+            {"DIVIDE_4"},
+            {"DIVIDE_10"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
+            {"DUPLICATE"},
             {"CHAINSAW"},
             {"BURST_2"},
             {"BURST_3"},
@@ -2814,7 +2815,8 @@ loadouts = {
             if effect ~= nil then ComponentSetValue2( effect, "frames", -1 ); end
             local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
             if inventory2 ~= nil then
-                ComponentSetValue2( inventory2, "full_inventory_slots_y", 5 );
+                ComponentSetValue2( inventory2, "full_inventory_slots_x", 18 );
+                ComponentSetValue2( inventory2, "full_inventory_slots_y", 3 );
             end
             EntityLoad( "data/entities/items/pickup/goldnugget_10000.xml", x + 50, y - 30 );
             --EntityAddComponent( player, "LuaComponent", {
@@ -2827,7 +2829,7 @@ loadouts = {
     { id = "gkbrkn_gunner", -- unique identifier
         name = "$loadout_gunner", -- displayed loadout name
         description = "A default loadout description",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         cape_color = 0xFF333333, -- cape color (ABGR)
         cape_color_edge = 0xFF666666, -- cape edge color (ABGR)
         wands = { -- wands

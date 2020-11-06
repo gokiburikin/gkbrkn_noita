@@ -57,6 +57,7 @@ function load_dynamic_badge ( key, append_bool_table )
             ComponentSetValue2( ui_icon, "icon_sprite_file", GameTextGetTranslatedOrNot("$"..badge_image) );
             ComponentSetValue2( ui_icon, "name", GameTextGetTranslatedOrNot("$"..badge_name) );
             ComponentSetValue2( ui_icon, "description", GameTextGetTranslatedOrNot("$"..badge_description) );
+            ComponentSetValue2( ui_icon, "is_perk", false );
         end
     end
     return badge;
@@ -82,13 +83,13 @@ function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, 
         usable_by_enemies   = usable_by_enemies,
         func                = pickup_function,
         deprecated          = deprecated,
-        author              = "$ui_author_name_goki_dev" or author,
+        author              = "goki_dev" or author,
         local_content       = true,
         stackable           = stackable
     };
 end
 
-function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, deprecated, icon_path, author )
+function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, deprecated, icon_path, author, related_projectiles )
     return {
         id = action_id,
         name 		        = "$action_name_gkbrkn_"..key,
@@ -104,8 +105,9 @@ function generate_action_entry( action_id, key, action_type, spawn_level, spawn_
         custom_xml_file     = custom_xml,
         action              = action_function,
         deprecated          = deprecated,
-        author              = "$ui_author_name_goki_dev" or author,
-        local_content       = true
+        author              = "goki_dev" or author,
+        related_projectiles = related_projectiles,
+        local_content       = true,
     };
 end
 
@@ -470,6 +472,29 @@ function find_polymorphed_players()
     return polymorphed_players;
 end
 
+function normalize( value, start_value, end_value )
+    width       = end_value - start_value;
+    offsetValue = value - start_value ;
+    return ( offsetValue - ( math.floor( offsetValue / width ) * width ) ) + start_value;
+end
+
+-- TODO fix
+function wrap_angle(angle)
+    local PI = math.pi;
+    local TWO_PI = math.pi * 2;
+	if angle > 0 then
+		angle = angle % TWO_PI
+	else
+		angle = -(math.abs(angle)%TWO_PI)
+	end
+	if angle > PI then
+		angle = angle - TWO_PI
+	elseif angle < -PI then
+		angle = angle + TWO_PI
+	end
+	return angle
+end
+
 function ease_angle( angle, target_angle, easing )
     local dir = (angle - target_angle) / (math.pi*2);
     dir = dir - math.floor(dir + 0.5);
@@ -560,42 +585,6 @@ function copy_component( left, right )
     for k,v in pairs( ComponentGetMembers( left ) ) do
         ComponentSetValue2( right, k, ComponentGetValue2( left, k ) )
     end
-end
-
-function update_sprite_image( entity, sprite_component, new_image_filepath )
---[[
-    if sprite_component then
-        local new_sprite_component = EntityAddComponent2( entity, "SpriteComponent" );
-        ComponentSetValue2( sprite, "image_file", pack_data.image_filepath );
-        copy_component( sprite_component, new_sprite_component );
-        EntityRemoveComponent( sprite_component );
-    end
-    ]]
-    local new_sprite                             = EntityAddComponent2( entity, "SpriteComponent", {
-        image_file                               = new_image_filepath,
-        ui_is_parent                             = ComponentGetValue2(sprite_component,"ui_is_parent"),
-        is_text_sprite                           = ComponentGetValue2(sprite_component,"is_text_sprite"),
-        offset_x                                 = ComponentGetValue2(sprite_component,"offset_x"),
-        offset_y                                 = ComponentGetValue2(sprite_component,"offset_y"),
-        alpha                                    = ComponentGetValue2(sprite_component,"alpha"),
-        visible                                  = ComponentGetValue2(sprite_component,"visible"),
-        emissive                                 = ComponentGetValue2(sprite_component,"emissive"),
-        additive                                 = ComponentGetValue2(sprite_component,"additive"),
-        fog_of_war_hole                          = ComponentGetValue2(sprite_component,"fog_of_war_hole"),
-        smooth_filtering                         = ComponentGetValue2(sprite_component,"smooth_filtering"),
-        rect_animation                           = ComponentGetValue2(sprite_component,"rect_animation"),
-        next_rect_animation                      = ComponentGetValue2(sprite_component,"next_rect_animation"),
-        text                                     = ComponentGetValue2(sprite_component,"text"),
-        z_index                                  = ComponentGetValue2(sprite_component,"z_index"),
-        update_transform                         = ComponentGetValue2(sprite_component,"update_transform"),
-        update_transform_rotation                = ComponentGetValue2(sprite_component,"update_transform_rotation"),
-        kill_entity_after_finished               = ComponentGetValue2(sprite_component,"kill_entity_after_finished"),
-        has_special_scale                        = ComponentGetValue2(sprite_component,"has_special_scale"),
-        special_scale_x                          = ComponentGetValue2(sprite_component,"special_scale_x"),
-        special_scale_y                          = ComponentGetValue2(sprite_component,"special_scale_y"),
-        never_ragdollify_on_death                = ComponentGetValue2(sprite_component,"never_ragdollify_on_death")
-    } );
-    EntityRemoveComponent( entity, sprite_component );
 end
 
 function sort_keyed_table( keyed_table, sort_function )

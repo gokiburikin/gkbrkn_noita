@@ -102,6 +102,11 @@ function register_action( state )
 
     gkbrkn._register_action( c );
     state_per_cast( c );
+    --if not reflecting then
+    --    for k,v in pairs(c) do
+    --        print(k.."/"..tostring(v));
+    --    end
+    --end
     return state;
 end
 

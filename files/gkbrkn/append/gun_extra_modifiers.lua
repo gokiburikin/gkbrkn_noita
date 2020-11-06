@@ -20,7 +20,7 @@ end
 
 extra_modifiers["matran"] = function()
     local data = hand[#hand];
-    if data.mana ~= nil then
+    if data and data.mana ~= nil then
         mana = mana + data.mana * 0.5;
     end
 end

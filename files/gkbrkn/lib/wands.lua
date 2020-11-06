@@ -40,6 +40,51 @@ function wand_get_actions( wand )
     return actions;
 end
 
+function wand_remove_actions( wand )
+    local actions = {};
+    local children = EntityGetAllChildren( wand ) or {};
+    for i,v in ipairs( children ) do
+        local item = EntityGetFirstComponentIncludingDisabled( v, "ItemComponent" );
+        local item_action = EntityGetFirstComponentIncludingDisabled( v, "ItemActionComponent" );
+        if item and item_action then
+            EntityRemoveFromParent( v );
+        end
+    end
+    return actions;
+end
+
+function wand_shuffle_actions( wand )
+    local actions = {};
+    local actions_data = {};
+    local children = EntityGetAllChildren( wand ) or {};
+    for i,v in ipairs( children ) do
+        local item = EntityGetFirstComponentIncludingDisabled( v, "ItemComponent" );
+        local item_action = EntityGetFirstComponentIncludingDisabled( v, "ItemActionComponent" );
+        if item and item_action then
+            local action_id = ComponentGetValue2( item_action, "action_id" );
+            local permanent = ComponentGetValue2( item, "permanently_attached" );
+            local locked = ComponentGetValue2( item, "is_frozen" );
+            local x, y = ComponentGetValue2( item, "inventory_slot" );
+            if action_id ~= nil and permanent ~= true and locked ~= true then
+                table.insert( actions, { action_entity = v, item = item } );
+                table.insert( actions_data, { x = x, y = y } );
+            end
+        end
+    end
+    local wx, wy = EntityGetTransform( wand );
+    SetRandomSeed( GameGetFrameNum(), wx + wy );
+    local actions_data_shuffled = {};
+    for i, v in ipairs(actions_data) do
+        local pos = Random( 1, #actions_data_shuffled + 1 );
+        table.insert( actions_data_shuffled, pos, v )
+    end
+    for i=1,#actions do
+        local action = actions[i];
+        local action_data = actions_data_shuffled[i];
+        ComponentSetValue2( action.item, "inventory_slot", action_data.x, action_data.y );
+    end
+end
+
 function wand_copy_actions( base_wand, copy_wand )
     local actions = wand_get_actions( base_wand );
     for index,action_data in pairs( actions ) do
@@ -82,6 +127,7 @@ function wand_copy( base_wand, copy_wand, copy_sprite, copy_actions )
         ComponentSetValue2( copy_hotspot, "offset", base_hotspot_x, base_hotspot_y );
     end
     if copy_actions ~= false then
+        wand_remove_actions( copy_wand );
         wand_copy_actions( base_wand, copy_wand );
     end
 end

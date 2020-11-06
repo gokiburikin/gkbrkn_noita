@@ -108,5 +108,11 @@
 		>
 	</LuaComponent>
 
+  <VariableStorageComponent
+		name="projectile_file"
+		value_string="mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile.xml"
+		>
+	</VariableStorageComponent>
+
 </Entity>
 

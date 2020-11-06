@@ -25,7 +25,7 @@ legendary_wands = {
         id = "blink_back",
         name = "Wormhole",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -82,7 +82,7 @@ legendary_wands = {
                 { { action="TELEPORT_CAST", locked=false } },
                 { { action="DAMAGE", locked=false } },
                 { { action="GKBRKN_TIME_COMPRESSION", locked=false } },
-                { { action="ADD_EXPIRATION_TRIGGER", locked=false } },
+                { { action="ADD_DEATH_TRIGGER", locked=false } },
                 { { action="TELEPORT_PROJECTILE", locked=false } },
             }
         }
@@ -124,7 +124,7 @@ legendary_wands = {
         id = "endless_alchemy",
         name = "Endless Alchemy",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -152,7 +152,7 @@ legendary_wands = {
         id = "pocket_black_hole",
         name = "Pocket Black Hole",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -180,7 +180,7 @@ legendary_wands = {
     id = "magic_popcorn",
     name = "Magic Popcorn",
     description = "A default unique wand description.",
-    author = "$ui_author_name_goki_dev",
+    author = "goki_dev",
     wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -201,7 +201,7 @@ legendary_wands = {
             actions = {
                 { { action="KNOCKBACK", locked=true } },
                 { { action="GRAVITY", locked=true } },
-                { { action="GKBRKN_TRIGGER_TIMER", locked=true } },
+                { { action="ADD_TIMER", locked=true } },
                 { { action="BUBBLESHOT", locked=true } },
                 { { action="GRAVITY_ANTI", locked=true } },
                 { { action="BUBBLESHOT", locked=false } },
@@ -212,7 +212,7 @@ legendary_wands = {
         id = "spirit_familiar",
         name = "Spirit Familiar",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -248,7 +248,7 @@ legendary_wands = {
         id = "noitius",
         name = "Noitius",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -283,7 +283,7 @@ legendary_wands = {
         id = "matra_magic",
         name = "Matra Magic",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -317,7 +317,7 @@ legendary_wands = {
         id = "tabula_rasa",
         name = "Tabula Rasa",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -395,7 +395,7 @@ legendary_wands = {
             actions = {
                 { { action="GKBRKN_BOUND_SHOT", locked=true } },
                 { { action="GKBRKN_GUIDED_SHOT", locked=true } },
-                { { action="ADD_EXPIRATION_TRIGGER", locked=true } },
+                { { action="ADD_DEATH_TRIGGER", locked=true } },
                 { { action="LIGHT", locked=true } },
                 { { action="SLIMEBALL", locked=true } },
                 { { action="EXPLOSION", locked=true } },
@@ -616,7 +616,7 @@ legendary_wands = {
         id = "twin_spiral",
         name = "Twin Spiral",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -651,7 +651,7 @@ legendary_wands = {
         id = "wormy",
         name = "Wormy",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -766,7 +766,7 @@ legendary_wands = {
         id = "sparkler",
         name = "Sparkler",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -837,7 +837,7 @@ legendary_wands = {
         id = "arcane_volley",
         name = "Arcane Volley",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -864,7 +864,7 @@ legendary_wands = {
                 { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
                 { { action="HORIZONTAL_ARC", locked=true } },
                 { { action="LONG_DISTANCE_CAST", locked=true } },
-                { { action="ADD_EXPIRATION_TRIGGER", locked=true } },
+                { { action="ADD_DEATH_TRIGGER", locked=true } },
                 { { action="DIGGER", locked=true } },
                 { { action="GKBRKN_FORMATION_STACK", locked=false } },
                 { { action="LIGHT_BULLET", locked=false } },
@@ -877,7 +877,7 @@ legendary_wands = {
         id = "spell_burst",
         name = "Spell Burst",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -896,7 +896,7 @@ legendary_wands = {
             permanent_actions = {
             },
             actions = {
-                { { action="GKBRKN_TRIGGER_HIT", locked=true } },
+                { { action="ADD_TRIGGER", locked=true } },
                 { { action="LIGHT_BULLET", locked=false } },
                 { { action="GKBRKN_CLINGING_SHOT", locked=true } },
                 { { action="LIFETIME_DOWN", locked=false } },
@@ -963,7 +963,7 @@ legendary_wands = {
             },
             actions = {
                 { { action="ENERGY_SHIELD_SECTOR", locked=true } },
-                { { action="GKBRKN_TRIGGER_TIMER", locked=true } },
+                { { action="ADD_TRIMER", locked=true } },
                 { { action="BULLET", locked=false } },
                 { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
                 { { action="GKBRKN_TRIPLE_CAST", locked=true } },
@@ -1008,7 +1008,7 @@ legendary_wands = {
         id = "creation_red",
         name = "Creation: Red",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle
@@ -1039,7 +1039,7 @@ legendary_wands = {
         id = "creation_green",
         name = "Creation: Green",
         description = "A default unique wand description.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = true, -- shuffle
@@ -1075,7 +1075,7 @@ legendary_wands = {
         id = "projectile_thrower",
         name = "Projectile Thrower",
         description = "Every thrower is personalized.",
-        author = "$ui_author_name_goki_dev",
+        author = "goki_dev",
         wand = {
             stats = {
                 shuffle_deck_when_empty = false, -- shuffle

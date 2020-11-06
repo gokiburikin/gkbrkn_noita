@@ -1,0 +1,20 @@
+<Sprite 
+  filename="mods/gkbrkn_noita/files/gkbrkn/actions/matra_magic/projectile.png" 
+  offset_x="2" 
+  offset_y="3.5" >
+
+  <RectAnimation 
+    frame_count="1" 
+    frame_height="7" 
+    frame_wait="0.2" 
+    frame_width="12" 
+    frames_per_row="10" 
+    name="default" 
+    pos_x="0" 
+    pos_y="0" 
+    shrink_by_one_pixel="1" >
+
+  </RectAnimation>
+
+</Sprite>
+

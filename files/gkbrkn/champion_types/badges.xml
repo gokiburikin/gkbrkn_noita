@@ -2,7 +2,8 @@
 <InheritTransformComponent>
 </InheritTransformComponent>
 <LuaComponent
-    remove_after_executed="1"
+    execute_on_added="1"
+    execute_every_n_frame="60"
     script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/badges_update.lua"
 >
 </LuaComponent>

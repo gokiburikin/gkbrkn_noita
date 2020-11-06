@@ -210,7 +210,7 @@ table.insert( perk_list,
                 ComponentSetValue2( dataComponent, "minimum_knockback_force", 100000 );
             end
         end
-	end, nil, nil, false
+	end, true, nil, false
 ));
 
 table.insert( perk_list,
@@ -280,7 +280,7 @@ table.insert( perk_list,
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_MANA_MASTERY", "mana_mastery", false, function( entity_perk_item, entity_who_picked, item_name )
         EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_mana_mastery", 0.0, function( value ) return value + 1.0; end );
-	end, nil, nil, false
+	end, true, nil, false
 ) );
 
 table.insert( perk_list,

@@ -624,3 +624,15 @@ function WeightedRandomTable( entries )
         random = random - v;
     end
 end
+
+function EntityHasScript( entity, filepath, script_type )
+    if script_type == nil then
+        script_type = "script_source_file";
+    end
+    for _,lua_component in pairs( EntityGetComponentIncludingDisabled(entity,"LuaComponent") or {}) do
+        if ComponentGetValue2( lua_component, script_type ) == filepath then
+            return true;
+        end
+    end
+    return false;
+end

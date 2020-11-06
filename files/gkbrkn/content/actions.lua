@@ -3,7 +3,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 --[[ NORMAL ]]
     table.insert( actions, generate_action_entry(
         "GKBRKN_DUMMY_SHOT", "dummy_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 10, 0, -1,
+        "1,3,5", "0.4,0.4,0.4", 10, 0, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/dummy_shot/projectile_extra_entity.xml,";
@@ -26,7 +26,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_SEPARATOR", "separator", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.3,0.3,0.3,0.3,0.3,0.3,0.3", 210, 0, -1,
+        "4,5,6", "0.3,0.3,0.3", 210, 0, -1,
         nil, 
         function()
             if reflecting then return; end
@@ -59,7 +59,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_BARRIER_TRAIL", "barrier_trail", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7,0.7,0.7", 200, 20, -1,
+        "2,3,4,5", "0.7,0.7,0.7,0.7", 200, 20, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/barrier_trail/wall_builder.xml,";
@@ -80,7 +80,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_BURST_FIRE", "burst_fire", ACTION_TYPE_STATIC_PROJECTILE,
-        "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
+        "0,1,2,3,4,5,6", "0.9,0.9,0.9,0.9,0.9,0.9,0.9", 300, 9, -1,
         nil,
         function()
             --c.fire_rate_wait = c.fire_rate_wait - 5;
@@ -204,7 +204,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_CARRY_SHOT", "carry_shot", ACTION_TYPE_UTILITY,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 160, 4, -1,
+        "2,3,4,5", "1,1,1,1", 160, 4, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/carry_shot/projectile_extra_entity.xml,";
@@ -214,7 +214,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_CHAIN_CAST", "chain_cast", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.33,0.33,0.33,0.33,0.33,0.33,0.33", 200, 50, -1,
+        "4,5,6", "0.6,0.6,0.6", 200, 50, -1,
         nil,
         function()
             c.speed_multiplier = c.speed_multiplier * 0.50;
@@ -227,7 +227,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_CHAOTIC_BURST", "chaotic_burst", ACTION_TYPE_PROJECTILE,
-        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 260, 42, -1,
+        "3,4,5,6", "1,1,1,1", 260, 42, -1,
         nil,
         function()
             add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile.xml" );
@@ -235,7 +235,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
             add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile.xml" );
             add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile.xml" );
             add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile.xml" );
-        end
+        end, nil, nil, nil,
+		{"mods/gkbrkn_noita/files/gkbrkn/actions/chaotic_burst/projectile.xml",5}
     ) );
 
     table.insert( actions, generate_action_entry(
@@ -271,7 +272,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_CURIOUS_SHOT", "curious_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7,0.7,0.7", 130, 0, -1,
+        "0,1,2,3,4,5,6", "0.3,0.3,0.3,0.3,0.3,0.3,0.3", 130, 0, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/curious_shot/projectile_extra_entity.xml,";
@@ -302,7 +303,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_DESTRUCTIVE_SHOT", "destructive_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 250, 30, -1,
+        "3,4,5,6", "0.5,0.5,0.5,0.5", 250, 30, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/destructive_shot/projectile_extra_entity.xml,";
@@ -311,8 +312,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
     ));
 
     table.insert( actions, generate_action_entry(
-        "GKBRKN_DOUBLE_CAST", "double_cast", ACTION_TYPE_OTHER,
-        "0,1,2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7,0.7,0.7", 400, 0, -1,
+        "GKBRKN_DOUBLE_CAST", "double_cast", ACTION_TYPE_MODIFIER,
+        "2,3,4", "0.7,0.7,0.7", 400, 0, -1,
         nil,
         function()
             if reflecting then return; end
@@ -331,7 +332,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_DUPLICAST", "duplicast", ACTION_TYPE_OTHER,
-        "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 100, 5, -1,
+        "4,5,6", "0.8,0.8,0.8", 100, 5, -1,
         nil,
         function()
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 5.00;
@@ -344,7 +345,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FALSE_SPELL", "false_spell", ACTION_TYPE_PROJECTILE,
-        "0,1,2,3,4,5,6", "0.1,0.1,0.1,0.1,0.1,0.1,0.1", 90, 1, -1,
+        "0,1", "0.1,0.1", 90, 1, -1,
         nil,
         function()
             add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/false_spell/projectile.xml" );
@@ -363,7 +364,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FEATHER_SHOT", "feather_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 100, 3, -1,
+        "1,3,5", "0.3,0.3,0.3", 100, 3, -1,
         nil,
         function()
             c.lifetime_add = c.lifetime_add + 21;
@@ -394,7 +395,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FRACTURE", "fracture", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 300, 9, -1,
+        "2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7", 300, 9, -1,
         nil,    
         function()
             local old_c = c;
@@ -444,7 +445,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_GLITTERING_TRAIL", "glittering_trail", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7,0.7,0.7", 120, 10, -1,
+        "2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7", 120, 10, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/glittering_trail/projectile_extra_entity.xml,";
@@ -464,7 +465,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_GUIDED_SHOT", "guided_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 160, 8, -1,
+        "1,2,3", "0.4,0.4,0.4", 160, 8, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/guided_shot/projectile_extra_entity.xml,";
@@ -474,7 +475,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_HYPER_BOUNCE", "hyper_bounce", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 500, 10, -1,
+        "2,3,4", "0.8,0.8,0.8", 500, 10, -1,
         nil,
         function()
             c.bounces = c.bounces + 100;
@@ -494,17 +495,16 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_MAGIC_LIGHT", "magic_light", ACTION_TYPE_PASSIVE,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 240, 0, -1,
+        "0,1,2", "1,1,1", 240, 0, -1,
         "mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/custom_card.xml",
         function()
             draw_actions( 1, true );
         end
     ) );
 
-    dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
     table.insert( actions, generate_action_entry(
-        "GKBRKN_MANA_EFFICIENCY", "mana_efficiency", ACTION_TYPE_UTILITY,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 150, 0, -1,
+        "GKBRKN_MANA_EFFICIENCY", "mana_efficiency", ACTION_TYPE_MODIFIER,
+        "3,4,5,6", "0.2,0.2,0.2,0.2", 150, 0, -1,
         nil,
         function()
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 0.50;
@@ -549,7 +549,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_MODIFICATION_FIELD", "modification_field", ACTION_TYPE_STATIC_PROJECTILE,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 200, 50, 3,
+        "0,1,2,3", "1,1,1,1", 200, 50, 3,
         nil,
         function()
             add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/modification_field/projectile.xml" );
@@ -580,7 +580,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_NUGGET_SHOT", "nugget_shot", ACTION_TYPE_PROJECTILE,
-        "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 1000, 30, -1,
+        "2,3,4,5", "0.6,0.6,0.6,0.6", 1000, 30, -1,
         nil,
         function()
             local shooter = GetUpdatedEntityID();
@@ -598,7 +598,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_ORDER_DECK", "order_deck", ACTION_TYPE_PASSIVE,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 100, 7, -1,
+        "0,1,2,3,4", "1,1,1,1,1", 100, 7, -1,
         "mods/gkbrkn_noita/files/gkbrkn/actions/order_deck/custom_card.xml",
         function()
             draw_actions( 1, true );
@@ -607,7 +607,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PAPER_SHOT", "paper_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 20, -5, -1,
+        "0,1,2,3,4", "0.5,0.4,0.3,0.2,0.1", 20, -5, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/paper_shot/projectile_extra_entity.xml,";
@@ -627,7 +627,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PATH_CORRECTION", "path_correction", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 250, 30, -1,
+        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 250, 30, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/path_correction/projectile_extra_entity.xml,";
@@ -638,7 +638,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PERFECT_CRITICAL", "perfect_critical", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 300, 20, -1,
+        "0,1,2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7,0.7,0.7", 300, 20, -1,
         nil,
         function()
             c.damage_critical_multiplier = math.max( 1, c.damage_critical_multiplier ) + 1;
@@ -648,17 +648,19 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PERFORATING_SHOT", "perforating_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.7,0.7,0.7,0.7,0.7,0.7,0.7", 210, 9, -1,
+        "2,3,4,5", "0.7,0.7,0.7,0.7", 210, 9, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/perforating_shot/projectile_extra_entity.xml,";
+			c.gore_particles = c.gore_particles + 20;
+            c.damage_projectile_add = c.damage_projectile_add + 0.12;
             draw_actions( 1, true );
         end
     ) );
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PERSISTENT_SHOT", "persistent_shot", ACTION_TYPE_DRAW_MANY,
-        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 160, 17, -1,
+        "0,1,2,3,4", "0.4,0.4,0.4,0.4,0.4", 160, 17, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/persistent_shot/projectile_extra_entity.xml,";
@@ -679,7 +681,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_POWER_SHOT", "power_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 250, 9, -1,
+        "0,1,2,3,4,5,6", "0.2,0.4,0.6,0.8,1,1,1", 250, 9, -1,
         nil,
         function()
             c.damage_projectile_add = c.damage_projectile_add + 0.24;
@@ -690,7 +692,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_EXTRA_PROJECTILE", "extra_projectile", ACTION_TYPE_OTHER,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 320, 12, -1,
+        "0,1,2,3,4,5,6", "0.2,0.4,0.6,0.8,1,1,1", 320, 12, -1,
         nil,
         function()
             c.fire_rate_wait = c.fire_rate_wait + 6;
@@ -703,7 +705,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PROJECTILE_BURST", "projectile_burst", ACTION_TYPE_OTHER,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 480, 30, -1,
+        "3,4,5,6", "0.2,0.4,0.6,0.8", 480, 30, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_burst/projectile_extra_entity.xml,";
@@ -730,7 +732,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PROXIMITY_BURST", "proximity_burst", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 300, 33, -1,
+        "0,1,2,3", "0.2,0.2,0.2,0.2", 300, 33, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/proximity_burst/projectile_extra_entity.xml,";
@@ -744,7 +746,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_RAPID_SHOT", "rapid_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 200, 2, -1,
+        "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 200, 2, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/rapid_shot/projectile_extra_entity.xml,";
@@ -777,7 +779,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_SEEKER_SHOT", "seeker_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "1.0,1.0,1.0,1.0,1.0,1.0,1.0", 280, 20, -1,
+        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 280, 20, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/seeker_shot/projectile_extra_entity.xml,";
@@ -825,7 +827,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_SPEED_DOWN", "speed_down", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.8,0.8,0.8,0.8,0.8,0.8,0.8", 50, -3, -1,
+        "1,2,3,4", "0.8,0.8,0.8,0.8", 50, -3, -1,
         nil,
         function()
             c.speed_multiplier = c.speed_multiplier * 0.40;
@@ -924,7 +926,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_STORED_SHOT", "stored_shot", ACTION_TYPE_STATIC_PROJECTILE,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 160, 4, -1,
+        "0,1,2,3,4,5,6", "0.3,0.3,0.3,0.3,0.3,0.3,0.3", 160, 4, -1,
         nil,
         function()
             add_projectile_trigger_death( "mods/gkbrkn_noita/files/gkbrkn/actions/stored_shot/projectile.xml", 1 );
@@ -993,8 +995,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
     ) );
 
     table.insert( actions, generate_action_entry(
-        "GKBRKN_TRIPLE_CAST", "triple_cast", ACTION_TYPE_OTHER,
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 500, 0, -1,
+        "GKBRKN_TRIPLE_CAST", "triple_cast", ACTION_TYPE_MODIFIER,
+        "3,4,5", "0.5,0.5,0.5", 500, 0, -1,
         nil,
         function()
             if reflecting then return; end
@@ -1004,12 +1006,11 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_ZAP", "zap", ACTION_TYPE_PROJECTILE,
-        "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 170, 8, -1,
+        "1,3,4", "1,1,1", 170, 8, -1,
         "mods/gkbrkn_noita/files/gkbrkn/actions/zap/custom_card.xml",
         function()
             c.fire_rate_wait = c.fire_rate_wait - 5;
             current_reload_time = current_reload_time - 5;
-            --add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/zap/projectile.xml" );
             
             if reflecting then 
                 Reflection_RegisterProjectile( "mods/gkbrkn_noita/files/gkbrkn/actions/zap/projectile.xml" );
@@ -1097,12 +1098,13 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
                 EndTrigger();
                 EndProjectile();
             end
-        end
+        end, nil, nil, nil,
+		{"mods/gkbrkn_noita/files/gkbrkn/actions/zap/projectile.xml",6}
     ) );
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_ZERO_GRAVITY", "zero_gravity", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 100, 3, -1,
+        "2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5", 100, 3, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/zero_gravity/projectile_extra_entity.xml,";
@@ -1241,7 +1243,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
                 BeginProjectile( projectile_path );
                 EndProjectile();
                 gkbrkn.register_action_callback = function( state )
-                    print(" register callbsck")
+                    print(" register callback")
                     gkbrkn.register_action_callback = old_register_action_callback;
                     state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename..trigger_repeat_group..",";
                     state.extra_entities = "mods/gkbrkn_noita/files/gkbrkn/actions/trigger_repeat/projectile_extra_entity.xml";
@@ -1269,7 +1271,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_AREA_SHOT", "area_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 150, 4, -1,
+        "2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5", 150, 4, -1,
         nil,
         function()
             if not c.extra_entities:find("mods/gkbrkn_noita/files/gkbrkn/actions/area_shot/projectile_extra_entity.xml_unique,") then
@@ -1283,7 +1285,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_ANCHORED_SHOT", "anchored_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 150, 6, -1,
+        "0,1,2", "0.5,0.5,0.5", 150, 6, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/anchored_shot/projectile_extra_entity.xml,";
@@ -1326,7 +1328,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FORMATION_STACK", "formation_stack", ACTION_TYPE_DRAW_MANY,
-        "0,1,2,3,4,5,6", "1,1,1,1,1,1,1", 160, 2, -1,
+        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 160, 2, -1,
         nil,
         function()
             capture_projectile_draw( "formation_stack", 3 );
@@ -1335,7 +1337,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_LINK_SHOT", "link_shot", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 190, 7, -1,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 190, 7, -1,
         nil,
         function()
             capture_projectile_draw( "link_shot", 2 );
@@ -1372,17 +1374,29 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_TRAILING_SHOT", "trailing_shot", ACTION_TYPE_DRAW_MANY, 
-        "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 10, 5, -1,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 5, -1,
         nil,
         function()
             capture_projectile_draw( "trailing_shot", 4 );
         end
     ) );
 
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_MATRA_MAGIC", "matra_magic", ACTION_TYPE_PROJECTILE,
+        "3,4,5,6", "1,1,1,1", 180, 52, -1,
+        nil,
+        function()
+            add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/matra_magic/projectile.xml" );
+			c.fire_rate_wait = c.fire_rate_wait + 33;
+			current_reload_time = current_reload_time + 33;
+        end, nil, nil, nil,
+		{"mods/gkbrkn_noita/files/gkbrkn/actions/matra_magic/projectile.xml"}
+    ) );
+
 --[[ SUPERS ]]
     table.insert( actions, generate_action_entry(
         "GKBRKN_CONTROL", "control", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 10, 3, -1,
+        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 10, 3, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/control/projectile_extra_entity.xml,";
@@ -1392,7 +1406,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_CLINGING_SHOT", "clinging_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 30, -1,
+        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 30, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/clinging_shot/projectile_extra_entity.xml,";
@@ -1402,7 +1416,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FOCUSED_SHOT", "focused_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 500, 20, -1,
+        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 500, 20, -1,
         nil,
         function()
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.0;
@@ -1415,7 +1429,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_TIME_SPLIT", "time_split", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 140, 4, -1,
+        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 140, 4, -1,
         nil,
         function()
             local sum = (c.fire_rate_wait + current_reload_time) * 0.5;
@@ -1427,10 +1441,26 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_BOUND_SHOT", "bound_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 90, -1,
+        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 90, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/bound_shot/projectile_extra_entity.xml,";
             draw_actions( 1, true );
         end
     ) );
+
+--[[
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_TEST_SHOT", "test_shot", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 90, -1,
+        nil,
+        function()
+            if not reflecting then
+                for k,v in pairs(c) do
+                    print(k.."/"..tostring(v));
+                end
+            end
+        end
+    ) );
+]]
+    

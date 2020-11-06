@@ -111,5 +111,11 @@
 		>
     </ElectricitySourceComponent>
 
+    <VariableStorageComponent
+		name="projectile_file"
+		value_string="mods/gkbrkn_noita/files/gkbrkn/actions/zap/projectile.xml"
+		>
+	</VariableStorageComponent>
+
 </Entity>
 
