@@ -31,8 +31,11 @@ FLAGS = {
     EnemyInvincibilityFrames = "gkbrkn_enemy_invincibility_frames",
     EnemyIntangibilityFrames = "gkbrkn_enemy_intangibility_frames",
     SkipGokiLoadouts = "gkbrkn_skip_goki_loadouts",
+    FixLoadoutIntegration = "gkbrkn_fix_loadout_integration",
+    DelayInit = "gkbrkn_delay_init",
     DisableRandomSpells = "gkbrkn_game_modifier_disable_random_spells",
     GenerateRandomSpellbooks = "gkbrkn_game_modifier_generate_random_spellbooks",
     RebalanceShops = "gkbrkn_rebalance_shops",
     UberBoss = "gkbrkn_uber_boss",
+    PolymorphImmunity = "gkbrkn_polymorph_immunity",
 }

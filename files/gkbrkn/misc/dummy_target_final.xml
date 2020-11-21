@@ -58,16 +58,18 @@
 	</DamageModelComponent>
 
     <HitboxComponent
-		aabb_min_x="-10.5"
-		aabb_max_x="10.5"
-		aabb_min_y="-13"
-		aabb_max_y="13"
+		aabb_min_x="-25"
+		aabb_max_x="25"
+		aabb_min_y="-25"
+		aabb_max_y="25"
 	>
 	</HitboxComponent>
+    <LuaComponent script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua"></LuaComponent>
     <LuaComponent script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"></LuaComponent>
     <LuaComponent script_death="mods/gkbrkn_noita/files/gkbrkn/misc/respawn_dummy.lua"></LuaComponent>
 	<VariableStorageComponent name="gkbrkn_always_show_damage_numbers"/>
 	<VariableStorageComponent name="gkbrkn_no_health_bar"/>
+	<VariableStorageComponent name="gkbrkn_no_custom_damage_numbers"/>
 	
 	<GenomeDataComponent 
 		herd_id="orcs"
@@ -76,7 +78,27 @@
 	</GenomeDataComponent>
     <SpriteAnimatorComponent/>
 	<StatusEffectDataComponent/>
-	<Entity>
+	<Entity serialize="0" >
+		<InheritTransformComponent only_position="1"/>
+		<SpriteComponent 
+			_tags="enabled_in_world,gkbrkn_custom_damage_number,ui,no_hitbox"
+			image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_damage.xml"
+			emissive="1"
+			is_text_sprite="1"
+			offset_x="0"
+			offset_y="0"
+			update_transform="1" 
+			update_transform_rotation="0"
+			text=""
+			has_special_scale="1"
+			special_scale_x="0.6667"
+			special_scale_y="0.6667"
+			z_index="-9000"
+			never_ragdollify_on_death="1"
+		/>
+		<LuaComponent execute_every_n_frame="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers_text.lua" />
+	</Entity>
+	<Entity serialize="0" >
 		<InheritTransformComponent only_position="1"></InheritTransformComponent>
 		<SpriteComponent 
 			_tags="enabled_in_world,gkbrkn_dps_tracker"

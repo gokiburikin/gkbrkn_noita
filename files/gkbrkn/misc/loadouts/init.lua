@@ -16,7 +16,7 @@ if HasFlagPersistent( MISC.Loadouts.EnabledFlag ) and not GameHasFlagRun( FLAGS.
         local loadout_name = loadout_data.name;
         loadout_name = loadout_name:gsub( "TYPE", spellcaster_types[spellcaster_types_rnd] );
 
-       handle_loadout( player_entity, loadout_data );
+        handle_loadout( player_entity, loadout_data );
 
         if loadout_data.custom_message == nil then
             local note = "";

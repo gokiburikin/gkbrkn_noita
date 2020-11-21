@@ -57,7 +57,7 @@ function load_dynamic_badge ( key, append_bool_table )
             ComponentSetValue2( ui_icon, "icon_sprite_file", GameTextGetTranslatedOrNot("$"..badge_image) );
             ComponentSetValue2( ui_icon, "name", GameTextGetTranslatedOrNot("$"..badge_name) );
             ComponentSetValue2( ui_icon, "description", GameTextGetTranslatedOrNot("$"..badge_description) );
-            ComponentSetValue2( ui_icon, "is_perk", false );
+            ComponentSetValue2( ui_icon, "is_perk", true );
         end
     end
     return badge;
@@ -393,7 +393,12 @@ function entity_draw_health_bar( entity, frames )
         local x, y = EntityGetTransform( entity );
         local health_bar_image = 11 - math.ceil( health_ratio * 10 );
         local sprite = "mods/gkbrkn_noita/files/gkbrkn/misc/health_bars/health_bar"..health_bar_image..".png";
-        GameCreateSpriteForXFrames( sprite, x, y + 8, true, 0, 0, frames );
+        local w,h = EntityGetFirstHitboxSize( entity );
+        if w == nil or h == nil then
+            GameCreateSpriteForXFrames( sprite, x, y + 8, true, 0, 0, frames );
+        else
+            GameCreateSpriteForXFrames( sprite, x, y + h / 2 + 2, true, 0, 0, frames );
+        end
     end
 end
 
@@ -512,7 +517,12 @@ function projectile_change_particle_colors( projectile_entity, color )
     local b = bit.rshift( bit.band( 0xFF0000, color ), 16 );
     local particle_emitters = EntityGetComponent( projectile_entity, "ParticleEmitterComponent" ) or {};
     for _,particle_emitter in pairs( particle_emitters ) do
-        ComponentSetValue2( particle_emitter, "color", color );
+        --for k,v in pairs( ComponentGetMembers( particle_emitter ) or {} ) do
+        --    print( k.."/"..tostring(v));
+        --end
+        if ComponentGetValue2( particle_emitter, "emit_real_particles" ) == false then
+            ComponentSetValue2( particle_emitter, "color", color );
+        end
     end
     local sprite_particle_emitters = EntityGetComponent( projectile_entity, "SpriteParticleEmitterComponent" ) or {};
     for _,sprite_particle_emitter in pairs( sprite_particle_emitters ) do
@@ -632,63 +642,11 @@ function get_entity_first_or_random_wand( entity )
     end
     return base_wand;
 end
--- by horscht
-function get_materials_that_damage(entity_id)
-  local out = {}
-  local damage_model_component = EntityGetFirstComponentIncludingDisabled(entity_id, "DamageModelComponent")
-  if damage_model_component then
-    local materials_that_damage = ComponentGetValue2(damage_model_component, "materials_that_damage")
-    materials_that_damage = string_split(materials_that_damage, ",")
-    local materials_how_much_damage = ComponentGetValue2(damage_model_component, "materials_how_much_damage")
-    materials_how_much_damage = string_split(materials_how_much_damage, ",")
-    for i, v in ipairs(materials_that_damage) do
-      out[v] = materials_how_much_damage[i]
-    end
-    return out
-  end
-end
-
--- by horscht
-function change_materials_that_damage(entity_id, materials)
-  -- Because changes to DamageModelComponent:materials_that_damage does not take effect
-  local damage_model_component = EntityGetFirstComponent(entity_id, "DamageModelComponent")
-  if damage_model_component ~= nil then
-    -- Retrieve and store all old values of the DamageModelComponent
-    local old_values = {}
-    local old_damage_multipliers = {}
-    for k,v in pairs(ComponentGetMembers(damage_model_component)) do
-      -- At the time of writing (1st of September 2020)
-      -- ComponentGetMembers does not return the value for ragdoll_fx_forced, ComponentGetValue2 is necessary
-      if k == "ragdoll_fx_forced" then
-        v = ComponentGetValue2(damage_model_component, k)
-      end
-      old_values[k] = v
-    end
-    for k,_ in pairs(ComponentObjectGetMembers(damage_model_component, "damage_multipliers")) do
-      old_damage_multipliers[k] = ComponentObjectGetValue(damage_model_component, "damage_multipliers", k)
-    end
-
-    -- Build comma separated string
-    old_values.materials_that_damage = ""
-    old_values.materials_how_much_damage = ""
-    local old_materials_that_damage = get_materials_that_damage(entity_id)
-    for material, damage in pairs(materials) do
-      old_materials_that_damage[material] = damage
-    end
-    for material, damage in pairs(old_materials_that_damage) do
-      local comma = old_values.materials_that_damage == "" and "" or ","
-      old_values.materials_that_damage = old_values.materials_that_damage .. comma .. material
-      old_values.materials_how_much_damage = old_values.materials_how_much_damage .. comma .. damage
-    end
-
-    EntityRemoveComponent(entity_id, damage_model_component)
-    damage_model_component = EntityAddComponent(entity_id, "DamageModelComponent", old_values)
-    ComponentSetValue2(damage_model_component, "ragdoll_fx_forced", old_values.ragdoll_fx_forced)
-
-    for k, v in pairs(old_damage_multipliers) do
-      ComponentObjectSetValue(damage_model_component, "damage_multipliers", k, v)
-    end
-  end
-end
 
 function log_table( t ) for k,v in pairs(t) do print(k..": "..tostring(v)) end; end
+
+function change_materials_that_damage( entity, data )
+    for material,damage in pairs( data ) do
+        EntitySetDamageFromMaterial( entity, material, damage );
+    end
+end

@@ -1274,7 +1274,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5", 150, 4, -1,
         nil,
         function()
-            if not c.extra_entities:find("mods/gkbrkn_noita/files/gkbrkn/actions/area_shot/projectile_extra_entity.xml_unique,") then
+            if not c.extra_entities:find("mods/gkbrkn_noita/files/gkbrkn/actions/area_shot/projectile_extra_entity_unique.xml,") then
                 c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/area_shot/projectile_extra_entity_unique.xml,";
             end
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/area_shot/projectile_extra_entity.xml,";

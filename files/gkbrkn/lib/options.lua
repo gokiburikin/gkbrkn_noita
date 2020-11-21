@@ -121,6 +121,7 @@ local options = {
             "$mod_tips_gkbrkn_tip_7",
             "$mod_tips_gkbrkn_tip_8",
             "$mod_tips_gkbrkn_tip_9",
+            "$mod_tips_gkbrkn_tip_10",
         }
     },
     Badges = { EnabledFlag = "gkbrkn_show_badges", },

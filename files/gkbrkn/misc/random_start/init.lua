@@ -63,7 +63,7 @@ if GameHasFlagRun( init_check_flag ) == false then
             generate_wands[1] = { "projectile_actions"};
         end
         if HasFlagPersistent( MISC.RandomStart.RandomSecondaryWandFlag ) then
-            generate_wands[2] = {  "cost_actions" };
+            generate_wands[2] = { "cost_actions" };
         end
         if HasFlagPersistent( MISC.RandomStart.RandomExtraWandFlag ) then
             generate_wands[3] = { "projectile_actions" };
@@ -85,6 +85,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                 } );
                 if held_wand then
                     wand_copy( item_entity, held_wand, true, true );
+                    EntityKill( item_entity );
                 else
                     EntityAddChild( inventory, item_entity );
                 end
@@ -95,6 +96,7 @@ if GameHasFlagRun( init_check_flag ) == false then
                 --EntityAddChild( inventory, wand );
                 if held_wand then
                     wand_copy( wand, held_wand, true, true );
+                    EntityKill( wand );
                 else
                     EntityAddChild( inventory, wand );
                 end

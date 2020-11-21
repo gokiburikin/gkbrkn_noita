@@ -439,6 +439,8 @@ champion_types = {
                 local regained = new_max - current_hp;
                 ComponentSetValue2( damage_model, "max_hp", new_max );
                 ComponentSetValue2( damage_model, "hp", current_hp + regained );
+                EntityAddTag( entity, "polymorphable_NOT" );
+    			EntityAddTag( entity, "touchmagic_immunity" );
             end
         end,
     },

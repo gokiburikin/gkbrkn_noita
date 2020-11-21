@@ -242,13 +242,13 @@ function initialize_wand( wand, wand_data )
                     if type( random_action ) == "table" then
                         local amount = random_action.amount or 1;
                         for _=1,amount,1 do
-                            local action_entity = CreateItemActionEntity( random_action.action );
+                            local action_entity = CreateItemActionEntity( random_action.action_id or random_action.action );
                             if action_entity then
                                 local item = EntityGetFirstComponentIncludingDisabled( action_entity, "ItemComponent" );
-                                if HasFlagPersistent( MISC.Loadouts.UnlockLoadouts ) ~= true and random_action.locked then
+                                if HasFlagPersistent( MISC.Loadouts.UnlockLoadouts ) ~= true and random_action.locked == true then
                                     ComponentSetValue2( item, "is_frozen", true );
                                 end
-                                if random_action.permanent then
+                                if random_action.permanent == true then
                                     ComponentSetValue2( item, "permanently_attached", true );
                                 end
                                 ComponentSetValue2( item, "inventory_slot", action_index - 1, 0 );

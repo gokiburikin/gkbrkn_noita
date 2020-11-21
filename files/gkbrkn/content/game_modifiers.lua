@@ -304,6 +304,18 @@ game_modifiers = {
         }
     },
     {
+        id = "polymorph_immunity",
+        name = "$game_modifier_name_gkbrkn_polymorph_immunity",
+        description = "$game_modifier_desc_gkbrkn_polymorph_immunity",
+        author = "goki_dev",
+        options = {
+            player_spawned_callback = function( player_entity )
+                EntityAddTag( player_entity, "polymorphable_NOT" );
+            end,
+            run_flags = { FLAGS.PolymorphImmunity }
+        }
+    },
+    {
         id = "no_hit_lite",
         name = "$game_modifier_name_gkbrkn_no_hit_lite",
         description = "$game_modifier_desc_gkbrkn_no_hit_lite",
@@ -318,18 +330,16 @@ game_modifiers = {
         }
     },
     {
+        id = "darkness",
+        name = "$game_modifier_name_gkbrkn_darkness",
+        description = "$game_modifier_desc_gkbrkn_darkness",
+        author = "goki_dev",
+    },
+    {
         -- Uses Persistent Flags
         id = "disable_random_spells",
         name = "$game_modifier_name_gkbrkn_disable_random_spells",
         description = "$game_modifier_desc_gkbrkn_disable_random_spells",
         author = "goki_dev",
-    },
-    {
-        -- Uses Persistent Flags
-        id = "generate_random_spellbooks",
-        name = "$game_modifier_name_gkbrkn_generate_random_spellbooks",
-        description = "$game_modifier_desc_gkbrkn_generate_random_spellbooks",
-        author = "goki_dev",
-        tags = {goki_thing = true}
     }
 }

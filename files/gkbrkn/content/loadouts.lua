@@ -1820,7 +1820,7 @@ loadouts = {
         },
         potions = { -- potions
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
-            { { {"blood_cold", 1000} } },
+            { { {"poison", 1000} } },
         },
         items = { -- items
         },
@@ -2496,7 +2496,6 @@ loadouts = {
                     { { action="GKBRKN_HYPER_BOUNCE",locked=true} },
                     { { action="ACCELERATING_SHOT",locked=true} },
                     { { action="GKBRKN_ZERO_GRAVITY",locked=true} },
-                    { "LIGHT" },
                     { "RUBBER_BALL" },
                 }
             },
@@ -2519,13 +2518,14 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    { "BOUNCE" },
+                    { { action="GKBRKN_HYPER_BOUNCE",locked=true} },
                     { "GRENADE_LARGE" },
                 }
             },
         },
         potions = { -- potions
             { { {"water", 1000} } }, -- a list of random choices of material amount pairs
+            { { {"unstable_gunpwder", 1000} } }, -- a list of random choices of material amount pairs
         },
         items = { -- items
         },
@@ -2625,6 +2625,30 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
+                    { { action="BLOOD_MAGIC", locked=false } },
+                    { { action="BURST_2", locked=false } },
+                    { { action="MATERIAL_WATER", locked=false } },
+                    { { action="LIGHT_BULLET", locked=false } },
+                }
+            },
+            {
+                name = "Debug Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {25,25}, -- capacity
+                    reload_time = {-21,-21}, -- recharge time in frames
+                    fire_rate_wait = {-21,-21}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {5000,5000}, -- mana charge speed
+                    mana_max = {5000,5000}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {},
+                actions = {
                     { { action="HITFX_CRITICAL_WATER" } },--{ { action="SPEED" } },
                     { { action="HITFX_CRITICAL_WATER" } },--{ { action="MU" } },
                     { { action="HITFX_CRITICAL_WATER" } },--{ { action="MU" } },
@@ -2670,55 +2694,31 @@ loadouts = {
                 stat_randoms = {},
                 permanent_actions = {},
                 actions = {
-                    { { action="BLOOD_MAGIC", locked=false } },
-                    { { action="BURST_2", locked=false } },
-                    { { action="MATERIAL_WATER", locked=false } },
-                    { { action="LIGHT_BULLET", locked=false } },
-                }
-            },
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = false, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {25,25}, -- capacity
-                    reload_time = {-21,-21}, -- recharge time in frames
-                    fire_rate_wait = {-21,-21}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {5000,5000}, -- mana charge speed
-                    mana_max = {5000,5000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {},
-                actions = {
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="DIVIDE_4", locked=false } },
-                    { { action="DIVIDE_10", locked=false } },
-                    { { action="DUPLICATE", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="SPEED", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="MU", locked=false } },
-                    { { action="RUBBER_BALL", locked=false } },
-                    { { action="LIGHT_SHOT", locked=false } },
-                    { { action="PIERCING_SHOT", locked=false } },
-                    { { action="ACCELERATING_SHOT", locked=false } },
-                    { { action="SPEED", locked=false } },
-                    { { action="HOMING_ROTATE", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },
-                    { { action="SPEED", locked=false } },
-                    { { action="MU", locked=false } },
+                    {"HEAVY_SHOT"},
+                    {"HITFX_CRITICAL_WATER"},
+                    {"HEAVY_SHOT"},
+                    {"HITFX_CRITICAL_WATER"},
+                    {"DUPLICATE"},
+                    {"LIGHT_SHOT"},
+                    {"HEAVY_SHOT"},
+                    {"SPEED"},
+                    {"HEAVY_SHOT"},
+                    {"DIVIDE_10"},
+                    {"HITFX_CRITICAL_WATER"},
+                    {"MU"},
+                    {"SPEED"},
+                    {"HOMING_ROTATE"},
+                    {"PIERCING_SHOT"},
+                    {"LIGHT_SHOT"},
+                    {"ACCELERATING_SHOT"},
+                    {"DUPLICATE"},
+                    {"MU"},
+                    {"MU"},
+                    {"MU"},
+                    {"MU"},
+                    {"MU"},
+                    {"HITFX_CRITICAL_WATER"},
+                    {"RUBBER_BALL"},
                 }
             },
             {
@@ -2741,30 +2741,30 @@ loadouts = {
                 },
                 actions = {
                     { { action="DIVIDE_10", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
-                    { { action="DUPLICATE", locked=false } },--{ { action="MU", locked=false } },
-                    { { action="DUPLICATE", locked=false } },--{ { action="RUBBER_BALL", locked=false } },
-                    { { action="DUPLICATE", locked=false } },--{ { action="MU", locked=false } },
-                    { { action="DUPLICATE", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="DUPLICATE", locked=false } },
                     { { action="HEAVY_SHOT", locked=false } },--{ { action="MU", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="HOMING_ROTATE", locked=false } },
-                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="SPEED", locked=false } },
-                    { { action="MU", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
-                    { { action="MU", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
-                    { { action="LIGHT_SHOT", locked=false } },--{ { action="HITFX_CRITICAL_WATER", locked=false } },
-                    { { action="CHAOTIC_ARC", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="RUBBER_BALL", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
+                    { { action="HEAVY_SHOT", locked=false } },--{ { action="DUPLICATE", locked=false } },
+                    { { action="HITFX_CRITICAL_WATER", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="DUPLICATE", locked=false } },--{ { action="HOMING_ROTATE", locked=false } },
+                    { { action="SPEED", locked=false } },--{ { action="SPEED", locked=false } },
                     { { action="PIERCING_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
-                    { { action="HEAVY_SHOT", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="ACCELERATING_SHOT", locked=false } },--{ { action="LIGHT_SHOT", locked=false } },
+                    { { action="SPEED", locked=false } },--{ { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="SPEED", locked=false } },--{ { action="MU", locked=false } },
+                    { { action="LIGHT_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="MU", locked=false } },
                     { { action="MU", locked=false } },--{ { action="ACCELERATING_SHOT", locked=false } },
                     { { action="MU", locked=false } },--{ { action="PIERCING_SHOT", locked=false } },
-                    { { action="RUBBER_BALL", locked=false } },--{ { action="DUPLICATE", locked=false } },
-                    { { action="ACCELERATING_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
-                    { { action="HOMING_ROTATE", locked=false } },--{ { action="DUPLICATE", locked=false } },
-                    { { action="LIGHT_SHOT", locked=false } },--{ { action="HITFX_CRITICAL_WATER", locked=false } },
                     { { action="MU", locked=false } },--{ { action="DUPLICATE", locked=false } },
                     { { action="MU", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
-                    { { action="MU", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="DUPLICATE", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="HITFX_CRITICAL_WATER", locked=false } },
+                    { { action="MU", locked=false } },--{ { action="DUPLICATE", locked=false } },
                     { { action="HEAVY_SHOT", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
+                    { { action="HOMING_ROTATE", locked=false } },--{ { action="HEAVY_SHOT", locked=false } },
                     --{ { action="DUPLICATE", locked=false } },
                 }
             }

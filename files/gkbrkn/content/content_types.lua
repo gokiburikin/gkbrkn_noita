@@ -96,6 +96,7 @@ content_types = {
         cache_filepath = "mods/gkbrkn_noita/files/gkbkrn/scratch/dev_options_cache.lua",
         cache_table = "dev_options_cache",
         content_disable_callback = function( content, current_string ) return current_string .."table.remove( dev_options, "..content.options.index.." );\r\n" end,
+        development_only = true
     },
     {
         id = "game_modifier",

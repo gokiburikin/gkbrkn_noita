@@ -123,7 +123,6 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_spiral_shot",
         author = "goki_dev",
         options = { action_id="SPIRAL_SHOT" },
-        enabled_by_default = true,
         tags = {goki_thing = true}
     },
     {
@@ -132,8 +131,6 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_piercing_shot",
         author = "goki_dev",
         options = { action_id="PIERCING_SHOT" },
-        enabled_by_default = true,
-        tags = {goki_thing = true}
     },
     {
         id = "clipping_shot",
@@ -141,8 +138,6 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_clipping_shot",
         author = "goki_dev",
         options = { action_id="CLIPPING_SHOT" },
-        enabled_by_default = true,
-        tags = {goki_thing = true}
     },
     {
         id = "teleport_cast",
@@ -150,7 +145,6 @@ tweaks = {
         description = "$tweak_desc_gkbrkn_teleport_cast",
         author = "goki_dev",
         options = { action_id="TELEPORT_CAST" },
-        enabled_by_default = true,
         tags = {goki_thing = true}
     },
     {
@@ -177,8 +171,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_trigger_block_expansion",
         description = "$tweak_desc_gkbrkn_trigger_block_expansion",
         author = "goki_dev",
-        enabled_by_default = true,
-        tags = {goki_thing = true}
+        deprecated = true
     },
     {
         id = "add_trigger",

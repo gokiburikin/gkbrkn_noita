@@ -55,7 +55,9 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/init.lua", { player_entity = player_entity } );
-    DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
+    if not GameHasFlagRun( FLAGS.DelayInit ) then
+        DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
+    end
 
     EntityAddComponent( player_entity, "LuaComponent", { script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/player_shot.lua" });
     EntityAddComponent( player_entity, "LuaComponent", { script_kick="mods/gkbrkn_noita/files/gkbrkn/misc/player_kick.lua" });
@@ -218,8 +220,12 @@ if HasFlagPersistent( FLAGS.DebugMode ) then
     end
 end
 
+ -- this generates global perk spawn order for current world seed
+
 --[[
 for _,pack_data in pairs( packs ) do
     simulate_cracking_packs( pack_data.id, 100, x, y );
 end
 ]]
+
+    print( tostring( GameIsBetaBuild() ) )

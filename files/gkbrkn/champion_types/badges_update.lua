@@ -18,6 +18,7 @@ if children then
             ComponentSetValue2( sprite, "visible", true );
             ComponentSetValue2( sprite, "offset_x", -offset_x + ( index - 1 ) * 9 );
             ComponentSetValue2( sprite, "offset_y", offset_y );
+            ComponentSetValue2( sprite, "never_ragdollify_on_death", true );
         end
     else
         for index,child in pairs( children ) do

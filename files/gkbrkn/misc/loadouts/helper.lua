@@ -97,20 +97,35 @@ function handle_loadout( player_entity, loadout_data )
         if loadout_data.items ~= nil then
             for _,item_choice in pairs( loadout_data.items or {} ) do
                 local random_item = item_choice[ Random( 1, #item_choice ) ];
-                local item = EntityLoad( random_item, x, y );
-                EntityAddChild( inventory, item );
+                if type( random_item ) == "string" then
+                    local item = EntityLoad( random_item, x, y );
+                    GamePickUpInventoryItem( player_entity, item, false );
+                elseif type( random_item ) == "table" then
+                    local item = EntityLoad( random_item.filepath, x, y );
+                    if item ~= nil then
+                        if random_item.initialize ~= nil then
+                            random_item.initialize( item );
+                        end
+                        GamePickUpInventoryItem( player_entity, item, false );
+                    end
+                end
             end
         end
 
         if loadout_data.wands ~= nil then
             for wand_index,wand_data in pairs( loadout_data.wands ) do
-                local wand = EntityLoad( wand_data.custom_file or "mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml", x, y );
-                SetRandomSeed( x, y );
+                if type( wand_data ) == "table" then
+                    local wand = EntityLoad( wand_data.custom_file or "mods/gkbrkn_noita/files/gkbrkn_loadouts/wands/wand_"..( ( wand_index - 1 ) % 4 + 1 )..".xml", x, y );
+                    SetRandomSeed( x, y );
 
-                EntitySetVariableNumber( wand, "gkbrkn_loadout_wand", 1 );
-                initialize_wand( wand, wand_data );
-                EntityAddChild( inventory, wand );
-                EntitySetComponentsWithTagEnabled( wand, "enabled_in_world", false );
+                    EntitySetVariableNumber( wand, "gkbrkn_loadout_wand", 1 );
+                    initialize_wand( wand, wand_data );
+                    GamePickUpInventoryItem( player_entity, wand, false );
+                    EntitySetComponentsWithTagEnabled( wand, "enabled_in_world", false );
+                elseif type( wand_data ) == "string" then
+                    local item = EntityLoad( wand_data, x, y );
+                    GamePickUpInventoryItem( player_entity, item, false );
+                end
             end
         end
 
@@ -128,8 +143,7 @@ function handle_loadout( player_entity, loadout_data )
                             AddMaterialInventoryMaterial( potion, material, amount );
                         end
                     end
-                    EntityAddChild( inventory, potion );
-                    EntitySetComponentsWithTagEnabled( potion, "enabled_in_world", false );
+                    GamePickUpInventoryItem( player_entity, potion, false );
                 end
             end
         end
@@ -140,8 +154,8 @@ function handle_loadout( player_entity, loadout_data )
             for _,actions in pairs( loadout_data.actions ) do
                 local action = actions[ Random( 1, #actions ) ];
                 local action_card = CreateItemActionEntity( action, x, y );
-                EntityAddChild( full_inventory, action_card );
                 EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
+                GamePickUpInventoryItem( player_entity, action_card, false );
             end
         end
     end

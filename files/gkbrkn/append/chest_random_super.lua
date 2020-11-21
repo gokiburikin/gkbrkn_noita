@@ -29,5 +29,5 @@ function drop_random_reward( x, y, entity_id, rand_x, rand_y, set_rnd_  )
         end
         return true;
     end
-    return _drop_random_reward( x, y, entity_id );
+    return _drop_random_reward( x, y, entity_id, rand_x, rand_y, set_rnd_ );
 end

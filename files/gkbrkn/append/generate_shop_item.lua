@@ -1,6 +1,5 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 
-
 local _generate_shop_item = generate_shop_item;
 local _generate_shop_wand = generate_shop_wand;
 

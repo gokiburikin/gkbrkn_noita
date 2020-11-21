@@ -1,27 +1,18 @@
 --[[        
-changelog 
-    -m "Add Action: Matra Magic"
-    -m "Add Option - Random Starts: Random Extra Wand"
-    -m "Add Option - Random Starts: Random Primary Wand"
-    -m "Add Option - Random Starts: Random Secondary Wand"
-    -m "Add Option - Champion Enemies: Show Icons"
-    -m "Add Tweak: Unlimited Spells (no spell exclusion)"
-    -m "Deprecate Perk: Knockback Immunity (superceded by No More Knockback)"
-    -m "Deprecate Perk: Mana Manipulation (superceded by new wand generation)"
-    -m "Deprecate Tweak: Allow Negative Mana Always Cast (added to base game)"
-    -m "Fix Option: Show Damage Numbers (no longer rotates with entities, no longer crashes when approaching the eel at the lake)"
-    -m "Remove Option - Random Starts: Random Starting Wands"
-    -m "Rename Option - Random Starts: Alternative Wand Generation -> Adjust Wand Generation"
-    -m "Update Action: Perforating Shot (damage 0 -> 3, gore 0 -> 20)"
-    -m "Update Game Modifier: Order/Shuffle Wands Only (affects all wands even wands that aren't generated, should fix some altar wands not being affected)"
-    -m "Update Option: Dummy Target (added real time DPS and highest DPS)"
-    -m "Update Option: Quick Swap (should work on items without the wand tag)"
-    -m "Update Option: Show Damage Numbers (don't apply on bosses, don't stop working after reload. need to figure out why it crashes bosses)"
-    -m "Update Option: Uber Boss (changed to 36 orbs)"
-    -m "Update Perk: Diplomatic Immunity (can anger the gods, but no temple collapse)"
-    -m "Update related_projectiles and projectile_file for relevant spells (adds support for returner, angry ghost, trigger support)"
-    -m "Update the types, spawn weightings, and spawn levels of many spells"
-    -m "Update Unique Wands that have deprecated spells"
+changelog
+    -m "Add Game Modifier: Polymorph Immunity"
+    -m "Dev Options are now hidden unless Options - Development Mode is enabled"
+    -m "Update Option: Rainbow Projectiles (only randomize costmetic particles. fixes rainbow water trail, etc)"
+    -m "Fix Champion Icons ragdolling when champion Lukki are killed"
+    -m "Update Action: Area Damage (no longer incorrectly stacks, damage multiplier 50% -> 100%, damage radius 16 -> 10)"
+    -m "Update Option: Manage External Content (don't show duplicate entries if mods incorrectly override vanilla spells)"
+    -m "Fix Option: Classy Framework Integration (properly give custom loadouts)"
+    -m "Fix Dev Option: No Polymorph"
+    -m "Fix Selectable Classes and Classy Framework integration messy loadouts (no spinning wands, potion sparkles)"
+    -m "Delay random start options until after loadouts are handled"
+    -m "Fix Random Starts (no longer duplicates generate primary or secondary wand in the world)"
+    -m "Fix outdated chest_random and chest_random_super scripts"
+    -m "Add Game Modifier: Advanced Darkness"
 
 some issues with noita (for if Nolla ever cares)
     explosive projectile (c.damage_explosion_add) is broken; damage is based on explosion radius
@@ -38,7 +29,6 @@ some issues with noita (for if Nolla ever cares)
     certain functions contain local variables instead of accessible information
     persistent flags don't use a single file and instead use individuals files leading to hundreds (and potentially thousands) of files when dealing with many flags
     there is no simple config file serialization
-
 BUG
     the sparkler unique wand is broken (this is almost 100% a projectile capture issue)
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
@@ -59,10 +49,6 @@ TODO
         Trigger on Bounce
         Trigger on Kick
         Trigger while Flying
-
-    mana focus (reduce mana cost of your next spell cast every second up to 10 seconds. resets every cast)
-    charged spell (increase damage your next spell cast every second up to 10 seconds. resets every cast)
-    override critical logic for critical callbacks (roll critical chance, if it succeeds set it to 100 and mark the projectile as critical, if it fails, set it to 0)
 
     Game Modifiers
         Spider Mage
@@ -165,6 +151,7 @@ ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noit
 --ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/alt_killer_goo.xml" );
 
 local skip_loadout = false;
+local delay_init = false;
 if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
     if ModIsEnabled("starting_loadouts") then
         ModTextFileAppend( "mods/starting_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/kill_player_spawned_event.lua" );
@@ -181,13 +168,21 @@ if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
         ModTextFileAppend( "mods/more_loadouts/files/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/more_loadouts_append.lua" );
         ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua", "mods/more_loadouts/files/loadouts.lua" );
     end
-    ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn/content/parse_external_loadouts.lua" );
 
     if ModIsEnabled("selectable_classes") then
+        ModTextFileSetContent( "mods/gkbrkn_noita/files/gkbrkn/content/selectable_classes_loadouts.lua", ModTextFileGetContent( "data/selectable_classes/classes/class_list.lua" ) );
+        ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/selectable_classes_loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_append.lua" );
+        ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn/content/selectable_classes_loadouts.lua" );
         if HasFlagPersistent( MISC.Loadouts.SelectableClassesIntegrationFlag ) then
             ModTextFileAppend( "data/selectable_classes/classes/class_list.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_integration.lua" );
             ModTextFileAppend( "data/selectable_classes/classes/class_pickup.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_extension.lua" );
             skip_loadout = true;
+            delay_init = true;
+        else
+            --ModTextFileSetContent( "mods/selectable_classes/init.lua", [[print("[goki's things] Terminated Selectable Classes Initialization")]] );
+            ModTextFileSetContent( "data/selectable_classes/magic_numbers.xml", "" );
+            ModTextFileSetContent( "data/selectable_classes/treehouse.lua", "" );
+            ModTextFileAppend( "mods/selectable_classes/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/kill_player_spawned_event.lua" );
         end
     end
 
@@ -196,8 +191,13 @@ if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
             ModTextFileAppend( "mods/classy_framework/classes/class_list.lua","mods/gkbrkn_noita/files/gkbrkn_loadouts/classy_framework_integration.lua" );
             ModTextFileAppend( "mods/classy_framework/class_select/class_pickup.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/classy_framework_extension.lua" );
             skip_loadout = true;
+            delay_init = true;
+        else
+            ModTextFileSetContent( "mods/classy_framework/init.lua", [[print("[goki's things] Terminated Classy Framework Initialization")]] );
         end
     end
+
+    ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn/content/parse_external_loadouts.lua" );
 end
 
 if ModIsEnabled("nightmare") then
@@ -205,12 +205,11 @@ if ModIsEnabled("nightmare") then
 end
 
 if HasFlagPersistent( MISC.LegendaryWands.EnabledFlag ) then dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" ); end
-if HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
+--if HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
 
 function OnPlayerSpawned( player_entity )
-    if skip_loadout then
-        GameAddFlagRun( FLAGS.SkipGokiLoadouts );
-    end
+    if skip_loadout then GameAddFlagRun( FLAGS.SkipGokiLoadouts ); end
+    if delay_init then GameAddFlagRun( FLAGS.DelayInit ); end
     if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then
         EntityLoad('mods/gkbrkn_noita/files/gkbrkn/gui/container.xml');
     end
@@ -288,4 +287,27 @@ function OnModPostInit() -- TODO this was done to allow init_function to call Mo
     if find_game_modifier("limited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/limited_ammo.lua" ); end
     if find_game_modifier("unlimited_ammo") then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/unlimited_ammo.lua" ); end
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_actions.lua" );
+end
+
+
+function OnWorldInitialized()
+    dofile( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua");
+    if find_game_modifier("darkness") then
+        local biomes = {
+            "coalmine",
+            "mountain_hall",
+            "coalmine_alt",
+            "excavationsite",
+            "fungicave",
+            "snowcave",
+            "snowcastle",
+            "rainforest",
+            "rainforest_open",
+            "vault",
+            "crypt",
+        };
+        for _,biome_name in pairs( biomes ) do
+            BiomeObjectSetValue( "data/biome/" .. biome_name .. ".xml", "modifiers", "fog_of_war_delta", 10 );
+        end
+    end
 end

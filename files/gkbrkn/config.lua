@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c103"
+    Version = "c104"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -167,24 +167,24 @@ end
         register_option_group_localized( "gkbrkn_wands",
             register_option_localized( MISC.LegendaryWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
             register_option_localized( MISC.LooseSpellGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, nil, nil, {goki_thing = true} ),
-            register_option_localized( MISC.ExtendedWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
-                if enabled then
-                    RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag );
-                    RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag );
-                end
-            end, nil, {goki_thing = true} ),
-            register_option_localized( MISC.ChaoticWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
-                if enabled then
-                    RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag );
-                    RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag );
-                end
-            end ),
             register_option_localized( MISC.AlternativeWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
                 if enabled then
                     RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag );
                     RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag );
                 end
             end ),
+            register_option_localized( MISC.ChaoticWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                if enabled then
+                    RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag );
+                    RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag );
+                end
+            end ),
+            register_option_localized( MISC.ExtendedWandGeneration.EnabledFlag, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                if enabled then
+                    RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag );
+                    RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag );
+                end
+            end, nil, {goki_thing = true} ),
             register_option_localized( MISC.NoPregenWands.EnabledFlag, CONTENT_ACTIVATION_TYPE.NewGame, nil, nil, {goki_thing = true} ),
             register_option_localized( MISC.PassiveRecharge.EnabledFlag, CONTENT_ACTIVATION_TYPE.Immediate )
         ),
@@ -232,6 +232,14 @@ end
                     EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x, y - 10 );
                     RemoveFlagPersistent("gkbrkn_spawn_target_dummy");
                 end
+            end ),
+            register_option_localized( "gkbrkn_spawn_boss_target_dummy", CONTENT_ACTIVATION_TYPE.Immediate, function( enabled )
+                local player = EntityGetWithTag( "player_unit")[1];
+                if player then
+                    local x,y = EntityGetTransform( player );
+                    EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target_final.xml", x, y - 10 );
+                    RemoveFlagPersistent("gkbrkn_spawn_boss_target_dummy");
+                end
             end )
         ),
         register_option_group_localized( "gkbrkn_misc",
@@ -251,7 +259,9 @@ end
 -- Options Menu End
 
 local cache_content = function()
+    local content_types_id_cache = {};
     for _,content_type in pairs( content_types ) do
+        content_types_id_cache[ content_type ] = ( content_types_id_cache[ content_type ] or {} );
         local content_filepath = content_type.shared_content_filepath or content_type.content_filepath;
         dofile( content_filepath );
         local content_table = _G[content_type.shared_content_table] or _G[content_type.content_table];
@@ -260,27 +270,30 @@ local cache_content = function()
         for _,cache_content in pairs(content_table or {}) do
             local keys = { {"id"}, {"name","ui_name"}, {"description","ui_description"}, {"author"}, {"enabled_by_default"}, {"item_path"}, {"deprecated"}, {"local_content"} };
             local content_metadata = "{";
-            for _,key_groups in pairs(keys) do
-                for _,key in pairs(key_groups) do
-                    local value = cache_content[key];
-                    if value ~= nil then
-                        if type(value) == "string" then
-                            value = "\""..value:gsub("\n","\\n").."\"";
+            if content_types_id_cache[ content_type ][ cache_content.id ] == nil then
+                content_types_id_cache[ content_type ][ cache_content.id ] = true;
+                for _,key_groups in pairs(keys) do
+                    for _,key in pairs(key_groups) do
+                        local value = cache_content[key];
+                        if value ~= nil then
+                            if type(value) == "string" then
+                                value = "\""..value:gsub("\n","\\n").."\"";
+                            end
+                            content_metadata = content_metadata..key.." = "..(tostring(value) or "nil")..",";
+                            break;
                         end
-                        content_metadata = content_metadata..key.." = "..(tostring(value) or "nil")..",";
-                        break;
                     end
                 end
-            end
-            if cache_content.tags then
-                content_metadata = content_metadata.. "tags={";
-                for k,v in pairs( cache_content.tags ) do
-                    content_metadata = content_metadata..k.."="..tostring(v)
+                if cache_content.tags then
+                    content_metadata = content_metadata.. "tags={";
+                    for k,v in pairs( cache_content.tags ) do
+                        content_metadata = content_metadata..k.."="..tostring(v)
+                    end
+                    content_metadata = content_metadata.. "}";
                 end
-                content_metadata = content_metadata.. "}";
+                content_metadata = content_metadata.."}";
+                content_cache = content_cache .. "\r\ntable.insert("..content_type.cache_table..","..content_metadata..");"
             end
-            content_metadata = content_metadata.."}";
-            content_cache = content_cache .. "\r\ntable.insert("..content_type.cache_table..","..content_metadata..");"
         end
         ModTextFileSetContent( content_type.cache_filepath, content_cache );
     end

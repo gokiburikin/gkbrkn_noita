@@ -48,6 +48,26 @@ local truncate_long_string = function( str )
     return str;
 end
 
+local word_wrap = function( str, wrap_size )
+    if wrap_size == nil then wrap_size = 60; end
+    local last_space_index = 1;
+    local last_wrap_index = 0;
+    for i=1,#str do
+        if str:sub(i,i) == " " then
+            last_space_index = i;
+        end
+        if str:sub(i,i) == "\n" then
+            last_space_index = i;
+            last_wrap_index = i;
+        end
+        if i - last_wrap_index > wrap_size then
+            str = str:sub(1,last_space_index-1) .. "\n" .. str:sub(last_space_index + 1);
+            last_wrap_index = i;
+        end
+    end
+    return str;
+end
+
 local tabs = {
     {
         name = GameTextGetTranslatedOrNot("$ui_tab_name_gkbrkn_options"),
@@ -79,7 +99,7 @@ for _,content_type in pairs( content_types ) do
     local name = GameTextGetTranslatedOrNot( content_type.display_name );
     name = ( content_counts[content_type.id] or 0 ).." "..name;
     table.insert( content_type_selection, { name = name, type = content_type.id } );
-    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = content_type.id, development_only = tonumber(v) == "dev_option" } );
+    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = content_type.id, development_only = content_type.development_only } );
 end
 table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
 
@@ -563,7 +583,7 @@ function do_content( content )
             text = text .. " " .. GameTextGetTranslatedOrNot( content.options.menu_note );
         end
         GuiLayoutBeginHorizontal( gui, 0, 0 );
-            if content.description ~= nil then
+            if content.description ~= nil and GuiTooltip == nil then
                 if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
                     for word in string.gmatch( content.description, '([^\n]+)' ) do
                         GamePrint( word );
@@ -580,6 +600,12 @@ function do_content( content )
             if GuiButton( gui, 0, 0, text, next_id() ) then
                 gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
                 content.toggle();
+            end
+            
+            if GuiTooltip then
+                if content.description then
+                    GuiTooltip( gui, "", word_wrap( GameTextGetTranslatedOrNot( content.description ) ) );
+                end
             end
         GuiLayoutEnd( gui );
     end
@@ -599,7 +625,7 @@ function do_option( option )
             text = text .. GameTextGetTranslatedOrNot("$ui_uncheck_mark_gkbrkn");
         end
         text = text .. " ".. GameTextGetTranslatedOrNot(option.name);
-        if option ~= nil and option.description ~= nil then
+        if option ~= nil and option.description ~= nil and GuiTooltip == nil then
             if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
                 for word in string.gmatch( GameTextGetTranslatedOrNot(option.description), '([^\n]+)' ) do
                     GamePrint( word );
@@ -615,6 +641,11 @@ function do_option( option )
             end
             if option.toggle_callback ~= nil then
                 option.toggle_callback( not option_enabled );
+            end
+        end
+        if GuiTooltip then
+            if option.description then
+                GuiTooltip( gui, "", word_wrap( GameTextGetTranslatedOrNot( option.description ) ) );
             end
         end
     else

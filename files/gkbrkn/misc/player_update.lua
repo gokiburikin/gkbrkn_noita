@@ -17,15 +17,18 @@ local t = GameGetRealWorldTimeSinceStarted();
 local now = GameGetFrameNum();
 
 local player_entity = GetUpdatedEntityID();
+
 local x, y = EntityGetTransform( player_entity );
 local children = EntityGetAllChildren( player_entity ) or {};
 local wands = {};
 local active_wand = nil;
 local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
+local inventory_quick = nil;
 if inventory2 ~= nil then
     local active_item = ComponentGetValue2( inventory2, "mActiveItem" );
     for key, child in pairs( children ) do
         if EntityGetName( child ) == "inventory_quick" then
+            inventory_quick = child;
             wands = EntityGetChildrenWithTag( child, "wand" ) or {};
             break;
         end
@@ -34,6 +37,17 @@ if inventory2 ~= nil then
         active_wand = tonumber( active_item );
     end
 end
+
+if GameHasFlagRun( FLAGS.DelayInit ) and now == tonumber( GlobalsGetValue("gkbrkn_delay_init_frame","0") ) then
+    DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );
+    if GameHasFlagRun( FLAGS.FixLoadoutIntegration ) then
+        for _,item in pairs( EntityGetAllChildren( inventory_quick ) ) do
+            EntityRemoveFromParent( item );
+            GamePickUpInventoryItem( player_entity, item, false );
+        end
+    end
+end
+
 local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" ) or {};
 
 --[[ Tweak: Reduced Electrocution ]]
@@ -140,8 +154,8 @@ if is_debug_mode_enabled and find_dev_option( "invincibility" ) then
     end
 end
 
---[[ Invincibility ]]
-if is_debug_mode_enabled and find_dev_option( "invincibility" ) then
+--[[ No Polymorph ]]
+if is_debug_mode_enabled and find_dev_option( "no_polymorph" ) then
     EntityAddTag( player_entity, "polymorphable_NOT" );
 end
 
@@ -381,6 +395,8 @@ if now % 1 == 0 then
     end
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
+        local item = EntityGetFirstComponent( gold_nugget, "ItemComponent" );
+
         --[[ Persistent Gold ]]
         if HasFlagPersistent( MISC.PersistentGold.EnabledFlag ) then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
@@ -609,7 +625,7 @@ if now % 10 == 0 then
     end
     ]]
     local nearby_enemies = EntityGetWithTag( "enemy" );
-    --[[ Champions ]]
+    --[[ Champion Enemies ]]
     if GameHasFlagRun( MISC.ChampionEnemies.EnabledFlag ) then
         for _,nearby in pairs( nearby_enemies ) do
             SetRandomSeed( now, x + y + nearby );
@@ -808,7 +824,7 @@ if now % 10 == 0 then
     if HasFlagPersistent( MISC.ShowDamageNumbers.EnabledFlag ) then
         local nearby_targets = EntityGetWithTag( "homing_target" );
         for _,target in pairs( nearby_targets ) do
-            if not EntityHasTag( target, "boss" ) then
+            if not EntityHasTag( target, "boss" ) and EntityHasNamedVariable( nearby, "gkbrkn_no_custom_damage_numbers") == false then
                 if not EntityHasScript( target, "mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua" ,"script_damage_received" ) then
                     EntityAddComponent( target, "LuaComponent", { script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/custom_damage_numbers.lua" });
                 end
@@ -921,6 +937,9 @@ if now % 10 == 0 then
 
                     local resistance_multiplier = orb_multiplier * distance_multiplier;
                     for index,damage_model in pairs( damage_models ) do
+                        -- NOTE this is what allows champion icons to ragdollify
+                        --ComponentSetValue2( damage_model, "ragdoll_filenames_file", "" );
+                        --ComponentSetValue2( damage_model, "ragdollify_child_entity_sprites", true );
                         for damage_type,multiplier in pairs( resistances ) do
                             local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
                             resistance = resistance * multiplier * resistance_multiplier;
@@ -930,6 +949,7 @@ if now % 10 == 0 then
                             ComponentSetValue2( damage_model, "critical_damage_resistance", critical_damage_resistance );
                         end
                     end
+
 
                     local attack_speed_divisor = 1.15 + 0.1 * places_visited_multiplier;
                     if is_carnage_mode then attack_speed_divisor = 1.80 + 0.2 * places_visited_multiplier; end
@@ -1173,6 +1193,17 @@ if now % 60 == 0 then
             end
         end
     end
+end
+
+if is_fixed_camera == nil then is_fixed_camera = HasFlagPersistent( MISC.FixedCamera.EnabledFlag ); end
+if HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) and is_fixed_camera then
+    GameSetCameraFree( false );
+    is_fixed_camera = false;
+elseif not HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) and not is_fixed_camera then
+    GameSetCameraFree( true );
+    local cx, cy = GameGetCameraPos();
+    GameSetCameraPos( cx + (x - cx ) / 2, cy + (y - cy ) / 2 );
+    is_fixed_camera = true;
 end
 
 add_update_time( GameGetRealWorldTimeSinceStarted() - t );
