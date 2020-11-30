@@ -1,4 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "data/scripts/perks/perk.lua" );
@@ -6,6 +7,11 @@ dofile_once( "data/scripts/lib/utilities.lua" );
 dofile_once( "data/scripts/gun/procedural/gun_action_utils.lua" );
 dofile_once( "data/scripts/gun/procedural/wands.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
+
+local function add_to_inventory( item, inventory )
+    EntityAddChild( inventory, item );
+    EntitySetComponentsWithTagEnabled( item, "enabled_in_world", false );
+end
 
 function handle_loadout( player_entity, loadout_data )
     local x, y = EntityGetTransform( player_entity );
@@ -32,7 +38,7 @@ function handle_loadout( player_entity, loadout_data )
     end
 
     -- set cape colour
-    if HasFlagPersistent( MISC.Loadouts.CapeColorFlag ) then
+    if setting_get( MISC.Loadouts.CapeColorFlag ) then
         local verlet = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
         if verlet ~= nil then
             if loadout_data.cape_color ~= nil then
@@ -99,14 +105,16 @@ function handle_loadout( player_entity, loadout_data )
                 local random_item = item_choice[ Random( 1, #item_choice ) ];
                 if type( random_item ) == "string" then
                     local item = EntityLoad( random_item, x, y );
-                    GamePickUpInventoryItem( player_entity, item, false );
+                    --GamePickUpInventoryItem( player_entity, item, false );
+                    add_to_inventory( item, inventory );
                 elseif type( random_item ) == "table" then
                     local item = EntityLoad( random_item.filepath, x, y );
                     if item ~= nil then
                         if random_item.initialize ~= nil then
                             random_item.initialize( item );
                         end
-                        GamePickUpInventoryItem( player_entity, item, false );
+                        --GamePickUpInventoryItem( player_entity, item, false );
+                        add_to_inventory( item, inventory );
                     end
                 end
             end
@@ -120,11 +128,13 @@ function handle_loadout( player_entity, loadout_data )
 
                     EntitySetVariableNumber( wand, "gkbrkn_loadout_wand", 1 );
                     initialize_wand( wand, wand_data );
-                    GamePickUpInventoryItem( player_entity, wand, false );
+                    --GamePickUpInventoryItem( player_entity, wand, false );
+                    add_to_inventory( wand, inventory );
                     EntitySetComponentsWithTagEnabled( wand, "enabled_in_world", false );
                 elseif type( wand_data ) == "string" then
                     local item = EntityLoad( wand_data, x, y );
-                    GamePickUpInventoryItem( player_entity, item, false );
+                    --GamePickUpInventoryItem( player_entity, item, false );
+                    add_to_inventory( item, inventory );
                 end
             end
         end
@@ -143,7 +153,8 @@ function handle_loadout( player_entity, loadout_data )
                             AddMaterialInventoryMaterial( potion, material, amount );
                         end
                     end
-                    GamePickUpInventoryItem( player_entity, potion, false );
+                    --GamePickUpInventoryItem( player_entity, potion, false );
+                    add_to_inventory( potion, inventory );
                 end
             end
         end
@@ -155,7 +166,8 @@ function handle_loadout( player_entity, loadout_data )
                 local action = actions[ Random( 1, #actions ) ];
                 local action_card = CreateItemActionEntity( action, x, y );
                 EntitySetComponentsWithTagEnabled( action_card, "enabled_in_world", false );
-                GamePickUpInventoryItem( player_entity, action_card, false );
+                --GamePickUpInventoryItem( player_entity, action_card, false );
+                add_to_inventory( action_card, full_inventory );
             end
         end
     end
@@ -179,7 +191,7 @@ function handle_loadout( player_entity, loadout_data )
         end	
     end
 
-    if HasFlagPersistent( MISC.Loadouts.PlayerSpritesFlag ) and loadout_data.sprites ~= nil then
+    if setting_get( MISC.Loadouts.PlayerSpritesFlag ) and loadout_data.sprites ~= nil then
         if loadout_data.sprites.player_sprite_filepath ~= nil then
             local player_sprite_component = EntityGetFirstComponent( player_entity, "SpriteComponent" );
             local player_sprite_file = loadout_data.sprites.player_sprite_filepath;

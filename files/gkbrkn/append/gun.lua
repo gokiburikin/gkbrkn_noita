@@ -1,4 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
@@ -61,6 +62,7 @@ gkbrkn = {
     _add_projectile_trigger_hit_world = add_projectile_trigger_hit_world,
     _BeginProjectile = BeginProjectile,
     _register_action = register_action,
+    _clone_action = clone_action,
 }
 
 function register_action( state )
@@ -143,6 +145,11 @@ function deck_snapshot()
             table.insert( deck_snapshot, action );
         end
     end
+end
+
+function clone_action( source, target )
+    gkbrkn._clone_action( source, target );
+    if setting_get( "dev_option_infinite_spells" ) then target.custom_uses_logic = true; end
 end
 
 function peek_draw_action( shot, instant_reload_if_empty )

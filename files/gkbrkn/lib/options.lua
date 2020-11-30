@@ -8,7 +8,7 @@ local options = {
     --    Enabled = "gkbrkn_charm_nerf",
     --},
     InvincibilityFrames = {
-        Duration = 40,
+        Duration = "gkbrkn_invincibility_frames_duration",
         EnabledFlag = "gkbrkn_invincibility_frames",
         FlashingFlag = "gkbrkn_invincibility_frames_flashing",
     },
@@ -49,7 +49,7 @@ local options = {
         RandomCapeColorFlag = "gkbrkn_random_start_random_cape",
         RandomFlaskFlag = "gkbrkn_random_start_random_flask",
         RandomPerkFlag = "gkbrkn_random_start_random_perk",
-        RandomPerks = 1,
+        RandomPerksFlag = "gkbrkn_random_start_random_perks",
     },
     LegendaryWands = {
         EnabledFlag = "gkbrkn_legendary_wands",
@@ -69,6 +69,7 @@ local options = {
         CardsPerPack = 4,
     },
     GoldDecay = { EnabledFlag = "gkbrkn_gold_decay",},
+    GoldLifetime = { EnabledFlag = "gkbrkn_gold_lifetime_multiplier", },
     PersistentGold = { EnabledFlag = "gkbrkn_persistent_gold", },
     AutoPickupGold = { EnabledFlag = "gkbrkn_auto_pickup_gold", },
     CombineGold = {
@@ -128,7 +129,7 @@ local options = {
     ShowEntityNames = { EnabledFlag = "gkbrkn_show_entity_names", },
     ShowPerkDescriptions = { EnabledFlag = "gkbrkn_show_perk_descriptions", },
     ShowDamageNumbers = { EnabledFlag = "gkbrkn_show_damage_numbers", },
-    FixedCamera = { EnabledFlag = "gkbrkn_fixed_camera", },
+    FixedCamera = { EnabledFlag = "gkbrkn_fixed_camera", OldBehaviourFlag = "gkbrkn_fixed_camera_old" },
     Events = { EnabledFlag = "gkbrkn_events", },
     AutoHide = { EnabledFlag = "gkbrkn_auto_hide", },
     RemoveEditPrompt = { EnabledFlag = "gkbrkn_remove_edit_prompt", },

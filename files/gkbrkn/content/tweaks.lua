@@ -20,6 +20,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_chainsaw",
         description = "$tweak_desc_gkbrkn_chainsaw",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="CHAINSAW" },
     },
     {
@@ -27,6 +28,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_heavy_shot",
         description = "$tweak_desc_gkbrkn_heavy_shot",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="HEAVY_SHOT" },
     },
     {
@@ -34,6 +36,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_damage",
         description = "$tweak_desc_gkbrkn_damage",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="DAMAGE" },
     },
     {
@@ -41,6 +44,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_freeze",
         description = "$tweak_desc_gkbrkn_freeze",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="FREEZE" }
     },
     {
@@ -48,6 +52,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_blindness",
         description = "$tweak_desc_gkbrkn_blindness",
         author = "goki_dev",
+        local_content = true,
         deprecated = true
     },
     {
@@ -55,6 +60,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_revenge_explosion",
         description = "$tweak_desc_gkbrkn_revenge_explosion",
         author = "goki_dev",
+        local_content = true,
         options = { perk_id="REVENGE_EXPLOSION" },
         tags = {goki_thing = true}
     },
@@ -63,6 +69,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_revenge_tentacle",
         description = "$tweak_desc_gkbrkn_revenge_tentacle",
         author = "goki_dev",
+        local_content = true,
         options = { perk_id="REVENGE_TENTACLE" },
         tags = {goki_thing = true}
     },
@@ -71,6 +78,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_glass_cannon",
         description = "$tweak_desc_gkbrkn_glass_cannon",
         author = "goki_dev",
+        local_content = true,
         options = { perk_id="GLASS_CANNON" }
     },
     {
@@ -78,6 +86,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_area_damage",
         description = "$tweak_desc_gkbrkn_area_damage",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="AREA_DAMAGE" }
     },
     {
@@ -85,6 +94,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_chain_bolt",
         description = "$tweak_desc_gkbrkn_chain_bolt",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="CHAIN_BOLT" },
         tags = {goki_thing = true}
     },
@@ -93,12 +103,14 @@ tweaks = {
         name = "$tweak_name_gkbrkn_stun_lock",
         description = "$tweak_desc_gkbrkn_stun_lock",
         author = "goki_dev",
+        local_content = true,
     },
     {
         id = "projectile_repulsion",
         name = "$tweak_name_gkbrkn_projectile_repulsion",
         description = "$tweak_desc_gkbrkn_projectile_repulsion",
         author = "goki_dev",
+        local_content = true,
         options = { perk_id="PROJECTILE_REPULSION" }
     },
     {
@@ -106,6 +118,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_explosion_of_thunder",
         description = "$tweak_desc_gkbrkn_explosion_of_thunder",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="THUNDER_BLAST" },
         tags = {goki_thing = true}
     },
@@ -114,6 +127,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_all_seeing_eye",
         description = "$tweak_desc_gkbrkn_all_seeing_eye",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="X_RAY" },
         deprecated = true,
     },
@@ -122,6 +136,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_spiral_shot",
         description = "$tweak_desc_gkbrkn_spiral_shot",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="SPIRAL_SHOT" },
         tags = {goki_thing = true}
     },
@@ -130,6 +145,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_piercing_shot",
         description = "$tweak_desc_gkbrkn_piercing_shot",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="PIERCING_SHOT" },
     },
     {
@@ -137,6 +153,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_clipping_shot",
         description = "$tweak_desc_gkbrkn_clipping_shot",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="CLIPPING_SHOT" },
     },
     {
@@ -144,6 +161,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_teleport_cast",
         description = "$tweak_desc_gkbrkn_teleport_cast",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="TELEPORT_CAST" },
         tags = {goki_thing = true}
     },
@@ -152,12 +170,14 @@ tweaks = {
         name = "$tweak_name_gkbrkn_blood_amount",
         description = "$tweak_desc_gkbrkn_blood_amount",
         author = "goki_dev",
+        local_content = true,
     },
     {
         id = "allow_negative_mana_always_cast",
         name = "$tweak_name_gkbrkn_allow_negative_mana_always_cast",
         description = "$tweak_desc_gkbrkn_allow_negative_mana_always_cast",
         author = "goki_dev",
+        local_content = true,
         deprecated = true,
     },
     {
@@ -171,6 +191,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_trigger_block_expansion",
         description = "$tweak_desc_gkbrkn_trigger_block_expansion",
         author = "goki_dev",
+        local_content = true,
         deprecated = true
     },
     {
@@ -178,6 +199,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_add_trigger",
         description = "$tweak_desc_gkbrkn_add_trigger",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="ADD_TRIGGER" },
     },
     {
@@ -185,6 +207,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_add_timer",
         description = "$tweak_desc_gkbrkn_add_timer",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="ADD_TIMER" },
     },
     {
@@ -192,6 +215,7 @@ tweaks = {
         name = "$tweak_name_gkbrkn_add_death_trigger",
         description = "$tweak_desc_gkbrkn_add_death_trigger",
         author = "goki_dev",
+        local_content = true,
         options = { action_id="ADD_DEATH_TRIGGER" },
     },
     {
@@ -199,5 +223,6 @@ tweaks = {
         name = "$tweak_name_gkbrkn_unlimited_spells",
         description = "$tweak_desc_gkbrkn_unlimited_spells",
         author = "goki_dev",
+        local_content = true,
     },
 }

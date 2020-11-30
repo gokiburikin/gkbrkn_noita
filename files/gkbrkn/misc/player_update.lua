@@ -1,4 +1,6 @@
+if not ModIsEnabled("gkbrkn_noita") then return; end
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
@@ -61,7 +63,7 @@ if find_tweak("reduced_electrocution") then
 end
 
 --[[ Invincibility Frames ]]
-if HasFlagPersistent( MISC.InvincibilityFrames.FlashingFlag ) then
+if setting_get( MISC.InvincibilityFrames.FlashingFlag ) then
     local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
     local max_invincibility_frames = 0;
     for _,damage_model in pairs( damage_models ) do
@@ -126,10 +128,16 @@ if find_game_modifier("limited_mana") then
     end
 end
 
-local is_debug_mode_enabled = HasFlagPersistent( FLAGS.DebugMode)
+--[[ Cheat - Infinite Flight ]]
+if setting_get( "dev_option_infinite_flight" ) == true then
+    local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
+    if character_data ~= nil then
+        ComponentSetValue2( character_data, "flying_needs_recharge", false );
+    end
+end
 
 --[[ Infinite Money ]]
-if is_debug_mode_enabled and find_dev_option( "infinite_money" ) then
+if setting_get( "dev_option_infinite_money" ) then
     local wallet = EntityGetFirstComponent( player_entity, "WalletComponent" );
     if wallet then
         ComponentSetValue2( wallet, "money", 2000000000 );
@@ -137,31 +145,36 @@ if is_debug_mode_enabled and find_dev_option( "infinite_money" ) then
 end
 
 --[[ Cheap Rerolls ]]
-if is_debug_mode_enabled and find_dev_option( "cheap_rerolls" ) then
+if setting_get( "dev_option_cheap_rerolls" ) then
     GlobalsSetValue( "TEMPLE_PERK_REROLL_COUNT", "-1" );
 end
 
 --[[ Spell Recovery ]]
-if is_debug_mode_enabled and find_dev_option( "infinite_spells" ) then
+if setting_get( "dev_option_infinite_spells" ) then
     GameRegenItemActionsInPlayer( player_entity );
 end
 
 --[[ Invincibility ]]
-if is_debug_mode_enabled and find_dev_option( "invincibility" ) then
+if setting_get( "dev_option_invincibility" ) then
     local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
     for _,damage_model in pairs( damage_models ) do
-        ComponentSetValue2( damage_model, "invincibility_frames", 100 );
+        ComponentSetValue2( damage_model, "invincibility_frames", 60 );
     end
 end
 
 --[[ No Polymorph ]]
-if is_debug_mode_enabled and find_dev_option( "no_polymorph" ) then
+if has_polymorph_immunity == nil then has_polymorph_immunity = false; end
+if setting_get( "dev_option_no_polymorph" ) and not has_polymorph_immunity then
     EntityAddTag( player_entity, "polymorphable_NOT" );
+    has_polymorph_immunity = true;
+elseif not setting_get( "dev_option_no_polymorph" ) and has_polymorph_immunity then
+    EntityRemoveTag( player_entity, "polymorphable_NOT" );
+    has_polymorph_immunity = false;
 end
 
 --[[ Health Recovery ]]
 local health_recovery = 0;
-if is_debug_mode_enabled and find_dev_option( "recover_health" ) then
+if setting_get( "dev_option_recover_health" ) then
     health_recovery = 4/15;
 end
 
@@ -176,7 +189,7 @@ end
 
 --[[ Mana Recovery ]]
 local mana_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_mana_recovery", 0 );
-if is_debug_mode_enabled and find_dev_option( "infinite_mana" ) then
+if setting_get( "dev_option_infinite_mana" ) then
     mana_recovery = 9999;
 end
 
@@ -197,7 +210,7 @@ end
 
 --[[ Passive Recharge ]]
 local recharge_speed = EntityGetVariableNumber( player_entity, "gkbrkn_passive_recharge", 0.0 );
-if HasFlagPersistent( MISC.PassiveRecharge.EnabledFlag ) and recharge_speed < MISC.PassiveRecharge.Speed then
+if setting_get( MISC.PassiveRecharge.EnabledFlag ) and recharge_speed < MISC.PassiveRecharge.Speed then
     recharge_speed = MISC.PassiveRecharge.Speed;
 end
 
@@ -236,10 +249,10 @@ for _,damage_model in pairs( damage_models ) do
         local current_hp = ComponentGetValue2( damage_model, "hp" );
         local hp_difference = max_hp - current_hp;
         local target_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_max_health_recovery", 0.0 );
-        if HasFlagPersistent( MISC.HealOnMaxHealthUp.EnabledFlag ) and target_recovery < 1.0 then
+        if setting_get( MISC.HealOnMaxHealthUp.EnabledFlag ) and target_recovery < 1.0 then
             target_recovery = 1.0;
         end
-        if HasFlagPersistent( MISC.HealOnMaxHealthUp.FullHealFlag ) then
+        if setting_get( MISC.HealOnMaxHealthUp.FullHealFlag ) then
             target_recovery = 10000.0;
         end
         local gained_hp = (max_hp - last_max_hp[ damage_model ]) * target_recovery;
@@ -256,7 +269,7 @@ end
 
 --[[ Quick Swap ]]
 -- TODO definitely needs more work
-if HasFlagPersistent( MISC.QuickSwap.EnabledFlag ) then
+if setting_get( MISC.QuickSwap.EnabledFlag ) then
     local controls = EntityGetFirstComponent( player_entity, "ControlsComponent" );
     local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
     if controls ~= nil and inventory2 ~= nil then
@@ -328,7 +341,7 @@ end
 ]]
 
 --[[ Auto-collect Gold ]]
-if HasFlagPersistent( MISC.AutoPickupGold.EnabledFlag ) then
+if setting_get( MISC.AutoPickupGold.EnabledFlag ) then
     local gold_nuggets = EntityGetWithTag( "gold_nugget" ) or {};
     for _,gold_nugget in pairs( gold_nuggets ) do
         if EntityHasTag( gold_nugget, "gkbrkn_special_goldnugget" ) == false then
@@ -339,8 +352,8 @@ if HasFlagPersistent( MISC.AutoPickupGold.EnabledFlag ) then
 end
 
 --[[ Gold Tracking ]]
-local gold_tracker_world = HasFlagPersistent( MISC.GoldPickupTracker.ShowTrackerFlag );
-local gold_tracker_message = HasFlagPersistent( MISC.GoldPickupTracker.ShowMessageFlag );
+local gold_tracker_world = setting_get( MISC.GoldPickupTracker.ShowTrackerFlag );
+local gold_tracker_message = setting_get( MISC.GoldPickupTracker.ShowMessageFlag );
 if gold_tracker_world or gold_tracker_message then
     last_money = last_money or 0;
     money_picked_total = money_picked_total or 0;
@@ -398,7 +411,7 @@ if now % 1 == 0 then
         local item = EntityGetFirstComponent( gold_nugget, "ItemComponent" );
 
         --[[ Persistent Gold ]]
-        if HasFlagPersistent( MISC.PersistentGold.EnabledFlag ) then
+        if setting_get( MISC.PersistentGold.EnabledFlag ) then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
             if lifetime_component ~= nil then
                 EntityRemoveComponent( gold_nugget, lifetime_component );
@@ -415,7 +428,7 @@ if now % 1 == 0 then
         end
             
         --[[ Gold Decay ]]
-        if HasFlagPersistent( MISC.GoldDecay.EnabledFlag ) and is_gold_decay( gold_nugget ) == false then
+        if setting_get( MISC.GoldDecay.EnabledFlag ) and is_gold_decay( gold_nugget ) == false then
             local lifetime_component = EntityGetFirstComponent( gold_nugget, "LifetimeComponent" );
             if lifetime_component ~= nil then
                 set_gold_decay( gold_nugget );
@@ -424,7 +437,7 @@ if now % 1 == 0 then
     end
 
     --[[ Combine Gold ]]
-     if HasFlagPersistent( MISC.CombineGold.EnabledFlag ) then
+     if setting_get( MISC.CombineGold.EnabledFlag ) then
         local nugget_sizes = { 10, 50, 200, 1000, 10000 };
         SetRandomSeed( GameGetFrameNum(), GameGetFrameNum() );
         for _,gold_nugget in pairs( gold_nuggets ) do
@@ -591,8 +604,8 @@ end
 ]]
 
 --[[ Health Bars ]]
-if HasFlagPersistent( MISC.HealthBars.EnabledFlag ) then
-    if HasFlagPersistent( MISC.HealthBars.PrettyHealthBarsFlag ) then
+if setting_get( MISC.HealthBars.EnabledFlag ) then
+    if setting_get( MISC.HealthBars.PrettyHealthBarsFlag ) then
         local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
         for _,nearby in pairs( nearby_mortal ) do
             if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil and EntityHasNamedVariable( nearby, "gkbrkn_no_health_bar") == false then
@@ -626,173 +639,183 @@ if now % 10 == 0 then
     ]]
     local nearby_enemies = EntityGetWithTag( "enemy" );
     --[[ Champion Enemies ]]
-    if GameHasFlagRun( MISC.ChampionEnemies.EnabledFlag ) then
-        for _,nearby in pairs( nearby_enemies ) do
+    local turn_these_into_champions = {};
+    for _,nearby in pairs( nearby_enemies ) do
+        if EntityHasTag( nearby, "gkbrkn_force_champion" ) then
+            turn_these_into_champions[nearby] = true;
+        end
+
+        if GameHasFlagRun( MISC.ChampionEnemies.EnabledFlag ) then
             SetRandomSeed( now, x + y + nearby );
 
-            --SetRandomSeed( x, y );
             if EntityHasTag( nearby, "polymorphed" ) == false and EntityHasNamedVariable( nearby, "goki_health" ) == false then
-                if ( EntityHasTag( nearby, "gkbrkn_champions" ) == false or EntityHasTag( nearby, "gkbrkn_force_champion" ) == true ) and 
+                if EntityHasTag( nearby, "gkbrkn_champions" ) == false and 
                 EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and 
                 EntityHasTag( nearby, "drone_friendly" ) == false and 
                 EntityHasTag( nearby, "boss_tag" ) == false and 
                 does_entity_drop_gold( nearby ) == true then
-                    if EntityHasTag( nearby, "gkbrkn_force_champion" ) or GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag ) or Random() <= MISC.ChampionEnemies.ChampionChance then
-                        EntityAddTag( nearby, "gkbrkn_champions" );
-                        EntityRemoveTag( nearby, "gkbrkn_force_champion" );
-                        local is_mini_boss = false;
-                        local kills = tonumber( StatsGetValue("enemies_killed") ) or 0;
-                        if GameHasFlagRun( MISC.ChampionEnemies.MiniBossesFlag ) then
-                            local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) ) or 0;
-                            if kills >= next_mini_boss then
-                                is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
-                                if is_mini_boss == true then
-                                    EntityAddTag( nearby, "gkbrkn_mini_boss" );
-                                    GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
-                                end
-                            end
-                        end
-
-                        local valid_champion_types = {};
-                        local valid_champion_type_count = 0;
-                        for index,champion_type_data in pairs( champion_types ) do
-                            if (champion_type_data.validator == nil or champion_type_data.validator( nearby ) ~= false) then
-                                --table.insert( valid_champion_types, champion_type_data );
-                                valid_champion_types[index] = champion_type_data.weight or 1;
-                                valid_champion_type_count = valid_champion_type_count + 1;
-                            end
-                        end
-
-                        local champion_types_to_apply = 1;
-                        if GameHasFlagRun( MISC.ChampionEnemies.ValourFlag ) then
-                            champion_types_to_apply = champion_types_to_apply + MISC.ChampionEnemies.ValourBonus;
-                        end
-                        local champions_encountered = tonumber( GlobalsGetValue( "gkbrkn_champion_enemies_encountered" ) ) or 0;
-                        if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsFlag ) then
-                            local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0012;
-                            local random_roll = Random();
-                            while random_roll <= extra_type_chance and champion_types_to_apply < valid_champion_type_count do
-                                champion_types_to_apply = champion_types_to_apply + 1;
-                                extra_type_chance = extra_type_chance - random_roll;
-                                random_roll = Random();
-                            end
-                        end
-
-                        GlobalsSetValue( "gkbrkn_champion_enemies_encountered", champions_encountered + 1 );
-                        
-                        EntitySetVariableNumber( nearby, "gkbrkn_champion_modifier_amount", champion_types_to_apply );
-
-                        local add_these_badges = {};
-
-                        local apply_these_champion_types = {};
-                        if is_mini_boss then
-                            apply_these_champion_types = {
-                                find_champion_type("damage_buff"),
-                                find_champion_type("projectile_buff"),
-                                find_champion_type("rapid_attack"),
-                                find_champion_type("faster_movement"),
-                                find_champion_type("armored"),
-                                find_champion_type("jetpack"),
-                                find_champion_type("reward"),
-                                find_champion_type("burning"),
-                                find_champion_type("mini_boss"),
-                            };
-                        end
-
-                        for i=1,math.min(valid_champion_type_count, champion_types_to_apply) do
-                            local champion_type_index = WeightedRandomTable( valid_champion_types );
-                            local champion_type = champion_types[tonumber(champion_type_index)];
-                            table.insert( apply_these_champion_types, champion_type );
-                            valid_champion_types[champion_type_index] = nil;
-                        end
-
-                        --[[ Per champion type ]]
-                        for _,champion_data in pairs( apply_these_champion_types ) do
-                            if champion_data.badge ~= nil then
-                                table.insert( add_these_badges, champion_data.badge );
-                            end
-
-                            --[[ Game Effects ]]
-                            for _,game_effect in pairs( champion_data.game_effects or {} ) do
-                                local effect = GetGameEffectLoadTo( nearby, game_effect, true );
-                                if effect ~= nil then ComponentSetValue2( effect, "frames", -1 ); end
-                            end
-
-                            --[[ General Application ]]
-                            if champion_data.apply ~= nil then
-                                champion_data.apply( nearby );
-                            end
-
-                            --[[ Particle Emitter ]]
-                            local particle_material = champion_data.particle_material;
-                            if particle_material ~= nil then
-                                local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/particles.xml" );
-                                local emitter = EntityGetFirstComponent( emitter_entity, "ParticleEmitterComponent" );
-                                if emitter ~= nil then
-                                    ComponentSetValue2( emitter, "emitted_material_name", particle_material );
-                                    EntityAddChild( nearby, emitter_entity );
-                                end
-                                ComponentSetValue2( emitter, "gravity", 0, -200 );
-                            end
-
-                            --[[ Mini-Boss Particle Emitter ]]
-                            if is_mini_boss then
-                                if particle_material ~= nil then
-                                    local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss_particles.xml" );
-                                    EntityAddChild( nearby, emitter_entity );
-                                end
-                            end
-
-                            --[[ Mini-Boss Health Bar ]]
-                            if is_mini_boss and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
-                                add_entity_mini_health_bar( nearby );
-                            end
-
-                            --[[ Sprite Particle Emitter ]]
-                            local sprite_particle_sprite_file = champion_data.sprite_particle_sprite_file;
-                            if sprite_particle_sprite_file ~= nil then
-                                local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/sprite_particles.xml" );
-                                local emitter = EntityGetFirstComponent( emitter_entity, "SpriteParticleEmitterComponent" );
-                                if emitter ~= nil then
-                                    ComponentSetValue2( emitter, "sprite_file", sprite_particle_sprite_file );
-                                    EntityAddChild( nearby, emitter_entity );
-                                end
-                            end
-
-                            --[[ Rewards Drop ]]
-                            local has_reward_script = false;
-                            for _,lua_component in pairs(EntityGetComponent(nearby,"LuaComponent")) do
-                                if ComponentGetValue2( lua_component, "script_damage_received" ) == "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/damage_received.lua" then
-                                    has_reward_script = true;
-                                    break;
-                                end
-                            end
-                            if not has_reward_script then
-                                EntityAddComponent( nearby, "LuaComponent", {
-                                    script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/damage_received.lua"
-                                });
-                            end
-                        end
-
-                        if #add_these_badges > 0 then
-                            local badges = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/badges.xml" );
-                            EntityAddChild( nearby, badges );
-                            for _,badge_filepath in pairs( add_these_badges ) do
-                                local badge = EntityCreateNew();
-                                local sprite = EntityAddComponent2( badge, "SpriteComponent",{
-                                    z_index=-9000,
-                                    image_file=badge_filepath,
-                                    has_special_scale=true
-                                });
-                                EntityAddComponent( badge, "InheritTransformComponent",{ only_position="1"} );
-                                EntityAddChild( badges, badge );
-                            end
-                        end
+                    if GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag ) or Random() <= MISC.ChampionEnemies.ChampionChance then
+                        turn_these_into_champions[ nearby ] = true;
                     else
                         EntityAddTag( nearby, "gkbrkn_no_champion" );
                     end
                 end
             end
+        end
+    end
+
+    for nearby,_ in pairs( turn_these_into_champions ) do
+        SetRandomSeed( now, x + y + nearby );
+        EntityAddTag( nearby, "gkbrkn_champions" );
+        EntityRemoveTag( nearby, "gkbrkn_force_champion" );
+        local is_mini_boss = false;
+        local kills = tonumber( StatsGetValue("enemies_killed") ) or 0;
+        if GameHasFlagRun( MISC.ChampionEnemies.MiniBossesFlag ) then
+            local next_mini_boss = tonumber( GlobalsGetValue( "gkbrkn_next_miniboss" ) ) or 0;
+            if kills >= next_mini_boss then
+                is_mini_boss = Random() <= MISC.ChampionEnemies.MiniBossChance;
+                if is_mini_boss == true then
+                    EntityAddTag( nearby, "gkbrkn_mini_boss" );
+                    GlobalsSetValue( "gkbrkn_next_miniboss", next_mini_boss + MISC.ChampionEnemies.MiniBossThreshold );
+                end
+            end
+        end
+
+        local valid_champion_types = {};
+        local valid_champion_type_count = 0;
+        for index,champion_type_data in pairs( champion_types ) do
+            if (champion_type_data.validator == nil or champion_type_data.validator( nearby ) ~= false) then
+                --table.insert( valid_champion_types, champion_type_data );
+                valid_champion_types[index] = champion_type_data.weight or 1;
+                valid_champion_type_count = valid_champion_type_count + 1;
+            end
+        end
+
+        local champion_types_to_apply = 1;
+        if GameHasFlagRun( MISC.ChampionEnemies.ValourFlag ) then
+            champion_types_to_apply = champion_types_to_apply + MISC.ChampionEnemies.ValourBonus;
+        end
+        local champions_encountered = tonumber( GlobalsGetValue( "gkbrkn_champion_enemies_encountered" ) ) or 0;
+        if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsFlag ) then
+            local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0012;
+            local random_roll = Random();
+            while random_roll <= extra_type_chance and champion_types_to_apply < valid_champion_type_count do
+                champion_types_to_apply = champion_types_to_apply + 1;
+                extra_type_chance = extra_type_chance - random_roll;
+                random_roll = Random();
+            end
+        end
+
+        GlobalsSetValue( "gkbrkn_champion_enemies_encountered", champions_encountered + 1 );
+        
+        EntitySetVariableNumber( nearby, "gkbrkn_champion_modifier_amount", champion_types_to_apply );
+
+        local add_these_badges = {};
+
+        local apply_these_champion_types = {};
+        if is_mini_boss then
+            apply_these_champion_types = {
+                find_champion_type("damage_buff"),
+                find_champion_type("projectile_buff"),
+                find_champion_type("rapid_attack"),
+                find_champion_type("faster_movement"),
+                find_champion_type("armored"),
+                find_champion_type("jetpack"),
+                find_champion_type("reward"),
+                find_champion_type("burning"),
+                find_champion_type("mini_boss"),
+            };
+        end
+
+        for i=1,math.min(valid_champion_type_count, champion_types_to_apply) do
+            local champion_type_index = WeightedRandomTable( valid_champion_types );
+            local champion_type = champion_types[tonumber(champion_type_index)];
+            table.insert( apply_these_champion_types, champion_type );
+            valid_champion_types[champion_type_index] = nil;
+        end
+
+        --[[ Per champion type ]]
+        for _,champion_data in pairs( apply_these_champion_types ) do
+            if champion_data.badge ~= nil then
+                table.insert( add_these_badges, champion_data.sprite );
+            end
+
+            --[[ Game Effects ]]
+            for _,game_effect in pairs( champion_data.game_effects or {} ) do
+                local effect = GetGameEffectLoadTo( nearby, game_effect, true );
+                if effect ~= nil then ComponentSetValue2( effect, "frames", -1 ); end
+            end
+
+            --[[ General Application ]]
+            if champion_data.apply ~= nil then
+                champion_data.apply( nearby );
+            end
+
+            --[[ Particle Emitter ]]
+            local particle_material = champion_data.particle_material;
+            if particle_material ~= nil then
+                local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/particles.xml" );
+                local emitter = EntityGetFirstComponent( emitter_entity, "ParticleEmitterComponent" );
+                if emitter ~= nil then
+                    ComponentSetValue2( emitter, "emitted_material_name", particle_material );
+                    EntityAddChild( nearby, emitter_entity );
+                end
+                ComponentSetValue2( emitter, "gravity", 0, -200 );
+            end
+
+            --[[ Mini-Boss Particle Emitter ]]
+            if is_mini_boss then
+                if particle_material ~= nil then
+                    local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss_particles.xml" );
+                    EntityAddChild( nearby, emitter_entity );
+                end
+            end
+
+            --[[ Mini-Boss Health Bar ]]
+            if is_mini_boss and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil then
+                add_entity_mini_health_bar( nearby );
+            end
+
+            --[[ Sprite Particle Emitter ]]
+            local sprite_particle_sprite_file = champion_data.sprite_particle_sprite_file;
+            if sprite_particle_sprite_file ~= nil then
+                local emitter_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/sprite_particles.xml" );
+                local emitter = EntityGetFirstComponent( emitter_entity, "SpriteParticleEmitterComponent" );
+                if emitter ~= nil then
+                    ComponentSetValue2( emitter, "sprite_file", sprite_particle_sprite_file );
+                    EntityAddChild( nearby, emitter_entity );
+                end
+            end
+
+            --[[ Rewards Drop ]]
+            local has_reward_script = false;
+            for _,lua_component in pairs(EntityGetComponent(nearby,"LuaComponent")) do
+                if ComponentGetValue2( lua_component, "script_damage_received" ) == "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/damage_received.lua" then
+                    has_reward_script = true;
+                    break;
+                end
+            end
+            if not has_reward_script then
+                EntityAddComponent( nearby, "LuaComponent", {
+                    script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/damage_received.lua"
+                });
+            end
+        end
+
+        if #add_these_badges > 0 then
+            local x,y = EntityGetTransform( nearby );
+            local badges = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/badges.xml", x, y );
+            for _,badge_filepath in pairs( add_these_badges ) do
+                local badge = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/template/badge_empty.xml", x, y );
+                local sprite = EntityGetFirstComponent( badge, "SpriteComponent" );
+                ComponentSetValue2( sprite, "image_file", badge_filepath );
+                EntityAddChild( badges, badge );
+            end
+            EntityAddComponent2( badges, "LuaComponent", {
+                execute_every_n_frame = 60,
+                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/champion_types/badges_update.lua"
+            } );
+            EntityAddChild( nearby, badges );
         end
     end
 
@@ -821,7 +844,7 @@ if now % 10 == 0 then
     end
 
     --[[ Custom Damage Numbers ]]
-    if HasFlagPersistent( MISC.ShowDamageNumbers.EnabledFlag ) then
+    if setting_get( MISC.ShowDamageNumbers.EnabledFlag ) then
         local nearby_targets = EntityGetWithTag( "homing_target" );
         for _,target in pairs( nearby_targets ) do
             if not EntityHasTag( target, "boss" ) and EntityHasNamedVariable( nearby, "gkbrkn_no_custom_damage_numbers") == false then
@@ -857,7 +880,7 @@ if now % 10 == 0 then
 
     --[[ Entity Names ]]
     local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
-    if HasFlagPersistent( MISC.ShowEntityNames.EnabledFlag ) then
+    if setting_get( MISC.ShowEntityNames.EnabledFlag ) then
         for _,nearby in pairs( nearby_mortal ) do
             if EntityGetFirstComponent( nearby, "UIInfoComponent" ) == nil then
                 EntityAddComponent( nearby, "UIInfoComponent", {
@@ -1027,7 +1050,7 @@ if now % 10 == 0 then
 end
 
 --[[ Blood Magic ]]
-if HasFlagPersistent( FLAGS.ShowDeprecatedContent ) then
+if setting_get( FLAGS.ShowDeprecatedContent ) then
     local blood_magic_stacks = EntityGetVariableNumber( player_entity, "gkbrkn_blood_magic_stacks", 0 );
     local blood_to_mana_ratio = MISC.PerkOptions.BloodMagic.BloodToManaRatio * blood_magic_stacks;
     if blood_magic_stacks ~= 0 then
@@ -1082,9 +1105,9 @@ if HasFlagPersistent( FLAGS.ShowDeprecatedContent ) then
 end
 
 --[[ Less Particles ]]
-if HasFlagPersistent( MISC.LessParticles.OtherStuffFlag ) then
+if setting_get( MISC.LessParticles.OtherStuffFlag ) then
     local nearby_entities = EntityGetInRadius( x, y, 256 );
-    local disable = HasFlagPersistent( MISC.LessParticles.DisableCosmeticsFlag );
+    local disable = setting_get( MISC.LessParticles.DisableCosmeticsFlag );
     _less_particle_entity_cache = _less_particle_entity_cache or {};
     for _,nearby in pairs( nearby_entities ) do
         if _less_particle_entity_cache[nearby] ~= true then
@@ -1113,17 +1136,9 @@ if GameHasFlagRun( FLAGS.FloorIsLava ) and now % 10 == 0 then
     local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
     if character_data ~= nil then
         local is_on_ground = ComponentGetValue2( character_data, "is_on_ground" );
-        if is_on_ground == "1" then
+        if is_on_ground == true then
             EntityInflictDamage( player_entity, 5/25, "DAMAGE_FIRE", "Floor is Lava", "NORMAL", 0, 0 );
         end
-    end
-end
-
---[[ Game Modifier - Infinite Flight ]]
-if GameHasFlagRun( FLAGS.InfiniteFlight ) then
-    local character_data = EntityGetFirstComponent( player_entity, "CharacterDataComponent" );
-    if character_data ~= nil then
-        ComponentSetValue2( character_data, "flying_needs_recharge", false );
     end
 end
 
@@ -1142,7 +1157,7 @@ if now % 60 == 0 then
     local world_wands = EntityGetWithTag( "wand" );
 
     --[[ Remove annoying edit wand prompt ]]
-    if HasFlagPersistent( MISC.RemoveEditPrompt.EnabledFlag ) then
+    if setting_get( MISC.RemoveEditPrompt.EnabledFlag ) then
         local workshops = EntityGetWithTag( "workshop_untouched" );
         for _,workshop in pairs(workshops or {}) do
             EntityRemoveTag( workshop, "workshop_untouched" );
@@ -1193,17 +1208,6 @@ if now % 60 == 0 then
             end
         end
     end
-end
-
-if is_fixed_camera == nil then is_fixed_camera = HasFlagPersistent( MISC.FixedCamera.EnabledFlag ); end
-if HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) and is_fixed_camera then
-    GameSetCameraFree( false );
-    is_fixed_camera = false;
-elseif not HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) and not is_fixed_camera then
-    GameSetCameraFree( true );
-    local cx, cy = GameGetCameraPos();
-    GameSetCameraPos( cx + (x - cx ) / 2, cy + (y - cy ) / 2 );
-    is_fixed_camera = true;
 end
 
 add_update_time( GameGetRealWorldTimeSinceStarted() - t );

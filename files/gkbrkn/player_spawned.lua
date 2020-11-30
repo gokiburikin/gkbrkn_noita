@@ -1,11 +1,13 @@
 print( "[goki's things] player spawn")
 GameAddFlagRun( "gkbrkn_content_cached" );
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "data/scripts/perks/perk.lua" );
+dofile_once( "data/scripts/perks/perk_list.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/packs.lua" );
-dofile( "mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/dev_options.lua" );
 dofile( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua" );
 local CONTENT = GKBRKN_CONFIG.CONTENT;
 local DEV_OPTIONS = GKBRKN_CONFIG.DEV_OPTIONS;
@@ -32,12 +34,12 @@ end
 
 local init_check_flag = "gkbrkn_player_new_game";
 if GameHasFlagRun( init_check_flag ) == false then
-    if not HasFlagPersistent( "gkbrkn_intro" ) then
+    if not setting_get( "gkbrkn_intro" ) then
         AddFlagPersistent( "gkbrkn_intro" );
         GamePrint( "Welcome to Goki's Things! Thanks for playing." );
         GamePrint( "Don't forget to adjust the settings by clicking the button in the top right." );
     end
-    if HasFlagPersistent( MISC.ShowModTips.EnabledFlag ) then
+    if setting_get( MISC.ShowModTips.EnabledFlag ) then
         SetRandomSeed( x, y );
         local tip = math.ceil( Random() * #MISC.ShowModTips.Tips );
         GamePrint( GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip] ) );
@@ -71,18 +73,18 @@ if GameHasFlagRun( init_check_flag ) == false then
     });
 
     --[[ Hero Mode ]]
-    if HasFlagPersistent( MISC.HeroMode.EnabledFlag ) then
+    if setting_get( MISC.HeroMode.EnabledFlag ) then
         GameAddFlagRun( MISC.HeroMode.EnabledFlag );
-        if HasFlagPersistent( MISC.HeroMode.OrbsDifficultyFlag ) then
+        if setting_get( MISC.HeroMode.OrbsDifficultyFlag ) then
             GameAddFlagRun( MISC.HeroMode.OrbsDifficultyFlag );
         end
-        if HasFlagPersistent( MISC.HeroMode.DistanceDifficultyFlag ) then
+        if setting_get( MISC.HeroMode.DistanceDifficultyFlag ) then
             GameAddFlagRun( MISC.HeroMode.DistanceDifficultyFlag );
         end
-        if HasFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ) then
+        if setting_get( MISC.HeroMode.CarnageDifficultyFlag ) then
             GameAddFlagRun( MISC.HeroMode.CarnageDifficultyFlag );
         end
-        if HasFlagPersistent( MISC.Badges.EnabledFlag ) then
+        if setting_get( MISC.Badges.EnabledFlag ) then
             local badge = load_dynamic_badge( "hero_mode", {
                 {_distance=GameHasFlagRun( MISC.HeroMode.DistanceDifficultyFlag )},
                 {_orbs=GameHasFlagRun( MISC.HeroMode.OrbsDifficultyFlag )},
@@ -127,22 +129,22 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     --[[ Champions Mode ]]
-    if HasFlagPersistent( MISC.ChampionEnemies.EnabledFlag ) then
+    if setting_get( MISC.ChampionEnemies.EnabledFlag ) then
         GameAddFlagRun( MISC.ChampionEnemies.EnabledFlag );
         GlobalsSetValue( "gkbrkn_next_miniboss", MISC.ChampionEnemies.MiniBossThreshold );
-        if HasFlagPersistent( MISC.ChampionEnemies.SuperChampionsFlag ) then
+        if setting_get( MISC.ChampionEnemies.SuperChampionsFlag ) then
             GameAddFlagRun( MISC.ChampionEnemies.SuperChampionsFlag );
         end
-        if HasFlagPersistent( MISC.ChampionEnemies.AlwaysChampionsFlag ) then
+        if setting_get( MISC.ChampionEnemies.AlwaysChampionsFlag ) then
             GameAddFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag );
         end
-        if HasFlagPersistent( MISC.ChampionEnemies.MiniBossesFlag ) then
+        if setting_get( MISC.ChampionEnemies.MiniBossesFlag ) then
             GameAddFlagRun( MISC.ChampionEnemies.MiniBossesFlag );
         end
-        if HasFlagPersistent( MISC.ChampionEnemies.ValourFlag ) then
+        if setting_get( MISC.ChampionEnemies.ValourFlag ) then
             GameAddFlagRun( MISC.ChampionEnemies.ValourFlag );
         end
-        if HasFlagPersistent( MISC.Badges.EnabledFlag ) then
+        if setting_get( MISC.Badges.EnabledFlag ) then
             local badge = load_dynamic_badge( "champion_mode", {
                 {_always=GameHasFlagRun( MISC.ChampionEnemies.AlwaysChampionsFlag )},
                 {_mini_boss=GameHasFlagRun( MISC.ChampionEnemies.MiniBossesFlag )},
@@ -202,10 +204,12 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     --[[ Starting Perks ]]
-    for _,starting_perk in pairs( starting_perks or {} ) do
-        local perk_entity = perk_spawn( x, y, starting_perk );
-        if perk_entity ~= nil then
-            perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+    for _,perk in pairs( perk_list or {} ) do
+        if setting_get( "sp_perk_"..perk.id ) == true then
+            local perk_entity = perk_spawn( x, y, perk.id );
+            if perk_entity ~= nil then
+                perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
+            end
         end
     end
 
@@ -214,7 +218,7 @@ if GameHasFlagRun( init_check_flag ) == false then
 end
 
 --[[ Development Options enabled warning ]]
-if HasFlagPersistent( FLAGS.DebugMode ) then
+if setting_get( FLAGS.DebugMode ) then
     if #dev_options > 0 then
         GamePrint( "There are development mode options enabled! If this is unintentional, disable them from the config menu!" );
     end
@@ -227,5 +231,3 @@ for _,pack_data in pairs( packs ) do
     simulate_cracking_packs( pack_data.id, 100, x, y );
 end
 ]]
-
-    print( tostring( GameIsBetaBuild() ) )

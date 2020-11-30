@@ -1,4 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "data/scripts/lib/coroutines.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/events.lua" );
 dofile_once( "data/scripts/perks/perk.lua" );
@@ -25,7 +26,7 @@ end
 
 async_loop(
     function()
-        if HasFlagPersistent( MISC.Events.EnabledFlag ) then
+        if setting_get( MISC.Events.EnabledFlag ) then
             local player_entity = EntityGetWithTag( "player_unit" )[1];
             local x, y = EntityGetTransform( player_entity );
             local valid_events = {};

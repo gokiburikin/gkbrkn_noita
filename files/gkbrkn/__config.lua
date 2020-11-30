@@ -207,10 +207,6 @@ end
                 register_boolean_option_localized( MISC.GoldPickupTracker.ShowMessageFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.GoldPickupTracker.ShowTrackerFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.GoldDecay.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
-                register_range_option_localized( MISC.GoldLifetime.MultiplierFlag, 1.0, 0.0, 6.0, 1.0,
-                function( value ) return math.floor( value * 10 ) / 10; end,
-                function( value ) return (value == 1.0 and "Disabled") or (value == 6.0 and "Forever") or (value.."x") end,
-                CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.PersistentGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.AutoPickupGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.CombineGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
@@ -313,7 +309,6 @@ end
     }
 -- Options Menu End
 
---[[
 local cache_content = function()
     local content_types_id_cache = {};
     for _,content_type in pairs( content_types ) do
@@ -359,26 +354,6 @@ local cache_content = function()
     has_content_been_cached = true;
     print( "[goki's things] content cached" );
 end
-]]
-
-local cache_content = function()
-    local content_types_id_cache = {};
-    for _,content_type in pairs( content_types ) do
-        content_types_id_cache[ content_type ] = ( content_types_id_cache[ content_type ] or {} );
-        dofile( content_type.content_filepath );
-        local content_table = _G[ content_type.content_table ];
-        print( "[goki's things] caching "..#( content_table or {} ).." "..content_type.short_name );
-        local cache_append = content_type.cache_table.." = {};";
-        for i,cache_content in pairs( content_table or {} ) do
-            cache_append = cache_append .. string.format( "\r\ntable.insert( %s, %s[%s] );", content_type.cache_table, content_type.content_table, i );
-        end
-        ModTextFileSetContent( content_type.cache_filepath, cache_append );
-        ModLuaFileAppend( content_type.content_filepath, content_type.cache_filepath );
-    end
-
-    has_content_been_cached = true;
-    print( "[goki's things] content cached" );
-end
 
 -- NOTE first_parse should only ever be true ONE time in goki's things. do not use it
 -- TODO this needs to be handled by each content type itself
@@ -388,16 +363,18 @@ local parse_content = function( first_parse, force_cached, content_table )
     if load_cached == nil then
         load_cached = has_content_been_cached or GameHasFlagRun( "gkbrkn_content_cached" );
     end
-    for _,content_type_data in pairs( content_types ) do dofile( content_type_data.content_filepath ); end
     if load_cached then
+        for _,content_type_data in pairs( content_types ) do dofile( content_type_data.cache_filepath ); end
+    else
+        for _,content_type_data in pairs( content_types ) do dofile( content_type_data.shared_content_filepath or content_type_data.content_filepath ); end
     end
 
     for _,content_type_data in pairs( content_types ) do
         local index = content_type_data.id;
         local starting_perk_string = "starting_perks = {};\r\n";
-        local content_type_table = _G[content_type_data.cache_table] or _G[content_type_data.content_table];
+        local content_type_table = _G[content_type_data.shared_content_table] or _G[content_type_data.content_table] or _G[content_type_data.cache_table];
         if content_type_table then
-            print( "[goki's things] registering "..#content_type_table.." "..content_type_data.short_name.. ( ( load_cached and " cached" ) or "") );
+            print( "[goki's things] registering "..#content_type_table.." "..content_type_data.short_name.. ( ( load_cached and content_type_data.cache_table and " cached" ) or "") );
             for content_index,content_data in pairs( content_type_table ) do
                 local options = content_data.options or {};
                 options.index = content_index;
@@ -459,6 +436,17 @@ local parse_content = function( first_parse, force_cached, content_table )
                 end
                 content_id = register_content( content_table, index, content_data.id, content_name, content_description, options, content_enabled_by_default, content_data.deprecated, content_data.init_function, content_data.development_mode_only, content_data.tags, content_data.perk_icon or content_data.sprite, content_data.author, content_data.local_content );
                 content = content_table[ content_id ];
+                if index == "starting_perk" and content then
+                    --local starting_perk_content_id = register_content( content_table, "starting_perk", content_data.id, content_name, content_description, options, false, content_data.deprecated )
+                    if content.enabled() then
+                        starting_perk_string = starting_perk_string .. "table.insert( starting_perks, \""..content_data.id.."\" );\r\n"
+                    end
+                end
+            end
+            if index == "starting_perk" and first_parse then
+                if #starting_perk_string ~= 0 then
+                    ModTextFileSetContent( "mods/gkbrkn_noita/files/gkbrkn/content/starting_perks.lua", starting_perk_string );
+                end
             end
         else
         print( "[goki's things] no cache or content table found for "..index );

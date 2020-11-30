@@ -1,10 +1,1 @@
-<Entity name="gkbrkn_champions_badges">
-<InheritTransformComponent>
-</InheritTransformComponent>
-<LuaComponent
-    execute_on_added="1"
-    execute_every_n_frame="60"
-    script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/badges_update.lua"
->
-</LuaComponent>
-</Entity>
+<Entity name="gkbrkn_champions_badges"><InheritTransformComponent/></Entity>

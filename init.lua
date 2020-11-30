@@ -1,18 +1,5 @@
 --[[        
-changelog
-    -m "Add Game Modifier: Polymorph Immunity"
-    -m "Dev Options are now hidden unless Options - Development Mode is enabled"
-    -m "Update Option: Rainbow Projectiles (only randomize costmetic particles. fixes rainbow water trail, etc)"
-    -m "Fix Champion Icons ragdolling when champion Lukki are killed"
-    -m "Update Action: Area Damage (no longer incorrectly stacks, damage multiplier 50% -> 100%, damage radius 16 -> 10)"
-    -m "Update Option: Manage External Content (don't show duplicate entries if mods incorrectly override vanilla spells)"
-    -m "Fix Option: Classy Framework Integration (properly give custom loadouts)"
-    -m "Fix Dev Option: No Polymorph"
-    -m "Fix Selectable Classes and Classy Framework integration messy loadouts (no spinning wands, potion sparkles)"
-    -m "Delay random start options until after loadouts are handled"
-    -m "Fix Random Starts (no longer duplicates generate primary or secondary wand in the world)"
-    -m "Fix outdated chest_random and chest_random_super scripts"
-    -m "Add Game Modifier: Advanced Darkness"
+changelog 
 
 some issues with noita (for if Nolla ever cares)
     explosive projectile (c.damage_explosion_add) is broken; damage is based on explosion radius
@@ -126,7 +113,7 @@ ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "mods/gkbrkn
 
 ModTextFilePrepend( "data/entities/animals/boss_centipede/boss_centipede_update.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_centipede_update.lua" );
 
-if HasFlagPersistent( MISC.NoPregenWands.EnabledFlag ) then
+if setting_get( MISC.NoPregenWands.EnabledFlag ) then
     local pregen_wand_biomes = {
         "data/scripts/biomes/coalmine.lua",
         "data/scripts/biomes/coalmine_alt.lua",
@@ -137,7 +124,7 @@ if HasFlagPersistent( MISC.NoPregenWands.EnabledFlag ) then
     end
 end
 
-if HasFlagPersistent( MISC.LooseSpellGeneration.EnabledFlag ) then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/loose_spell_generation.lua" ); end
+if setting_get( MISC.LooseSpellGeneration.EnabledFlag ) then ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/loose_spell_generation.lua" ); end
 
 ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/append/perk_list.lua" );
 ModLuaFileAppend( "data/scripts/perks/perk.lua", "mods/gkbrkn_noita/files/gkbrkn/append/perk.lua" );
@@ -152,7 +139,7 @@ ModLuaFileAppend( "data/scripts/items/generate_shop_item.lua", "mods/gkbrkn_noit
 
 local skip_loadout = false;
 local delay_init = false;
-if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
+if setting_get( MISC.Loadouts.ManageFlag ) then
     if ModIsEnabled("starting_loadouts") then
         ModTextFileAppend( "mods/starting_loadouts/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/kill_player_spawned_event.lua" );
         ModTextFileAppend( "mods/starting_loadouts/files/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/starting_loadouts_append.lua" );
@@ -173,7 +160,7 @@ if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
         ModTextFileSetContent( "mods/gkbrkn_noita/files/gkbrkn/content/selectable_classes_loadouts.lua", ModTextFileGetContent( "data/selectable_classes/classes/class_list.lua" ) );
         ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/selectable_classes_loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_append.lua" );
         ModTextFileAppend( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua", "mods/gkbrkn_noita/files/gkbrkn/content/selectable_classes_loadouts.lua" );
-        if HasFlagPersistent( MISC.Loadouts.SelectableClassesIntegrationFlag ) then
+        if setting_get( MISC.Loadouts.SelectableClassesIntegrationFlag ) then
             ModTextFileAppend( "data/selectable_classes/classes/class_list.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_integration.lua" );
             ModTextFileAppend( "data/selectable_classes/classes/class_pickup.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/selectable_classes_extension.lua" );
             skip_loadout = true;
@@ -187,7 +174,7 @@ if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
     end
 
     if ModIsEnabled("classy_framework") then
-        if HasFlagPersistent( MISC.Loadouts.ClassyFrameworkIntegrationFlag ) then
+        if setting_get( MISC.Loadouts.ClassyFrameworkIntegrationFlag ) then
             ModTextFileAppend( "mods/classy_framework/classes/class_list.lua","mods/gkbrkn_noita/files/gkbrkn_loadouts/classy_framework_integration.lua" );
             ModTextFileAppend( "mods/classy_framework/class_select/class_pickup.lua", "mods/gkbrkn_noita/files/gkbrkn_loadouts/classy_framework_extension.lua" );
             skip_loadout = true;
@@ -201,25 +188,20 @@ if HasFlagPersistent( MISC.Loadouts.ManageFlag ) then
 end
 
 if ModIsEnabled("nightmare") then
-    if HasFlagPersistent( MISC.Badges.EnabledFlag ) then ModTextFileAppend( "mods/nightmare/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/nightmare_mode_badge.lua" ); end
+    if setting_get( MISC.Badges.EnabledFlag ) then ModTextFileAppend( "mods/nightmare/init.lua", "mods/gkbrkn_noita/files/gkbrkn/append/nightmare_mode_badge.lua" ); end
 end
 
-if HasFlagPersistent( MISC.LegendaryWands.EnabledFlag ) then dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" ); end
---if HasFlagPersistent( MISC.FixedCamera.EnabledFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
+if setting_get( MISC.LegendaryWands.EnabledFlag ) then dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" ); end
+if setting_get( MISC.FixedCamera.OldBehaviourFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
 
 function OnPlayerSpawned( player_entity )
+    GlobalsSetValue( "mod_button_tr_width", "0" );
     if skip_loadout then GameAddFlagRun( FLAGS.SkipGokiLoadouts ); end
     if delay_init then GameAddFlagRun( FLAGS.DelayInit ); end
     if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then
         EntityLoad('mods/gkbrkn_noita/files/gkbrkn/gui/container.xml');
     end
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/player_spawned.lua", { player_entity = player_entity } );
-end
-
-function OnModPreInit()
-    --[[ Tweaks ]]
-    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_actions.lua" );
-    ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
 end
 
 -- Add "Nolla" as the author to actions in gun_actions.lua
@@ -237,34 +219,23 @@ ModLuaFileAppend( "data/scripts/status_effects/status_list.lua", "mods/gkbrkn_no
 ModMaterialsFileAdd( "mods/gkbrkn_noita/files/gkbrkn/materials/slow_polymorph.xml" );
 ]]
 
+
+function OnModPreInit()
+    --[[ Tweaks ]]
+    ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_actions.lua" );
+    ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
+end
+
 --function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
 function OnModPostInit() -- TODO this was done to allow init_function to call ModMaterialsFileAdd
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
     ModTextFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/content/perks.lua" );
 
-	if HasFlagPersistent( FLAGS.GenerateRandomSpellbooks ) then ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/generate_random_spellbooks.lua" ); end
-    if HasFlagPersistent( FLAGS.DisableRandomSpells ) then ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/disable_spells.lua" ); end
+	if setting_get( FLAGS.GenerateRandomSpellbooks ) then ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/generate_random_spellbooks.lua" ); end
+    if setting_get( FLAGS.DisableRandomSpells ) then ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/disable_spells.lua" ); end
     
     GKBRKN_CONFIG.cache_content();
     GKBRKN_CONFIG.parse_content( true );
-
-    -- On first launch enable any options that should be enabled by default
-    if HasFlagPersistent("gkbrkn_first_launch") == false then
-        AddFlagPersistent("gkbrkn_first_launch");
-        for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
-            if option.SubOptions ~= nil then
-                for _,sub_option in pairs(option.SubOptions) do
-                    if sub_option.EnabledByDefault then
-                        AddFlagPersistent( sub_option.PersistentFlag );
-                    end
-                end
-            else
-                if option.EnabledByDefault then
-                    AddFlagPersistent( option.PersistentFlag );
-                end
-            end
-        end
-    end
 
     -- Run any enabled content's init functions
     for content_id,content in pairs( GKBRKN_CONFIG.CONTENT ) do
@@ -289,8 +260,11 @@ function OnModPostInit() -- TODO this was done to allow init_function to call Mo
     ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_actions.lua" );
 end
 
-
 function OnWorldInitialized()
+    local mod_button_reservation = tonumber( GlobalsGetValue( "mod_button_tr_width", "0" ) );
+    GlobalsSetValue( "gkbrkn_mod_button_reservation", tostring( mod_button_reservation ) );
+    GlobalsSetValue( "mod_button_tr_width", tostring( mod_button_reservation + 15 ) );
+
     dofile( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua");
     if find_game_modifier("darkness") then
         local biomes = {
@@ -308,6 +282,51 @@ function OnWorldInitialized()
         };
         for _,biome_name in pairs( biomes ) do
             BiomeObjectSetValue( "data/biome/" .. biome_name .. ".xml", "modifiers", "fog_of_war_delta", 10 );
+        end
+    end
+end
+
+local last_time = GameGetRealWorldTimeSinceStarted();
+local current_fps = 0;
+local times = {};
+function OnWorldPostUpdate()
+    --[[ More Accurate Smoothed FPS ]]
+    local now = GameGetRealWorldTimeSinceStarted();
+    local time_sum = 0;
+    table.insert( times, now - last_time );
+    last_time = now;
+    if #times > 5 then table.remove( times, 1 ); end
+    for k,v in ipairs( times ) do time_sum = time_sum + v; end
+    local fps = math.floor( (1 / (time_sum / #times) ) );
+    current_fps = current_fps + ( fps - current_fps ) / 4;
+    GlobalsSetValue( "gkbrkn_fps", tostring( math.ceil( current_fps ) ) );
+
+    if GlobalsGetValue( "gkbrkn_mod_button_tr_max", "0" ) == "0" then
+        GlobalsSetValue( "gkbrkn_mod_button_tr_max", GlobalsGetValue( "mod_button_tr_current", "0" ) );
+    end
+    GlobalsSetValue( "mod_button_tr_current", "0" );
+    local x, y = 0, 0;
+    local player = EntityGetWithTag( "player_unit" )[1];
+    if player == nil or player == 0 then
+        player = ( find_polymorphed_players() or {} )[1];
+    end
+    if player ~= nil and player ~= 0 then
+        x, y = EntityGetTransform( player );
+        if is_fixed_camera == nil then is_fixed_camera = not setting_get( MISC.FixedCamera.EnabledFlag ); end
+        if setting_get( MISC.FixedCamera.EnabledFlag ) and not setting_get( MISC.FixedCamera.OldBehaviourFlag ) then
+            if is_fixed_camera then
+                local cx, cy = GameGetCameraPos();
+                --GameSetCameraPos( cx + (x - cx ) / 1.2, cy + (y - cy ) / 1.2 );
+                GameSetCameraPos( cx + ( x - cx ) / 1.2, cy + ( y - cy ) / 1.2 );
+            else
+                GameSetCameraFree( true );
+                is_fixed_camera = true;
+            end
+        elseif not setting_get( MISC.FixedCamera.EnabledFlag ) or setting_get( MISC.FixedCamera.OldBehaviourFlag ) then
+            if is_fixed_camera then
+                GameSetCameraFree( false );
+                is_fixed_camera = false;
+            end
         end
     end
 end

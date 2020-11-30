@@ -1,6 +1,7 @@
 dofile( "data/scripts/gun/gun_actions.lua" );
 dofile_once( "data/scripts/gun/gun_enums.lua" );
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
@@ -73,8 +74,8 @@ function generate_gun( cost, level, force_unshuffle )
         if EntityGetRootEntity(wand) == wand and EntityGetVariableNumber( wand, "gkbrkn_altered_wand", 0 ) == 0 then
             EntitySetVariableNumber( wand, "gkbrkn_altered_wand", 1 );
             local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
-            if HasFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag ) then
-                local children = EntityGetAllChildren( wand );
+            if setting_get( MISC.AlternativeWandGeneration.EnabledFlag ) then
+                local children = EntityGetAllChildren( wand ) or {};
                 for _,child in ipairs( children ) do
                     local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
                     local permanent_action = false;
@@ -107,8 +108,8 @@ function generate_gun( cost, level, force_unshuffle )
                     end
                     EntityAddChild( wand, child_to_return );
                 end
-            elseif HasFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag ) then
-                local children = EntityGetAllChildren( wand );
+            elseif setting_get( MISC.ChaoticWandGeneration.EnabledFlag ) then
+                local children = EntityGetAllChildren( wand ) or {};
                 for _,child in ipairs( children ) do
                     local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
                     local permanent_action = false;
@@ -138,8 +139,8 @@ function generate_gun( cost, level, force_unshuffle )
                     end
                     EntityAddChild( wand, child_to_return );
                 end
-            elseif HasFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag ) then
-                local children = EntityGetAllChildren( wand );
+            elseif setting_get( MISC.ExtendedWandGeneration.EnabledFlag ) then
+                local children = EntityGetAllChildren( wand ) or {};
                 for _,child in ipairs( children ) do
                     local item = EntityGetFirstComponentIncludingDisabled( child, "ItemComponent" );
                     local permanent_action = false;

@@ -1,4 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "data/scripts/perks/perk.lua" );
 dofile_once( "data/scripts/perks/perk_list.lua" );
 
@@ -26,14 +27,14 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     -- random cape colour
-    if HasFlagPersistent( MISC.RandomStart.RandomCapeColorFlag ) and cape ~= nil then
+    if setting_get( MISC.RandomStart.RandomCapeColorFlag ) and cape ~= nil then
         local verlet_physics = EntityGetFirstComponent( cape, "VerletPhysicsComponent" );
         ComponentSetValue2( verlet_physics, "cloth_color",  Random( 0xFF000000, 0xFFFFFFFF ) );
         ComponentSetValue2( verlet_physics, "cloth_color_edge",  Random( 0xFF000000, 0xFFFFFFFF ) );
     end
 
     -- randomize starting hp
-    if HasFlagPersistent( MISC.RandomStart.RandomHealthFlag ) then
+    if setting_get( MISC.RandomStart.RandomHealthFlag ) then
         local damage_models = EntityGetComponent( player_entity, "DamageModelComponent" );
         if damage_models ~= nil then
             for i,v in pairs(damage_models) do
@@ -59,20 +60,20 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
 
         local generate_wands = {}
-        if HasFlagPersistent( MISC.RandomStart.RandomPrimaryWandFlag ) then
+        if setting_get( MISC.RandomStart.RandomPrimaryWandFlag ) then
             generate_wands[1] = { "projectile_actions"};
         end
-        if HasFlagPersistent( MISC.RandomStart.RandomSecondaryWandFlag ) then
+        if setting_get( MISC.RandomStart.RandomSecondaryWandFlag ) then
             generate_wands[2] = { "cost_actions" };
         end
-        if HasFlagPersistent( MISC.RandomStart.RandomExtraWandFlag ) then
+        if setting_get( MISC.RandomStart.RandomExtraWandFlag ) then
             generate_wands[3] = { "projectile_actions" };
         end
 
         for i,v in pairs(generate_wands) do
             local held_wand = held_wands[i];
             local actions_pool = generate_wands[i][1];
-            if HasFlagPersistent( MISC.RandomStart.CustomWandGenerationFlag ) == true then
+            if setting_get( MISC.RandomStart.CustomWandGenerationFlag ) == true then
                 local item_entity = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/random_wand.xml", Random( -1000, 1000 ),  Random( -1000, 1000 ) );
                 EntityAddComponent( item_entity, "VariableStorageComponent", {
                     name = "random_start_actions_pool",
@@ -103,7 +104,7 @@ if GameHasFlagRun( init_check_flag ) == false then
             end
         end
 
-        if HasFlagPersistent( MISC.RandomStart.RandomFlaskFlag ) then
+        if setting_get( MISC.RandomStart.RandomFlaskFlag ) then
             local inventory_items = EntityGetAllChildren( inventory );
             local flasks_to_replace = 0;
             if inventory_items ~= nil then
@@ -122,7 +123,8 @@ if GameHasFlagRun( init_check_flag ) == false then
     end
 
     -- random perk
-    if HasFlagPersistent( MISC.RandomStart.RandomPerkFlag ) then
+    local random_perks = setting_get( MISC.RandomStart.RandomPerksFlag );
+    for i=1,random_perks or 0 do
         local random_perk = random_from_array( perk_list ).id;
         local perk_entity = perk_spawn( x, y, random_perk );
         if perk_entity ~= nil then

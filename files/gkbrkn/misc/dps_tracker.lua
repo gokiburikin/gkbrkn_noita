@@ -1,6 +1,7 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 current = current or 0;
 current_true = current_true or 0;
 first_hit_frame = first_hit_frame or 0;
@@ -25,7 +26,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     --if did_hit then
     --    EntityApplyTransform( entity, x, y - 5 );
     --end
-    if entity_thats_responsible == 0 and HasFlagPersistent( MISC.TargetDummy.AllowEnvironmentalDamage ) == false or damage < 0 then return; end
+    if entity_thats_responsible == 0 and setting_get( MISC.TargetDummy.AllowEnvironmentalDamage ) == false or damage < 0 then return; end
     
     -- reset tracker after 10 frames of dps
     if now >= reset_frame or (now - first_hit_frame) > 600 then

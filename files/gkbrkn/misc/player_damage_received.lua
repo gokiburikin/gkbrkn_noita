@@ -1,4 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
 function damage_received( damage, message, entity_thats_responsible, is_fatal )
@@ -10,8 +11,9 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
     end
 
     local invincibility_duration = EntityGetVariableNumber(entity, "gkbrkn_invincibility_frames", 0 );
-    if HasFlagPersistent( MISC.InvincibilityFrames.EnabledFlag ) and invincibility_duration < MISC.InvincibilityFrames.Duration then
-        invincibility_duration = MISC.InvincibilityFrames.Duration;
+    local duration = setting_get( MISC.InvincibilityFrames.Duration );
+    if duration > 0 and invincibility_duration < duration then
+        invincibility_duration = duration;
     end
     if invincibility_duration > 0 and damage > 0 then
         local components = EntityGetComponent( entity, "DamageModelComponent" );

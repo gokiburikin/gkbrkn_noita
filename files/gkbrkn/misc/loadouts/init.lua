@@ -1,7 +1,8 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
-if HasFlagPersistent( MISC.Loadouts.EnabledFlag ) and not GameHasFlagRun( FLAGS.SkipGokiLoadouts ) then
+if setting_get( MISC.Loadouts.EnabledFlag ) and not GameHasFlagRun( FLAGS.SkipGokiLoadouts ) then
     if loadouts and #loadouts > 0 then
         print("[goki's things] found "..#loadouts.." active loadouts" );
         local x,y = EntityGetTransform( player_entity );

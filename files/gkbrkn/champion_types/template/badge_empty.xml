@@ -1,0 +1,4 @@
+<Entity>
+    <SpriteComponent z_index = "-9000" image_file = ""/>
+    <InheritTransformComponent only_position = "true"/>
+</Entity>

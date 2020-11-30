@@ -1,4 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
@@ -191,11 +192,11 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
         end
     end
 
-    if HasFlagPersistent( MISC.LessParticles.PlayerProjectilesFlag ) then
-        reduce_particles( projectile_entity, HasFlagPersistent( MISC.LessParticles.DisableCosmeticsFlag ) );
+    if setting_get( MISC.LessParticles.PlayerProjectilesFlag ) then
+        reduce_particles( projectile_entity, setting_get( MISC.LessParticles.DisableCosmeticsFlag ) );
     end
 
-    if HasFlagPersistent( MISC.RainbowProjectiles.EnabledFlag ) then
+    if setting_get( MISC.RainbowProjectiles.EnabledFlag ) then
         SetRandomSeed( projectile_entity, projectile_entity );
         local color = 0xFF000000 + math.floor( Random() * 0xFFFFFF );
         projectile_change_particle_colors( projectile_entity, color );

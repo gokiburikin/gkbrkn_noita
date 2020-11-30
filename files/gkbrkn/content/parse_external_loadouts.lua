@@ -25,7 +25,7 @@ if loadouts_to_parse ~= nil then
         table.insert( loadouts, {
             id = id, -- unique identifier
             name = name, -- displayed loadout name
-            description = loadout_data.description or "An automatically managed loadout.",
+            description = loadout_data.description or "An automatically managed loadout",
             author = loadout_data.author,
             cape_color = cape_color, -- cape color (ABGR) *can be nil
             cape_color_edge = cape_color_edge, -- cape edge color (ABGR) *can be nil

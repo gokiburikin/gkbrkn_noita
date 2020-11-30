@@ -236,6 +236,7 @@ packs = {
     {
         id = "gkbrkn_critical_hits",
         name = "Critical Hits",
+        local_content = true,
         -- this might become an xml to load? that way people could design specialer packs
         image_filepath = "mods/gkbrkn_noita/files/gkbrkn/packs/critical_hits/pack.png", -- the path to the pack image
         custom_xml = nil, -- this would contain a pack entity that might have cool legendary effects

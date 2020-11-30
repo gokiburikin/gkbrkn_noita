@@ -21,6 +21,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_uber_boss",
         description = "$game_modifier_desc_gkbrkn_uber_boss",
         author = "goki_dev",
+        local_content = true,
         options = {
             run_flags = { FLAGS.UberBoss }
         }
@@ -30,6 +31,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_goo_mode",
         description = "$game_modifier_desc_gkbrkn_goo_mode",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 dofile_once( "data/scripts/perks/perk.lua" );
@@ -48,6 +50,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_poly_goo_mode",
         description = "$game_modifier_desc_gkbrkn_poly_goo_mode",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
@@ -68,6 +71,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_hot_goo_mode",
         description = "$game_modifier_desc_gkbrkn_hot_goo_mode",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
@@ -91,6 +95,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_killer_goo_mode",
         description = "$game_modifier_desc_gkbrkn_killer_goo_mode",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
@@ -114,6 +119,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_alt_killer_goo_mode",
         description = "$game_modifier_desc_gkbrkn_alt_killer_goo_mode",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 local perk_entity = perk_spawn( x, y, "REMOVE_FOG_OF_WAR" );
@@ -136,6 +142,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_limited_mana",
         description = "$game_modifier_desc_gkbrkn_limited_mana",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.LimitedMana } }
     },
     {
@@ -143,6 +150,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_remove_generic_wands",
         description = "$game_modifier_desc_gkbrkn_remove_generic_wands",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.RemoveGenericWands } }
     },
     {
@@ -150,6 +158,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_no_edit",
         description = "$game_modifier_desc_gkbrkn_no_edit",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.NoWandEditing } }
     },
     {
@@ -157,6 +166,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_limited_ammo",
         description = "$game_modifier_desc_gkbrkn_limited_ammo",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.LimitedAmmo } }
     },
     {
@@ -164,6 +174,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_unlimited_ammo",
         description = "$game_modifier_desc_gkbrkn_unlimited_ammo",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.UnlimitedAmmo } }
     },
     {
@@ -171,6 +182,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_no_hit",
         description = "$game_modifier_desc_gkbrkn_no_hit",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 EntityAddComponent( player_entity, "LuaComponent", {
@@ -185,6 +197,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_order_wands_only",
         description = "$game_modifier_desc_gkbrkn_order_wands_only",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.OrderWandsOnly } }
     },
     {
@@ -192,6 +205,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_shuffle_wands_only",
         description = "$game_modifier_desc_gkbrkn_shuffle_wands_only",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.ShuffleWandsOnly } }
     },
     {
@@ -199,6 +213,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_guaranteed_always_cast",
         description = "$game_modifier_desc_gkbrkn_guaranteed_always_cast",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.GuaranteedAlwaysCast } }
     },
     {
@@ -206,6 +221,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_spell_shops_only",
         description = "$game_modifier_desc_gkbrkn_spell_shops_only",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.SpellShopsOnly } }
     },
     {
@@ -213,6 +229,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_wand_shops_only",
         description = "$game_modifier_desc_gkbrkn_wand_shops_only",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.WandShopsOnly } },
         tags = {goki_thing = true}
     },
@@ -221,6 +238,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_free_shops",
         description = "$game_modifier_desc_gkbrkn_free_shops",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.FreeShops } }
     },
     {
@@ -228,6 +246,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_rebalance_shops",
         description = "$game_modifier_desc_gkbrkn_rebalance_shops",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.RebalanceShops } },
         tags = {goki_thing = true}
     },
@@ -236,20 +255,15 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_floor_is_lava",
         description = "$game_modifier_desc_gkbrkn_floor_is_lava",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.FloorIsLava } }
-    },
-    {
-        id = "infinite_flight",
-        name = "$game_modifier_name_gkbrkn_infinite_flight",
-        description = "$game_modifier_desc_gkbrkn_infinite_flight",
-        author = "goki_dev",
-        options = { run_flags = { FLAGS.InfiniteFlight } }
     },
     {
         id = "disintegrate_corpses",
         name = "$game_modifier_name_gkbrkn_disintegrate_corpses",
         description = "$game_modifier_desc_gkbrkn_disintegrate_corpses",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.DisintegrateCorpses } }
     },
     {
@@ -257,6 +271,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_keep_moving",
         description = "$game_modifier_desc_gkbrkn_keep_moving",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.KeepMoving } }
     },
     {
@@ -264,6 +279,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_kick_spells_off_wands",
         description = "$game_modifier_desc_gkbrkn_kick_spells_off_wands",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.KickSpellsOffWands } },
         tags = {goki_thing = true}
     },
@@ -272,6 +288,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_kick_spells_around",
         description = "$game_modifier_desc_gkbrkn_kick_spells_around",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.KickSpellsAround } },
         enabled_by_default = true,
         tags = {goki_thing = true}
@@ -281,6 +298,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_enemy_invincibility_frames",
         description = "$game_modifier_desc_gkbrkn_enemy_invincibility_frames",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.EnemyInvincibilityFrames } }
     },
     {
@@ -288,6 +306,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_enemy_intangibility_frames",
         description = "$game_modifier_desc_gkbrkn_enemy_intangibility_frames",
         author = "goki_dev",
+        local_content = true,
         options = { run_flags = { FLAGS.EnemyIntangibilityFrames } },
         tags = {goki_thing = true}
     },
@@ -296,6 +315,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_angry_gods",
         description = "$game_modifier_desc_gkbrkn_angry_gods",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", "1" );
@@ -308,6 +328,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_polymorph_immunity",
         description = "$game_modifier_desc_gkbrkn_polymorph_immunity",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 EntityAddTag( player_entity, "polymorphable_NOT" );
@@ -320,6 +341,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_no_hit_lite",
         description = "$game_modifier_desc_gkbrkn_no_hit_lite",
         author = "goki_dev",
+        local_content = true,
         options = {
             player_spawned_callback = function( player_entity )
                 EntityAddComponent( player_entity, "LuaComponent", {
@@ -334,6 +356,7 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_darkness",
         description = "$game_modifier_desc_gkbrkn_darkness",
         author = "goki_dev",
+        local_content = true,
     },
     {
         -- Uses Persistent Flags
@@ -341,5 +364,6 @@ game_modifiers = {
         name = "$game_modifier_name_gkbrkn_disable_random_spells",
         description = "$game_modifier_desc_gkbrkn_disable_random_spells",
         author = "goki_dev",
+        local_content = true,
     }
 }
