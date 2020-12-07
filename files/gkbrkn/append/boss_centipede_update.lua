@@ -1,8 +1,9 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua");
-if GameHasFlagRun( FLAGS.UberBoss ) then
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua");
+if setting_get( FLAGS.UberBossCount ) > -1 then
     local _GameGetOrbCountThisRun = GameGetOrbCountThisRun;
     function GameGetOrbCountThisRun()
         _GameGetOrbCountThisRun();
-        return 36;
+        return setting_get( FLAGS.UberBossCount );
     end
 end

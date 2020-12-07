@@ -1,6 +1,6 @@
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
 local entity = GetUpdatedEntityID();
-local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
+local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_spell_merge_soft_parent", "0" ));
 if parent ~= 0 and EntityGetIsAlive(parent) then
     local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );

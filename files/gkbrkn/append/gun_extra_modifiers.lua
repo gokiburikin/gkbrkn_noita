@@ -18,9 +18,6 @@ extra_modifiers["gkbrkn_no_recoil"] = function()
 	shot_effects.recoil_knockback = -999999;
 end
 
-extra_modifiers["matran"] = function()
-    local data = hand[#hand];
-    if data and data.mana ~= nil then
-        mana = mana + data.mana * 0.5;
-    end
+extra_modifiers["gkbrkn_dimige"] = function()
+    c.damage_projectile_add = c.damage_projectile_add + 0.04;
 end

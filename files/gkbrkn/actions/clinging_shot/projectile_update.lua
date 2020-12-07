@@ -25,10 +25,10 @@ if projectile ~= nil then
 
     local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );
-    local soft_parent = EntityGetVariableNumber( entity, "gkbrkn_clinging_shot_target", nil );
+    local soft_parent = EntityGetVariableNumber( entity, "gkbrkn_clinging_shot_target", 0 );
     local target_x = EntityGetVariableNumber( entity, "gkbrkn_clinging_shot_target_x", x );
     local target_y = EntityGetVariableNumber( entity, "gkbrkn_clinging_shot_target_y", y );
-    if soft_parent ~= nil and EntityGetIsAlive( soft_parent ) then
+    if soft_parent ~= 0 and EntityGetIsAlive( soft_parent ) then
         local px, py = EntityGetTransform( soft_parent );
         local distance = math.sqrt( ( px - x ) ^ 2 + ( py - y ) ^ 2 );
         if distance < distance_full then
@@ -41,24 +41,25 @@ if projectile ~= nil then
             EntitySetVariableNumber( entity, "gkbrkn_clinging_shot_target_y", y );
         end
     else
-        EntitySetVariableNumber( entity, "gkbrkn_clinging_shot_target_x", target_x );
-        EntitySetVariableNumber( entity, "gkbrkn_clinging_shot_target_y", target_y );
+        EntitySetVariableNumber( entity, "gkbrkn_clinging_shot_target", 0 );
     end
 
 
-    target_x = target_x + Random( -random_offset, random_offset );
-    target_y = target_y + Random( -random_offset, random_offset );
-    local distance = math.sqrt( ( x - target_x ) ^ 2 + ( y - target_y ) ^ 2 );
-    local direction = math.atan2( target_y - y, target_x - x );
+    if soft_parent ~= 0 then
+        target_x = target_x + Random( -random_offset, random_offset );
+        target_y = target_y + Random( -random_offset, random_offset );
+        local distance = math.sqrt( ( x - target_x ) ^ 2 + ( y - target_y ) ^ 2 );
+        local direction = math.atan2( target_y - y, target_x - x );
 
-    local velocity_components = EntityGetComponent( entity, "VelocityComponent" ) or {};
-    
-    for _,velocity_component in pairs(velocity_components) do
-        local vx,vy = ComponentGetValue2( velocity_component, "mVelocity", vx, vy);
-        local ox = math.cos( direction ) * maximum_strength;
-        local oy = math.sin( direction ) * maximum_strength;
-        vx = vx + ox;
-        vy = vy + oy;
-        ComponentSetValue2( velocity_component, "mVelocity", vx, vy );
+        local velocity_components = EntityGetComponent( entity, "VelocityComponent" ) or {};
+        
+        for _,velocity_component in pairs(velocity_components) do
+            local vx,vy = ComponentGetValue2( velocity_component, "mVelocity", vx, vy);
+            local ox = math.cos( direction ) * maximum_strength;
+            local oy = math.sin( direction ) * maximum_strength;
+            vx = vx + ox;
+            vy = vy + oy;
+            ComponentSetValue2( velocity_component, "mVelocity", vx, vy );
+        end
     end
 end

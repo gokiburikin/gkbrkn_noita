@@ -1,12 +1,17 @@
--- NOTE: Using GameTextGetXX may be wastey. Consider caching some of the ui elements like [?] and [X] and only update them when the menu is clicked
 print("[goki's things] setting up GUI");
+
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/config.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua");
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/inventories.lua");
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua");
 dofile_once( "data/scripts/lib/coroutines.lua" );
-GlobalsSetValue( "mod_button_width_tr", tonumber( GlobalsGetValue( "mod_button_width_tr" ) ) or 0 - 14 );
+dofile_once( "data/scripts/lib/utilities.lua" );
+
 SetRandomSeed( 137, 931 );
+
 -- TODO: this is a temporary solution, fix this later
 local CONTENT = {};
 GKBRKN_CONFIG.parse_content( false, true, CONTENT );
@@ -20,33 +25,20 @@ local SCREEN = {
     ContentSelection = 3,
     ContentTypeSelection = 4,
 }
-local options = {};
-local gui = gui or GuiCreate();
-local gui_id = 1707;
-local gui_required_activation = CONTENT_ACTIVATION_TYPE.Immediate;
-local wrap_threshold = 17;
-local wrap_limit = 3;
-local content_wrap_limit = 2;
-local wrap_size = 33;
-local last_time = 0;
-local fps_easing = 4;
-local current_fps = 0;
-local screen = SCREEN.Closed;
-local page = 1;
-local id_offset = 0;
+
 local sorted_content = {};
 local content_counts = {};
 local content_type_selection = {};
 local content_type = nil;
-local tab_index = 1;
-local hide_menu_frame = GameGetFrameNum() + 300;
-local tip = "";
+local tip_index = math.ceil( Random() * #MISC.ShowModTips.Tips );
+local tip = GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip_index] );
 
-local truncate_long_string = function( str )
-    if #str > 31 then
-        str = str:sub( 0, 14 ).."..."..str:sub( -14 );
-    end
-    return str;
+local function previous_data( gui )
+    local left_click,right_click,hover,x,y,width,height,draw_x,draw_y = GuiGetPreviousWidgetInfo( gui );
+    if left_click == 1 then left_click = true; elseif left_click == 0 then left_click = false; end
+    if right_click == 1 then right_click = true; elseif right_click == 0 then right_click = false; end
+    if hover == 1 then hover = true; elseif hover == 0 then hover = false; end
+    return left_click,right_click,hover,x,y,width,height,draw_x,draw_y;
 end
 
 local word_wrap = function( str, wrap_size )
@@ -69,18 +61,176 @@ local word_wrap = function( str, wrap_size )
     return str;
 end
 
-local tabs = {
-    {
-        name = GameTextGetTranslatedOrNot("$ui_tab_name_gkbrkn_options"),
-        screen = SCREEN.Options,
-        development_only = false
-    }
-}
+function get_active_item_inventory( player_entity )
+    local inventory = nil;
+    local player_inventories = EntityGetAllChildren( player_entity );
+    for k,v in pairs( player_inventories ) do
+        if EntityGetName( v ) == "inventory_quick" then
+            inventory = v;
+            break;
+        end
+    end
+    return inventory;
+end
+
+function get_item_inventory( player_entity, index )
+    local inventory_entities = EntityGetWithTag( "gkbrkn_inventory" ) or {};
+    local inventory = nil;
+    for k,inventory_entity in pairs( inventory_entities ) do
+        if EntityGetName( inventory_entity ) == "gkbrkn_item_inventory_"..index then
+            inventory = inventory_entity;
+            break;
+        end
+    end
+    if inventory == nil then
+        local entity = EntityCreateNew();
+        EntitySetName( entity, "gkbrkn_item_inventory_"..index );
+        EntityAddTag( entity, "gkbrkn_inventory" );
+        EntityAddChild( player_entity, entity );
+        inventory = entity;
+    end
+    return inventory;
+end
+
+function swap_item_inventories( left, right )
+    local left_inventory_entities = EntityGetAllChildren( left ) or {};
+    local right_inventory_entities = EntityGetAllChildren( right ) or {};
+    for _,child in pairs(left_inventory_entities) do EntityRemoveFromParent( child ); end
+    for _,child in pairs(right_inventory_entities) do EntityRemoveFromParent( child ); end
+    for _,child in pairs(left_inventory_entities) do EntityAddChild( right, child ); end
+    for _,child in pairs(right_inventory_entities) do EntityAddChild( left, child ); end
+    left_inventory_entities = EntityGetAllChildren( left ) or {};
+    right_inventory_entities = EntityGetAllChildren( right ) or {};
+end
+
+function change_item_inventory( player_entity, index )
+    local current_item_inventory_index = tonumber( GlobalsGetValue( "gkbrkn_current_item_inventory_index", "0" ) );
+    if current_item_inventory_index ~= index then
+        local inventory_entities = EntityGetWithTag( "gkbrkn_inventory" ) or {};
+        local current_item_inventory_entity = get_item_inventory( player_entity, current_item_inventory_index );
+        local next_item_inventory_entity = get_item_inventory( player_entity, index );
+
+        if current_item_inventory_entity and next_item_inventory_entity then
+            swap_item_inventories( get_active_item_inventory( player_entity ), current_item_inventory_entity );
+            swap_item_inventories( get_active_item_inventory( player_entity ), next_item_inventory_entity );
+            GlobalsSetValue( "gkbrkn_current_item_inventory_index", index );
+        end
+    end
+end
+
+function next_item_inventory( player_entity, change )
+    local current_item_inventory_index = tonumber( GlobalsGetValue( "gkbrkn_current_item_inventory_index", "0" ) );
+    local next_index = math.max( 0, current_item_inventory_index + change );
+    if current_item_inventory_index ~= next_index then
+        local current_inventory = get_item_inventory( player_entity, current_item_inventory_index );
+        local next_inventory = get_item_inventory( player_entity, next_index );
+        change_item_inventory( player_entity, next_index );
+        GamePrint( "Swapped to inventory "..( next_index + 1 ) );
+    end
+end
+
+function is_action_unlocked( action )
+    local valid = false;
+    if action then
+        if action.spawn_requires_flag ~= nil then
+            local flag_name = action.spawn_requires_flag;
+            local flag_status = HasFlagPersistent( flag_name );
+            if flag_status then valid = true; end
+            -- Music Notes
+            --if action.spawn_probability == "0" then  valid = false; end
+        else
+            valid = true;
+        end
+        return valid;
+    end
+end
+
+local function truncate_long_string( str )
+    if #str > 31 then
+        str = str:sub( 0, 14 ).."..."..str:sub( -14 );
+    end
+    return str;
+end
+
+local function pattern_validation( value )
+    local status,result = pcall( function() local s = string.format( value, 0,0,0,0,0,0,0,0 ); end );
+    if status == false then
+        return result;
+    end 
+    return true;
+end
+
+local function safe_string_format( format, ... )
+    local s = "";
+    local status,result = pcall( function(...)
+        s = string.format( format, ... );
+    end, ... );
+    if status == false then return "err"; end 
+    return s;
+end
+
+local gui = gui or GuiCreate();
+local full_screen_width, full_screen_height = GuiGetScreenDimensions( gui );
+GuiStartFrame( gui );
+local screen_width, screen_height = GuiGetScreenDimensions( gui );
+
+local mod_settings_id = "gkbrkn_noita";
+local gokiui = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/gokiui.lua" )( gui, 0, mod_settings_id, -20 );
+local next_id = gokiui.next_id;
+local reset_id = gokiui.reset_id;
+local iterate_settings = gokiui.iterate_settings;
+local refresh_settings = gokiui.refresh_settings;
+local do_custom_tooltip = gokiui.do_custom_tooltip;
+local set_setting = function( setting, value )
+    if value ~= nil then
+        ModSettingSet( mod_settings_id.."."..setting.key, value );
+        setting.current = value;
+    end
+end
+
+function toggle_vanilla()
+    iterate_settings( function( setting )
+        if setting.type_data ~= nil and setting.type_data.content ~= nil then
+            set_setting( setting, false );
+        else
+            set_setting( setting, setting.disable );
+        end
+    end );
+end
+
+function toggle_default()
+    iterate_settings( function( setting )
+        if setting.type_data ~= nil and setting.type_data.content ~= nil then
+            set_setting( setting, setting.default );
+        else
+            set_setting( setting, setting.default );
+        end
+    end );
+end
+
+function toggle_content_by_tag( tag, skip_default )
+    iterate_settings( function( setting )
+        if setting.type_data ~= nil and setting.type_data.content ~= nil then
+            if setting.type_data.content.tags[tag] then
+                set_setting( setting, true );
+            elseif skip_default ~= true then
+                set_setting( setting, setting.default );
+            end
+        else
+            if setting.tags[tag] then
+                set_setting( setting, true );
+            elseif skip_default ~= true then
+                set_setting( setting, setting.default );
+            end
+        end
+    end );
+end
 
 for index,content in pairs( CONTENT ) do
     if content.visible() then
         table.insert( sorted_content, {
             id=index,
+            type=content.type,
             name=GameTextGetTranslatedOrNot( content.name ) or ( "missing content name: "..index ),
             author=GameTextGetTranslatedOrNot( content.options.author or "Unknown" )
         } );
@@ -96,267 +246,463 @@ table.sort( sorted_content, function( a, b )
     end
 end );
 
-for _,content_type in pairs( content_types ) do
-    local name = GameTextGetTranslatedOrNot( content_type.display_name );
-    name = ( content_counts[content_type.id] or 0 ).." "..name;
-    table.insert( content_type_selection, { name = name, type = content_type.id } );
-    table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = content_type.id, development_only = content_type.development_only } );
-end
-table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
-
 function filter_content( content_list, content_type, content_table )
     if content_table == nil then content_table = CONTENT; end
     local filtered = {};
     for _,content in pairs( content_list ) do
         if content.type == content_type then
-            table.insert( filtered, content );
+            table.insert( filtered, content.id );
         end
     end
     return filtered;
 end
 
-local pagination_list = nil;
+local action_data = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/action_data.lua" )( true );
+local perk_data = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/perk_data.lua" )();
 
-function RegisterFlagOption( name, flag, activation_type, sub_option, activation_type, toggle_callback, require_new_game, description, height )
-    table.insert( options, {
-        name = name,
-        flag = flag,
-        activation_type = activation_type,
-        sub_option = sub_option,
-        activation_type = activation_type,
-        toggle_callback = toggle_callback,
-        require_new_game = require_new_game,
-        description = description,
-        height = height
-    } );
-end
-
-for _,option in pairs( OPTIONS ) do
-    if option.GroupName then
-        RegisterFlagOption( option.GroupName, nil, nil, nil, nil, nil, nil, nil, #option.SubOptions + 1 );
-        for _,subOption in pairs(option.SubOptions) do
-            RegisterFlagOption( subOption.Name, subOption.PersistentFlag, subOption.RequiresRestart, true, subOption.ActivationType, subOption.ToggleCallback, subOption.RequiresNewGame, subOption.Description, 0 );
+local basic_content_callback = function( setting )
+    local setting_data = setting.type_data;
+    local toggle = false;
+    local deprecated = setting_data.content.deprecated;
+    if not deprecated or setting_get( FLAGS.ShowDeprecatedContent ) then
+        local left_click, right_click = GuiImageButton( gui, next_id(), 0, 1, "", "mods/gkbrkn_noita/files/gkbrkn/gui/checkbox" .. (setting.current == true and "_fill" or "") .. ".png" );
+        if setting.current == false then GuiColorSetForNextWidget( gui, 0.60, 0.60, 0.60, 1.0 ); end
+        local alt_left_click, alt_right_click = GuiButton( gui, next_id(), 0, 0, setting_data.content.name );
+        if setting.tooltip then GuiTooltip( gui, setting_data.content.description, ""); end
+        if left_click == true or alt_left_click == true then
+            setting.current = not setting.current;
+            setting_set( setting.key, setting.current );
         end
-    else
-        RegisterFlagOption( option.Name, option.PersistentFlag, option.RequiresRestart, false, option.ActivationType, option.ToggleCallback, option.RequiresNewGame, option.Description, 1 );
-    end
-end
-
-function next_id()
-    id_offset = id_offset + 1;
-    return gui_id + id_offset;
-end
-
-function get_tab_name()
-    for _,tab_data in pairs( tabs ) do
-        if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
-            return tab_data.name;
-        end
-    end
-end
-
-function toggle_vanilla()
-    for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
-        if option.SubOptions ~= nil then
-            for _,sub_option in pairs(option.SubOptions) do
-                RemoveFlagPersistent( sub_option.PersistentFlag );
-            end
-        else
-            RemoveFlagPersistent( option.PersistentFlag );
-        end
-    end
-    for _,content in pairs( CONTENT ) do
-        content.toggle( false );
-    end
-end
-
-function toggle_default()
-    toggle_vanilla();
-    for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
-        if option.SubOptions ~= nil then
-            for _,sub_option in pairs(option.SubOptions) do
-                if sub_option.EnabledByDefault then
-                    AddFlagPersistent( sub_option.PersistentFlag );
+        if right_click == true or alt_right_click == true then
+            if setting_data.content ~= nil then
+                if setting_data.content.options and setting_data.content.options.preview_callback ~= nil then
+                    setting_data.content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
                 end
             end
-        else
-            if option.EnabledByDefault then
-                AddFlagPersistent( option.PersistentFlag );
-            end
-        end
-    end
-    for _,content in pairs( CONTENT ) do
-        if content.enabled_by_default or content.type == "action" or content.type == "perk" or content.type == "pack" or content.type == "champion_type" or content.type == "legendary_wand" then
-            content.toggle( true );
         end
     end
 end
 
-function toggle_content_by_tag( tag, skip_default )
-    for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
-        if option.SubOptions ~= nil then
-            for _,sub_option in pairs(option.SubOptions) do
-                if skip_default == false then
-                    if sub_option.EnabledByDefault then
-                        AddFlagPersistent( sub_option.PersistentFlag );
-                    end
-                end
-                if sub_option.Tags[tag] then
-                    AddFlagPersistent( sub_option.PersistentFlag );
-                elseif sub_option.Tags[tag] == false then
-                    RemoveFlagPersistent( sub_option.PersistentFlag );
-                end
-            end
-        else
-            if skip_default == false then
-                if option.EnabledByDefault then
-                    AddFlagPersistent( option.PersistentFlag );
-                end
-            end
-            if option.Tags[tag] then
-                AddFlagPersistent( option.PersistentFlag );
-            elseif option.Tags[tag] == false then
-                RemoveFlagPersistent( sub_option.PersistentFlag );
-            end
-        end
-    end
-    for _,content in pairs( CONTENT ) do
-        if skip_default == false then
-            if content.enabled_by_default then
-                content.toggle( true );
-            end
-        end
-        if content.tags[tag] then
-            content.toggle( true );
-        elseif content.tags[tag] == false then
-            content.toggle( false );
-        end
-    end
-end
+local action_type_to_border_sprite = {
+    [ACTION_TYPE_PROJECTILE] = "data/ui_gfx/inventory/item_bg_projectile.png",
+    [ACTION_TYPE_STATIC_PROJECTILE] = "data/ui_gfx/inventory/item_bg_static_projectile.png",
+    [ACTION_TYPE_MODIFIER] = "data/ui_gfx/inventory/item_bg_modifier.png",
+    [ACTION_TYPE_DRAW_MANY] = "data/ui_gfx/inventory/item_bg_draw_many.png",
+    [ACTION_TYPE_MATERIAL] = "data/ui_gfx/inventory/item_bg_material.png",
+    [ACTION_TYPE_OTHER] = "data/ui_gfx/inventory/item_bg_other.png",
+    [ACTION_TYPE_UTILITY] = "data/ui_gfx/inventory/item_bg_utility.png",
+    [ACTION_TYPE_PASSIVE] = "data/ui_gfx/inventory/item_bg_passive.png",
+}
 
-function do_gui()
-    id_offset = 0;
-    GuiStartFrame( gui );
-
-    -- Config Menu Button
-    GuiLayoutBeginVertical( gui, 90, 0 ); -- fold vertical
-        local main_text = "["..GameTextGetTranslatedOrNot("$ui_mod_name_gkbrkn").."]";
-        if gui_required_activation ~= CONTENT_ACTIVATION_TYPE.Immediate then
-            main_text = main_text.."*"
-        end
-        if GuiButton( gui, 0, 0, main_text, gui_id ) then
-            if screen ~= 0 then
-                change_screen( 0 );
+local setting_callbacks = {
+    pack = basic_content_callback,
+    item = basic_content_callback,
+    game_modifier = basic_content_callback,
+    dev_option = basic_content_callback,
+    legendary_wand = basic_content_callback,
+    champion_type = function( setting )
+        local setting_data = setting.type_data;
+        if setting_data then
+            local champion_type_data = setting_data.content;
+            local toggle = false;
+            local deprecated = setting_data.content.deprecated == true;
+            if setting.current ~= true then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent );
+                GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            end
+            if deprecated == true and setting_get( FLAGS.ShowDeprecatedContent ) == false then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent );
+                GuiColorSetForNextWidget( gui, 0.25, 0.25, 0.25, 1.0 );
+            end
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
+            local hover_data = nil;
+            if champion_type_data then
+                local left_click, right_click = GuiImageButton( gui, next_id(), 0, 0, "", champion_type_data.sprite );
+                if left_click then
+                    toggle = true;
+                end
+            elseif setting_data.content.sprite then
+                local left_click, right_click = GuiImageButton( gui, next_id(), 0, 0, "", setting_data.content.sprite );
+                if left_click then
+                    toggle = true;
+                end
             else
-                change_screen( SCREEN.Info );
+                local left_click, right_click = GuiButton( gui, next_id(), 0, 0, (setting.current == true and "[x] " or "[ ] ")..GameTextGetTranslatedOrNot( setting_data.content.name ) );
+                if left_click then
+                    toggle = true;
+                end
             end
-        end
-        if screen ~= 0 then
-            GuiText( gui, 0, 0, SETTINGS.Version );
-        end
-    GuiLayoutEnd( gui ); -- fold vertical
-
-    if HasFlagPersistent( FLAGS.DebugMode ) then
-        GuiLayoutBeginVertical( gui, 89, 85 );
-            GuiText( gui, 0, 0, "Development Mode" );
-            local update_time = get_update_time();
-            reset_update_time();
-            local frame_time = get_frame_time();
-            reset_frame_time();
-            local cx, cy = GameGetCameraPos();
-            GuiText( gui, 0, 0, tostring( #(EntityGetInRadius( cx, cy, 100000000 ) or {}) ).."ents" );
-            GuiText( gui, 0, 0, tostring( math.floor( update_time * 100000 ) / 100 ).."ms/pu" );
-            GuiText( gui, 0, 0, tostring( math.floor( frame_time * 100000 ) / 100 ).."ms/fr" );
-        GuiLayoutEnd( gui );
-    end
-
-    GuiLayoutBeginVertical( gui, 1, 12 );  -- main vertical
-    if screen ~= SCREEN.Closed then
-        local cx, cy = GameGetCameraPos();
-        GameCreateSpriteForXFrames( "mods/gkbrkn_noita/files/gkbrkn/gui/darken.png", cx, cy );
-        hide_menu_frame = GameGetFrameNum() + 300;
-        GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
-        local tab_index = 1;
-        for index,tab_data in pairs( tabs ) do
-            if HasFlagPersistent( FLAGS.DebugMode ) or tab_data.development_only ~= true then
-                local tab_title = tab_data.name;
-                local is_current_tab = false;
-                if screen == tab_data.screen and ( tab_data.content_type == nil or content_type == tab_data.content_type ) then
-                    is_current_tab = true;
-                end
-                if is_current_tab then
-                    tab_title = ">"..tab_title.."<";
-                else
-                    tab_title = "["..tab_title.."]";
-                end
-                if GuiButton( gui, 0, 0, tab_title.." ", next_id() ) then
-                    if screen ~= tab_data.screen then
-                        change_screen( tab_data.screen );
-                    else
-                        if tab_data.content_type == nil or content_type == tab_data.content_type then
-                            change_screen( SCREEN.Info );
+            --GuiTooltip( gui, GameTextGetTranslatedOrNot( setting_data.content.description ), "" );
+            do_custom_tooltip( function()
+                GuiLayoutBeginVertical( gui, 0, 0 );
+                    GuiLayoutBeginHorizontal( gui, 0, 0 );
+                        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot( setting_data.content.name ) );
+                        GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+                        GuiText( gui, 2, 0, "by "..(GameTextGetTranslatedOrNot(setting_data.content.author) or "Unknown")  );
+                    GuiLayoutEnd( gui );
+                    GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+                    GuiText( gui, 0, 0, word_wrap( GameTextGetTranslatedOrNot( setting_data.content.description ), 50 ) );
+                    if deprecated then
+                        if setting_get( FLAGS.ShowDeprecatedContent ) == false then
+                            GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is deprecated and will not appear in-game" ) );
+                        else
+                            GuiColorSetForNextWidget( gui, 1.0, 0.5, 1.0, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is deprecated, but your settings allow it to appear in-game" )  );
                         end
                     end
-                    if tab_data.content_type ~= nil then
-                        change_content_type( tab_data.content_type );
+                    if champion_type_data == nil then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This content is not currently loaded and can not be spawned" ) );
                     end
-                end
-                if tab_index % 7 == 0 then
-                    GuiLayoutEnd( gui ); -- tabs horizontal
-                    GuiLayoutBeginHorizontal( gui, 0, 0 ); -- tabs horizontal
-                end
-                tab_index = tab_index + 1;
+                GuiLayoutEnd( gui );
+            end, -32 );
+            GuiZSet( gui, -20 );
+            if hover_data then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                -- TODO use constants for specific layers
+                GuiZSetForNextWidget( gui, -21 );
+                GuiImage( gui, next_id(), hover_data[8] - 2, hover_data[9] - 2, "mods/gkbrkn_noita/files/gkbrkn/gui/locked.png", 1.0, 1.0, 0 );
+            end
+            if toggle then
+                setting.current = not setting.current;
+                set_setting( setting, setting.current );
             end
         end
-        GuiLayoutEnd( gui ); -- tabs horizontal
-    end
+    end,
+    tweak = basic_content_callback,
+    loadout = basic_content_callback,
+    action = function( setting )
+        local setting_data = setting.type_data;
+        local deprecated = setting_data.content.deprecated == true;
+        if action_data ~= nil and ( deprecated == false or setting_get( FLAGS.ShowDeprecatedContent ) ) then
+            local action_data = action_data[setting_data.content.key];
+            local toggle = false;
+            local managed = setting_get( MISC.ManageExternalContent.EnabledFlag ) == true or setting_data.content.local_content == true;
+            local semi_transparent = false;
+            if is_action_unlocked( action_data ) == false then
+                semi_transparent = true;
+            end
+            if setting.current ~= true and managed == true then
+                semi_transparent = true;
+                GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            end
+            if deprecated == true and setting_get( FLAGS.ShowDeprecatedContent ) == false and managed == true then
+                semi_transparent = true;
+                GuiColorSetForNextWidget( gui, 0.25, 0.25, 0.25, 1.0 );
+            end
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
+            local hover_data = nil;
+            if action_data then
+                GuiZSetForNextWidget( gui, -18 );
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.Disabled );
+                if semi_transparent then GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent ); end
+                GuiImage( gui, next_id(), 0, 0, action_type_to_border_sprite[ action_data.type ], 1.0, 1.0, 0 );
+                if semi_transparent then GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent ); end
+                local left_click, right_click = GuiImageButton( gui, next_id(), -20, 2, "", action_data.sprite );
+                if left_click then
+                    toggle = true;
+                elseif right_click then
+                    if setting_data.content.options.preview_callback ~= nil then
+                        setting_data.content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
+                    end
+                end
+                if is_action_unlocked( action_data ) == false then
+                    hover_data = { previous_data( gui ) };
+                end
+            elseif setting_data.content.sprite then
+                local left_click, right_click = GuiImageButton( gui, next_id(), 0, 0, "", setting_data.content.sprite );
+                if left_click then
+                    toggle = true;
+                end
+            else
+                local left_click, right_click = GuiButton( gui, next_id(), 0, 0, (setting.current == true and "[x] " or "[ ] ")..GameTextGetTranslatedOrNot( setting_data.content.name ) );
+                if left_click then
+                    toggle = true;
+                end
+            end
+            --GuiTooltip( gui, GameTextGetTranslatedOrNot( setting_data.content.description ), "" );
+            do_custom_tooltip( function()
+                GuiLayoutBeginVertical( gui, 0, 0 );
+                    GuiLayoutBeginHorizontal( gui, 0, 0 );
+                        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot( setting_data.content.name ) );
+                        GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+                        GuiText( gui, 2, 0, "by "..(GameTextGetTranslatedOrNot(setting_data.content.author) or "Unknown")  );
+                    GuiLayoutEnd( gui );
+                    GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+                    GuiText( gui, 0, 0, word_wrap( GameTextGetTranslatedOrNot( setting_data.content.description ), 50 ) );
+                    if is_action_unlocked( action_data ) == false then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This content is not unlocked and will not appear in-game\nSpawning this content will unlock it permanently" ) );
+                    end
+                    if not managed then
+                        GuiColorSetForNextWidget( gui, 1.0, 0., 1.0, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This content is external and not managed by Goki's Things" ) );
+                    end
+                    if deprecated then
+                        if setting_get( FLAGS.ShowDeprecatedContent ) == false then
+                            GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is deprecated and will not appear in-game" ) );
+                        else
+                            GuiColorSetForNextWidget( gui, 1.0, 0.5, 1.0, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is deprecated, but your settings allow it to appear in-game" )  );
+                        end
+                    end
+                    if action_data == nil then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This content is not currently loaded and can not be spawned" ) );
+                    end
+                GuiLayoutEnd( gui );
+            end, -32 );
+            GuiZSet( gui, -20 );
+            if hover_data then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                -- TODO use constants for specific layers
+                GuiZSetForNextWidget( gui, -21 );
+                GuiImage( gui, next_id(), hover_data[8] - 2, hover_data[9] - 2, "mods/gkbrkn_noita/files/gkbrkn/gui/locked.png", 1.0, 1.0, 0 );
+            end
+            if toggle then
+                setting.current = not setting.current;
+                set_setting( setting, setting.current );
+            end
+        end
+    end,
+    perk = function( setting )
+        local setting_data = setting.type_data;
+        local deprecated = setting_data.content.deprecated == true;
+        if perk_data ~= nil then
+            local this_perk_data = perk_data[setting_data.content.key];
+            local toggle = false;
+            local starting_perk = setting_get( "sp_"..setting.key );
+            local managed = setting_get( MISC.ManageExternalContent.EnabledFlag ) == true or setting_data.content.local_content == true;
+            if starting_perk == true then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawWobble );
+            end
+            if setting.current ~= true and managed == true then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent );
+                GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            end
+            if deprecated == true and setting_get( FLAGS.ShowDeprecatedContent ) == false and managed == true then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent );
+                GuiColorSetForNextWidget( gui, 0.25, 0.25, 0.25, 1.0 );
+            end
+            if this_perk_data.enabled == true and this_perk_data.missing == true then
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawWaveAnimateOpacity );
+            end
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
+            local hover_data = nil;
+            if this_perk_data then
+                local left_click, right_click = GuiImageButton( gui, next_id(), 0, 0, "", this_perk_data.perk_icon );
+                if left_click then
+                    toggle = true;
+                elseif right_click then
+                    if setting_data.content.options.preview_callback ~= nil then
+                        setting_data.content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
+                    end
+                end
+                if this_perk_data.missing == true or this_perk_data.stackable == true then
+                    hover_data = { previous_data( gui ) };
+                end
+            end
+            do_custom_tooltip( function()
+                GuiLayoutBeginVertical( gui, 0, 0 );
+                    GuiLayoutBeginHorizontal( gui, 0, 0 );
+                        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot( setting_data.content.name ) );
+                        GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+                        GuiText( gui, 2, 0, "by "..(GameTextGetTranslatedOrNot(setting_data.content.author) or "Unknown")  );
+                    GuiLayoutEnd( gui );
+                    
+                    GuiLayoutAddVerticalSpacing( gui, -2 );
+                    GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+                    GuiText( gui, 0, 0, this_perk_data.id );
 
-    if screen == SCREEN.Info then
-        GuiText( gui, 0, 0, " ");
-        GuiText( gui, 0, 0, "Welcome to Goki's Things!")
+                    GuiLayoutAddVerticalSpacing( gui, 2 );
+                    GuiColorSetForNextWidget( gui, 0.811, 0.811, 0.811, 1.0 );
+                    GuiText( gui, 0, 0, word_wrap( GameTextGetTranslatedOrNot( setting_data.content.description ), 50 ) );
+                    if this_perk_data.stackable then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This perk is stackable" ) );
+                    end
+                    if this_perk_data.not_in_pool then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This perk is not in the perk pool" ) );
+                    elseif this_perk_data.missing then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+                        -- TODO localize
+                        if not setting_get( MISC.PerkRewrite.NewLogicFlag ) then
+                            GuiText( gui, 0, 0, word_wrap( "This perk is not in the perk pool for this run" ) );
+                        else
+                            GuiText( gui, 0, 0, word_wrap( "This perk will take a long time to roll into" ) );
+                        end
+                    end
+                    if starting_perk == true and not deprecated then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "You will start with this perk on your next run" ) );
+                    end
+                    if not managed then
+                        GuiColorSetForNextWidget( gui, 1.0, 0., 1.0, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This content is external and not managed by Goki's Things" ) );
+                    end
+                    if deprecated then
+                        if setting_get( FLAGS.ShowDeprecatedContent ) == false then
+                            GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is deprecated and will not appear in-game" ) );
+                        else
+                            GuiColorSetForNextWidget( gui, 1.0, 0.5, 1.0, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is deprecated, but your settings allow it to appear in-game" )  );
+                        end
+                    end
+                    if this_perk_data == nil then
+                        GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+                        -- TODO localize
+                        GuiText( gui, 0, 0, word_wrap( "This content is not currently loaded and can not be spawned" ) );
+                    end
+                GuiLayoutEnd( gui );
+            end, -32 );
+            GuiZSet( gui, -20 );
+            if hover_data then
+                if this_perk_data.enabled == true then
+                    if this_perk_data.not_in_pool == true then
+                        GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                        GuiZSetForNextWidget( gui, -21 );
+                        GuiImage( gui, next_id(), hover_data[8] - 2, hover_data[9] - 2, "mods/gkbrkn_noita/files/gkbrkn/gui/perk_not_in_pool.png", 1.0, 1.0, 0 );
+                    elseif this_perk_data.missing == true then
+                        GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                        GuiZSetForNextWidget( gui, -21 );
+                        if setting_get( MISC.PerkRewrite.NewLogicFlag ) then
+                            GuiImage( gui, next_id(), hover_data[8] - 2, hover_data[9] - 2, "mods/gkbrkn_noita/files/gkbrkn/gui/perk_deep_in_pool.png", 1.0, 1.0, 0 );
+                        else
+                            GuiImage( gui, next_id(), hover_data[8] - 2, hover_data[9] - 2, "mods/gkbrkn_noita/files/gkbrkn/gui/missing_perk.png", 1.0, 1.0, 0 );
+                        end
+                    end
+                end
+                if this_perk_data.stackable == true then
+                    GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                    GuiZSetForNextWidget( gui, -21 );
+                    GuiImage( gui, next_id(), hover_data[8] + 12, hover_data[9] - 1, "mods/gkbrkn_noita/files/gkbrkn/gui/stackable_perk.png", 1.0, 1.0, 0 );
+                end
+            end
+            if toggle then
+                if setting.current == false then
+                    set_setting( setting, true );
+                    if not managed then
+                        setting_set( "sp_"..setting.key, true );
+                    end
+                elseif setting.current == true and setting_get( "sp_"..setting.key ) == nil then
+                    setting_set( "sp_"..setting.key, true );
+                else
+                    setting_clear( "sp_"..setting.key );
+                    if managed then
+                        set_setting( setting, false );
+                    else
+                        set_setting( setting, true );
+                    end
+                end
+            end
+        end
+    end
+}
+
+function do_special_button( button_text, description_text )
+    GuiLayoutBeginHorizontal( gui, 0, 0 );
+        GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+        local left_click, right_click = GuiButton( gui, 0, 0, button_text, next_id() );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        GuiText( gui, 0, 0, description_text );
+    GuiLayoutEnd( gui );
+    return left_click, right_click;
+end
+
+local group_callbacks;
+group_callbacks = {
+    start_page = function( group_setting )
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiText( gui, 0, 0, "Welcome to")
+            GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+            GuiText( gui, 0, 0, "Goki's Things")
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            GuiText( gui, 0, 0, SETTINGS.Version)
+        GuiLayoutEnd( gui );
+
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            GuiText( gui, 0, 0, "Love Goki's Things? Donate at" );
+            GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+            GuiText( gui, 0, 0, "ko-fi.com/goki_dev" );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            GuiText( gui, 0, 0, "to support what I do!" );
+        GuiLayoutEnd( gui );
+        
+
         GuiText( gui, 0, 0, " ");
         GuiText( gui, 0, 0, "Choose a tab up above to customize the mod or choose one of the presets below!")
-        GuiText( gui, 0, 0, "Be sure to check out all the different pages of content for that tab, what you're looking for may be on page 2.")
-        GuiText( gui, 0, 0, " ");
         GuiText( gui, 0, 0, "Press one of the buttons below to select a preset. Be careful, you can't undo this!");
         GuiText( gui, 0, 0, " ");
-        if GuiButton( gui, 0, 0, "[Default] Reset Goki's Things to default settings", next_id() ) then
+        
+        
+        if do_special_button( "[Default]", "Reset Goki's Things to default settings" ) then
             toggle_default();
             GamePrint( "Reset Goki's Things to its default settings" );
         end
-        if GuiButton( gui, 0, 0, "[Vanilla] Turn off all custom Goki's Things content", next_id() ) then
+
+        if do_special_button( "[Vanilla]", "Turn off all custom Goki's Things content" ) then
             toggle_vanilla();
             GamePrint( "Disabled all custom content" );
         end
-        GuiText( gui, 0, 0, " ");
-        if GuiButton( gui, 0, 0, "[Champions Mode] Enemies have special modifiers that change up the combat", next_id() ) then
+
+        GuiText( gui, 0, 0, " " );
+
+        if do_special_button( "[Champions Mode]", "Enemies have special modifiers that change up the combat" ) then
             toggle_content_by_tag("champions_mode");
             GamePrint( "Enabled Champions Mode options" );
         end
-        if GuiButton( gui, 0, 0, "[Hero Mode] Enemies are tougher and the final boss has a higher minimum health", next_id() ) then
+
+        if do_special_button( "[Hero Mode]", "Enemies are tougher and the final boss has a higher minimum health" ) then
             toggle_content_by_tag("hero_mode");
             GamePrint( "Enabled Hero Mode options" );
         end
-        if GuiButton( gui, 0, 0, "[Ultimate Challenge Mode] Enable the Ultimate Hero + Ultimate Champion game modes", next_id() ) then
+
+        if do_special_button( "[Ultimate Challenge Mode]", "Enable the Ultimate Hero + Ultimate Champion game modes" ) then
             toggle_content_by_tag("ultimate_challenge");
             GamePrint( "Enabled Ultimate Challenge Mode options" );
         end
-        if GuiButton( gui, 0, 0, "[Goki Mode] Apply the settings Goki prefers to use (this is a difficult mode)", next_id() ) then
+
+        if do_special_button( "[Goki Mode]", "Apply the settings Goki prefers to use (this is a difficult mode)" ) then
             toggle_default();
             toggle_content_by_tag("goki_thing");
             GamePrint( "Enabled Goki Mode options" );
         end
-        if GuiButton( gui, 0, 0, "[???? Mode] An intense untested difficulty mode (taking name suggestions)", next_id() ) then
+
+        if do_special_button( "[???? Mode]", "An intense untested difficulty mode (taking name suggestions)" ) then
             toggle_default();
             toggle_content_by_tag("carnage");
             GamePrint( "Enabled ???? Mode options" );
         end
+
         GuiText( gui, 0, 0, " ");
-        if GuiButton( gui, 0, 0, "[Random Starts] Start runs with random equipment", next_id() ) then
+
+        if do_special_button( "[Random Starts]", "Start runs with random equipment" ) then
             toggle_content_by_tag("random_starts");
+            setting_set( MISC.RandomStart.RandomPerksFlag, 1 );
+            refresh_settings();
             GamePrint( "Enabled Random Starts options" );
         end
-        if GuiButton( gui, 0, 0, "[Loadouts] Allow Goki's Things to manage loadouts and start runs with a random loadout", next_id() ) then
+
+        if do_special_button( "[Loadouts]", "Allow Goki's Things to manage loadouts and start runs with a random loadout" ) then
             toggle_content_by_tag("loadouts");
             for _,content in pairs( CONTENT ) do
                 if content.type == "loadout" or content.type == "action" or content.type == "perk" then
@@ -365,363 +711,666 @@ function do_gui()
             end
             GamePrint( "Enabled loadout management and all loadouts" );
         end
-        if GuiButton( gui, 0, 0, "[Randomize] Randomize all of the options (this is a bad idea)", next_id() ) then
-            for _,option in pairs( GKBRKN_CONFIG.OPTIONS ) do
-                if option.SubOptions ~= nil then
-                    for _,sub_option in pairs(option.SubOptions) do
-                        if Random() < 0.5 then
-                            AddFlagPersistent( sub_option.PersistentFlag );
-                        else
-                            RemoveFlagPersistent( sub_option.PersistentFlag );
-                        end
-                    end
-                else
-                    if Random() < 0.5 then
-                        AddFlagPersistent( option.PersistentFlag );
+
+        GuiText( gui, 0, 0, " ");
+
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+            GuiText( gui, 0, 0, "Goki Says: " );
+            GuiText( gui, 0, 0, tip );
+        GuiLayoutEnd( gui );
+    end,
+    pack = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Packs by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+        for _,setting in pairs( group_setting.settings or {} ) do
+            GuiLayoutBeginHorizontal( gui, 1, 0 );
+                setting_callbacks.pack( setting );
+            GuiLayoutEnd( gui );
+        end
+    end,
+    pack_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click packs to turn them on or off - Right Click packs to acquire them" );
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Packs are an incomplete system and there aren't enough packs for fulfilling gameplay (WIP)" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse packs you add to mods/gkbrkn_noita/files/gkbrkn/content/packs.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.pack( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    item = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Items by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+            for _,setting in pairs( group_setting.settings or {} ) do
+                GuiLayoutBeginHorizontal( gui, 1, 0 );
+                    setting_callbacks.item( setting );
+                GuiLayoutEnd( gui );
+            end
+    end,
+    item_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click items to turn them on or off - Right Click items to acquire them" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse items you add to mods/gkbrkn_noita/files/gkbrkn/content/items.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.item( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    game_modifier = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Game Modifiers by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+        for _,setting in pairs( group_setting.settings or {} ) do
+            GuiLayoutBeginHorizontal( gui, 1, 0 );
+                setting_callbacks.game_modifier( setting );
+            GuiLayoutEnd( gui );
+        end
+    end,
+    game_modifier_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click game modifiers to turn them on or off" );
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Changes to game modifiers require a new game and persist throughout the run" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse game modifiers you add to mods/gkbrkn_noita/files/gkbrkn/content/game_modifiers.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.game_modifier( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    dev_option = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Cheats by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+        for _,setting in pairs( group_setting.settings or {} ) do
+            GuiLayoutBeginHorizontal( gui, 1, 0 );
+                setting_callbacks.dev_option( setting );
+            GuiLayoutEnd( gui );
+        end
+    end,
+    dev_option_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click cheats to turn them on or off" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse cheats you add to mods/gkbrkn_noita/files/gkbrkn/content/dev_options.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.dev_option( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    legendary_wand = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Unique Wands by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+            for _,setting in pairs( group_setting.settings or {} ) do
+                GuiLayoutBeginHorizontal( gui, 1, 0 );
+                    setting_callbacks.legendary_wand( setting );
+                GuiLayoutEnd( gui );
+            end
+    end,
+    legendary_wand_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click unique wands to turn them on or off - Right Click Unique Wands to acquire them" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse an unique wands you add to mods/gkbrkn_noita/files/gkbrkn/content/legendary_wands.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.legendary_wand( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    champion_type = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Champions by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+        local setting_index = 1;
+        local setting = group_setting.settings[setting_index];
+        local adjusted_columns = math.max( 6, math.min( (#group_setting.settings) ^ 0.75, 16 ) );
+        while setting ~= nil do
+            GuiLayoutBeginHorizontal( gui, 1, 0 );
+                for x=1,adjusted_columns do
+                    setting = group_setting.settings[setting_index];
+                    if setting then
+                        setting_callbacks.champion_type( setting );
                     else
-                        RemoveFlagPersistent( option.PersistentFlag );
+                        break;
                     end
+                    setting_index = setting_index + 1;
+                end
+            GuiLayoutEnd( gui );
+        end
+    end,
+    champion_type_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click champions to turn them on or off" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse champions you add to mods/gkbrkn_noita/files/gkbrkn/content/champion_types.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings) do
+                group_callbacks.champion_type( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    tweak = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Tweaks by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
                 end
             end
-            for _,content in pairs( CONTENT ) do
-                if Random() < 0.5 then
-                    content.toggle( true );
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+            for _,setting in pairs( group_setting.settings or {} ) do
+                GuiLayoutBeginHorizontal( gui, 1, 0 );
+                    setting_callbacks.tweak( setting );
+                GuiLayoutEnd( gui );
+            end
+    end,
+    tweak_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click tweaks to turn them on or off" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse Tweaks you add to mods/gkbrkn_noita/files/gkbrkn/content/tweaks.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.tweak( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    loadout = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Loadouts by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+            for _,setting in pairs( group_setting.settings or {} ) do
+                GuiLayoutBeginHorizontal( gui, 1, 0 );
+                    setting_callbacks.loadout( setting );
+                GuiLayoutEnd( gui );
+            end
+    end,
+    loadout_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click loadouts to turn them on or off - Right Click loadouts to acquire them" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse loadouts you add to mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.loadout( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    action = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Spells by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+        local setting_index = 1;
+        local setting = group_setting.settings[setting_index];
+        local adjusted_columns = math.max( 6, math.min( (#group_setting.settings) ^ 0.75, 16 ) );
+        while setting ~= nil do
+            GuiLayoutBeginHorizontal( gui, 1, 0 );
+                local x = 1;
+                while x < adjusted_columns do
+                    setting = group_setting.settings[setting_index];
+                    setting_index = setting_index + 1;
+                    if setting then
+                        if setting.type_data.content.deprecated ~= true or setting_get( FLAGS.ShowDeprecatedContent ) == true then
+                            setting_callbacks.action( setting );
+                            x = x + 1;
+                        end
+                    else
+                        break;
+                    end
+                end
+            GuiLayoutEnd( gui );
+            GuiLayoutAddVerticalSpacing( gui, -2 );
+        end
+    end,
+    action_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click spells to turn them on or off - Right Click spells to spawn them" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse an author variable on the spells you add to gun_actions.lua and separate by author here!" ), "" );
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings) do
+                group_callbacks.action( group );
+            end
+        GuiLayoutEnd( gui );
+    end,
+    perk = function( group_setting )
+        GuiLayoutAddVerticalSpacing( gui, 10 );
+        GuiLayoutBeginHorizontal( gui, 0, 0 );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 1.0, 1.0 );
+            GuiText( gui, 0, 0, "Perks by "..group_setting.settings[1].type_data.content.author );
+            if GuiButton( gui, next_id(), 0, 0, "[Enable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, true );
+                end
+            end
+            if GuiButton( gui, next_id(), 0, 0, "[Disable All]" ) then  
+                for _,setting in pairs( group_setting.settings ) do
+                    set_setting( setting, false );
+                end
+            end
+        GuiLayoutEnd( gui );
+        local setting_index = 1;
+        local setting = group_setting.settings[setting_index];
+        local adjusted_columns = math.max( 6, math.min( (#group_setting.settings) ^ 0.75, 16 ) );
+        while setting ~= nil do
+            GuiLayoutBeginHorizontal( gui, 1, 0 );
+                local x = 1;
+                while x < adjusted_columns do
+                    setting = group_setting.settings[setting_index];
+                    setting_index = setting_index + 1;
+                    if setting then
+                        if setting.type_data.content.deprecated ~= true or setting_get( FLAGS.ShowDeprecatedContent ) == true then
+                            setting_callbacks.perk( setting );
+                            x = x + 1;
+                        end
+                    else
+                        break;
+                    end
+                end
+            GuiLayoutEnd( gui );
+        end
+    end,
+    perk_page = function( group_setting )
+        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.5, 1.0 );
+        GuiText( gui, 0, 0, "Left Click perks to cycle through their states (Off, On, Starting Perk) - Right Click perks to acquire them" );
+        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+        if true --[[setting_get( MISC.ManageExternalContent.EnabledFlag )]] then
+            GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
+            GuiTooltip( gui, word_wrap( "Goki's Things will parse an author variable on the perks you add to perk_list.lua and separate by author here!" ), "" );
+        end
+        --[[ Perk Bar Graph
+        ]]
+        if setting_get( MISC.PerkRewrite.ShowBarGraphFlag ) then
+            GuiImage( gui, next_id(), 0, 0, "mods/gkbrkn_noita/files/gkbrkn/gui/bar_graph.xml", 1.0, 1.0, 1.0, 0, GUI_RECT_ANIMATION_PLAYBACK.Loop, "invisible" );
+            local left_click,right_click,hover,x,y,width,height,draw_x,draw_y,draw_width,draw_height = previous_data( gui );
+            local perk_order = perk_get_spawn_order();
+            local perk_appearances = {};
+            local perk_list_size = 0;
+            for k,perk_data in pairs( perk_list ) do
+                perk_appearances[perk_data.id] = 0;
+                perk_list_size = perk_list_size + 1;
+            end
+            local most_appearances = 0;
+            for k,perk_id in pairs( perk_order ) do
+                perk_appearances[perk_id] = perk_appearances[perk_id] + 1;
+                if perk_appearances[perk_id] > most_appearances then
+                    most_appearances = perk_appearances[perk_id];
+                end
+            end
+            for i=1,perk_list_size do
+                local perk_data = perk_list[i];
+                local perk_id = perk_data.id;
+                local ratio = perk_appearances[perk_id] / most_appearances;
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                GuiImage( gui, next_id(), x + i, y, "mods/gkbrkn_noita/files/gkbrkn/gui/bar_graph.xml", 1.0, 1.0, ( (1 - ratio) ), 0, GUI_RECT_ANIMATION_PLAYBACK.Loop, "empty" );
+                GuiTooltip( gui, perk_id .. " shows up "..perk_appearances[perk_id].. " times", "" );
+                GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                if ratio > 0 then
+                    GuiImage( gui, next_id(), x + i, y + ( 1 - ratio ) * 50, "mods/gkbrkn_noita/files/gkbrkn/gui/bar_graph.xml", 1.0, 1.0, ratio, 0, GUI_RECT_ANIMATION_PLAYBACK.Loop, "fill" );                
+                    GuiTooltip( gui, perk_id .. " shows up "..perk_appearances[perk_id].. " times", "" );
+                end
+            end
+        end
+        GuiLayoutBeginVertical( gui, 1, 0 );
+            for _,group in pairs( group_setting.settings ) do
+                group_callbacks.perk( group );
+            end
+        GuiLayoutEnd( gui );
+    end
+}
+
+for _,content_type in pairs( content_types ) do
+    local name = GameTextGetTranslatedOrNot( content_type.display_name );
+    name = ( content_counts[content_type.id] or 0 ).." "..name;
+    table.insert( content_type_selection, { name = name, type = content_type.id } );
+    --table.insert( tabs, { name = name, screen = SCREEN.ContentSelection, content_type = content_type.id, development_only = content_type.development_only } );
+    local filtered_content = filter_content( sorted_content, content_type.id );
+    local content_table = {};
+    for k,content in pairs( filtered_content ) do
+        content = CONTENT[content];
+        table.insert( content_table, GKBRKN_CONFIG.register_option_localized( content.settings_key, content.enabled_by_default or false, false, content_type.id, { content = content }, 2, nil, tags ) );
+    end
+    local grouped_content = {};
+    for k,content in pairs( content_table ) do
+        grouped_content[content.type_data.content.author] = grouped_content[content.type_data.content.author] or {};
+        table.insert( grouped_content[content.type_data.content.author], content );
+    end
+    local groups = {};
+    for k,group_tables in pairs(grouped_content) do
+        table.insert( groups, GKBRKN_CONFIG.register_option_group( content_type.id, group_callbacks[content_type.id], unpack( group_tables ) ) )
+    end
+    table.insert( OPTIONS, GKBRKN_CONFIG.register_option_tab_localized( content_type.id, 1, GKBRKN_CONFIG.register_option_group( content_type.id, group_callbacks[content_type.id.."_page"], unpack( groups ) ) ) );
+end
+table.sort( content_type_selection, function( a, b ) return a.name < b.name end );
+
+table.insert( OPTIONS, 1, GKBRKN_CONFIG.register_option_tab_localized( "gkbrkn_start_page", 1, GKBRKN_CONFIG.register_option_group( "start_page", group_callbacks.start_page ) ) );
+
+if setting_get( "version" ) == nil then
+    local iterate_options = {};
+    for k,v in pairs( OPTIONS ) do
+        table.insert( iterate_options, v );
+    end
+    local i = 1;
+    while i < #iterate_options do
+        local v = iterate_options[i];
+        if v.settings ~= nil then
+            for _,vv in pairs( v.settings ) do table.insert( iterate_options, vv ); end
+        else
+            if v.key then
+                if HasFlagPersistent( v.key ) then
+                    setting_set( v.key, true );
                 else
-                    content.toggle( false );
+                    setting_set( v.key, false );
                 end
+                RemoveFlagPersistent( v.key )
             end
-            RemoveFlagPersistent( MISC.AutoHide.EnabledFlag );
-            GamePrint( "All settings have been randomized" );
         end
-        GuiText( gui, 0, 0, " ");
-        GuiText( gui, 0, 0, "Goki Says: "..tip);
-    elseif screen == SCREEN.Options then
-        GuiText( gui, 0, 0, " ");
-        do_paginated_content( options, function( option ) do_option(option) end );
-    elseif screen == SCREEN.ContentTypeSelection then
-        GuiText( gui, 0, 0, " ");
-        GuiLayoutBeginHorizontal( gui, 0, 0 );
-        GuiLayoutEnd( gui );
-        GuiText( gui, 0, 0, " ");
-        for k,content_type_data in pairs(content_type_selection) do
-            if GuiButton( gui, 0, 0, content_type_data.name, next_id() ) then
-                content_type = content_type_data.type;
-                change_screen( SCREEN.ContentSelection );
-            end 
-        end
-    elseif screen == SCREEN.ContentSelection then
-        local filtered_content = filter_content( sorted_content, content_type );
-        --do_paginated_content( filtered_content, function( content ) do_content( contnt ) end );
-
-        --for index,action_id in pairs( sorted_actions ) do
-        --[[]]
-        GuiText( gui, 0, 0, " ");
-        local pages_info = do_pagination( filtered_content, wrap_threshold,  wrap_limit, page );
-        if page > #pages_info then
-            page = 1;
-        end
-        local break_index = 1;
-        local breaks_hit = 0;
-        if pages_info[page].size > 0 then
-            do_quick_bar( filtered_content );
-            GuiText( gui, 0, 0, " " );
-            GuiLayoutBeginVertical( gui, 0, 0 ); -- content wrapping vertical
-                local wrap_index = 1;
-                local start_index = 1;
-                local page_size = pages_info[page].size;
-                local page_breaks = pages_info[page].breaks;
-                for p=1,#pages_info,1 do
-                    if page > p then
-                        start_index = start_index + pages_info[p].size;
-                    end
-                end
-                local content_index = 0;
-                for index = start_index, start_index + page_size-1,1 do
-                    --for index=start_index,math.min(start_index + wrap_threshold * wrap_limit - 1, #filtered_content ),1 do
-                    if page_breaks[wrap_index] and break_index > page_breaks[wrap_index] then
-                        GuiLayoutEnd( gui );
-                        GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 0 );
-                        wrap_index = wrap_index + 1;
-                        break_index = 1;
-                    end
-                    do_content( CONTENT[ filtered_content[index].id ] );
-                    content_index = content_index + 1;
-                    break_index = break_index + 1;
-                end
-                do_required_activation();
-            GuiLayoutEnd( gui ); -- content wrapping vertical
-        else
-            GuiText( gui, 0, 0, " " );
-            GuiText( gui, 0, 0, "No content" );
-        end
+        i = i + 1;
     end
-    GuiLayoutEnd( gui ); -- main vertical
-end
-
-function do_paginated_content( content_list, content_callback )
-    local pages_info = do_pagination( content_list, wrap_threshold,  wrap_limit, page );
-    local break_index = 1;
-    local breaks_hit = 0;
-    GuiText( gui, 0, 0, " ");
-    GuiLayoutBeginVertical( gui, 0, 0 );
-        local wrap_index = 1;
-        local start_index = 1;
-        local page_size = pages_info[page].size;
-        local page_breaks = pages_info[page].breaks;
-        for p=1,#pages_info,1 do
-            if page > p then
-                start_index = start_index + pages_info[p].size;
-            end
-        end
-        local content_index = 0;
-        for index = start_index, start_index + page_size-1,1 do
-            local content = content_list[index];
-            if content then
-                --if option.sub_option ~= true and content_index + option.height > wrap_index * wrap_threshold then
-                if page_breaks[wrap_index] and break_index > page_breaks[wrap_index] then
-                    GuiLayoutEnd( gui );
-                    GuiLayoutBeginVertical( gui, wrap_size * wrap_index, 0 );
-                    wrap_index = wrap_index + 1;
-                    break_index = 1;
+    local enabled_by_default = { 
+        perk = true, 
+        action = true, 
+        champion_type = true, 
+        legendary_wand = true, 
+        loadout = true, 
+        pack = true
+    };
+    for k,v in pairs( CONTENT ) do
+        if v.settings_key then
+            if HasFlagPersistent( "gkbrkn_"..v.settings_key ) then
+                if v.enabled_by_default and enabled_by_default[v.type] == true then
+                    setting_set( v.settings_key, false );
+                else
+                    setting_set( v.settings_key, true );
                 end
-                content_callback( content );
-                content_index = content_index + 1;
-            end
-            break_index = break_index + 1;
-        end
-        do_required_activation();
-    GuiLayoutEnd( gui );
-end
-
-function do_fps()
-    if HasFlagPersistent( MISC.ShowFPS.EnabledFlag ) then
-        local now = GameGetRealWorldTimeSinceStarted();
-        local fps = 1 / (now - last_time);
-        current_fps = current_fps + (fps - current_fps ) / fps_easing;
-        last_time = now;
-        GuiLayoutBeginVertical( gui, 82, 0 );
-        GuiText( gui, 0, 0, (math.floor( current_fps * 10) / 10) );
-        GuiLayoutEnd( gui );
-    end
-end
-
-function change_page( new_page )
-    page = new_page;
-end
-
-function change_content_type( new_content_type )
-    content_type = new_content_type;
-end
-
-function change_screen( new_screen )
-    local new_page = 1;
-    if new_screen == 0 then
-        GlobalsSetValue( "gkbrkn_gui_screen", tostring( screen ) );
-        GlobalsSetValue( "gkbrkn_gui_page", tostring( page ) );
-        GlobalsSetValue( "gkbrkn_gui_content_type", tostring( content_type ) );
-        GameRemoveFlagRun( FLAGS.ConfigMenuOpen );
-        local tip_index = math.ceil( Random() * #MISC.ShowModTips.Tips );
-        tip = GameTextGetTranslatedOrNot( MISC.ShowModTips.Tips[tip_index] );
-    else
-        if screen == 0 then
-            local saved_screen = tonumber(GlobalsGetValue( "gkbrkn_gui_screen", tostring(new_screen)));
-            if saved_screen ~= 0 then
-                new_screen = saved_screen;
-            end
-            new_page = tonumber(GlobalsGetValue( "gkbrkn_gui_page", tostring(page) ));
-            content_type = GlobalsGetValue( "gkbrkn_gui_content_type", content_type or "" );
-        end
-        GameAddFlagRun( FLAGS.ConfigMenuOpen );
-    end
-    screen = new_screen;
-    change_page( new_page );
-end
-
-function do_required_activation()
-    if gui_required_activation == CONTENT_ACTIVATION_TYPE.NewGame then
-        GuiText( gui, 0, 0, " ");
-        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_new_game_required_gkbrkn").." *");
-    elseif gui_required_activation == CONTENT_ACTIVATION_TYPE.Restart then
-        GuiText( gui, 0, 0, " ");
-        GuiText( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_restart_required_gkbrkn").." *");
-    end
-end
-
-function do_quick_bar( filtered_content )
-    GuiLayoutBeginHorizontal( gui, 0, 0 ); -- quick bar horizontal
-        if GuiButton( gui, 0, 0, "["..GameTextGetTranslatedOrNot("$ui_enable_all_gkbrkn").."]", next_id() ) then
-            for index,content_mapping in pairs( filtered_content ) do
-                CONTENT[ content_mapping.id ].toggle( true );
-            end
-            gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
-        end
-        if GuiButton( gui, 0, 0, "["..GameTextGetTranslatedOrNot("$ui_disable_all_gkbrkn").."]", next_id() ) then
-            for index,content_mapping in pairs( filtered_content ) do
-                CONTENT[ content_mapping.id ].toggle( false );
-            end
-            gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
-        end
-        if GuiButton( gui, 0, 0, "["..GameTextGetTranslatedOrNot("$ui_toggle_all_gkbrkn").."]", next_id() ) then
-            for index,content_mapping in pairs( filtered_content ) do
-                CONTENT[ content_mapping.id ].toggle();
-            end
-            gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
-        end
-    GuiLayoutEnd( gui ); -- quick bar horizontal
-end
-
-function do_content( content )
-    local text = "";
-    local flag = GKBRKN_CONFIG.get_content_flag( content.id, CONTENT );
-    if flag ~= nil then
-        if content.enabled() == true then
-            text = text .. GameTextGetTranslatedOrNot("$ui_check_mark_gkbrkn");
-        else
-            text = text .. GameTextGetTranslatedOrNot("$ui_uncheck_mark_gkbrkn");
-        end
-        text = text .. " "..truncate_long_string( GameTextGetTranslatedOrNot( ( content.options and content.options.display_name ) or content.name ) );
-        if content.options.menu_note then
-            text = text .. " " .. GameTextGetTranslatedOrNot( content.options.menu_note );
-        end
-        GuiLayoutBeginHorizontal( gui, 0, 0 );
-            if content.description ~= nil and GuiTooltip == nil then
-                if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
-                    for word in string.gmatch( content.description, '([^\n]+)' ) do
-                        GamePrint( word );
-                    end
-                end
-            end
-            if content.options ~= nil then
-                if content.options.preview_callback ~= nil then
-                    if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_preview_button_gkbrkn"), next_id() ) then
-                        content.options.preview_callback( EntityGetWithTag( "player_unit" )[1] );
-                    end
-                end
-            end
-            if GuiButton( gui, 0, 0, text, next_id() ) then
-                gui_required_activation = math.max( gui_required_activation, CONTENT_ACTIVATION_TYPE.Restart );
-                content.toggle();
-            end
-            
-            if GuiTooltip then
-                if content.description then
-                    GuiTooltip( gui, "", word_wrap( GameTextGetTranslatedOrNot( content.description ) ) );
-                end
-            end
-        GuiLayoutEnd( gui );
-    end
-end
-
-function do_option( option )
-    GuiLayoutBeginHorizontal( gui, 0, 0 );
-    if option.flag ~= nil then
-        local text = "";
-        if option.sub_option then
-            GuiText( gui, 0, 0, "  " );
-        end
-        local option_enabled = HasFlagPersistent( option.flag );
-        if option_enabled then
-            text = text .. GameTextGetTranslatedOrNot("$ui_check_mark_gkbrkn");
-        else
-            text = text .. GameTextGetTranslatedOrNot("$ui_uncheck_mark_gkbrkn");
-        end
-        text = text .. " ".. GameTextGetTranslatedOrNot(option.name);
-        if option ~= nil and option.description ~= nil and GuiTooltip == nil then
-            if GuiButton( gui, 0, 0, GameTextGetTranslatedOrNot("$ui_info_button_gkbrkn"), next_id() ) then
-                for word in string.gmatch( GameTextGetTranslatedOrNot(option.description), '([^\n]+)' ) do
-                    GamePrint( word );
-                end
-            end
-        end
-        if GuiButton( gui, 0, 0, text, next_id() ) then
-            gui_required_activation = math.max( gui_required_activation, option.activation_type )
-            if option_enabled then
-                RemoveFlagPersistent( option.flag );
             else
-                AddFlagPersistent( option.flag );
-            end
-            if option.toggle_callback ~= nil then
-                option.toggle_callback( not option_enabled );
-            end
-        end
-        if GuiTooltip then
-            if option.description then
-                GuiTooltip( gui, "", word_wrap( GameTextGetTranslatedOrNot( option.description ) ) );
+                if v.enabled_by_default and enabled_by_default[v.type] == true then
+                    setting_set( v.settings_key, true );
+                else
+                    setting_set( v.settings_key, false );
+                end
             end
         end
-    else
-        GuiText( gui, 0, 0, option.name );
     end
-    GuiLayoutEnd( gui );
+    refresh_settings();
+    setting_set( "version", SETTINGS.Version );
 end
 
-function do_pagination( list, rows, columns, page )
-    local page_info = {};
-    local page_sizes = {};
-    GuiLayoutBeginHorizontal( gui, 0, 0 );
-    GuiText( gui, 0, 0, get_tab_name().." "..GameTextGetTranslatedOrNot("$ui_page_gkbrkn").." " );
-    local page_rows = 0;
-    local page_columns = 1;
-    local page_size = 0;
-    local page_breaks = {};
-    for i=1,#list,1 do
-        local entry_height = (list[i].height or 1);
-        if page_rows + entry_height >= rows then
-            page_columns = page_columns + 1;
-            if page_columns > columns then
-                table.insert( page_info, { size = page_size, breaks = page_breaks } );
-                page_breaks = {};
-                page_columns = 1;
-                page_size = 0;
-                page_rows = 0;
+local hidden = false;
+local hide_menu_frame = GameGetFrameNum() + 300;
+
+function do_gui()
+    reset_id();
+    GuiStartFrame( gui );
+    GuiIdPushString( gui, "gkbrkn_noita" );
+    if setting_get( MISC.AutoHide.EnabledFlag ) == false or hidden == false then
+        GuiZSet( gui, -20 );
+        GuiOptionsAdd( gui, GUI_OPTION.NoPositionTween );
+        screen_width, screen_height = GuiGetScreenDimensions( gui );
+        gokiui.parse_mod_settings( OPTIONS, setting_get( FLAGS.DisableNewContent ) );
+        if not GameIsInventoryOpen() then
+            GuiLayoutBeginVertical( gui, 5, 16 );
+            if is_panel_open then
+                gokiui.do_gui();
+                hide_menu_frame = GameGetFrameNum() + 300;
+                hidden = false;
             else
-                table.insert( page_breaks, page_rows );
+                if hide_menu_frame - GameGetFrameNum() < 0 then
+                    hidden = true;
+                end
             end
-            page_rows = entry_height;
-        else
-            page_rows = page_rows + entry_height;
+            GuiLayoutEnd( gui );
         end
-        page_size = page_size + entry_height;
-    end
-    table.insert( page_info, { size = page_size, breaks = page_breaks } );
-    for i=1,#page_info do
-        local text = "";
-        if page == i then
-            text = "("..i..")";
-        else
-            text = "  "..i.."  ";
-        end
-        if GuiButton( gui, 0, 0, text, next_id() ) then
-            change_page( i );
-        end
-    end
-    GuiLayoutEnd( gui );
-    return page_info;
-end
 
-local auto_hide_message_shown = false;
+        GuiLayoutBeginVertical( gui, 0, 0 );
+            local mod_button_reservation = tonumber( GlobalsGetValue( "gkbrkn_mod_button_reservation", "0" ) );
+            local current_button_reservation = tonumber( GlobalsGetValue( "mod_button_tr_current", "0" ) );
+            if current_button_reservation > mod_button_reservation then
+                current_button_reservation = mod_button_reservation;
+            elseif current_button_reservation < mod_button_reservation then
+                current_button_reservation = math.max( 0, mod_button_reservation + (current_button_reservation - mod_button_reservation ) );
+            else
+                current_button_reservation = mod_button_reservation;
+            end
+            GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) );
+
+            local player = EntityGetWithTag( "player_unit" )[1];
+            if player then
+                local platform_shooter_player = EntityGetFirstComponent( player, "PlatformShooterPlayerComponent" );
+                if platform_shooter_player then
+                    local is_gamepad = ComponentGetValue2( platform_shooter_player, "mHasGamepadControlsPrev" );
+                    if is_gamepad == true then
+                        GuiOptionsAddForNextWidget( gui, GUI_OPTION.NonInteractive );
+                        GuiOptionsAddForNextWidget( gui, GUI_OPTION.AlwaysClickable );
+                    end
+                end
+            end
+
+            if GuiImageButton( gui, next_id(), screen_width - 14 - current_button_reservation, 2, "", "mods/gkbrkn_noita/files/gkbrkn/gui/icon.png" ) then
+                GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", GameGetCameraPos() );
+                is_panel_open = not is_panel_open;
+            end
+            local width = GuiGetTextDimensions( gui, "Configure Goki's Things" );
+            do_custom_tooltip( function()
+                GuiText( gui, 0, 0, "Configure Goki's Things" );
+                GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+                GuiText( gui, 0, 0, SETTINGS.Version );
+            end, -31, -width - 24, 10 );
+        GuiLayoutEnd( gui );
+        GuiOptionsRemove( gui, GUI_OPTION.NoPositionTween );
+
+        if is_panel_open then
+            if not GameHasFlagRun( FLAGS.ConfigMenuOpen ) then
+                GameAddFlagRun( FLAGS.ConfigMenuOpen );
+            end
+        else
+            if GameHasFlagRun( FLAGS.ConfigMenuOpen ) then
+                GameRemoveFlagRun( FLAGS.ConfigMenuOpen );
+            end
+        end
+    end
+
+    if not GameIsInventoryOpen() and setting_get( MISC.ShowFPS.EnabledFlag ) then
+        local mod_button_reservation_max_width = tonumber( GlobalsGetValue( "gkbrkn_mod_button_tr_max", "0" ) );
+        local fps = tonumber( GlobalsGetValue( "gkbrkn_fps" ) );
+        local width = GuiGetTextDimensions( gui, GlobalsGetValue( "gkbrkn_fps" ) );
+        if fps > 45 then
+            GuiColorSetForNextWidget( gui, 0.75, 0.75, 0.75, 1.0 );
+        elseif fps > 30 then
+            GuiColorSetForNextWidget( gui, 0.85, 0.85, 0.6, 1.0 );
+        else
+            GuiColorSetForNextWidget( gui, 1.0, 0.5, 0.5, 1.0 );
+        end
+        GuiText( gui, screen_width - width - mod_button_reservation_max_width, 3, GlobalsGetValue( "gkbrkn_fps" ) );
+    end
+
+    if setting_get( FLAGS.DebugMode ) then
+        GuiColorSetForNextWidget( gui, 0.20, 0.60, 1.00, 1.0 );
+        local text = decimal_format( get_update_time() * 1000, 2 ) .."ms/pu "..decimal_format( get_frame_time() * 1000, 2 ).."ms/ft";
+        reset_update_time();
+        reset_frame_time();
+        local width,height = GuiGetTextDimensions( gui, text );
+        GuiText( gui, screen_width - width, screen_height - height, text );
+    end
+
+    if GameIsInventoryOpen() and setting_get( MISC.InfiniteInventory.EnabledFlag ) then
+        GuiOptionsAdd( gui, GUI_OPTION.NoPositionTween );
+        local player = EntityGetWithTag( "player_unit" )[1];
+        if GuiImageButton( gui, next_id(), 0, 17+0, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_left_up.png" ) then
+            next_item_inventory( player, -1 );
+        end
+        if GuiImageButton( gui, next_id(), 0, 17+13, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_left_down.png" ) then
+            next_item_inventory( player, 1 );
+        end
+        if GuiImageButton( gui, next_id(), 494+17, 17+0, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_right_up.png" ) then
+            next_spell_inventory( player, -1 );
+        end
+        if GuiImageButton( gui, next_id(), 494+17, 17+13, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_right_down.png" ) then
+            next_spell_inventory( player, 1 );
+        end
+        GuiOptionsRemove( gui, GUI_OPTION.NoPositionTween );
+    end
+
+    GuiIdPop( gui );
+end
 
 if gui then
     async_loop(function()
         if gui then
-            if HasFlagPersistent( MISC.AutoHide.EnabledFlag ) == false or GameGetFrameNum() - hide_menu_frame < 0 then
-                local status, err = pcall( do_gui );
-                if err then
-                    GamePrint("Goki Says: PLEASE LET ME KNOW ABOUT THIS");
-                    GamePrint(err);
-                    print(err);
-                    print_error(err);
-                end
-            elseif auto_hide_message_shown == false then
-                auto_hide_message_shown = true;
-                GamePrint( GameTextGetTranslatedOrNot("$ui_auto_hide_message_gkbrkn") );
-                GlobalsSetValue( "mod_button_width_tr", tonumber( GlobalsGetValue( "mod_button_width_tr" ) ) or 0 - 14 );
+            local status, err = pcall( do_gui );
+            if err then
+                GamePrint("Goki Says: PLEASE LET ME KNOW ABOUT THIS");
+                GamePrint(err);
+                print("Goki Says: PLEASE LET ME KNOW ABOUT THIS");
+                print(err);
+                print_error("Goki Says: PLEASE LET ME KNOW ABOUT THIS");
+                print_error(err);
             end
-            do_fps();
         end
         wait( 0 );
     end);
-    change_screen(0);
 end
 
 print("[goki's things] done setting up GUI");

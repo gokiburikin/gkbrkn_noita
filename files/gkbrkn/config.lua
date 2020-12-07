@@ -9,7 +9,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c105"
+    Version = "c107c"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -113,8 +113,6 @@ end
     local register_option_localized = function( key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags )
         if key ~= nil then
             return register_option( key, "$option_name_"..key, "$option_desc_"..key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags );
-        else
-            print( "key not found "..tostring(default).."/"..settingType );
         end
     end
 
@@ -126,24 +124,25 @@ end
         return register_option_localized( key, default, disable, SETTING_TYPE.Range, { min = min, max = max, value_callback = value_callback, text_callback = text_callback }, activationType, toggleCallback, tags );
     end
 
-    local register_input_option_localized = function( key, default, disable, activationType, toggleCallback, tags )
-        return register_option_localized( key, default, disable, SETTING_TYPE.Input, {}, activationType, toggleCallback, tags );
+    local register_input_option_localized = function( key, default, disable, allowed_characters, max_length, activationType, toggleCallback, tags )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Input, { allowed_characters = allowed_characters, max_length = max_length }, activationType, toggleCallback, tags );
     end
 
     local register_button_option_localized = function( key, click_callback )
-        return register_option_localized( key, nil, nil, SETTING_TYPE.Button, { click_callback } );
+        return register_option_localized( key, nil, nil, SETTING_TYPE.Button, { click_callback = click_callback } );
     end
 
-    local register_option_tab = function( key, name, ... )
+    local register_option_tab = function( key, name, columns, ... )
         return {
             tab_key = key,
             tab_label = name,
+            columns = columns or 1,
             settings = {...}
         }
     end
 
-    local register_option_tab_localized = function( key, ... )
-        return register_option_tab( key, "$option_tab_name_"..key, ... );
+    local register_option_tab_localized = function( key, columns, ... )
+        return register_option_tab( key, "$option_tab_name_"..key, columns, ... );
     end
 
     local register_option_group = function( name, custom_callback, ... )
@@ -159,12 +158,14 @@ end
     end
 
     local OPTIONS = {
-        register_option_tab_localized( "gkbrkn_options",
+        register_option_tab_localized( "gkbrkn_options", 2,
             register_option_group_localized( "gkbrkn_mod_core", nil,
                 register_boolean_option_localized( MISC.ManageExternalContent.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.Restart ),
                 register_boolean_option_localized( MISC.ShowModTips.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.AutoHide.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( FLAGS.ShowDeprecatedContent, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( FLAGS.DisableNewContent, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowWhileInInventory, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( FLAGS.DebugMode, false, false, CONTENT_ACTIVATION_TYPE.Restart )
             ),
             register_option_group_localized( "gkbrkn_hero_mode", nil,
@@ -207,10 +208,10 @@ end
                 register_boolean_option_localized( MISC.GoldPickupTracker.ShowMessageFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.GoldPickupTracker.ShowTrackerFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.GoldDecay.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
-                register_range_option_localized( MISC.GoldLifetime.MultiplierFlag, 1.0, 0.0, 6.0, 1.0,
-                function( value ) return math.floor( value * 10 ) / 10; end,
-                function( value ) return (value == 1.0 and "Disabled") or (value == 6.0 and "Forever") or (value.."x") end,
-                CONTENT_ACTIVATION_TYPE.Immediate ),
+                --register_range_option_localized( MISC.GoldLifetime.MultiplierFlag, 1.0, 0.0, 6.0, 1.0,
+                --function( value ) return math.floor( value * 10 ) / 10; end,
+                --function( value ) return (value == 1.0 and "Disabled") or (value == 6.0 and "Forever") or (value.."x") end,
+                --CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.PersistentGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.AutoPickupGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.CombineGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
@@ -248,29 +249,45 @@ end
                 register_boolean_option_localized( MISC.Loadouts.ClassyFrameworkIntegrationFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true} ),
                 register_boolean_option_localized( MISC.Loadouts.UnlockLoadouts, false, false, CONTENT_ACTIVATION_TYPE.NewGame )
             ),
-            register_option_group_localized( "gkbrkn_invincibility_frames", nil,
+            register_option_group_localized( "gkbrkn_seeded_runs", nil,
+                register_boolean_option_localized( MISC.SeededRuns.UseSeedNextRunFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_input_option_localized( MISC.SeededRuns.SeedFlag, "", "", nil, nil, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_button_option_localized( MISC.SeededRuns.CopySeedButtonFlag, function( left_click, right_click )
+                    if left_click == true then
+                        setting_set( MISC.SeededRuns.SeedFlag, tostring( StatsGetValue("world_seed") ) );
+                        GlobalsSetValue( "gkbrkn_force_settings_refresh", "1" );
+                    end
+                end )
+            ),
+            register_option_group_localized( "gkbrkn_perk_options", nil,
+                register_boolean_option_localized( MISC.PerkRewrite.StackableChangesFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.PerkRewrite.NewLogicFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.PerkRewrite.ShowBarGraphFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
+            ),
+            register_option_group_localized( "gkbrkn_health_damage", nil,
                 register_range_option_localized( MISC.InvincibilityFrames.Duration, 0, 0, 60, 0,
-                    function( value ) return math.floor( value ); end,
+                    function( value ) return math.floor( value + 0.5 ); end,
                     function( value ) return (value == 0 and "Disabled") or (value == 1 and (value.." frame")) or (value.." frames") end,
                     CONTENT_ACTIVATION_TYPE.Immediate ),
-                register_boolean_option_localized( MISC.InvincibilityFrames.FlashingFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
-            ),
-            register_option_group_localized( "gkbrkn_heal_new_health", nil,
-                register_boolean_option_localized( MISC.HealOnMaxHealthUp.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
-                register_boolean_option_localized( MISC.HealOnMaxHealthUp.FullHealFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
+                register_boolean_option_localized( MISC.InvincibilityFrames.FlashingFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( MISC.HealOnMaxHealthUp.RangeFlag, 0, 0, 2, 0,
+                    function( value ) return math.floor( value + 0.5 ); end,
+                    function( value ) return (value == 0 and "Disabled") or (value == 1 and ("Heal Gained")) or ("Heal to Full") end,
+                    CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
+                register_range_option_localized( MISC.HealthBars.RangeFlag,  0, 0, 2, 0,
+                    function( value ) return math.floor( value + 0.5 ); end,
+                    function( value ) return (value == 0 and "Disabled") or (value == 1 and ("Simple Health Bars")) or ("Pretty Health Bars") end,
+                CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} )
             ),
             register_option_group_localized( "gkbrkn_less_particles", nil,
                 register_boolean_option_localized( MISC.LessParticles.PlayerProjectilesFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.LessParticles.OtherStuffFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.LessParticles.ExplosionStainsFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.LessParticles.DisableCosmeticsFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
-            ),
-            register_option_group_localized( "gkbrkn_health_bars", nil,
-                register_boolean_option_localized( MISC.HealthBars.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
-                register_boolean_option_localized( MISC.HealthBars.PrettyHealthBarsFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} )
             ),
             register_option_group_localized( "gkbrkn_ui", nil,
                 register_boolean_option_localized( MISC.ShowEntityNames.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
-                --register_boolean_option_localized( MISC.ShowPerkDescriptions.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
+                register_boolean_option_localized( MISC.ShowPerkDescriptions.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.ShowDamageNumbers.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.ShowFPS.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.Badges.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {goki_thing = true} )
@@ -298,6 +315,11 @@ end
                 end )
             ),
             register_option_group_localized( "gkbrkn_misc", nil,
+                register_range_option_localized( FLAGS.UberBossCount, -1, -1, 100, -1, 
+                function( value ) return math.floor( value ); end,
+                function( value ) return (value == -1 and "Disabled") or (value == 1 and (value.." orb")) or (value.." orbs") end,
+                CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.InfiniteInventory.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.PackShops.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
                 register_boolean_option_localized( MISC.RainbowProjectiles.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.QuickSwap.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
@@ -307,59 +329,13 @@ end
                 --register_boolean_option_localized( MISC.Events.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.FixedCamera.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.FixedCamera.OldBehaviourFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart, nil, nil ),
-                register_boolean_option_localized( MISC.RemoveEditPrompt.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} )
+                register_boolean_option_localized( MISC.RemoveEditPrompt.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
+                register_boolean_option_localized( FLAGS.ShowHitboxes, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.EnableLogging, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
             )
         ),
     }
 -- Options Menu End
-
---[[
-local cache_content = function()
-    local content_types_id_cache = {};
-    for _,content_type in pairs( content_types ) do
-        content_types_id_cache[ content_type ] = ( content_types_id_cache[ content_type ] or {} );
-        local content_filepath = content_type.shared_content_filepath or content_type.content_filepath;
-        dofile( content_filepath );
-        local content_table = _G[content_type.shared_content_table] or _G[content_type.content_table];
-        print( "[goki's things] caching "..#(content_table or {}).." "..content_type.short_name );
-        local content_cache = content_type.cache_table.." = {};";
-        for _,cache_content in pairs(content_table or {}) do
-            local keys = { {"id"}, {"name","ui_name"}, {"description","ui_description"}, {"author"}, {"item_path"}, {"deprecated"}, {"local_content"}, {"sprite","perk_icon"}, {"enabled_by_default"} };
-            local content_metadata = "{";
-            if content_types_id_cache[ content_type ][ cache_content.id ] == nil then
-                content_types_id_cache[ content_type ][ cache_content.id ] = true;
-                for _,key_groups in pairs(keys) do
-                    for _,key in pairs(key_groups) do
-                        local value = cache_content[key];
-                        if value ~= nil then
-                            if type( value ) == "string" then
-                                value = "\""..value:gsub("\n","\\n").."\"";
-                            elseif type( value ) == "boolean" then
-                                value = tostring( value );
-                            end
-                            content_metadata = content_metadata..key.." = "..(tostring(value) or "nil")..",";
-                            break;
-                        end
-                    end
-                end
-                if cache_content.tags then
-                    content_metadata = content_metadata.. "tags={";
-                    for k,v in pairs( cache_content.tags ) do
-                        content_metadata = content_metadata..k.."="..tostring(v)
-                    end
-                    content_metadata = content_metadata.. "}";
-                end
-                content_metadata = content_metadata.."}";
-                content_cache = content_cache .. "\r\ntable.insert("..content_type.cache_table..","..content_metadata..");"
-            end
-        end
-        ModTextFileSetContent( content_type.cache_filepath, content_cache );
-    end
-
-    has_content_been_cached = true;
-    print( "[goki's things] content cached" );
-end
-]]
 
 local cache_content = function()
     local content_types_id_cache = {};

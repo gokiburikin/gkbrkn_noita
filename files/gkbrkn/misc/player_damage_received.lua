@@ -2,7 +2,7 @@ local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" );
-function damage_received( damage, message, entity_thats_responsible, is_fatal )
+function damage_received( damage, message, entity_thats_responsible, is_fatal, projectile_thats_responsible )
     local entity = GetUpdatedEntityID();
 
     -- TODO utilizing this for Blood Magic will be problematic when Blood Magic deals proper damage to self
@@ -24,6 +24,15 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal )
                 if current_invincibility_frames <= 0 then
                     ComponentSetValue2( data_component, "invincibility_frames", invincibility_duration );
                 end
+            end
+        end
+    end
+    if projectile_thats_responsible then
+        local projectile_file = EntityGetNamedVariable( projectile_thats_responsible, "projectile_file" );
+        if projectile_file then
+            projectile_file = ComponentGetValue2( projectile_file, "value_string" );
+            if #projectile_file > 0 then
+                EntitySetVariableString( entity, "gkbrkn_blue_magic_projectile_file", projectile_file );
             end
         end
     end

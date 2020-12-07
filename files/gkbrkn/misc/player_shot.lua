@@ -13,11 +13,9 @@ function shot( projectile_entity )
     --GamePrint( "Projectile Damage: " .. ComponentGetValue2( projectile, "damage" ) * 25 );
     local damage_multiplier =  EntityGetVariableNumber( player, "gkbrkn_damage_multiplier", 1.0 );
     local projectile_damage_multiplier =  EntityGetVariableNumber( projectile_entity, "gkbrkn_damage_multiplier", 1.0 );
-    adjust_all_entity_damage( projectile_entity, function( current_damage ) return (current_damage ) * projectile_damage_multiplier; end )
-
     local current_protagonist_bonus = get_protagonist_bonus( player );
-    if current_protagonist_bonus ~= 0 then
-    end
+    adjust_all_entity_damage( projectile_entity, function( current_damage ) return ( current_damage ) * projectile_damage_multiplier * current_protagonist_bonus; end )
+
 
     local empower_stacks = EntityGetVariableNumber( projectile_entity, "gkbrkn_empower_stacks", 0 );
     if empower_stacks > 0 then
@@ -194,6 +192,10 @@ local hyper_casting_bonus = EntityGetVariableNumber( player, "gkbrkn_hyper_casti
 
     if setting_get( MISC.LessParticles.PlayerProjectilesFlag ) then
         reduce_particles( projectile_entity, setting_get( MISC.LessParticles.DisableCosmeticsFlag ) );
+    end
+
+    if setting_get( MISC.LessParticles.ExplosionStainsFlag ) then
+        remove_explosion_stains( projectile_entity );
     end
 
     if setting_get( MISC.RainbowProjectiles.EnabledFlag ) then

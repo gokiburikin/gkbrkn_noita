@@ -83,13 +83,13 @@ function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, 
         usable_by_enemies   = usable_by_enemies,
         func                = pickup_function,
         deprecated          = deprecated,
-        author              = "goki_dev" or author,
+        author              = author or "goki_dev",
         local_content       = true,
         stackable           = stackable
     };
 end
 
-function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, deprecated, icon_path, author, related_projectiles )
+function generate_action_entry( action_id, key, action_type, spawn_level, spawn_probability, price, mana, max_uses, custom_xml, action_function, deprecated, icon_path, author, related_projectiles, enabled_by_default )
     return {
         id = action_id,
         name 		        = "$action_name_gkbrkn_"..key,
@@ -105,9 +105,10 @@ function generate_action_entry( action_id, key, action_type, spawn_level, spawn_
         custom_xml_file     = custom_xml,
         action              = action_function,
         deprecated          = deprecated,
-        author              = "goki_dev" or author,
+        author              = author or "goki_dev",
         related_projectiles = related_projectiles,
         local_content       = true,
+        enabled_by_default  = enabled_by_default
     };
 end
 
@@ -456,12 +457,22 @@ function reduce_particles( entity, disable )
         end
         if projectile ~= nil then
             ComponentObjectSetValues( projectile, "config_explosion", {
-                sparks_count_min=0,
-                sparks_count_max=0,
+                sparks_enabled=false,
+                particle_effect=false
             });
         end
     end
 end
+
+function remove_explosion_stains( entity )
+    local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
+    if projectile ~= nil then
+        ComponentObjectAdjustValues( projectile, "config_explosion", {
+            stains_enabled=function( value ) return false; end,
+        });
+    end
+end
+
 
 function find_polymorphed_players()
     local nearby_polymorph = EntityGetWithTag( "polymorphed" ) or {};
@@ -543,10 +554,10 @@ function distance_to_entity( x, y, entity )
     return math.sqrt( math.pow( tx - x, 2 ) + math.pow( ty - y, 2 ) );
 end
 
-function get_protagonist_bonus( player )
+function get_protagonist_bonus( entity )
     local multiplier = 1.0;
     local health_ratio = 1;
-    local damage_models = EntityGetComponent( player, "DamageModelComponent" );
+    local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
     if damage_models ~= nil then
         for i,damage_model in ipairs( damage_models ) do
             local current_hp = ComponentGetValue2( damage_model, "hp" );
@@ -557,8 +568,8 @@ function get_protagonist_bonus( player )
             end
         end
     end
-    if player ~= nil then
-        local current_protagonist_bonus = EntityGetVariableNumber( player, "gkbrkn_low_health_damage_bonus", 0.0 );
+    if entity ~= nil then
+        local current_protagonist_bonus = EntityGetVariableNumber( entity, "gkbrkn_low_health_damage_bonus", 0.0 );
         local adjuted_ratio = ( 1 - health_ratio ) ^ 1.5;
         multiplier = 1.0 + current_protagonist_bonus * adjuted_ratio;
     end
@@ -590,6 +601,12 @@ function thousands_separator(amount)
     end
     return formatted;
 end
+
+function decimal_format( amount, decimals )
+    if decimals == nil then decimals = 0; end
+    return thousands_separator( string.format( "%."..decimals.."f", amount ) );
+end
+
 
 function copy_component( left, right )
     for k,v in pairs( ComponentGetMembers( left ) ) do
@@ -649,4 +666,11 @@ function change_materials_that_damage( entity, data )
     for material,damage in pairs( data ) do
         EntitySetDamageFromMaterial( entity, material, damage );
     end
+end
+
+function parse_custom_world_seed( seed )
+    seed = seed:gsub( "%a", function( value )
+        return tostring( value:byte( 1 ) );
+    end );
+    return tonumber( seed ) % (2 ^ 32);
 end

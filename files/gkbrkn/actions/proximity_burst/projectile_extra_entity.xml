@@ -1,5 +1,5 @@
 <Entity >
     <LuaComponent 
-		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/proximity_burst/projectile_update.lua" >
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/proximity_burst/projectile_init.lua" >
 	</LuaComponent>
 </Entity>

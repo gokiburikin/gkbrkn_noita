@@ -1,0 +1,25 @@
+<Entity>
+    <MagicConvertMaterialComponent
+      kill_when_finished="1"
+      from_material_tag="[liquid]"
+      steps_per_frame="4"
+      to_material="air"
+      clean_stains="0"
+      is_circle="1"
+      radius="32" 
+	  >
+    </MagicConvertMaterialComponent>
+
+	<LoadEntitiesComponent
+        count.min="1"
+        count.max="1"
+        kill_entity="0"
+        entity_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/janitor/clear_materials_image.xml" >
+    </LoadEntitiesComponent>
+	
+	<LifetimeComponent
+		lifetime="80"
+		>
+	</LifetimeComponent>
+</Entity>
+

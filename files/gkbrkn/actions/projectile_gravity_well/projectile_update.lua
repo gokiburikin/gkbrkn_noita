@@ -5,7 +5,7 @@ local maximum_strength = 96;
 local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 
-local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
+local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_projectile_gravity_well_soft_parent", "0" ));
 if parent ~= 0 and EntityGetIsAlive(parent) then
     local projectile = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
     local parent_projectile = EntityGetFirstComponentIncludingDisabled( parent, "ProjectileComponent" );

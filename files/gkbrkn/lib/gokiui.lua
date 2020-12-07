@@ -6,6 +6,14 @@ return function( gui, gui_id, mod_settings_id, z_index )
     local current_tab = nil;
     local mod_settings = nil;
     local z_index = z_index or 0;
+     
+    local function previous_data( gui )
+        local left_click,right_click,hover,x,y,width,height,draw_x,draw_y = GuiGetPreviousWidgetInfo( gui );
+        if left_click == 1 then left_click = true; elseif left_click == 0 then left_click = false; end
+        if right_click == 1 then right_click = true; elseif right_click == 0 then right_click = false; end
+        if hover == 1 then hover = true; elseif hover == 0 then hover = false; end
+        return left_click,right_click,hover,x,y,width,height,draw_x,draw_y;
+    end
 
     local function word_wrap( str, wrap_size )
         if str then
@@ -36,13 +44,33 @@ return function( gui, gui_id, mod_settings_id, z_index )
 
     local function next_id( amount )
         if amount == nil then amount = 1; end
+        local current_id = id_offset + 1;
         id_offset = id_offset + amount;
-        return gui_id + id_offset;
+        return gui_id + current_id;
+    end
+
+    local function iterate_settings( callback, settings )
+        if settings == nil then settings = mod_settings; end
+        for _,setting in pairs( settings or {} ) do
+            if setting then
+                if setting.settings ~= nil then
+                    iterate_settings( callback, setting.settings );
+                else
+                    callback( setting );
+                end
+            end
+        end
+    end
+
+    local function refresh_settings()
+        iterate_settings( function( setting )
+            setting.current = ModSettingGet( mod_settings_id.."."..setting.key );
+        end );
     end
 
     local is_panel_open = false;
     local has_been_parsed = false;
-    local function parse_mod_settings( parse_mod_settings )
+    local function parse_mod_settings( parse_mod_settings, disable_new_settings )
         mod_settings = parse_mod_settings;
         if not has_been_parsed then
             has_been_parsed = true;
@@ -54,7 +82,11 @@ return function( gui, gui_id, mod_settings_id, z_index )
                 else
                     if setting.default ~= nil then
                         if ModSettingGet( mod_settings_id.."."..setting.key ) == nil then
-                            ModSettingSet( mod_settings_id.."."..setting.key, setting.default );
+                            if disable_new_settings == true then
+                                ModSettingSet( mod_settings_id.."."..setting.key, setting.disable );
+                            else
+                                ModSettingSet( mod_settings_id.."."..setting.key, setting.default );
+                            end
                         end
                         setting.current = ModSettingGet( mod_settings_id.."."..setting.key );
                         --for k,v in pairs( setting ) do
@@ -73,7 +105,7 @@ return function( gui, gui_id, mod_settings_id, z_index )
         button = function( setting )
             if setting.type_data.click_callback then
                 setting.type_data.click_callback( GuiButton( gui, next_id(), 0, 0, setting.label ) );
-                if setting.tooltip then GuiTooltip( gui, word_wrap( setting.tooltip ), ""); end
+                if setting.tooltip then GuiTooltip( gui, word_wrap( GameTextGetTranslatedOrNot( setting.tooltip ) ), ""); end
             end
         end,
         boolean = function( setting )
@@ -81,7 +113,7 @@ return function( gui, gui_id, mod_settings_id, z_index )
             if GuiImageButton( gui, next_id(), 0, 1, "", "mods/gkbrkn_noita/files/gkbrkn/gui/checkbox" .. (setting.current == true and "_fill" or "") .. ".png" ) then toggle = true; end
             if setting.current == false then GuiColorSetForNextWidget( gui, 0.60, 0.60, 0.60, 1.0 ); end
             if GuiButton( gui, next_id(), 0, 0, setting.label ) then toggle = true; end
-            if setting.tooltip then GuiTooltip( gui, word_wrap( setting.tooltip ), ""); end
+            if setting.tooltip then GuiTooltip( gui, word_wrap( GameTextGetTranslatedOrNot( setting.tooltip ) ), ""); end
             if toggle == true then
                 setting.current = not setting.current;
                 ModSettingSet( mod_settings_id.."."..setting.key, setting.current );
@@ -90,7 +122,7 @@ return function( gui, gui_id, mod_settings_id, z_index )
         range = function( setting )
             if setting.current == setting.default then GuiColorSetForNextWidget( gui, 0.60, 0.60, 0.60, 1.0 ); end
             GuiText( gui, 0, 0, setting.label );
-            if setting.tooltip then GuiTooltip( gui, word_wrap( setting.tooltip ), ""); end
+            if setting.tooltip then GuiTooltip( gui, word_wrap( GameTextGetTranslatedOrNot( setting.tooltip ) ), ""); end
             local new_value = GuiSlider( gui, next_id(), -2, 1, "", setting.current, setting.type_data.min, setting.type_data.max, setting.default, 1.0, " ", 100 );
             if setting.type_data.value_callback ~= nil then
                 new_value = setting.type_data.value_callback( new_value );
@@ -109,7 +141,7 @@ return function( gui, gui_id, mod_settings_id, z_index )
         end,
         input = function( setting )
             GuiText( gui, 0, 0, setting.label );
-            if setting.tooltip then GuiTooltip( gui, word_wrap( setting.tooltip ), ""); end
+            if setting.tooltip then GuiTooltip( gui, word_wrap( GameTextGetTranslatedOrNot( setting.tooltip ) ), ""); end
             local new_value = GuiTextInput( gui, next_id(), 0, 0, setting.current, 200, 100 );
             if setting.current ~= new_value then
                 setting.current = new_value;
@@ -120,14 +152,14 @@ return function( gui, gui_id, mod_settings_id, z_index )
 
     function do_custom_tooltip( callback, z, x_offset, y_offset )
         if z == nil then z = -12; end
-        local left_click,right_click,hover,x,y,width,height,draw_x,draw_y,draw_width,draw_height = GuiGetPreviousWidgetInfo( gui );
+        local left_click,right_click,hover,x,y,width,height,draw_x,draw_y,draw_width,draw_height = previous_data( gui );
         local screen_width,screen_height = GuiGetScreenDimensions( gui );
         if x_offset == nil then x_offset = 0; end
         if y_offset == nil then y_offset = 0; end
         if draw_y > screen_height * 0.5 then
             y_offset = y_offset - height;
         end
-        if hover == 1 then
+        if hover then
             local screen_width, screen_height = GuiGetScreenDimensions( gui );
             GuiZSet( gui, z );
             GuiLayoutBeginLayer( gui );
@@ -154,8 +186,8 @@ return function( gui, gui_id, mod_settings_id, z_index )
                     for g,v in ipairs( setting.settings ) do
                         do_setting( v );
                         setting_index = setting_index + #v.settings;
-                        if setting_index > settings_sum / 2 then
-                            setting_index = setting_index - settings_sum / 2;
+                        if setting_index > settings_sum / setting.columns then
+                            setting_index = setting_index - settings_sum / setting.columns;
                             GuiLayoutEnd( gui );
                             GuiLayoutBeginVertical( gui, 33, 0 );
                         end
@@ -191,7 +223,7 @@ return function( gui, gui_id, mod_settings_id, z_index )
                 end
             GuiLayoutEnd( gui );
             if setting.type == "range" then
-                GuiLayoutAddVerticalSpacing( gui, -2 );
+                --GuiLayoutAddVerticalSpacing( gui, -2 );
             elseif setting.type == "input" then
                 GuiLayoutAddVerticalSpacing( gui, -2 );
             end
@@ -199,6 +231,10 @@ return function( gui, gui_id, mod_settings_id, z_index )
     end
 
     local function do_gui()
+        if GlobalsGetValue("gkbrkn_force_settings_refresh","0") == "1" then
+            refresh_settings();
+            GlobalsSetValue("gkbrkn_force_settings_refresh","0");
+        end
         local current_tab_index = 0;
         local scroll_container_ids = next_id( #mod_settings );
         GuiLayoutBeginVertical( gui, 0, 0 );
@@ -208,18 +244,21 @@ return function( gui, gui_id, mod_settings_id, z_index )
                         current_tab = current_tab or setting.tab_key;
                     end
                     GuiBeginAutoBox( gui );
+                        local was_selected = false;
                         if current_tab == setting.tab_key then
                             GuiZSetForNextWidget( gui, z_index - 2 );
                             current_tab_index = i;
+                            was_selected = true;
                         else
                             GuiZSetForNextWidget( gui, z_index );
                             GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
                         end
                         if GuiButton( gui, next_id(), 0, 0, " "..GameTextGetTranslatedOrNot( setting.tab_label ).." " ) then
                             current_tab = setting.tab_key;
+                            current_tab_index = i;
                         end
                         GuiLayoutAddHorizontalSpacing( gui, 0 );
-                        if current_tab == setting.tab_key then
+                        if was_selected then
                             GuiZSetForNextWidget( gui, z_index - 1 );
                         else
                             GuiZSetForNextWidget( gui, z_index + 10 );
@@ -230,32 +269,19 @@ return function( gui, gui_id, mod_settings_id, z_index )
 
             GuiZSetForNextWidget( gui, z_index + 2 );
             GuiBeginScrollContainer( gui, scroll_container_ids + (current_tab_index - 1), 0, 0, screen_width - screen_width * 0.12, screen_height - screen_height * 0.30, false );
-                for _,setting in ipairs( mod_settings ) do
-                    if current_tab == setting.tab_key then
-                        do_setting( setting );
-                    end
-                end
+                do_setting( mod_settings[current_tab_index] );
             GuiEndScrollContainer( gui );
-        GuiLayoutEnd( gui );
-    end
-
-    local function iterate_settings( callback, settings )
-        if settings == nil then settings = mod_settings; end
-        for _,setting in pairs( settings or {} ) do
-            if setting then
-                if setting.settings ~= nil then
-                    iterate_settings( callback, setting.settings );
-                else
-                    callback( setting );
+            -- keep the other scroll containers drawing so their scroll position is maintained (doesn't really look that good anyway)
+            --[[
+            for i=1,#mod_settings do
+                if i ~= current_tab_index then
+                    GuiOptionsAddForNextWidget( gui, GUI_OPTION.Layout_NoLayouting );
+                    GuiBeginScrollContainer( gui, scroll_container_ids + (i - 1), 0, 0, -1000, -1000, false );
+                    GuiEndScrollContainer( gui );
                 end
             end
-        end
-    end
-
-    local function refresh_settings()
-        iterate_settings( function( setting )
-            setting.current = ModSettingGet( mod_settings_id.."."..setting.key );
-        end );
+            ]]
+        GuiLayoutEnd( gui );
     end
 
     return {

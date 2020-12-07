@@ -1,12 +1,1 @@
-<Entity >
-    <LuaComponent 
-		remove_after_executed="1"
-        execute_on_added="1"
-		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/projectile_init.lua" >
-	</LuaComponent>
-    <LuaComponent 
-        execute_on_added="1"
-        execute_every_n_frame="1"
-		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/projectile_update.lua" >
-	</LuaComponent>
-</Entity>
+<Entity><VariableStorageComponent name="gkbrkn_projectile_gravity_well"/></Entity>

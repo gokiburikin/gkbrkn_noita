@@ -3,7 +3,7 @@ local entity = GetUpdatedEntityID();
 local x, y = EntityGetTransform( entity );
 local link_distance = 8;
 
-local parent = tonumber( EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ) );
+local parent = tonumber( EntityGetVariableString( entity, "gkbrkn_trailing_shot_soft_parent", "0" ) );
 if parent ~= 0 and EntityGetIsAlive( parent ) then
     local velocity = EntityGetFirstComponentIncludingDisabled( entity, "VelocityComponent" );
     local vx, vy = ComponentGetValue2( velocity, "mVelocity" );

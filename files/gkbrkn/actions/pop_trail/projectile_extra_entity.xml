@@ -1,0 +1,26 @@
+<Entity>
+    <ParticleEmitterComponent 
+		emitted_material_name="gkbrkn_liliumpurple"
+		offset.x="0"
+		offset.y="0"
+		x_pos_offset_min="-2"
+		x_pos_offset_max="2"
+		y_pos_offset_min="2"
+		y_pos_offset_max="-2"
+		x_vel_min="0"
+		x_vel_max="0"
+		y_vel_min="0"
+		y_vel_max="0"
+		count_min="1"
+		count_max="1"
+		lifetime_min="4.0"
+		lifetime_max="4.0"
+        is_trail="1"
+        trail_gap="1"
+		create_real_particles="0"
+		emit_cosmetic_particles="1"
+		emission_interval_min_frames="1"
+		emission_interval_max_frames="1"
+		is_emitting="1" >
+	</ParticleEmitterComponent>
+</Entity>

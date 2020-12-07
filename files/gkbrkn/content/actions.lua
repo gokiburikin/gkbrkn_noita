@@ -8,7 +8,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/dummy_shot/projectile_extra_entity.xml,";
             draw_actions( 1, true );
-        end
+        end, true
     ) );
 
     table.insert( actions, generate_action_entry(
@@ -612,7 +612,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/paper_shot/projectile_extra_entity.xml,";
             draw_actions( 1, true );
-        end
+        end, true
     ) );
 
     table.insert( actions, generate_action_entry(
@@ -642,6 +642,19 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         nil,
         function()
             c.damage_critical_multiplier = math.max( 1, c.damage_critical_multiplier ) + 1;
+            draw_actions( 1, true );
+        end
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_DAMAGE_SMALL", "damage_small", ACTION_TYPE_MODIFIER,
+        "0,1,2,3", "1.0,1.0,1.0,1.0", 70, 1, -1,
+        nil,
+        function()
+            c.damage_projectile_add = c.damage_projectile_add + 0.04;
+            if not reflecting then
+                _add_extra_modifier_to_shot( "gkbrkn_dimige" );
+            end
             draw_actions( 1, true );
         end
     ) );
@@ -732,15 +745,63 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_PROXIMITY_BURST", "proximity_burst", ACTION_TYPE_MODIFIER,
-        "0,1,2,3", "0.2,0.2,0.2,0.2", 300, 33, -1,
+        "2,3,4,5", "0.2,0.2,0.2,0.2", 300, 70, -1,
         nil,
         function()
-            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/proximity_burst/projectile_extra_entity.xml,";
-            c.lifetime_add = c.lifetime_add + 6;
-            c.explosion_radius = c.explosion_radius + 8.0;
-            c.damage_explosion_add = c.damage_explosion_add + 0.1;
-            set_trigger_death( 1 );
+            SetRandomSeed( GameGetFrameNum(), 1284 );
+            c.explosion_radius = c.explosion_radius + 15.0;
+			c.damage_explosion_add = c.damage_explosion_add + 0.2;
+            local old_c = c;
+            c = {};
+            for k,v in pairs(old_c) do
+                c[k] = v;
+            end
+            local inside_c = nil;
+            local old_capture = gkbrkn.add_projectile_capture_callback;
+            gkbrkn._proximity_bursts = (gkbrkn._proximity_bursts or 0) + 1;
+            gkbrkn.add_projectile_capture_callback = function( filepath, trigger_action_draw_count, trigger_delay_frames )
+                BeginProjectile( filepath );
+                if gkbrkn.add_projectile_depth <= gkbrkn._proximity_bursts then
+                    BeginTriggerDeath();
+                        inside_c = c;
+                        for i=1,Random(1,4) do
+                            add_projectile( filepath );
+                        end
+                        c = {};
+                        for k,v in pairs(inside_c) do
+                            c[k] = v;
+                        end
+                        c.spread_degrees = 360;
+                        c.gravity = c.gravity + 1200;
+                        c.bounces = c.bounces + 1;
+                        c.explosion_radius = c.explosion_radius + 10.0;
+			            c.damage_explosion_add = c.damage_explosion_add + 0.1;
+                        for i=1,gkbrkn.add_projectile_depth do
+                            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/proximity_burst/projectile_extra_entity.xml,";
+                        end
+                        register_action( c );
+                        SetProjectileConfigs();
+                        c = old_c;
+                    EndTrigger();
+                end
+                EndProjectile();
+            end
             draw_actions( 1, true );
+            gkbrkn.add_projectile_capture_callback = old_capture;
+            gkbrkn._proximity_bursts = gkbrkn._proximity_bursts - 1;
+            c = old_c;
+            if inside_c then
+                for k,v in pairs(inside_c) do
+                    c[k] = v;
+                end
+            end
+
+            --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/proximity_burst/projectile_extra_entity.xml,";
+            --c.lifetime_add = c.lifetime_add + 6;
+            --c.explosion_radius = c.explosion_radius + 8.0;
+            --c.damage_explosion_add = c.damage_explosion_add + 0.1;
+            --set_trigger_death( 1 );
+            --draw_actions( 1, true );
         end
     ) );
 
@@ -779,7 +840,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_SEEKER_SHOT", "seeker_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 280, 20, -1,
+        "0,1,2,3,4,5,6", "0.1,0.2,0.3,0.4,0.5,0.4,0.3", 280, 20, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities.."mods/gkbrkn_noita/files/gkbrkn/actions/seeker_shot/projectile_extra_entity.xml,";
@@ -1285,11 +1346,28 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_ANCHORED_SHOT", "anchored_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2", "0.5,0.5,0.5", 150, 6, -1,
+        "0,1,2", "0.2,0.2,0.2", 150, 6, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/anchored_shot/projectile_extra_entity.xml,";
             draw_actions( 1, true );
+        end
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_BLUE_MAGIC", "blue_magic", ACTION_TYPE_PROJECTILE,
+        "0,1,2,3,4,5", "0.5,0.4,0.3,0.2,0.2,0.2", 90, 11, -1,
+        nil,
+        function()
+            c.fire_rate_wait = c.fire_rate_wait + 10;
+            current_reload_time = current_reload_time + 6;
+            if not reflecting then
+                local player = EntityGetWithTag( "player_unit" )[1];
+                local projectile_file = EntityGetVariableString( player, "gkbrkn_blue_magic_projectile_file" );
+                if projectile_file ~= nil and #projectile_file > 0 then
+                    add_projectile( projectile_file );
+                end
+            end
         end
     ) );
 
@@ -1328,10 +1406,12 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FORMATION_STACK", "formation_stack", ACTION_TYPE_DRAW_MANY,
-        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 160, 2, -1,
+        "0,1,2,3,4,5,6", "0.4,0.4,0.4,0.4,0.4,0.4,0.4", 160, 5, -1,
         nil,
         function()
-            capture_projectile_draw( "formation_stack", 3 );
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/formation_stack/projectile_extra_entity.xml,";
+            if not reflecting then add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/formation_stack/separator.xml"); end
+            draw_actions( 3, true );
         end
     ));
 
@@ -1340,7 +1420,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 190, 7, -1,
         nil,
         function()
-            capture_projectile_draw( "link_shot", 2 );
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/projectile_extra_entity.xml,";
+            if not reflecting then add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/link_shot/separator.xml"); end
+            draw_actions( 2, true );
         end
     ) );
 
@@ -1349,7 +1431,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.6,0.6,0.6,0.6,0.6,0.6,0.6", 190, 14, -1,
         nil,
         function()
-            capture_projectile_draw( "spell_merge", 2 );
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/projectile_extra_entity.xml,";
+            if not reflecting then add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/spell_merge/separator.xml"); end
+            draw_actions( 2, true );
         end
     ) );
 
@@ -1359,7 +1443,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         nil,
         function()
             c.speed_multiplier = c.speed_multiplier * 0.75;
-            capture_projectile_draw( "projectile_gravity_well", 3 );
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/projectile_extra_entity.xml,";
+            if not reflecting then add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/projectile_gravity_well/separator.xml"); end
+            draw_actions( 3, true );
         end
     ) );
 
@@ -1368,7 +1454,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.1,0.1,0.1,0.1,0.1,0.1,0.1", 100, 12, -1,
         nil,
         function()
-            capture_projectile_draw( "projectile_orbit", 5, function( projectile_path, state ) state.action_unidentified_sprite_filename = state.action_unidentified_sprite_filename.."orbital_radius_"..state.spread_degrees..","; end );
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_extra_entity.xml,";
+            if not reflecting then add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/separator.xml"); end
+            draw_actions( 5, true );
         end
     ) );
 
@@ -1377,7 +1465,9 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 5, -1,
         nil,
         function()
-            capture_projectile_draw( "trailing_shot", 4 );
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/trailing_shot/projectile_extra_entity.xml,";
+            if not reflecting then add_projectile("mods/gkbrkn_noita/files/gkbrkn/actions/trailing_shot/separator.xml"); end
+            draw_actions( 4, true );
         end
     ) );
 
@@ -1396,7 +1486,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 --[[ SUPERS ]]
     table.insert( actions, generate_action_entry(
         "GKBRKN_CONTROL", "control", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 10, 3, -1,
+        "0,1,2,3,4,5,6,10", "0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.12", 10, 3, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/control/projectile_extra_entity.xml,";
@@ -1406,7 +1496,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_CLINGING_SHOT", "clinging_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 30, -1,
+        "0,1,2,3,4,5,6,10", "0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.12", 150, 30, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/clinging_shot/projectile_extra_entity.xml,";
@@ -1416,7 +1506,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_FOCUSED_SHOT", "focused_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 500, 20, -1,
+        "0,1,2,3,4,5,6,10", "0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.12", 500, 20, -1,
         nil,
         function()
             gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 3.0;
@@ -1429,7 +1519,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_TIME_SPLIT", "time_split", ACTION_TYPE_MODIFIER, 
-        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 140, 4, -1,
+        "0,1,2,3,4,5,6,10", "0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.12", 140, 4, -1,
         nil,
         function()
             local sum = (c.fire_rate_wait + current_reload_time) * 0.5;
@@ -1441,7 +1531,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
 
     table.insert( actions, generate_action_entry(
         "GKBRKN_BOUND_SHOT", "bound_shot", ACTION_TYPE_MODIFIER,
-        "0,1,2,3,4,5,6,10", "0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25", 150, 90, -1,
+        "0,1,2,3,4,5,6,10", "0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.12", 150, 90, -1,
         nil,
         function()
             c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/bound_shot/projectile_extra_entity.xml,";
@@ -1463,4 +1553,187 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua");
         end
     ) );
 ]]
-    
+
+
+
+--[[ EXTRA THINGS ]]
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_FREEZING_MIST", "freezing_mist", ACTION_TYPE_PROJECTILE,
+        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 600, 200, -1,
+        nil,
+        function()
+            add_projectile( "mods/gkbrkn_noita/files/gkbrkn/actions/freezing_mist/projectile.xml" );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/freezing_mist/icon.png",
+        "goki_dev_extra",
+        {"mods/gkbrkn_noita/files/gkbrkn/actions/freezing_mist/projectile.xml",1},
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_FREEZING_VAPOUR_TRAIL", "freezing_vapour_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 300, 13, -1,
+        nil,
+        function()
+            c.trail_material = c.trail_material .. "blood_cold";
+            c.trail_material_amount = c.trail_material_amount + 5;
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/freezing_vapour_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ));
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_HONK", "honk", ACTION_TYPE_OTHER,
+        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 10, 0, -1,
+        nil,
+        function()
+            GamePlaySound( "mods/gkbrkn_noita/files/gkbrkn_extras.snd", "lily_honk"..math.ceil( math.random() * 3 + 1 ), x, y );
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/honk/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ));
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_LOVELY_TRAIL", "lovely_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/lovely_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/lovely_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_NULL_TRAIL", "null_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/null_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/null_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_POP_TRAIL", "pop_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/pop_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/pop_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_RAINBOW_GLITTER_TRAIL", "rainbow_glitter_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/rainbow_glitter_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/rainbow_glitter_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_RAINBOW_PROJECTILE", "rainbow_projectile", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/rainbow_projectile/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/rainbow_projectile/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_RAINBOW_TRAIL", "rainbow_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/rainbow_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/rainbow_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_SPARKLING_TRAIL", "sparkling_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/sparkling_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/sparkling_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_STARRY_TRAIL", "starry_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.2,0.2,0.2,0.2,0.2,0.2,0.2", 10, 0, -1,
+        nil,
+        function()
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/actions/starry_trail/projectile_extra_entity.xml,";
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/starry_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ) );
+
+    table.insert( actions, generate_action_entry(
+        "GKBRKN_VOID_TRAIL", "void_trail", ACTION_TYPE_MODIFIER,
+        "0,1,2,3,4,5,6", "0.5,0.5,0.5,0.5,0.5,0.5,0.5", 200, 6, -1,
+        nil,
+        function()
+            c.trail_material = c.trail_material .. "void_liquid,";
+            c.trail_material_amount = c.trail_material_amount + 1;
+            draw_actions( 1, true );
+        end,
+        false,
+        "mods/gkbrkn_noita/files/gkbrkn/actions/void_trail/icon.png",
+        "goki_dev_extra",
+        nil,
+        false
+    ));

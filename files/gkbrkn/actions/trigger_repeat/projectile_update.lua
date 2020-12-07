@@ -32,6 +32,9 @@ if projectile then
                         end
                     end
                 end
+                if not found_parent then
+                    EntityKill( entity );
+                end
             end
         end
     end

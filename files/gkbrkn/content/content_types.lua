@@ -32,7 +32,7 @@ content_types = {
         content_filepath = "data/scripts/perks/perk_list.lua",
         content_table = "perk_list",
         cache_filepath = "mods/gkbrkn_noita/files/gkbkrn/scratch/perks_cache.lua",
-        cache_table = "perks_cache",
+        cache_table = "perk_list_cache",
         content_disable_callback = function( content, current_string ) return current_string .."table.remove( perk_list, "..content.options.index.." );\r\n" end,
     },
     {

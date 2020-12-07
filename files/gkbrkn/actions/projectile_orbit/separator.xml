@@ -1,0 +1,4 @@
+<Entity tags="projectile_player">
+  <VariableStorageComponent name="gkbrkn_projectile_orbit_separator"/>
+  <Base file="mods/gkbrkn_noita/files/gkbrkn/actions/separator.xml"/>
+</Entity>

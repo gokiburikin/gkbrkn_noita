@@ -56,6 +56,8 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
     end
 
+    EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/infinite_inventory.xml" );
+
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/init.lua", { player_entity = player_entity } );
     if not GameHasFlagRun( FLAGS.DelayInit ) then
         DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/misc/random_start/init.lua", { player_entity = player_entity } );

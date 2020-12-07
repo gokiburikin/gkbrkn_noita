@@ -1,0 +1,6 @@
+<Entity >
+    <HitEffectComponent
+        effect_hit="LOAD_ENTITY"
+        value_string="mods/gkbrkn_noita/files/gkbrkn/champion_types/thief/projectile_hit_effect.xml"
+    ></HitEffectComponent>
+</Entity>

@@ -25,6 +25,14 @@ function EntitySetVariableString( entity, variable_tag, value )
     end
 end
 
+function EntityGetNamedVariable( entity, name )
+    for k,component in pairs( EntityGetComponent( entity, "VariableStorageComponent" ) or {} ) do
+        if ComponentGetValue2( component, "name") == name then
+            return component;
+        end
+    end
+end
+
 function EntityHasNamedVariable( entity, name )
     for k,component in pairs( EntityGetComponent( entity, "VariableStorageComponent" ) or {} ) do
         if ComponentGetValue2( component, "name") == name then
@@ -32,6 +40,18 @@ function EntityHasNamedVariable( entity, name )
         end
     end
     return false;
+end
+
+function EntityAddNamedVariable( entity, name )
+    local c = EntityAddComponent2( entity, "VariableStorageComponent", { name=name } );
+end
+
+function EntityRemoveNamedVariable( entity, name )
+    for k,component in pairs( EntityGetComponent( entity, "VariableStorageComponent" ) or {} ) do
+        if ComponentGetValue2( component, "name") == name then
+            EntityRemoveComponent( entity, component );
+        end
+    end
 end
 
 function EntityGetVariableNumber( entity, variable_tag, default )

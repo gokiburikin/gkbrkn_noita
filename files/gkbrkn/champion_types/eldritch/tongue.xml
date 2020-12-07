@@ -75,7 +75,14 @@
 		<Base file="data/entities/projectiles/tentacle/tongue_2.xml" />
 		<Base file="data/entities/projectiles/tentacle/tongue_1.xml" />
 		<Base file="data/entities/projectiles/tentacle/tongue_2.xml" />
+
 		<Base file="data/entities/projectiles/tentacle/tongue_3.xml" />
+		<Base file="data/entities/projectiles/tentacle/tongue_3.xml" />
+		
+		<Base file="data/entities/projectiles/tentacle/tongue_3.xml" />
+		<Base file="data/entities/projectiles/tentacle/tongue_3.xml" />
+		<Base file="data/entities/projectiles/tentacle/tongue_3.xml" />
+
 		<Base file="data/entities/projectiles/tentacle/tentacle_4.xml" />
 	</Entity>
 

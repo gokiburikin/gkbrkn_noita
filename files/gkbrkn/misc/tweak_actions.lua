@@ -122,6 +122,13 @@ local edit_callbacks = {
 			set_trigger_death( 1 );
             draw_actions( 1, true );
 		end
+    end,
+    CHAOTIC_ARC = function ( action, index )
+        action.action = function()
+			c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/chaotic_arc.xml,"
+			c.speed_multiplier = c.speed_multiplier * 2;
+			draw_actions( 1, true );
+		end
     end
 }
 

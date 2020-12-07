@@ -1,21 +1,24 @@
 --[[        
-changelog 
+changelog
 
-some issues with noita (for if Nolla ever cares)
-    explosive projectile (c.damage_explosion_add) is broken; damage is based on explosion radius
-    add timer trigger, add trigger, and expiration trigger are fundamentally incorrectly implemented
-    new statues can be killed and physically destroyed so they aren't good replacements to target dummy
-    unlimited spells should work on all spells since there are infinite forms of healing and blackholes anyway
-    far too many base game spells don't support modifiers in any interesting or meaningful way; very antithetical to the design of the gun system
-    timer triggers should not also activate on hit / expiration--the other triggers exists for those reasons
-    there should be a repeat timer trigger (that also doesn't activate on hit / expiration) so that self replicating / larpa triggers can be properly implemented
-    projectile_file and related_projectiles should be implemented dynamically instead of manually (applied during Begin Projectile / parsed during action)
-    damage modifiers are egregiously imbalanced compared to other modifiers (i.g. 7 mana drain for 44 damage: heavy shot)
-    summon fly swarm is cheaper 5x piercing shots without friendly fire; certain spells and perks betray any understanding of the games previous balance / design
-    certain functions don't return useful information
-    certain functions contain local variables instead of accessible information
-    persistent flags don't use a single file and instead use individuals files leading to hundreds (and potentially thousands) of files when dealing with many flags
-    there is no simple config file serialization
+
+TWitch Event ideas
+    All Enemies Gain 1 Perk (forever)
+    Gold Value +/- N
+
+
+TODO
+    Gold Duration (Disabled -> 0 - 10 -> Infinite)
+    Starting Health (1 -> 300)
+    Gold = Health Regeneration
+    Kills = Health Regeneration
+    Passive Health Regeneration
+    Selectable Cape Colour
+    Selectable Laser Sight Colour
+    make uber boss a slider
+    move polymorph immunity game modifier out
+    (look into this) if no legendary wands are enabled, don't spawn one
+
 BUG
     the sparkler unique wand is broken (this is almost 100% a projectile capture issue)
     grimoires should either be no limited uses or all limited uses or something, fix this somehow
@@ -111,6 +114,9 @@ ModLuaFileAppend( "data/scripts/gun/gun.lua", "mods/gkbrkn_noita/files/gkbrkn/ap
 ModLuaFileAppend( "data/scripts/gun/gun_extra_modifiers.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_extra_modifiers.lua" );
 ModLuaFileAppend( "data/scripts/gun/procedural/gun_procedural.lua", "mods/gkbrkn_noita/files/gkbrkn/append/gun_procedural.lua" );
 
+ModRegisterAudioEventMappings( "mods/gkbrkn_noita/files/GUIDs.txt" );
+ModMaterialsFileAdd( "mods/gkbrkn_noita/files/rainbow_materials.xml" );
+
 ModTextFilePrepend( "data/entities/animals/boss_centipede/boss_centipede_update.lua", "mods/gkbrkn_noita/files/gkbrkn/append/boss_centipede_update.lua" );
 
 if setting_get( MISC.NoPregenWands.EnabledFlag ) then
@@ -193,14 +199,15 @@ end
 
 if setting_get( MISC.LegendaryWands.EnabledFlag ) then dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" ); end
 if setting_get( MISC.FixedCamera.OldBehaviourFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
+if setting_get( FLAGS.EnableLogging ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_enable_logging.xml" ); end
 
 function OnPlayerSpawned( player_entity )
     GlobalsSetValue( "mod_button_tr_width", "0" );
     if skip_loadout then GameAddFlagRun( FLAGS.SkipGokiLoadouts ); end
     if delay_init then GameAddFlagRun( FLAGS.DelayInit ); end
-    if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then
-        EntityLoad('mods/gkbrkn_noita/files/gkbrkn/gui/container.xml');
-    end
+    --if #(EntityGetWithTag( "gkbrkn_mod_config") or {}) == 0 then
+    --    EntityLoad('mods/gkbrkn_noita/files/gkbrkn/gui/container.xml');
+    --end
     DoFileEnvironment( "mods/gkbrkn_noita/files/gkbrkn/player_spawned.lua", { player_entity = player_entity } );
 end
 
@@ -226,8 +233,14 @@ function OnModPreInit()
     ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/misc/tweak_perks.lua" );
 end
 
---function OnMagicNumbersAndWorldSeedInitialized() -- this is the last point where the Mod* API is available. after this materials.xml will be loaded.
 function OnModPostInit() -- TODO this was done to allow init_function to call ModMaterialsFileAdd
+    if setting_get( MISC.SeededRuns.UseSeedNextRunFlag ) then
+        local seed = setting_get( MISC.SeededRuns.SeedFlag );
+        if #seed > 0 then
+            seed = parse_custom_world_seed( seed );
+        end
+        SetWorldSeed( seed );
+    end
     ModTextFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/content/actions.lua" );
     ModTextFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/content/perks.lua" );
 
@@ -286,10 +299,18 @@ function OnWorldInitialized()
     end
 end
 
+function OnWorldPreUpdate()
+    if GlobalsGetValue( "gkbrkn_mod_button_tr_max", "0" ) == "0" then
+        GlobalsSetValue( "gkbrkn_mod_button_tr_max", GlobalsGetValue( "mod_button_tr_width", "0" ) );
+    end
+    dofile( "mods/gkbrkn_noita/files/gkbrkn/gui/update.lua" );
+end
+
 local last_time = GameGetRealWorldTimeSinceStarted();
 local current_fps = 0;
 local times = {};
 function OnWorldPostUpdate()
+    GlobalsSetValue( "mod_button_tr_current", "0" );
     --[[ More Accurate Smoothed FPS ]]
     local now = GameGetRealWorldTimeSinceStarted();
     local time_sum = 0;
@@ -301,10 +322,6 @@ function OnWorldPostUpdate()
     current_fps = current_fps + ( fps - current_fps ) / 4;
     GlobalsSetValue( "gkbrkn_fps", tostring( math.ceil( current_fps ) ) );
 
-    if GlobalsGetValue( "gkbrkn_mod_button_tr_max", "0" ) == "0" then
-        GlobalsSetValue( "gkbrkn_mod_button_tr_max", GlobalsGetValue( "mod_button_tr_current", "0" ) );
-    end
-    GlobalsSetValue( "mod_button_tr_current", "0" );
     local x, y = 0, 0;
     local player = EntityGetWithTag( "player_unit" )[1];
     if player == nil or player == 0 then
@@ -316,7 +333,6 @@ function OnWorldPostUpdate()
         if setting_get( MISC.FixedCamera.EnabledFlag ) and not setting_get( MISC.FixedCamera.OldBehaviourFlag ) then
             if is_fixed_camera then
                 local cx, cy = GameGetCameraPos();
-                --GameSetCameraPos( cx + (x - cx ) / 1.2, cy + (y - cy ) / 1.2 );
                 GameSetCameraPos( cx + ( x - cx ) / 1.2, cy + ( y - cy ) / 1.2 );
             else
                 GameSetCameraFree( true );
@@ -329,4 +345,49 @@ function OnWorldPostUpdate()
             end
         end
     end
+
+    if setting_get( FLAGS.ShowHitboxes ) then
+        local mortals = EntityGetWithTag( "mortal" );
+        for _,mortal in pairs(mortals) do
+            if EntityHasTag( mortal, "debug_hitbox" ) == false then
+                EntityAddTag( mortal, "debug_hitbox" );
+                local origin = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/hitboxes/origin.xml" );
+                EntityAddChild( mortal, origin );
+
+                local components = EntityGetAllComponents( mortal ) or {};
+                for _,component in pairs(components) do
+                    if ComponentGetTypeName( component ) == "HitboxComponent" then
+                        local hitbox = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/hitboxes/hitbox.xml" );
+                        local width = tonumber( ComponentGetValue( component, "aabb_max_x" ) ) - tonumber( ComponentGetValue( component, "aabb_min_x" ) );
+                        local height = tonumber( ComponentGetValue( component, "aabb_max_y" ) ) - tonumber( ComponentGetValue( component, "aabb_min_y" ) );
+                        local x = -tonumber( ComponentGetValue( component, "aabb_min_x" ) );
+                        local y = -tonumber( ComponentGetValue( component, "aabb_min_y" ) );
+                        local sprite = EntityGetFirstComponent( hitbox, "SpriteComponent" );
+
+                        ComponentSetValue( sprite, "has_special_scale", "1" );
+                        ComponentSetValue( sprite, "special_scale_x", width / 10 );
+                        ComponentSetValue( sprite, "special_scale_y", height / 10 );
+                        EntityAddChild( mortal, hitbox );
+                    end
+                end
+            end
+        end
+    else
+        local mortals = EntityGetWithTag( "mortal" );
+        for _,mortal in pairs( mortals ) do
+            if EntityHasTag( mortal, "debug_hitbox" ) then
+                EntityRemoveTag( mortal, "debug_hitbox" );
+                local children = EntityGetAllChildren( mortal ) or {};
+
+                for _,child in pairs( children ) do
+                    if EntityHasNamedVariable( child, "gkbrkn_hitbox" ) then
+                        EntityRemoveFromParent( child );
+                        EntityKill( child );
+                    end
+                end
+            end
+        end
+    end
+
+    add_frame_time( GameGetRealWorldTimeSinceStarted() - now );
 end

@@ -96,7 +96,8 @@ tweaks = {
         author = "goki_dev",
         local_content = true,
         options = { action_id="CHAIN_BOLT" },
-        tags = {goki_thing = true}
+        tags = {goki_thing = true},
+        enabled_by_default = true,
     },
     {
         id = "stun_lock",
@@ -163,7 +164,8 @@ tweaks = {
         author = "goki_dev",
         local_content = true,
         options = { action_id="TELEPORT_CAST" },
-        tags = {goki_thing = true}
+        tags = {goki_thing = true},
+        enabled_by_default = true,
     },
     {
         id = "blood_amount",
@@ -217,6 +219,15 @@ tweaks = {
         author = "goki_dev",
         local_content = true,
         options = { action_id="ADD_DEATH_TRIGGER" },
+    },
+    {
+        id = "chaotic_arc",
+        name = "$tweak_name_gkbrkn_chaotic_arc",
+        description = "$tweak_desc_gkbrkn_chaotic_arc",
+        author = "goki_dev",
+        local_content = true,
+        options = { action_id="CHAOTIC_ARC" },
+        enabled_by_default = true,
     },
     {
         id = "unlimited_spells",

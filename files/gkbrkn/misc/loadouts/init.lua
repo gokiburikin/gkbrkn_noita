@@ -2,6 +2,7 @@ local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua" );
 dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" );
+
 if setting_get( MISC.Loadouts.EnabledFlag ) and not GameHasFlagRun( FLAGS.SkipGokiLoadouts ) then
     if loadouts and #loadouts > 0 then
         print("[goki's things] found "..#loadouts.." active loadouts" );
@@ -27,10 +28,6 @@ if setting_get( MISC.Loadouts.EnabledFlag ) and not GameHasFlagRun( FLAGS.SkipGo
             GamePrintImportant( string.format( GameTextGetTranslatedOrNot("$loadout_message_format"), loadout_name ), note );
         elseif loadout_data.custom_message ~= "" then
             GamePrintImportant( loadout_data.custom_message, "" );
-        end
-
-        if loadout_data.callback ~= nil then
-            loadout_data.callback( player_entity, inventory, cape );
         end
     end
 end

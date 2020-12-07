@@ -19,7 +19,6 @@ end
 champion_types = {
     { id = "armored",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/armored/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/armored/badge.png",
         name = "$champion_type_name_armored",
         description = "$champion_type_desc_armored",
@@ -60,7 +59,6 @@ champion_types = {
     { id = "melee_immune",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/melee_immune/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/melee_immune/badge.png",
         name = "$champion_type_name_melee_immune",
         description = "$champion_type_desc_melee_immune",
@@ -73,7 +71,6 @@ champion_types = {
     { id = "explosion_immune",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/explosion_immune/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/explosion_immune/badge.png",
         name = "$champion_type_name_explosion_immune",
         description = "$champion_type_desc_explosion_immune",
@@ -86,7 +83,6 @@ champion_types = {
     { id = "burning",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/burning/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/burning/badge.png",
         name = "$champion_type_name_burning",
         description = "$champion_type_desc_burning",
@@ -108,7 +104,6 @@ champion_types = {
     },
     { id = "counter",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/counter/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/counter/badge.png",
         name = "$champion_type_name_counter",
         description = "$champion_type_desc_counter",
@@ -126,7 +121,6 @@ champion_types = {
         weight = 0.7
     },
     { id = "damage_buff",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/badge.png",
         name = "$champion_type_name_damage_buff",
         description = "$champion_type_desc_damage_buff",
@@ -140,11 +134,9 @@ champion_types = {
             local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
             if #animal_ai > 0 then
                 for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue2( ai, "attack_melee_damage_min", ComponentGetValue2( ai, "attack_melee_damage_min" ) * 2 );
-                    ComponentSetValue2( ai, "attack_melee_damage_max", ComponentGetValue2( ai, "attack_melee_damage_max" ) * 2 );
-                    --ComponentSetValue2( ai, "attack_melee_frames_between", eil( tonumber( ComponentGetValue2( ai, "attack_melee_frames_between" ) / 2 ) );
-                    ComponentSetValue2( ai, "attack_dash_damage", ComponentGetValue2( ai, "attack_dash_damage" ) * 2 );
-                    --ComponentSetValue2( ai, "attack_dash_frames_between", ComponentGetValue2( ai, "attack_dash_frames_between" ) / 2 );
+                    ComponentSetValue2( ai, "attack_melee_damage_min", ComponentGetValue2( ai, "attack_melee_damage_min" ) + 0.4 );
+                    ComponentSetValue2( ai, "attack_melee_damage_max", ComponentGetValue2( ai, "attack_melee_damage_max" ) + 0.4 );
+                    ComponentSetValue2( ai, "attack_dash_damage", ComponentGetValue2( ai, "attack_dash_damage" ) + 0.4 );
                 end
             end
             EntityAddComponent( entity, "LuaComponent", {
@@ -154,9 +146,34 @@ champion_types = {
         stackable = true,
         weight = 1.1
     },
+    { id = "heavy_shot",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/heavy_shot/badge.png",
+        name = "$champion_type_name_heavy_shot",
+        description = "$champion_type_desc_heavy_shot",
+        author = "lilyhops",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) return true; end,
+        apply = function( entity )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_melee_damage_min", ComponentGetValue2( ai, "attack_melee_damage_min" ) + 1.76 );
+                    ComponentSetValue2( ai, "attack_melee_damage_max", ComponentGetValue2( ai, "attack_melee_damage_max" ) + 1.76 );
+                    ComponentSetValue2( ai, "attack_dash_damage", ComponentGetValue2( ai, "attack_dash_damage" ) + 1.76 );
+                end
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/heavy_shot/shot.lua"
+            });
+        end,
+        stackable = true,
+        weight = 0.3
+    },
     { id = "digging",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/digging/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/digging/badge.png",
         name = "$champion_type_name_digging",
         description = "$champion_type_desc_digging",
@@ -185,7 +202,6 @@ champion_types = {
         end
     },
     { id = "eldritch",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/eldritch/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/eldritch/badge.png",
         name = "$champion_type_name_eldritch",
         description = "$champion_type_desc_eldritch",
@@ -228,7 +244,6 @@ champion_types = {
     { id = "electric",
         particle_material = nil,
         sprite_particle_sprite_file = "data/particles/spark_electric.xml",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/electric/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/electric/badge.png",
         name = "$champion_type_name_electric",
         description = "$champion_type_desc_electric",
@@ -266,7 +281,6 @@ champion_types = {
     { id = "energy_shield",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/energy_shield/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/energy_shield/badge.png",
         name = "$champion_type_name_energy_shield",
         description = "$champion_type_desc_energy_shield",
@@ -299,7 +313,6 @@ champion_types = {
     { id = "faster_movement",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/faster_movement/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/faster_movement/badge.png",
         name = "$champion_type_name_faster_movement",
         description = "$champion_type_desc_faster_movement",
@@ -325,7 +338,6 @@ champion_types = {
     { id = "freezing",
         particle_material = nil,
         sprite_particle_sprite_file = "data/particles/snowflake_$[1-2].xml",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/freezing/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/freezing/badge.png",
         name = "$champion_type_name_freezing",
         description = "$champion_type_desc_freezing",
@@ -352,7 +364,6 @@ champion_types = {
     },
     { id = "tremor",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/tremor/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/tremor/badge.png",
         name = "$champion_type_name_tremor",
         description = "$champion_type_desc_tremor",
@@ -371,7 +382,6 @@ champion_types = {
     },
     { id = "poison_blood",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poison_blood/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poison_blood/badge.png",
         name = "$champion_type_name_poison_blood",
         description = "$champion_type_desc_poison_blood",
@@ -393,7 +403,6 @@ champion_types = {
     },
     { id = "frozen_blood",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/frozen_blood/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/frozen_blood/badge.png",
         name = "$champion_type_name_frozen_blood",
         description = "$champion_type_desc_frozen_blood",
@@ -413,7 +422,6 @@ champion_types = {
     },
     { id = "gunpowder_blood",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/gunpowder_blood/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/gunpowder_blood/badge.png",
         name = "$champion_type_name_gunpowder_blood",
         description = "$champion_type_desc_gunpowder_blood",
@@ -432,7 +440,6 @@ champion_types = {
     },
     { id = "healthy",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/healthy/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/healthy/badge.png",
         name = "$champion_type_name_healthy",
         description = "$champion_type_desc_healthy",
@@ -457,7 +464,6 @@ champion_types = {
     },
     { id = "mini_boss",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.png",
         name = "$champion_type_name_mini_boss",
         description = "$champion_type_desc_mini_boss",
@@ -482,7 +488,6 @@ champion_types = {
     },
     { id = "hot_blooded",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/hot_blooded/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/hot_blooded/badge.png",
         name = "$champion_type_name_hot_blooded",
         description = "$champion_type_desc_hot_blooded",
@@ -503,7 +508,6 @@ champion_types = {
     },
     { id = "poly_blood",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poly_blood/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poly_blood/badge.png",
         name = "$champion_type_name_poly_blood",
         description = "$champion_type_desc_poly_blood",
@@ -524,7 +528,6 @@ champion_types = {
     },
     { id = "blood_spray",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/blood_spray/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/blood_spray/badge.png",
         name = "$champion_type_name_blood_spray",
         description = "$champion_type_desc_blood_spray",
@@ -552,7 +555,6 @@ champion_types = {
     },
     { id = "ice_burst",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/ice_burst/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/ice_burst/badge.png",
         name = "$champion_type_name_ice_burst",
         description = "$champion_type_desc_ice_burst",
@@ -572,7 +574,6 @@ champion_types = {
     },
     { id = "infested",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/infested/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/infested/badge.png",
         name = "$champion_type_name_infested",
         description = "$champion_type_desc_infested",
@@ -592,7 +593,6 @@ champion_types = {
     },
     { id = "intangibility_frames",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/badge.png",
         name = "$champion_type_name_intangibility_frames",
         description = "$champion_type_desc_intangibility_frames",
@@ -611,7 +611,6 @@ champion_types = {
     },
     { id = "invincibility_frames",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/invincibility_frames/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/invincibility_frames/badge.png",
         name = "$champion_type_name_invincibility_frames",
         description = "$champion_type_desc_invincibility_frames",
@@ -630,7 +629,6 @@ champion_types = {
     { id = "invisible",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/invisible/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/invisible/badge.png",
         name = "$champion_type_name_invisible",
         description = "$champion_type_desc_invisible",
@@ -648,7 +646,6 @@ champion_types = {
     },
     { id = "jetpack",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/jetpack/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/jetpack/badge.png",
         name = "$champion_type_name_jetpack",
         description = "$champion_type_desc_jetpack",
@@ -703,7 +700,6 @@ champion_types = {
         end
     },
     { id = "knockback",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/badge.png",
         name = "$champion_type_name_knockback",
         description = "$champion_type_desc_knockback",
@@ -729,7 +725,6 @@ champion_types = {
     },
     { id = "leaping",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/leaping/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/leaping/badge.png",
         name = "$champion_type_name_leaping",
         description = "$champion_type_desc_leaping",
@@ -767,7 +762,6 @@ champion_types = {
     },
     { id = "projectile_bounce",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_bounce/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_bounce/badge.png",
         name = "$champion_type_name_projectile_bounce",
         description = "$champion_type_desc_projectile_bounce",
@@ -797,7 +791,6 @@ champion_types = {
         weight = 0.9
     },
     { id = "multi_shot",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/multi_shot/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/multi_shot/badge.png",
         name = "$champion_type_name_multi_shot",
         description = "$champion_type_desc_multi_shot",
@@ -838,7 +831,6 @@ champion_types = {
         weight = 0.8
     },
     { id = "long_range",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/long_range/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/long_range/badge.png",
         name = "$champion_type_name_long_range",
         description = "$champion_type_desc_long_range",
@@ -889,7 +881,6 @@ champion_types = {
     { id = "projectile_repulsion_field",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_repulsion_field/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_repulsion_field/badge.png",
         name = "$champion_type_name_projectile_repulsion_field",
         description = "$champion_type_desc_projectile_repulsion_field",
@@ -904,7 +895,6 @@ champion_types = {
         weight = 0.5
     },
     { id = "rapid_attack",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/rapid_attack/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/rapid_attack/badge.png",
         name = "$champion_type_name_rapid_attack",
         description = "$champion_type_desc_rapid_attack",
@@ -933,7 +923,6 @@ champion_types = {
     { id = "regenerating",
         particle_material = "spark_green",
         sprite_particle_sprite_file = "data/particles/heal.xml",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/regenerating/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/regenerating/badge.png",
         name = "$champion_type_name_regenerating",
         description = "$champion_type_desc_regenerating",
@@ -954,7 +943,6 @@ champion_types = {
     },
     { id = "revenge_explosion",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/revenge_explosion/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/revenge_explosion/badge.png",
         name = "$champion_type_name_revenge_explosion",
         description = "$champion_type_desc_revenge_explosion",
@@ -972,7 +960,6 @@ champion_types = {
     },
     { id = "reward",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/reward/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/reward/badge.png",
         name = "$champion_type_name_reward",
         description = "$champion_type_desc_reward",
@@ -989,7 +976,6 @@ champion_types = {
     },
     { id = "sparkbolt",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/sparkbolt/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/sparkbolt/badge.png",
         name = "$champion_type_name_sparkbolt",
         description = "$champion_type_desc_sparkbolt",
@@ -1026,7 +1012,6 @@ champion_types = {
     { id = "teleporting",
         particle_material = "spark_white",
         sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/teleporting/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/teleporting/badge.png",
         name = "$champion_type_name_teleporting",
         description = "$champion_type_desc_teleporting",
@@ -1048,7 +1033,6 @@ champion_types = {
     },
     { id = "toxic_trail",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/toxic_trail/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/toxic_trail/badge.png",
         name = "$champion_type_name_toxic_trail",
         description = "$champion_type_desc_toxic_trail",
@@ -1075,9 +1059,186 @@ champion_types = {
             });
         end
     },
+    { id = "janitor",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/janitor/badge.png",
+        name = "$champion_type_name_janitor",
+        description = "$champion_type_desc_janitor",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent2( entity, "LuaComponent", {
+                execute_every_n_frame = 120,
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/janitor/update.lua"
+            });
+        end,
+    },
+    { id = "thief",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/thief/badge.png",
+        name = "$champion_type_name_thief",
+        description = "$champion_type_desc_thief",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/thief/shot.lua",
+            });
+        end,
+    },
+    { id = "saving_grace",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/saving_grace/badge.png",
+        name = "$champion_type_name_saving_grace",
+        description = "$champion_type_desc_saving_grace",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {"SAVING_GRACE"},
+        validator = function( entity ) return true; end,
+        apply = function( entity )
+            --[[
+            EntityAddComponent( entity, "LuaComponent", { 
+                --remove_after_executed="1",
+                execute_every_n_frame="-1",
+                script_damage_about_to_be_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/saving_grace/pre_damage.lua",
+            } );
+            ]]
+        end,
+        -- TODO both manual and game_effect saving grace don't work
+        deprecated = true
+    },
+    { id = "precursor",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/precursor/badge.png",
+        name = "$champion_type_name_precursor",
+        description = "$champion_type_desc_precursor",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        validator = function( entity ) return true; end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/precursor/damage_received.lua",
+            } );
+        end,
+        weight = 0.05
+    },
+    { id = "all_seeing_eye",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/all_seeing_eye/badge.png",
+        name = "$champion_type_name_all_seeing_eye",
+        description = "$champion_type_desc_all_seeing_eye",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        validator = function( entity ) return true; end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="10",
+                execute_on_added="1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/all_seeing_eye/update.lua",
+            });
+        end
+    },
+    { id = "explosive_projectile",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/explosive_projectile/badge.png",
+        name = "$champion_type_name_explosive_projectile",
+        description = "$champion_type_desc_explosive_projectile",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/explosive_projectile/shot.lua",
+            });
+        end
+    },
+    { id = "antagonist",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/antagonist/badge.png",
+        name = "$champion_type_name_antagonist",
+        description = "$champion_type_desc_antagonist",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAdjustVariableNumber( entity, "gkbrkn_low_health_damage_bonus", 0, function( value ) return value + 3; end );
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/antagonist/shot.lua",
+            });
+        end
+    },
+    --[[
+    { id = "fizzle",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/fizzle/badge.png",
+        name = "$champion_type_name_fizzle",
+        description = "$champion_type_desc_fizzle",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity ) 
+            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/fizzle/fizzle_field.xml", x, y );
+            if field ~= nil then
+                EntityAddChild( entity, field );
+            end
+        end
+    },
+    ]]
     --[[{ id = "lukki",
         particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.xml",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/champion/badge.png",
         name = "$champion_type_name_lukki",
         description = "$champion_type_desc_lukki",

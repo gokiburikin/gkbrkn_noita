@@ -210,4 +210,8 @@ function handle_loadout( player_entity, loadout_data )
             ComponentSetValue2( player_ragdoll_component, "ragdoll_filenames_file", player_ragdoll_file );
         end
     end
+
+    if loadout_data.callback ~= nil then
+        loadout_data.callback( player_entity, inventory, cape );
+    end
 end

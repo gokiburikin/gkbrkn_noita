@@ -249,10 +249,10 @@ for _,damage_model in pairs( damage_models ) do
         local current_hp = ComponentGetValue2( damage_model, "hp" );
         local hp_difference = max_hp - current_hp;
         local target_recovery = EntityGetVariableNumber( player_entity, "gkbrkn_max_health_recovery", 0.0 );
-        if setting_get( MISC.HealOnMaxHealthUp.EnabledFlag ) and target_recovery < 1.0 then
+        if setting_get( MISC.HealOnMaxHealthUp.RangeFlag ) > 0 and target_recovery < 1.0 then
             target_recovery = 1.0;
         end
-        if setting_get( MISC.HealOnMaxHealthUp.FullHealFlag ) then
+        if setting_get( MISC.HealOnMaxHealthUp.RangeFlag ) == 2 then
             target_recovery = 10000.0;
         end
         local gained_hp = (max_hp - last_max_hp[ damage_model ]) * target_recovery;
@@ -604,8 +604,8 @@ end
 ]]
 
 --[[ Health Bars ]]
-if setting_get( MISC.HealthBars.EnabledFlag ) then
-    if setting_get( MISC.HealthBars.PrettyHealthBarsFlag ) then
+if setting_get( MISC.HealthBars.RangeFlag ) > 0 then
+    if setting_get( MISC.HealthBars.RangeFlag ) == 2 then
         local nearby_mortal = EntityGetInRadiusWithTag( x, y, 512, "mortal" );
         for _,nearby in pairs( nearby_mortal ) do
             if EntityHasTag( nearby, "homing_target" ) and EntityGetFirstComponent( nearby, "HealthBarComponent" ) == nil and EntityHasNamedVariable( nearby, "gkbrkn_no_health_bar") == false then
@@ -736,7 +736,7 @@ if now % 10 == 0 then
 
         --[[ Per champion type ]]
         for _,champion_data in pairs( apply_these_champion_types ) do
-            if champion_data.badge ~= nil then
+            if champion_data.sprite ~= nil then
                 table.insert( add_these_badges, champion_data.sprite );
             end
 

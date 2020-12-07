@@ -56,10 +56,10 @@ legendary_wands = {
     },  
 
     {
-        id = "telefragger",
-        name = "Telefragger",
+        id = "assassin",
+        name = "Assassin",
         description = "A default unique wand description.",
-        author = "Ivylistar",
+        author = "goki_dev",
         local_content = true,
         wand = {
             stats = {
@@ -68,24 +68,20 @@ legendary_wands = {
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
             stat_ranges = {
-                deck_capacity = {20,20}, -- capacity
-                reload_time = {60,60}, -- recharge time in frames
-                fire_rate_wait = {30,30}, -- cast delay in frames
+                deck_capacity = {10,10}, -- capacity
+                reload_time = {20,20}, -- recharge time in frames
+                fire_rate_wait = {10,10}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
-                mana_charge_speed = {250,250}, -- mana charge speed
-                mana_max = {600,600}, -- mana max
+                mana_charge_speed = {100,100}, -- mana charge speed
+                mana_max = {200,200}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
-                { { action="LIGHT_BULLET_TIMER", locked=false } },
-                { { action="GKBRKN_TRIPLE_CAST", locked=false } },
-                { { action="TELEPORT_CAST", locked=false } },
-                { { action="DAMAGE", locked=false } },
-                { { action="GKBRKN_TIME_COMPRESSION", locked=false } },
-                { { action="ADD_DEATH_TRIGGER", locked=false } },
-                { { action="TELEPORT_PROJECTILE", locked=false } },
+                { { action="TELEPORT_CAST" } },
+                { { action="DAMAGE" } },
+                { { action="GKBRKN_FALSE_SPELL" } },
             }
         }
     },
@@ -93,7 +89,7 @@ legendary_wands = {
         id = "alchemic_lance",
         name = "Alchemic Lance",
         description = "A default unique wand description.",
-        author = "liliumpop",
+        author = "lilyhops",
         local_content = true,
         wand = {
             stats = {
@@ -313,7 +309,6 @@ legendary_wands = {
             actions = {
                 { { action="GKBRKN_BURST_FIRE", locked=true } },
                 { { action="GKBRKN_RAPID_SHOT", locked=true } },
-                { { action="GKBRKN_PAPER_SHOT", locked=true } },
                 { { action="GKBRKN_ZERO_GRAVITY", locked=true } },
                 { { action="GKBRKN_SEEKER_SHOT", locked=true } },
                 { { action="BOUNCE", locked=true } },
@@ -405,12 +400,12 @@ legendary_wands = {
             permanent_actions = {
             },
             actions = {
-                { { action="GKBRKN_BOUND_SHOT", locked=true } },
-                { { action="GKBRKN_GUIDED_SHOT", locked=true } },
-                { { action="ADD_DEATH_TRIGGER", locked=true } },
-                { { action="LIGHT", locked=true } },
-                { { action="SLIMEBALL", locked=true } },
-                { { action="EXPLOSION", locked=true } },
+                { { action="GKBRKN_FEATHER_SHOT" } },
+                { { action="GKBRKN_CONTROL" } },
+                { { action="ADD_DEATH_TRIGGER" } },
+                { { action="LIGHT" } },
+                { { action="SLIMEBALL" } },
+                { { action="EXPLOSION" } },
             }
         }
     },
@@ -445,10 +440,10 @@ legendary_wands = {
         }
     },
     {
-        id = "soulshot",
-        name = "Soulshot",
+        id = "essence",
+        name = "Essence",
         description = "A default unique wand description.",
-        author = "Aster Castell",
+        author = "goki_dev",
         local_content = true,
         wand = {
             stats = {
@@ -462,20 +457,20 @@ legendary_wands = {
                 fire_rate_wait = {45,45}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
                 mana_charge_speed = {50,50}, -- mana charge speed
-                mana_max = {150,150}, -- mana max
+                mana_max = {250,250}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
-                { { action="HOMING_SHOOTER", locked=true } },
-                { { action="GKBRKN_BOUND_SHOT", locked=true } },
-                { { action="GKBRKN_CLINGING_SHOT", locked=true } },
-                { { action="DAMAGE", locked=false } },
-                { { action="GKBRKN_POWER_SHOT", locked=false } },
-                { { action="AVOIDING_ARC", locked=true } },
-                { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
-                { { action="GKBRKN_STORED_SHOT", locked=true } },
+                { { action="GKBRKN_BOUND_SHOT", permanent=true } },
+                { { action="GKBRKN_CLINGING_SHOT", permanent=true } },
+                { { action="CLIPPING_SHOT", permanent=true } },
+                { { action="ESSENCE_TO_POWER", permanent=true } },
+                { { action="HOMING_SHOOTER"} },
+                { { action="GKBRKN_POWER_SHOT" } },
+                { { action="AVOIDING_ARC"} },
+                { { action="GKBRKN_FALSE_SPELL"} },
             }
         }
     },
@@ -831,24 +826,20 @@ legendary_wands = {
                 speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
             },
             stat_ranges = {
-                deck_capacity = {25,25}, -- capacity
-                reload_time = {300,300}, -- recharge time in frames
+                deck_capacity = {15,15}, -- capacity
+                reload_time = {240,240}, -- recharge time in frames
                 fire_rate_wait = {60,60}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
-                mana_charge_speed = {25000,25000}, -- mana charge speed
-                mana_max = {25000,25000}, -- mana max
+                mana_charge_speed = {300,300}, -- mana charge speed
+                mana_max = {1250,1250}, -- mana max
             },
             stat_randoms = {},
             permanent_actions = {
             },
             actions = {
                 { { action="LONG_DISTANCE_CAST", locked= false } },
-                { { action="LIFETIME_DOWN", locked=false } },
-                { { action="GKBRKN_CLINGING_SHOT", locked= false } },
-                { { action="DELAYED_SPELL", locked= false } },
                 { { action="GKBRKN_SPELL_DUPLICATOR", locked= false } },
                 { { action="LIFETIME_DOWN", locked=false } },
-                { { action="GKBRKN_FEATHER_SHOT", locked=false } },
                 { { action="GKBRKN_SPELL_DUPLICATOR", locked= false } },
                 { { action="RECOIL_DAMPER", locked= false } },
                 { { action="GKBRKN_GUIDED_SHOT", locked= false } },
@@ -881,20 +872,11 @@ legendary_wands = {
             permanent_actions = {
             },
             actions = {
-                { { action="LONG_DISTANCE_CAST", locked=true } },
-                { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
-                { { action="GKBRKN_PROJECTILE_GRAVITY_WELL", locked=true } },
-                { { action="ACCELERATING_SHOT", locked=true } },
-                { { action="LIFETIME_DOWN", locked=true } },
-                { { action="GKBRKN_SPELL_DUPLICATOR", locked=true } },
-                { { action="HORIZONTAL_ARC", locked=true } },
-                { { action="LONG_DISTANCE_CAST", locked=true } },
-                { { action="ADD_DEATH_TRIGGER", locked=true } },
-                { { action="DIGGER", locked=true } },
-                { { action="GKBRKN_FORMATION_STACK", locked=false } },
-                { { action="LIGHT_BULLET", locked=false } },
-                { { action="LIGHT_BULLET", locked=false } },
-                { { action="LIGHT_BULLET", locked=false } },
+                { { action="DECELERATING_SHOT" } },
+                { { action="FLY_UPWARDS" } },
+                { { action="GRAVITY" } },
+                { { action="GKBRKN_PROXIMITY_BURST" } },
+                { { action="LIGHT_BULLET" } },
             }
         }
     },
@@ -996,7 +978,6 @@ legendary_wands = {
                 { { action="GKBRKN_PERSISTENT_SHOT", locked=true } },
                 { { action="GKBRKN_TRIPLE_CAST", locked=true } },
                 { { action="SCATTER_3", locked=true } },
-                { { action="LIGHT_BULLET", locked=false } },
                 { { action="LIGHT_BULLET", locked=false } },
             }
         }
@@ -1128,10 +1109,10 @@ legendary_wands = {
             actions = {
                 {},
                 {},
-                { { action="GKBRKN_TRIGGER_REPEAT", locked=true } },
-                { { action="LIGHT_BULLET" } },
-                { { action="T_SHAPE", locked=true } },
                 { { action="GKBRKN_RAPID_SHOT" } },
+                { { action="GKBRKN_TRIGGER_REPEAT", locked=true } },
+                { { action="BUBBLE_SHOT" } },
+                { { action="T_SHAPE", locked=true } },
                 { { action="LIGHT_BULLET" } },
                 { { action="LIGHT_BULLET" } },
             }

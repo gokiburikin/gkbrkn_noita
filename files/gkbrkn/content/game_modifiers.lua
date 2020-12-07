@@ -24,7 +24,8 @@ game_modifiers = {
         local_content = true,
         options = {
             run_flags = { FLAGS.UberBoss }
-        }
+        },
+        deprecated = true
     },
     {
         id = "goo_mode",

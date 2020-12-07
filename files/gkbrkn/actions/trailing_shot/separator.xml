@@ -1,0 +1,4 @@
+<Entity tags="projectile_player">
+  <VariableStorageComponent name="gkbrkn_trailing_shot_separator"/>
+  <Base file="mods/gkbrkn_noita/files/gkbrkn/actions/separator.xml"/>
+</Entity>

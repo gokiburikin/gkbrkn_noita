@@ -3,7 +3,7 @@ local TWO_PI = math.pi * 2;
 local ORBIT_RADIUS = 8;
 local ORBIT_SPEED = 8;
 local entity = GetUpdatedEntityID();
-local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_soft_parent", "0" ));
+local parent = tonumber(EntityGetVariableString( entity, "gkbrkn_projectile_orbit_soft_parent", "0" ));
 
 local projectile_data = EntityGetFirstComponentIncludingDisabled( entity, "ProjectileComponent" );
 if projectile_data then
@@ -33,5 +33,4 @@ if parent ~= 0 and EntityGetIsAlive(parent) then
     local target_velocity_x = (target_x - x) * 60 + parent_velocity_x;
     local target_velocity_y = (target_y - y) * 60 + parent_velocity_y;
     ComponentSetValue2( velocity, "mVelocity", target_velocity_x, target_velocity_y );
-    --EntitySetTransform( entity, target_x, target_y );
 end

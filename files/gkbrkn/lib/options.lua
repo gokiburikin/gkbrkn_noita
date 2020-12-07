@@ -13,9 +13,11 @@ local options = {
         FlashingFlag = "gkbrkn_invincibility_frames_flashing",
     },
     HealOnMaxHealthUp = {
+        RangeFlag = "gkbrkn_max_health_heal_range",
         EnabledFlag = "gkbrkn_max_health_heal",
         FullHealFlag = "gkbrkn_max_health_heal_full",
     },
+    InfiniteInventory = { EnabledFlag = "gkbrkn_infinite_inventory", },
     LooseSpellGeneration = { EnabledFlag = "gkbrkn_loose_spell_generation", },
     ChampionEnemies = {
         EnabledFlag = "gkbrkn_champion_enemies",
@@ -31,9 +33,15 @@ local options = {
         ValourBonus = 3,
     },
     QuickSwap = { EnabledFlag = "gkbrkn_quick_swap", },
+    SeededRuns = {
+        UseSeedNextRunFlag = "gkbrkn_seeded_runs_use_seed_next_run",
+        SeedFlag = "gkbrkn_seeded_runs_seed",
+        CopySeedButtonFlag = "gkbrkn_seeded_runs_copy_seed",
+    },
     LessParticles = {
         PlayerProjectilesFlag = "gkbrkn_less_particles_player",
         OtherStuffFlag = "gkbrkn_less_particles_other_stuff",
+        ExplosionStainsFlag = "gkbrkn_less_particles_explosion_stains",
         DisableCosmeticsFlag = "gkbrkn_less_particles_disable_cosmetic"
     },
     RainbowProjectiles = { EnabledFlag = "gkbrkn_rainbow_projectiles" },
@@ -60,6 +68,7 @@ local options = {
     AlternativeWandGeneration = { EnabledFlag = "gkbrkn_alternative_wand_generation", },
     ShowFPS = { EnabledFlag = "gkbrkn_show_fps", },
     HealthBars = {
+        RangeFlag = "gkbrkn_health_bars_range",
         EnabledFlag = "gkbrkn_health_bars",
         PrettyHealthBarsFlag = "gkbrkn_health_bars_pretty",
     },
@@ -163,6 +172,11 @@ local options = {
     },
     TweakOptions = {
         BloodAmountMultiplier = 0.98
+    },
+    PerkRewrite = {
+        StackableChangesFlag = "gkbrkn_new_perk_stackables",
+        NewLogicFlag = "gkbrkn_new_perk_logic",
+        ShowBarGraphFlag = "gkbrkn_new_perk_bar_graph",
     }
 }
 --# intercept this line

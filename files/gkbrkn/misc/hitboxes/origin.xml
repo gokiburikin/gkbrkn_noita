@@ -1,0 +1,5 @@
+<Entity>
+    <SpriteComponent alpha="1" image_file="mods/gkbrkn_noita/files/gkbrkn/misc/hitboxes/origin_sprite.xml" emissive="1"/>
+    <InheritTransformComponent only_position="1"/>
+    <VariableStorageComponent name="gkbrkn_hitbox"/>
+</Entity>

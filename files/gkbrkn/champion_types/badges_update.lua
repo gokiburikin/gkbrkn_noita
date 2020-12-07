@@ -4,8 +4,8 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
 local entity = GetUpdatedEntityID();
 local children = EntityGetAllChildren( entity );
 local rows = 6;
-local badge_width = 9;
-local badge_height = 9;
+local badge_width = 10;
+local badge_height = 10;
 local parent = EntityGetParent( entity );
 if children and parent then
     local width,height = EntityGetFirstHitboxSize( parent );

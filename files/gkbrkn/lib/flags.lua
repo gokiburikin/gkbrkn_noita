@@ -37,5 +37,10 @@ FLAGS = {
     GenerateRandomSpellbooks = "gkbrkn_game_modifier_generate_random_spellbooks",
     RebalanceShops = "gkbrkn_rebalance_shops",
     UberBoss = "gkbrkn_uber_boss",
+    UberBossCount = "gkbrkn_uber_boss_count",
     PolymorphImmunity = "gkbrkn_polymorph_immunity",
+    ShowHitboxes = "gkbrkn_show_hitboxes",
+    EnableLogging = "gkbrkn_enable_logging",
+    DisableNewContent = "gkbrkn_disable_new_content",
+    ShowWhileInInventory = "gkbrkn_show_while_in_inventory",
 }

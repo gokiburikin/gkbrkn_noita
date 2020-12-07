@@ -1,5 +1,5 @@
 local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" );
-local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" );
 local _spawn_hp = spawn_hp;
 function spawn_hp( x, y )
 	_spawn_hp( x, y );
