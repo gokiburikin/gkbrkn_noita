@@ -96,9 +96,8 @@ if GameHasFlagRun( init_check_flag ) == false then
         end
 
         if GameHasFlagRun( MISC.HeroMode.CarnageDifficultyFlag ) == true then
-            GlobalsSetValue( "TEMPLE_SPAWN_GUARDIAN", 1 );
-            GlobalsSetValue( "TEMPLE_PERK_COUNT", 2 );
-            GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", 3 );
+            GlobalsSetValue( "TEMPLE_PERK_COUNT", 4 );
+            GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", 7 );
             GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/sampo_pick/create", x, y );
             GamePlaySound( "data/audio/Desktop/event_cues.snd", "event_cues/orb_distant_monster/create", x, y );
             GameScreenshake( 500 );

@@ -172,6 +172,12 @@ elseif not setting_get( "dev_option_no_polymorph" ) and has_polymorph_immunity t
     has_polymorph_immunity = false;
 end
 
+--[[ No Damage Flashing ]]
+if setting_get( FLAGS.NoDamageFlashing ) then
+    local effect = GetGameEffectLoadTo( player_entity, "NO_DAMAGE_FLASH", true );
+    if effect ~= nil and effect ~= 0 then ComponentSetValue2( effect, "frames", 2 ); end
+end
+
 --[[ Health Recovery ]]
 local health_recovery = 0;
 if setting_get( "dev_option_recover_health" ) then
@@ -627,16 +633,6 @@ if setting_get( MISC.HealthBars.RangeFlag ) > 0 then
 end
 
 if now % 10 == 0 then
-    --[[
-    if active_wand then
-        wand_shuffle_actions( active_wand );
-        local inventory2 = EntityGetFirstComponent( player_entity, "Inventory2Component" );
-        if inventory2 ~= nil then
-            ComponentSetValue2( inventory2, "mForceRefresh", true );
-            ComponentSetValue2( inventory2, "mActualActiveItem", 0 );
-        end
-    end
-    ]]
     local nearby_enemies = EntityGetWithTag( "enemy" );
     --[[ Champion Enemies ]]
     local turn_these_into_champions = {};
@@ -648,7 +644,7 @@ if now % 10 == 0 then
         if GameHasFlagRun( MISC.ChampionEnemies.EnabledFlag ) then
             SetRandomSeed( now, x + y + nearby );
 
-            if EntityHasTag( nearby, "polymorphed" ) == false and EntityHasNamedVariable( nearby, "goki_health" ) == false then
+            if EntityHasTag( nearby, "polymorphed" ) == false and EntityHasNamedVariable( nearby, "goki_health" ) == false and not EntityHasTag( nearby, "necromancer_shop" ) then
                 if EntityHasTag( nearby, "gkbrkn_champions" ) == false and 
                 EntityHasTag( nearby, "gkbrkn_no_champion" ) == false and 
                 EntityHasTag( nearby, "drone_friendly" ) == false and 
@@ -692,9 +688,6 @@ if now % 10 == 0 then
         end
 
         local champion_types_to_apply = 1;
-        if GameHasFlagRun( MISC.ChampionEnemies.ValourFlag ) then
-            champion_types_to_apply = champion_types_to_apply + MISC.ChampionEnemies.ValourBonus;
-        end
         local champions_encountered = tonumber( GlobalsGetValue( "gkbrkn_champion_enemies_encountered" ) ) or 0;
         if GameHasFlagRun( MISC.ChampionEnemies.SuperChampionsFlag ) then
             local extra_type_chance = MISC.ChampionEnemies.ExtraTypeChance + champions_encountered * 0.0012;
@@ -704,6 +697,9 @@ if now % 10 == 0 then
                 extra_type_chance = extra_type_chance - random_roll;
                 random_roll = Random();
             end
+        end
+        if GameHasFlagRun( MISC.ChampionEnemies.ValourFlag ) then
+            champion_types_to_apply = champion_types_to_apply + MISC.ChampionEnemies.ValourBonus;
         end
 
         GlobalsSetValue( "gkbrkn_champion_enemies_encountered", champions_encountered + 1 );
@@ -1116,8 +1112,6 @@ if setting_get( MISC.LessParticles.OtherStuffFlag ) then
         end
     end
 end
-
-dofile("mods/gkbrkn_noita/files/gkbrkn/misc/projectile_capture.lua");
 
 --[[ Tweak - Shorten Blindness ]]
 if find_tweak("blindness") then

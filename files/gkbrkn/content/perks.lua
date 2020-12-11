@@ -219,6 +219,11 @@ table.insert( perk_list,
 	end, nil, nil, false
 ) );
 
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_BARRAGE", "barrage", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_barrage", 1 );
+	end, nil, nil, false
+) );
 
 table.insert( perk_list, 
     generate_perk_entry( "GKBRKN_LIVING_WAND", "living_wand", false, function( entity_perk_item, entity_who_picked, item_name )
@@ -578,7 +583,7 @@ table.insert( perk_list,
 
 table.insert( perk_list,
     generate_perk_entry( "GKBRKN_UPGRADE_WAND", "upgrade_wand", false, function( entity_perk_item, entity_who_picked, item_name )
-        local wand = get_entity_first_or_random_wand( entity_who_picked );
+        local wand = get_entity_held_or_random_wand( entity_who_picked );
         if wand ~= 0 then
             local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" );
             if ability ~= 0 then

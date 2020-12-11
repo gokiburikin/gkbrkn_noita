@@ -634,10 +634,11 @@ function get_magic_focus_multiplier( last_calibration_shot_frame, last_calibrati
     end
 end
 
-function get_entity_first_or_random_wand( entity )
+function get_entity_held_or_random_wand( entity, or_random )
+    if or_random == nil then or_random = true; end
     local base_wand = nil;
     local wands = {};
-    local children = EntityGetAllChildren( entity );
+    local children = EntityGetAllChildren( entity ) or {};
     for key,child in pairs( children ) do
         if EntityGetName( child ) == "inventory_quick" then
             wands = EntityGetChildrenWithTag( child, "wand" );
@@ -653,11 +654,26 @@ function get_entity_first_or_random_wand( entity )
                 break;
             end
         end
-        if base_wand == nil then
-            base_wand =  random_from_array( wands );
+        if base_wand == nil and or_random then
+            SetRandomSeed( EntityGetTransform( entity ) );
+            base_wand =  Random( 1, #wands );
         end
     end
     return base_wand;
+end
+
+function entity_get_inventory_wands( entity )
+    local wands = {};
+    local inventory2 = EntityGetFirstComponent( entity, "Inventory2Component" );
+    if inventory2 ~= nil then
+        for key, child in pairs( EntityGetAllChildren( entity ) or {} ) do
+            if EntityGetName( child ) == "inventory_quick" then
+                wands = EntityGetChildrenWithTag( child, "wand" ) or {};
+                break;
+            end
+        end
+    end
+    return wands;
 end
 
 function log_table( t ) for k,v in pairs(t) do print(k..": "..tostring(v)) end; end
@@ -674,3 +690,5 @@ function parse_custom_world_seed( seed )
     end );
     return tonumber( seed ) % (2 ^ 32);
 end
+
+function nexp( value, exponent ) return ( ( math.abs( value ^ 2 ) ) ^ exponent ) / value; end

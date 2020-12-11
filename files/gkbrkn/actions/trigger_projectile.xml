@@ -37,6 +37,7 @@
 	  penetrate_world="1"
 	  damage_every_x_frames="25"
     collide_with_world="0"
+    collide_with_tag=""
 	>
     <config_explosion
         damage="0.0"

@@ -170,7 +170,7 @@ legendary_wands = {
             },
             stat_randoms = {},
             permanent_actions = {
-                { "GKBRKN_CARRY_SHOT" },
+                { "GKBRKN_FORMATION_SWORD" },
                 { "BLACK_HOLE" },
             },
             actions = {
@@ -227,7 +227,7 @@ legendary_wands = {
                 reload_time = {180,180}, -- recharge time in frames
                 fire_rate_wait = {120,120}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
-                mana_charge_speed = {30,30}, -- mana charge speed
+                mana_charge_speed = {60,60}, -- mana charge speed
                 mana_max = {150,150}, -- mana max
             },
             stat_randoms = {},
@@ -370,7 +370,7 @@ legendary_wands = {
                 { "ENERGY_SHIELD_SECTOR" },
             },
             actions = {
-                { { action="GKBRKN_CARRY_SHOT", locked=true } },
+                { { action="GKBRKN_FORMATION_SWORD", locked=true } },
                 { { action="PIERCING_SHOT", locked=true } },
                 { { action="GKBRKN_PROTECTIVE_ENCHANTMENT", locked=true } },
             }
@@ -456,7 +456,7 @@ legendary_wands = {
                 reload_time = {45,45}, -- recharge time in frames
                 fire_rate_wait = {45,45}, -- cast delay in frames
                 spread_degrees = {0,0}, -- spread
-                mana_charge_speed = {50,50}, -- mana charge speed
+                mana_charge_speed = {60,60}, -- mana charge speed
                 mana_max = {250,250}, -- mana max
             },
             stat_randoms = {},
@@ -686,7 +686,7 @@ legendary_wands = {
                 { "MATTER_EATER" },
             },
             actions = {
-                { { action="PIERCING_SHOT", locked=true } },
+                { { action="GKBRKN_PERFORATING_SHOT", locked=true } },
                 { { action="CLIPPING_SHOT", locked=true } },
                 { { action="GKBRKN_PATH_CORRECTION", locked=true } },
                 { { action="GKBRKN_LINK_SHOT", locked=true } },
@@ -805,7 +805,7 @@ legendary_wands = {
             actions = {
                 { { action="GKBRKN_DOUBLE_CAST", locked=true } },
                 { { action="GKBRKN_TRIPLE_CAST", locked=true } },
-                { { action="GKBRKN_CARRY_SHOT", locked=true } },
+                { { action="GKBRKN_FORMATION_SWORD", locked=true } },
                 { { action="LIGHT_BULLET_TIMER", locked=false } },
                 { { action="BURST_2", locked=false } },
                 { { action="GKBRKN_GLITTERING_TRAIL", locked=false } },
@@ -1111,7 +1111,7 @@ legendary_wands = {
                 {},
                 { { action="GKBRKN_RAPID_SHOT" } },
                 { { action="GKBRKN_TRIGGER_REPEAT", locked=true } },
-                { { action="BUBBLE_SHOT" } },
+                { { action="BUBBLESHOT" } },
                 { { action="T_SHAPE", locked=true } },
                 { { action="LIGHT_BULLET" } },
                 { { action="LIGHT_BULLET" } },

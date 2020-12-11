@@ -135,7 +135,7 @@ loadouts = {
                 },
                 stat_ranges = {
                     deck_capacity = {4,4}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
+                    reload_time = {15,15}, -- recharge time in frames
                     fire_rate_wait = {4,4}, -- cast delay in frames
                     spread_degrees = {5,5}, -- spread
                     mana_charge_speed = {120,120}, -- mana charge speed
@@ -421,7 +421,6 @@ loadouts = {
         },
         perks = { -- perks
             { "SPEED_DIVER" },
-            { "BREATH_UNDERWATER" }
         }
     },
     { -- Charge
@@ -445,14 +444,14 @@ loadouts = {
                     reload_time = {16,16}, -- recharge time in frames
                     fire_rate_wait = {12,12}, -- cast delay in frames
                     spread_degrees = {4,4}, -- spread
-                    mana_charge_speed = {40,40}, -- mana charge speed
+                    mana_charge_speed = {80,80}, -- mana charge speed
                     mana_max = {120,120}, -- mana max
                 },
                 stat_randoms = {},
                 permanent_actions = {
                 },
                 actions = {
-                    { "GKBRKN_CARRY_SHOT" },
+                    { "GKBRKN_FORMATION_SWORD" },
                     { "GKBRKN_STORED_SHOT" },
                     { "GKBRKN_FORMATION_STACK" },
                     { "LIGHT_BULLET" },
@@ -1247,7 +1246,7 @@ loadouts = {
                     reload_time = {180,180}, -- recharge time in frames
                     fire_rate_wait = {120,120}, -- cast delay in frames
                     spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {50,50}, -- mana charge speed
+                    mana_charge_speed = {60,60}, -- mana charge speed
                     mana_max = {100,100}, -- mana max
                 },
                 stat_randoms = {},
@@ -1559,10 +1558,11 @@ loadouts = {
                 permanent_actions = {
                 },
                 actions = {
-                    { { action="GKBRKN_DOUBLE_CAST", locked=true } },
-                    { { action="GKBRKN_TRIPLE_CAST", locked=true } },
-                    { { action="GKBRKN_CARRY_SHOT", locked=true } },
-                    { { action="ADD_TIMER", locked=true } },
+                    { { action="GKBRKN_FORMATION_SWORD", locked=true } },
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
+                    { { action="RUBBER_BALL", locked=false } },
                     { { action="RUBBER_BALL", locked=false } },
                 }
             },
@@ -1596,7 +1596,6 @@ loadouts = {
         },
         perks = { -- perks
         },
-        deprecated = true
     },
     { -- Grease (More Loadouts Update)
         id = "gkbrkn_grease", -- unique identifier
@@ -2058,7 +2057,7 @@ loadouts = {
                     { "LIGHT_SHOT" },
                 },
                 actions = {
-                    { "WATER_TO_POISON" },
+                    { "HITFX_CRITICAL_WATER" },
                     { "LANCE" },
                 }
             },
@@ -2093,8 +2092,7 @@ loadouts = {
         items = { -- items
         },
         perks = { -- perks
-            { "SPEED_DIVER" },
-            { "SPEED_DIVER" },
+            { "BREATH_UNDERWATER" },
         }
     },
     { -- Critical (More Loadouts Update; was Blood)
@@ -2367,6 +2365,69 @@ loadouts = {
         perks = { -- perks
             { "MOVEMENT_FASTER" },
             { "SPEED_DIVER" },
+        }
+    },
+    { -- Barrage
+        id = "gkbrkn_barrage", -- unique identifier
+        name = "$loadout_barrage", -- displayed loadout name
+        description = "A default loadout description",
+        author = "goki_dev",
+        local_content = true,
+        cape_color = 0xff0c00d4, -- cape color (ABGR)
+        cape_color_edge = 0xff6059e2, -- cape edge color (ABGR)
+        wands = { -- wands
+            {
+                name = "Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1.0, -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {5,5}, -- capacity
+                    reload_time = {10,10}, -- recharge time in frames
+                    fire_rate_wait = {10,10}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {60,60}, -- mana charge speed
+                    mana_max = {120,120}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                },
+                actions = {
+                    {"GKBRKN_RED_SPARKBOLT"}
+                }
+            },
+            {
+                name = "Wand",
+                stats = {
+                    shuffle_deck_when_empty = false, -- shuffle
+                    actions_per_round = 1, -- spells per cast
+                    speed_multiplier = 1.0 -- projectile speed multiplier (hidden)
+                },
+                stat_ranges = {
+                    deck_capacity = {3,3}, -- capacity
+                    reload_time = {16,16}, -- recharge time in frames
+                    fire_rate_wait = {12,12}, -- cast delay in frames
+                    spread_degrees = {0,0}, -- spread
+                    mana_charge_speed = {50,50}, -- mana charge speed
+                    mana_max = {100,100}, -- mana max
+                },
+                stat_randoms = {},
+                permanent_actions = {
+                },
+                actions = {
+                    { { action_id="GRENADE_TIER_3" } },
+                }
+            },
+        },
+        potions = { -- potions
+            { { { "water", 1000 } } }, -- a list of random choices of material amount pairs
+        },
+        items = { -- items
+        },
+        perks = { -- perks
+            { "GKBRKN_BARRAGE" },
         }
     },
     { -- Rapid (More Loadouts Update)
@@ -3096,12 +3157,8 @@ loadouts = {
                     { "GKBRKN_RAINBOW_TRAIL" },
                     { "GKBRKN_RAINBOW_GLITTER_TRAIL" },
                     { "GKBRKN_RAINBOW_PROJECTILE" },
-                    { "GKBRKN_PROJECTILE_ORBIT" },
-                    { "BUBBLESHOT" },
-                    { "BUBBLESHOT" },
-                    { "BUBBLESHOT" },
-                    { "BUBBLESHOT" },
-                    { "BUBBLESHOT" },
+                    { "GKBRKN_FORMATION_SWORD" },
+                    { "GKBRKN_CHAOTIC_BURST" },
                 }
             },
             {

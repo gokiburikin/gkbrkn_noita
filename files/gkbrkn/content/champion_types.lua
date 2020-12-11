@@ -80,6 +80,19 @@ champion_types = {
         validator = function( entity ) return true end,
         apply = function( entity ) end
     },
+    { id = "knockback_immune",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback_immune/badge.png",
+        name = "$champion_type_name_knockback_immune",
+        description = "$champion_type_desc_knockback_immune",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {"KNOCKBACK_IMMUNITY"},
+        validator = function( entity ) return true end,
+        apply = function( entity ) end,
+        weight = 1.2
+    },
     { id = "burning",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
@@ -642,7 +655,8 @@ champion_types = {
                 execute_on_added="1",
                 execute_every_n_frame="10",
             });
-        end
+        end,
+        weight = 0.8
     },
     { id = "jetpack",
         particle_material = nil,
@@ -697,7 +711,8 @@ champion_types = {
                 emission_interval_max_frames="1",
                 is_emitting="1",
             } );
-        end
+        end,
+        weight = 1.5
     },
     { id = "knockback",
         sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/badge.png",
@@ -758,7 +773,7 @@ champion_types = {
                 end
             end
         end,
-        weight = 1.1
+        weight = 1.5
     },
     { id = "projectile_bounce",
         particle_material = nil,
@@ -1007,6 +1022,42 @@ champion_types = {
                 
             end
         end,
+        weight = 0.8,
+        deprecated = true
+    },
+    { id = "red_sparkbolt",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/red_sparkbolt/badge.png",
+        name = "$champion_type_name_red_sparkbolt",
+        description = "$champion_type_desc_red_sparkbolt",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return not has_projectile_attack;
+        end,
+        apply = function( entity )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            for _, animal_ai in pairs( animal_ais ) do
+                ComponentSetValue2( animal_ai, "attack_ranged_enabled", true );
+                ComponentSetValue2( animal_ai, "attack_landing_ranged_enabled", true );
+                ComponentSetValue2( animal_ai, "attack_ranged_entity_file", "mods/gkbrkn_noita/files/gkbrkn/actions/red_sparkbolt/projectile.xml" );
+                ComponentSetValue2( animal_ai, "attack_ranged_predict", false );
+                ComponentSetValue2( animal_ai, "attack_ranged_aim_rotation_speed", 0.5 );
+                
+            end
+        end,
         weight = 0.8
     },
     { id = "teleporting",
@@ -1029,7 +1080,7 @@ champion_types = {
                 execute_every_n_frame = "180",
             } );
         end,
-        weight = 0.7
+        weight = 0.6
     },
     { id = "toxic_trail",
         particle_material = nil,
@@ -1059,6 +1110,35 @@ champion_types = {
             });
         end
     },
+    { id = "lava_trail",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/lava_trail/badge.png",
+        name = "$champion_type_name_lava_trail",
+        description = "$champion_type_desc_lava_trail",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/lava_trail/shot.lua",
+            });
+            change_materials_that_damage( entity, { lava = 0 } );
+        end
+    },
     { id = "janitor",
         particle_material = nil,
         sprite_particle_sprite_file = nil,
@@ -1073,6 +1153,24 @@ champion_types = {
             EntityAddComponent2( entity, "LuaComponent", {
                 execute_every_n_frame = 120,
                 script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/janitor/update.lua"
+            });
+        end,
+    },
+    { id = "no_homing",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/no_homing/badge.png",
+        name = "$champion_type_name_no_homing",
+        description = "$champion_type_desc_no_homing",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {},
+        validator = function( entity ) return true end,
+        apply = function( entity )
+            EntityAddComponent2( entity, "LuaComponent", {
+                remove_after_executed = true,
+                execute_on_added = true,
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/no_homing/init.lua"
             });
         end,
     },
@@ -1217,6 +1315,121 @@ champion_types = {
                 script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/antagonist/shot.lua",
             });
         end
+    },
+    { id = "armed",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/armed/badge.png",
+        name = "$champion_type_name_armed",
+        description = "$champion_type_desc_armed",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local can_pick_up_wands = false;
+            local animal_ais = EntityGetComponent( entity, "ItemPickUpperComponent" ) or {};
+            if #animal_ais > 0 then
+                can_pick_up_wands = true;
+            end
+            return can_pick_up_wands;
+        end,
+        apply = function( entity )
+            local x, y = EntityGetTransform( entity );
+            local wand = EntityLoad( "data/entities/items/wand_level_02.xml", x, y );
+        end,
+        deprecated = true
+    },
+    { id = "hard_headed",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/hard_headed/badge.png",
+        name = "$champion_type_name_hard_headed",
+        description = "$champion_type_desc_hard_headed",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) end,
+        apply = function( entity )
+            local resistances = { physics_hit = 0.0 };
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+            for index,damage_model in pairs( damage_models ) do
+                for damage_type,multiplier in pairs( resistances ) do
+                    local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
+                    resistance = resistance * multiplier;
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
+                end
+            end
+        end
+    },
+    { id = "neurotoxin",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/neurotoxin/badge.png",
+        name = "$champion_type_name_neurotoxin",
+        description = "$champion_type_desc_neurotoxin",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity )
+            local has_projectile_attack = false;
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true;
+                        break;
+                    end
+                end
+            end
+            return has_projectile_attack;
+        end,
+        apply = function( entity )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/neurotoxin/shot.lua",
+            } );
+        end
+    },
+    { id = "robotic",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/robotic/badge.png",
+        name = "$champion_type_name_robotic",
+        description = "$champion_type_desc_robotic",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity ) end,
+        apply = function( entity )
+            local resistances = {
+                fire=0.0,
+                drill=0.1,
+                slice=0.1,
+                melee=0.3,
+                projectile=0.5,
+                radioactive=0.0,
+                explosion=1.0,
+                electricity=2.0,
+            };
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
+            for index,damage_model in pairs( damage_models ) do
+                for damage_type,multiplier in pairs( resistances ) do
+                    local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type );
+                    resistance = resistance * multiplier;
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance );
+                end
+            end
+            local audio = EntityGetFirstComponent( entity, "AudioComponent" );
+            if audio then
+                ComponentSetValue2( audio, "file", "data/audio/Desktop/animals.bank" );
+                ComponentSetValue2( audio, "event_root", "animals/robot" );
+            else
+                EntityAddComponent2( entity, "AudioComponent", {
+                    file="data/audio/Desktop/animals.bank",
+                    event_root="animals/robot"
+                } );
+            end
+        end,
+        weight = 0.4
     },
     --[[
     { id = "fizzle",

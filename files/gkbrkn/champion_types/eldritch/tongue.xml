@@ -62,7 +62,7 @@
 
 	<Entity name="$projectile_default">
 	    <VerletPhysicsComponent
-	    	num_points="6"
+	    	num_points="13"
 	    	stiffness="0.99"
 	    	resting_distance="4.0" 
 	    	pixelate_sprite_transforms="1"

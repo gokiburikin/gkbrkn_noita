@@ -92,13 +92,14 @@ if GameHasFlagRun( init_check_flag ) == false then
                 end
             else
                 local wand = EntityLoad( "data/entities/items/wand_level_01.xml", Random( -1000, 1000 ), Random( -1000, 1000 ) );
-                --local item = EntityGetFirstComponent( wand, "ItemComponent" );
-                --ComponentSetValue2( item, "play_hover_animation", false );
                 --EntityAddChild( inventory, wand );
                 if held_wand then
                     wand_copy( wand, held_wand, true, true );
                     EntityKill( wand );
                 else
+                    EntityApplyTransform( wand, 0, 0 );
+                    local item = EntityGetFirstComponent( wand, "ItemComponent" );
+                    ComponentSetValue2( item, "play_hover_animation", false );
                     EntityAddChild( inventory, wand );
                 end
             end

@@ -32,14 +32,14 @@
     knockback_force="0"
     velocity_sets_scale="0"
     lifetime_randomness="0"
-	velocity_sets_rotation="0"
+	  velocity_sets_rotation="0"
     ragdoll_force_multiplier="0"
     hit_particle_force_multiplier="0"
     camera_shake_when_shot="0.4"
     muzzle_flash_file="data/entities/particles/muzzle_flashes/muzzle_flash_magic_launcher_blue.xml"
-	knockback_force="0"
+	  knockback_force="0"
     damage_every_x_frames="10"
-	physics_impulse_coeff="0"
+	  physics_impulse_coeff="0"
     collide_with_tag=""
 	>
     <config_explosion

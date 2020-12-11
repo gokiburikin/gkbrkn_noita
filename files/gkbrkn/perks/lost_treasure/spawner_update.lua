@@ -21,6 +21,8 @@ if current_lost_treasure_count > 0 then
     elseif current_lost_treasure_count >= 10 then
         EntityLoad( "data/entities/items/pickup/goldnugget_10.xml", x, y );
         EntityAdjustVariableNumber( entity, tracker_variable, 0.0, function(value) return tonumber(value) - 10; end );
+    else
+        remove = true;
     end
 else
     remove = true;

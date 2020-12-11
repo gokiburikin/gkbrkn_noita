@@ -112,6 +112,9 @@ if initialized == false then
     GuiStartFrame( gui );
     local screen_width, screen_height = GuiGetScreenDimensions( gui );
 
+    local action_data = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/action_data.lua" )( true );
+    local perk_data = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/perk_data.lua" )();
+
     local mod_settings_id = "gkbrkn_noita";
     local gokiui = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/gokiui.lua" )( gui, 0, mod_settings_id, z_index );
     local next_id = gokiui.next_id;
@@ -126,6 +129,12 @@ if initialized == false then
         end
     end
 
+    function disable_starting_perks()
+        for k,v in pairs( perk_data ) do
+            setting_clear( "sp_perk_"..v.id );
+        end
+    end
+
     function toggle_vanilla()
         iterate_settings( function( setting )
             if setting.type_data ~= nil and setting.type_data.content ~= nil then
@@ -134,6 +143,9 @@ if initialized == false then
                 set_setting( setting, setting.disable );
             end
         end );
+        setting_set( FLAGS.DisableNewContent, true );
+        disable_starting_perks();
+        refresh_settings();
     end
 
     function toggle_default()
@@ -144,6 +156,8 @@ if initialized == false then
                 set_setting( setting, setting.default );
             end
         end );
+        disable_starting_perks();
+        refresh_settings();
     end
 
     function toggle_content_by_tag( tag, skip_default )
@@ -194,9 +208,6 @@ if initialized == false then
         end
         return filtered;
     end
-
-    local action_data = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/action_data.lua" )( true );
-    local perk_data = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/perk_data.lua" )();
 
     local basic_content_callback = function( setting )
         local setting_data = setting.type_data;
@@ -321,6 +332,7 @@ if initialized == false then
                 local toggle = false;
                 local managed = setting_get( MISC.ManageExternalContent.EnabledFlag ) == true or setting_data.content.local_content == true;
                 local semi_transparent = false;
+                local has_progress = HasFlagPersistent( "action_"..this_action_data.id:lower() );
                 if is_action_unlocked( this_action_data ) == false then
                     semi_transparent = true;
                 end
@@ -337,10 +349,24 @@ if initialized == false then
                 if this_action_data then
                     GuiZSetForNextWidget( gui, z_index + 2 );
                     GuiOptionsAddForNextWidget( gui, GUI_OPTION.Disabled );
+                    local left_click, right_click;
+                    local spell_icon_x = 0;
+                    local spell_icon_y = 0;
+                    if setting_get( FLAGS.ShowSpellBorders ) then
+                        if semi_transparent then GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent ); end
+                        GuiImage( gui, next_id(), 0, 0, action_type_to_border_sprite[ this_action_data.type ], 1.0, 1.0, 0 );
+                        spell_icon_x = -20;
+                        spell_icon_y = 2;
+                    else
+                        spell_icon_x = 0;
+                        spell_icon_y = 0;
+                    end
+                    if setting_get( FLAGS.ShowSpellProgress ) and not has_progress then
+                        GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawWaveAnimateOpacity );
+                        GuiColorSetForNextWidget( gui, 1.0, 1.0, 0.0, 1.0 );
+                    end
                     if semi_transparent then GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent ); end
-                    GuiImage( gui, next_id(), 0, 0, action_type_to_border_sprite[ this_action_data.type ], 1.0, 1.0, 0 );
-                    if semi_transparent then GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawSemiTransparent ); end
-                    local left_click, right_click = GuiImageButton( gui, next_id(), -20, 2, "", this_action_data.sprite );
+                    left_click, right_click = GuiImageButton( gui, next_id(), spell_icon_x, spell_icon_y, "", this_action_data.sprite );
                     if left_click then
                         toggle = true;
                     elseif right_click then
@@ -377,8 +403,13 @@ if initialized == false then
                             -- TODO localize
                             GuiText( gui, 0, 0, word_wrap( "This content is not unlocked and will not appear in-game\nSpawning this content will unlock it permanently" ) );
                         end
+                        if not has_progress then
+                            GuiColorSetForNextWidget( gui, 0.50, 0.75, 0.50, 1.0 );
+                            -- TODO localize
+                            GuiText( gui, 0, 0, word_wrap( "This content is not yet in the progress menu" ) );
+                        end
                         if not managed then
-                            GuiColorSetForNextWidget( gui, 1.0, 0., 1.0, 1.0 );
+                            GuiColorSetForNextWidget( gui, 1.0, 0.0, 1.0, 1.0 );
                             -- TODO localize
                             GuiText( gui, 0, 0, word_wrap( "This content is external and not managed by Goki's Things" ) );
                         end
@@ -554,6 +585,16 @@ if initialized == false then
             end
         end
     }
+
+    function get_screen_position( x, y )
+        local screen_width, screen_height = GuiGetScreenDimensions( gui );
+        local camera_x, camera_y = GameGetCameraPos();
+        local res_width = MagicNumbersGetValue( "VIRTUAL_RESOLUTION_X" );
+        local res_height = MagicNumbersGetValue( "VIRTUAL_RESOLUTION_Y" );
+        local ax = (x - camera_x) / res_width * screen_width;
+        local ay = (y - camera_y) / res_height * screen_height;
+        return ax + screen_width * 0.5, ay + screen_height * 0.5;
+    end
 
     function do_special_button( button_text, description_text )
         GuiLayoutBeginHorizontal( gui, 0, 0 );
@@ -1007,6 +1048,12 @@ if initialized == false then
                 GuiText( gui, 0, 0, "Are you a modder? Hover me for more information!" );
                 GuiTooltip( gui, word_wrap( "Goki's Things will parse an author variable on the spells you add to gun_actions.lua and separate by author here!" ), "" );
             end
+            if gokiui.do_boolean( gui, next_id(), 0, 0, "$option_name_gkbrkn_show_spell_progress", setting_get( FLAGS.ShowSpellProgress ), "$option_desc_gkbrkn_show_spell_progress" ) then
+                setting_set( FLAGS.ShowSpellProgress, not setting_get( FLAGS.ShowSpellProgress ) );
+            end
+            if gokiui.do_boolean( gui, next_id(), 0, 0, "$option_name_gkbrkn_show_spell_borders", setting_get( FLAGS.ShowSpellBorders ), "$option_desc_gkbrkn_show_spell_borders" ) then
+                setting_set( FLAGS.ShowSpellBorders, not setting_get( FLAGS.ShowSpellBorders ) );
+            end
             GuiLayoutBeginVertical( gui, 1, 0 );
                 for _,group in pairs( group_setting.settings) do
                     group_callbacks.action( group );
@@ -1283,15 +1330,23 @@ if initialized == false then
         if GameIsInventoryOpen() and setting_get( MISC.InfiniteInventory.EnabledFlag ) then
             GuiOptionsAdd( gui, GUI_OPTION.NoPositionTween );
             local player = EntityGetWithTag( "player_unit" )[1];
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.HandleDoubleClickAsClick );
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
             if GuiImageButton( gui, next_id(), 0, 17+0, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_left_up.png" ) then
                 next_item_inventory( player, -1 );
             end
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.HandleDoubleClickAsClick );
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
             if GuiImageButton( gui, next_id(), 0, 17+13, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_left_down.png" ) then
                 next_item_inventory( player, 1 );
             end
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.HandleDoubleClickAsClick );
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
             if GuiImageButton( gui, next_id(), 494+17, 17+0, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_right_up.png" ) then
                 next_spell_inventory( player, -1 );
             end
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.HandleDoubleClickAsClick );
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.ClickCancelsDoubleClick );
             if GuiImageButton( gui, next_id(), 494+17, 17+13, "", "mods/gkbrkn_noita/files/gkbrkn/gui/inventory_button_right_down.png" ) then
                 next_spell_inventory( player, 1 );
             end

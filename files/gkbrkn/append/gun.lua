@@ -78,28 +78,40 @@ function register_action( state )
     else
         --gkbrkn._register_action( state );
     end
-    local player = GetUpdatedEntityID();
-    local calibration_level = EntityGetVariableNumber( player, "gkbrkn_magic_focus_stacks", 0 );
-    local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );
-    local last_calibration_percent = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_percent", 0 );
-    local calibration_multiplier = get_magic_focus_multiplier( last_calibration_shot, last_calibration_percent );
-    local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
-    local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
-    if #deck == 0 then
-        current_reload_time = math.min( current_reload_time, current_reload_time * math.pow( 0.5, rapid_fire_level ) );
-    end
-    c.fire_rate_wait = math.min( c.fire_rate_wait, c.fire_rate_wait * math.pow( 0.5, rapid_fire_level ) );
-    c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
-    c.spread_degrees = c.spread_degrees - c.spread_degrees * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 10;
-    c.fire_rate_wait = c.fire_rate_wait - c.fire_rate_wait * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
-    current_reload_time = current_reload_time - current_reload_time * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
-    if lead_boots > 0 then
-        local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );
-        if character_data ~= nil then
-            if ComponentGetValue2( character_data, "is_on_ground" ) == true then
-                shot_effects.recoil_knockback = shot_effects.recoil_knockback - 10000;
+    if not reflecting then
+        local player = GetUpdatedEntityID();
+        local calibration_level = EntityGetVariableNumber( player, "gkbrkn_magic_focus_stacks", 0 );
+        local last_calibration_shot = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_frame", 0 );
+        local last_calibration_percent = EntityGetVariableNumber( player, "gkbrkn_last_calibration_shot_percent", 0 );
+        local calibration_multiplier = get_magic_focus_multiplier( last_calibration_shot, last_calibration_percent );
+        local rapid_fire_level = EntityGetVariableNumber( player, "gkbrkn_rapid_fire", 0 );
+        local lead_boots = EntityGetVariableNumber( player, "gkbrkn_lead_boots", 0 );
+        local barrage = EntityGetVariableNumber( player, "gkbrkn_barrage", 0 );
+        if #deck == 0 then
+            current_reload_time = math.min( current_reload_time, current_reload_time * math.pow( 0.5, rapid_fire_level ) );
+        end
+        c.fire_rate_wait = math.min( c.fire_rate_wait, c.fire_rate_wait * math.pow( 0.5, rapid_fire_level ) );
+        c.spread_degrees = c.spread_degrees + 8 * rapid_fire_level;
+        c.spread_degrees = c.spread_degrees - c.spread_degrees * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 10;
+        c.fire_rate_wait = c.fire_rate_wait - c.fire_rate_wait * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
+        current_reload_time = current_reload_time - current_reload_time * calibration_level * calibration_multiplier * 0.5 - calibration_multiplier * calibration_level * 6;
+        if lead_boots > 0 then
+            local character_data = EntityGetFirstComponent( player, "CharacterDataComponent" );
+            if character_data ~= nil then
+                if ComponentGetValue2( character_data, "is_on_ground" ) == true then
+                    shot_effects.recoil_knockback = shot_effects.recoil_knockback - 10000;
+                end
             end
         end
+        if barrage > 0 then
+            c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/perks/barrage/projectile_extra_entity.xml,"
+            add_projectile("mods/gkbrkn_noita/files/gkbrkn/perks/barrage/separator.xml");
+            shot_effects.recoil_knockback = shot_effects.recoil_knockback * 0.1;
+            c.knockback_force = c.knockback_force * 0.1;
+            c.fire_rate_wait = math.min( 3, c.fire_rate_wait );
+            current_reload_time = 0;
+        end
+        add_projectile( "mods/gkbrkn_noita/files/gkbrkn/misc/projectile_capture.xml" );
     end
 
     gkbrkn._register_action( c );
@@ -129,6 +141,11 @@ function state_per_cast( state )
     gkbrkn.skip_projectiles = false;
     gkbrkn.mana_multiplier = 1.0;
     gkbrkn.added_projectiles = 0;
+    local player = GetUpdatedEntityID();
+    local barrage = EntityGetVariableNumber( player, "gkbrkn_barrage", 0 );
+    if barrage > 0 then
+        gkbrkn.mana_multiplier = gkbrkn.mana_multiplier * 0.2;
+    end
 end
 
 function create_shot( num_of_cards_to_draw )
@@ -439,7 +456,7 @@ function draw_action( instant_reload_if_empty )
     gkbrkn.draw_action_stack_size = gkbrkn.draw_action_stack_size + 1;
 
     local result = false;
-    local player = GetUpdatedEntityID();
+local player = GetUpdatedEntityID();
     local blood_magic_stacks = EntityGetVariableNumber( player, "gkbrkn_blood_magic_stacks", 0 );
     local extra_projectiles_level = EntityGetVariableNumber( player, "gkbrkn_extra_projectiles", 0 );
 
@@ -449,9 +466,9 @@ function draw_action( instant_reload_if_empty )
             current_reload_time = current_reload_time + 8 * extra_projectiles_level;
         end
     ]]
-    if not reflecting and not c.extra_entities:find("mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.xml,") then
-        c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.xml,";
-    end
+    --if not reflecting and not c.extra_entities:find("mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.xml,") then
+    --    c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/misc/projectile_indexing.xml,";
+    --end
 
     if gkbrkn.skip_cards <= 0 then
         --for index,extra_modifier in pairs( active_extra_modifiers ) do
@@ -495,7 +512,6 @@ function draw_action( instant_reload_if_empty )
     end
     
     if gkbrkn.draw_action_stack_size == 0 then
-
         state_per_cast( c );
     else
         --c.extra_entities = c.extra_entities .. "mods/gkbrkn_noita/files/gkbrkn/misc/ephemeral.xml,"

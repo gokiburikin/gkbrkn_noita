@@ -3,7 +3,7 @@
 	<InheritTransformComponent/>
 	<LuaComponent
 		script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_repulsion_field/update.lua"
-		execute_every_n_frame="3"
+		execute_every_n_frame="5"
 		>
 	</LuaComponent>
   	<ParticleEmitterComponent 

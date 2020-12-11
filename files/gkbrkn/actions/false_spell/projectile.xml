@@ -124,6 +124,10 @@
 		is_emitting="1" >
 	</ParticleEmitterComponent>
 
+	<VariableStorageComponent
+		name="projectile_file"
+		value_string="mods/gkbrkn_noita/files/gkbrkn/actions/false_spell/projectile.xml"
+	/>
 
 </Entity>
 

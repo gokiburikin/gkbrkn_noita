@@ -1,0 +1,14 @@
+<Entity tags="gkbrkn_formation_sword_shoot_pos">
+	<LuaComponent script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/formation_sword/card_update.lua" />
+	<Base file="data/entities/base_custom_card.xml" > 
+		<SpriteComponent 
+			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/formation_sword/icon.png" >
+		</SpriteComponent>
+		
+		<ItemActionComponent 
+			_tags="enabled_in_world"
+			action_id="GKBRKN_FORMATION_SWORD" >
+		</ItemActionComponent>
+	</Base>
+	<InheritTransformComponent parent_hotspot_tag="shoot_pos" _tags="enabled_in_world,enabled_in_hand" />
+</Entity>

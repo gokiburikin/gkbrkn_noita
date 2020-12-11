@@ -9,7 +9,7 @@ dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" );
 
 local has_content_been_cached = false;
 local SETTINGS = {
-    Version = "c107c"
+    Version = "c109"
 }
 
 local CONTENT_ACTIVATION_TYPE = {
@@ -92,7 +92,7 @@ local register_content = function( content_table, content_type, key, display_nam
 end
 
 -- Options Menu Start
-    local register_option = function( key, label, tooltip, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags )
+    local register_option = function( key, label, tooltip, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags, hidden )
         if activationType == nil then
             activationType = CONTENT_ACTIVATION_TYPE.Restart;
         end
@@ -107,25 +107,26 @@ end
             activation_type = activationType,
             toggle_callback = toggleCallback,
             tags = tags or {},
+            hidden = hidden
         }
     end
 
-    local register_option_localized = function( key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags )
+    local register_option_localized = function( key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags, hidden )
         if key ~= nil then
-            return register_option( key, "$option_name_"..key, "$option_desc_"..key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags );
+            return register_option( key, "$option_name_"..key, "$option_desc_"..key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags, hidden );
         end
     end
 
-    local register_boolean_option_localized = function( key, default, disable, activationType, toggleCallback, tags )
-        return register_option_localized( key, default, disable, SETTING_TYPE.Boolean, {}, activationType, toggleCallback, tags );
+    local register_boolean_option_localized = function( key, default, disable, activationType, toggleCallback, tags, hidden )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Boolean, {}, activationType, toggleCallback, tags, hidden );
     end
 
-    local register_range_option_localized = function( key, default, min, max, disable, value_callback, text_callback, activationType, toggleCallback, tags )
-        return register_option_localized( key, default, disable, SETTING_TYPE.Range, { min = min, max = max, value_callback = value_callback, text_callback = text_callback }, activationType, toggleCallback, tags );
+    local register_range_option_localized = function( key, default, min, max, disable, value_callback, text_callback, activationType, toggleCallback, tags, hidden )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Range, { min = min, max = max, value_callback = value_callback, text_callback = text_callback }, activationType, toggleCallback, tags, hidden );
     end
 
-    local register_input_option_localized = function( key, default, disable, allowed_characters, max_length, activationType, toggleCallback, tags )
-        return register_option_localized( key, default, disable, SETTING_TYPE.Input, { allowed_characters = allowed_characters, max_length = max_length }, activationType, toggleCallback, tags );
+    local register_input_option_localized = function( key, default, disable, allowed_characters, max_length, activationType, toggleCallback, tags, hidden )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Input, { allowed_characters = allowed_characters, max_length = max_length }, activationType, toggleCallback, tags, hidden );
     end
 
     local register_button_option_localized = function( key, click_callback )
@@ -166,7 +167,9 @@ end
                 register_boolean_option_localized( FLAGS.ShowDeprecatedContent, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
                 register_boolean_option_localized( FLAGS.DisableNewContent, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( FLAGS.ShowWhileInInventory, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
-                register_boolean_option_localized( FLAGS.DebugMode, false, false, CONTENT_ACTIVATION_TYPE.Restart )
+                register_boolean_option_localized( FLAGS.DebugMode, false, false, CONTENT_ACTIVATION_TYPE.Immedate ),
+                -- Hidden setting for default values
+                register_boolean_option_localized( FLAGS.ShowSpellProgress, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, nil, true )
             ),
             register_option_group_localized( "gkbrkn_hero_mode", nil,
                 register_boolean_option_localized( MISC.HeroMode.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {goki_thing = true, ultimate_challenge = true, hero_mode = true, carnage = true} ),
@@ -277,7 +280,9 @@ end
                 register_range_option_localized( MISC.HealthBars.RangeFlag,  0, 0, 2, 0,
                     function( value ) return math.floor( value + 0.5 ); end,
                     function( value ) return (value == 0 and "Disabled") or (value == 1 and ("Simple Health Bars")) or ("Pretty Health Bars") end,
-                CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} )
+                CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
+                register_boolean_option_localized( FLAGS.NoDamageFlashing, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.NoLowHealthWarning, false, false, CONTENT_ACTIVATION_TYPE.Restart )
             ),
             register_option_group_localized( "gkbrkn_less_particles", nil,
                 register_boolean_option_localized( MISC.LessParticles.PlayerProjectilesFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
@@ -287,7 +292,8 @@ end
             ),
             register_option_group_localized( "gkbrkn_ui", nil,
                 register_boolean_option_localized( MISC.ShowEntityNames.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
-                register_boolean_option_localized( MISC.ShowPerkDescriptions.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
+                register_boolean_option_localized( FLAGS.ShowSpellDescriptions, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.ShowPerkDescriptions.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
                 register_boolean_option_localized( MISC.ShowDamageNumbers.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.ShowFPS.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {goki_thing = true} ),
                 register_boolean_option_localized( MISC.Badges.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {goki_thing = true} )
@@ -396,7 +402,7 @@ local parse_content = function( first_parse, force_cached, content_table )
                 if index == "perk" then
                     options.preview_callback = function( player_entity )
                         dofile_once( "data/scripts/perks/perk.lua" );
-                        local perk_entity = perk_spawn( x, y, string.upper( content_data.id ) );
+                        local perk_entity = perk_spawn( x, y, content_data.id );
                         if perk_entity ~= nil then
                             perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false );
                             GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() );
@@ -405,7 +411,7 @@ local parse_content = function( first_parse, force_cached, content_table )
                 elseif index == "action" then
                     options.preview_callback = function( player_entity )
                         local x, y = EntityGetTransform( player_entity );
-                        local action_entity = CreateItemActionEntity( string.upper( content_data.id ), x, y );
+                        local action_entity = CreateItemActionEntity( content_data.id, x, y );
                         GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() );
                     end
                 elseif index == "legendary_wand" then

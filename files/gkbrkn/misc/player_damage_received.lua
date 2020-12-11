@@ -27,7 +27,7 @@ function damage_received( damage, message, entity_thats_responsible, is_fatal, p
             end
         end
     end
-    if projectile_thats_responsible then
+    if projectile_thats_responsible and not EntityHasTag( projectile_thats_responsible, "projectile_player" ) then
         local projectile_file = EntityGetNamedVariable( projectile_thats_responsible, "projectile_file" );
         if projectile_file then
             projectile_file = ComponentGetValue2( projectile_file, "value_string" );

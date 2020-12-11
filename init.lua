@@ -6,6 +6,11 @@ TWitch Event ideas
     All Enemies Gain 1 Perk (forever)
     Gold Value +/- N
 
+CHAMPIONS
+    remove homing_target tag
+    twitchy
+    lava trail
+    change janitor icon
 
 TODO
     Gold Duration (Disabled -> 0 - 10 -> Infinite)
@@ -200,6 +205,7 @@ end
 if setting_get( MISC.LegendaryWands.EnabledFlag ) then dofile( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/init.lua" ); end
 if setting_get( MISC.FixedCamera.OldBehaviourFlag ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_fixed_camera.xml" ); end
 if setting_get( FLAGS.EnableLogging ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_enable_logging.xml" ); end
+if setting_get( FLAGS.NoLowHealthWarning ) then ModMagicNumbersFileAdd( "mods/gkbrkn_noita/files/gkbrkn/misc/magic_numbers_no_low_health_warning.xml" ); end
 
 function OnPlayerSpawned( player_entity )
     GlobalsSetValue( "mod_button_tr_width", "0" );

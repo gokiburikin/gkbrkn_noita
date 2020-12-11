@@ -43,4 +43,11 @@ FLAGS = {
     EnableLogging = "gkbrkn_enable_logging",
     DisableNewContent = "gkbrkn_disable_new_content",
     ShowWhileInInventory = "gkbrkn_show_while_in_inventory",
+    ShowSpellProgress = "gkbrkn_show_spell_progress",
+    ShowSpellBorders = "gkbrkn_show_spell_borders",
+    ShowSpellDescriptions = "gkbrkn_show_spell_descriptions",
+    NoDamageFlashing = "gkbrkn_no_damage_flashing",
+    NoLowHealthWarning = "gkbrkn_no_low_health_warning",
+    TargetDummyShowRealTimeDPS = "gkbrkn_target_dummy_real_time_dps",
+    TargetDummyShowHighestDPS = "gkbrkn_target_dummy_highest_dps",
 }

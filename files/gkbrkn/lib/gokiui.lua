@@ -101,6 +101,22 @@ return function( gui, gui_id, mod_settings_id, z_index )
         end
     end
 
+    local function do_boolean( gui, id, x, y, label, value, tooltip )
+        GuiLayoutBeginHorizontal( gui, x, y );
+            local left_click, right_click = GuiImageButton( gui, id, 0, 1, "", "mods/gkbrkn_noita/files/gkbrkn/gui/checkbox" .. (value == true and "_fill" or "") .. ".png" );
+            if value == false then
+                GuiColorSetForNextWidget( gui, 0.60, 0.60, 0.60, 1.0 );
+            end
+            if GuiButton( gui, next_id(), 0, 0,  GameTextGetTranslatedOrNot( label ) ) then
+                left_click = true;
+            end
+            if tooltip then
+                GuiTooltip( gui, word_wrap( GameTextGetTranslatedOrNot( tooltip ) ), "");
+            end
+        GuiLayoutEnd( gui );
+        return left_click, right_click;
+    end
+
     local gui_functions = {
         button = function( setting )
             if setting.type_data.click_callback then
@@ -174,58 +190,60 @@ return function( gui, gui_id, mod_settings_id, z_index )
     end
 
     local function do_setting( setting )
-        if setting.tab_key ~= nil then
-            -- Individual Tabs
-            GuiLayoutBeginHorizontal( gui, 0, 0 );
-                GuiLayoutBeginVertical( gui, 0, 0 );
-                    local settings_sum = 0;
-                    for g,v in ipairs( setting.settings ) do
-                        settings_sum = settings_sum + #v.settings;
-                    end
-                    local setting_index = 0;
-                    for g,v in ipairs( setting.settings ) do
-                        do_setting( v );
-                        setting_index = setting_index + #v.settings;
-                        if setting_index > settings_sum / setting.columns then
-                            setting_index = setting_index - settings_sum / setting.columns;
-                            GuiLayoutEnd( gui );
-                            GuiLayoutBeginVertical( gui, 33, 0 );
+        if setting.hidden ~= true then
+            if setting.tab_key ~= nil then
+                -- Individual Tabs
+                GuiLayoutBeginHorizontal( gui, 0, 0 );
+                    GuiLayoutBeginVertical( gui, 0, 0 );
+                        local settings_sum = 0;
+                        for g,v in ipairs( setting.settings ) do
+                            settings_sum = settings_sum + #v.settings;
                         end
+                        local setting_index = 0;
+                        for g,v in ipairs( setting.settings ) do
+                            do_setting( v );
+                            setting_index = setting_index + #v.settings;
+                            if setting_index > settings_sum / setting.columns then
+                                setting_index = setting_index - settings_sum / setting.columns;
+                                GuiLayoutEnd( gui );
+                                GuiLayoutBeginVertical( gui, 33, 0 );
+                            end
+                        end
+                    GuiLayoutEnd( gui );
+                GuiLayoutEnd( gui );
+            elseif setting.group_label ~= nil then
+                -- Individual Groups
+                if setting.custom_callback ~= nil then
+                    setting:custom_callback();
+                else
+                    GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
+                    GuiText( gui, 0, 0, setting.group_label );
+                    GuiLayoutAddVerticalSpacing( gui, 2 );
+                    for k,v in pairs( setting.settings ) do
+                        do_setting( v );
+                    end
+                    GuiLayoutAddVerticalSpacing( gui, 5 );
+                end
+            else
+                -- Individual Settings
+                GuiLayoutBeginHorizontal( gui, 1, 0 );
+                    if gui_functions[setting.type] then
+                        gui_functions[setting.type]( setting );
+                        if setting.validation_callback then
+                            local result = setting.validation_callback( setting.current );
+                            if result ~= true then
+                                GuiTooltip( gui, word_wrap( result ), "" );
+                            end
+                        end
+                    else
+                        print( "[gokiui] missing gui function "..setting.type );
                     end
                 GuiLayoutEnd( gui );
-            GuiLayoutEnd( gui );
-        elseif setting.group_label ~= nil then
-            -- Individual Groups
-            if setting.custom_callback ~= nil then
-                setting:custom_callback();
-            else
-                GuiColorSetForNextWidget( gui, 1.0, 0.75, 0.5, 1.0 );
-                GuiText( gui, 0, 0, setting.group_label );
-                GuiLayoutAddVerticalSpacing( gui, 2 );
-                for k,v in pairs( setting.settings ) do
-                    do_setting( v );
+                if setting.type == "range" then
+                    --GuiLayoutAddVerticalSpacing( gui, -2 );
+                elseif setting.type == "input" then
+                    GuiLayoutAddVerticalSpacing( gui, -2 );
                 end
-                GuiLayoutAddVerticalSpacing( gui, 5 );
-            end
-        else
-            -- Individual Settings
-            GuiLayoutBeginHorizontal( gui, 1, 0 );
-                if gui_functions[setting.type] then
-                    gui_functions[setting.type]( setting );
-                    if setting.validation_callback then
-                        local result = setting.validation_callback( setting.current );
-                        if result ~= true then
-                            GuiTooltip( gui, word_wrap( result ), "" );
-                        end
-                    end
-                else
-                    print( "[gokiui] missing gui function "..setting.type );
-                end
-            GuiLayoutEnd( gui );
-            if setting.type == "range" then
-                --GuiLayoutAddVerticalSpacing( gui, -2 );
-            elseif setting.type == "input" then
-                GuiLayoutAddVerticalSpacing( gui, -2 );
             end
         end
     end
@@ -285,6 +303,7 @@ return function( gui, gui_id, mod_settings_id, z_index )
     end
 
     return {
+        do_boolean = do_boolean,
         do_setting = do_setting,
         do_custom_tooltip = do_custom_tooltip,
         reset_id = reset_id,
