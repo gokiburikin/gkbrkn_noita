@@ -1,0 +1,86 @@
+<Entity tags="hittable,teleportable_NOT,item_physics" >
+
+    <PhysicsBodyComponent 
+        _tags="enabled_in_world"
+        uid="1" 
+        allow_sleep="1" 
+        angular_damping="0" 
+        fixed_rotation="0" 
+        is_bullet="1" 
+        linear_damping="0"
+        auto_clean="0"
+        on_death_leave_physics_body="1"
+        hax_fix_going_through_ground="1"
+    ></PhysicsBodyComponent>
+  
+    <PhysicsImageShapeComponent 
+        body_id="1"
+        centered="1"
+        image_file="mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/sprite.png"
+        material="item_box2d"
+    ></PhysicsImageShapeComponent>
+  
+    <PhysicsThrowableComponent
+        max_throw_speed="180"
+        throw_force_coeff="1.5"
+    ></PhysicsThrowableComponent>
+
+    <VelocityComponent
+        _tags="enabled_in_world"
+    ></VelocityComponent>
+
+    <SpriteComponent
+        _tags="enabled_in_hand"
+        _enabled="false"
+        offset_x="4"
+        offset_y="4"
+        image_file="mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/sprite.png"
+    ></SpriteComponent>
+
+    <ItemComponent
+        _tags="enabled_in_world"
+        item_name="Spell Bag"
+        is_pickable="1"
+        is_equipable_forced="1"
+        ui_sprite="mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/icon.png"
+        ui_description="A bag in which to hold your spells"
+        preferred_inventory="QUICK"
+    ></ItemComponent>
+
+    <UIInfoComponent
+        _tags="enabled_in_world"
+        name="Spell Bag">
+    </UIInfoComponent>
+  
+    <AbilityComponent
+        ui_name="Spell Bag"
+        throw_as_item="1"
+        ><gun_config
+            deck_capacity="0"
+        ></gun_config>
+    </AbilityComponent>
+
+    <LuaComponent
+        _tags="enabled_in_hand"
+        execute_every_n_frame="1"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/items/spell_bag/spell_bag_update.lua"
+    >
+    </LuaComponent>
+
+    <Entity name="gkbrkn_spell_bag_storage">
+    </Entity>
+
+  <MaterialInventoryComponent 
+    _tags="enabled_in_world,enabled_in_hand"
+    drop_as_item="0" 
+    on_death_spill="0"
+    leak_pressure_min="0.07"
+    leak_pressure_min="0.1"
+    leak_on_damage_percent="1"
+    min_damage_to_leak="0.0"
+    death_throw_particle_velocity_coeff="0.5" >
+    <count_per_material_type>
+    </count_per_material_type>
+  </MaterialInventoryComponent>
+
+</Entity>

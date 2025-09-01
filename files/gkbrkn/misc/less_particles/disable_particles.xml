@@ -1,7 +1,0 @@
-<Entity>
-<LuaComponent
-    execute_on_added="1"
-    remove_after_executed="1"
-    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/less_particles/disable_particles.lua">
-</LuaComponent>
-</Entity>

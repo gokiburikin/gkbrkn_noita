@@ -1,0 +1,1 @@
+EntityAddTag( GetUpdatedEntityID(), "homing_target" )

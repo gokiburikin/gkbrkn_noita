@@ -1,0 +1,1 @@
+EntityAddTag( GetUpdatedEntityID(), "gkbrkn_projectile_capture" )

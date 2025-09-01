@@ -1,4 +1,4 @@
-<Entity >
+<Entity>
     <SpriteComponent 
         _tags="enabled_in_hand"
         alpha="1.0"
@@ -39,9 +39,5 @@
 		is_emitting="1" >
 	</ParticleEmitterComponent>
 
-    <LuaComponent
-		_tags="enabled_in_hand"
-        script_source_file="mods/gkbrkn_noita/files/gkbrkn/perks/magic_light/magic_light_update.lua"
-    >
-    </LuaComponent>
+    <LuaComponent _tags="enabled_in_hand" script_source_file="mods/gkbrkn_noita/files/gkbrkn/perks/magic_light/magic_light_update.lua"/>
 </Entity>

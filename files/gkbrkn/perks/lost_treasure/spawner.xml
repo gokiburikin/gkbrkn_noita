@@ -1,4 +1,4 @@
-<Entity name="gkbrkn_lost_treasure_spawner" tags="gkbrkn_lost_treasure_spawner" >
+<Entity name="gkbrkn_lost_treasure_spawner">
     <InheritTransformComponent>
         <Transform 
             position.x="0"

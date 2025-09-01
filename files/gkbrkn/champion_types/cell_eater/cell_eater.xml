@@ -1,0 +1,6 @@
+<Entity>
+    <CellEaterComponent
+		eat_probability="1"
+		radius="30" >
+	</CellEaterComponent>
+</Entity>

@@ -1,0 +1,16 @@
+<Sprite
+filename="mods/gkbrkn_noita/files/gkbrkn/misc/hitboxes/hitbox.png"
+offset_x="0"
+offset_y="0"
+default_animation="default">
+<RectAnimation
+name="default"
+pos_x="0"
+pos_y="0"
+frame_count="1"
+frame_width="100"
+frame_height="100"
+frame_wait="0.02"
+frames_per_row="1"
+loop="1"/>
+</Sprite>

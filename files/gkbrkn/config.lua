@@ -1,1264 +1,603 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" );
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/localization.lua" );
+print("[goki's things] config file called - reduce these calls as much as possible" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/mod_settings.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/enums.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/content/content_types.lua" )
+--dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" )
+local MISC = dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/options.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" )
 
-SETTINGS = {
-    Debug = true,
-    ShowDeprecatedContent = false,
-    Version = "c70"
+local has_content_been_cached = false
+local SETTINGS = {
+    Version = "c114b"
 }
 
-CONTENT_TYPE = {
-    Action = 1,
-    Perk = 2,
-    --Misc = 3,
-    Tweak = 4,
-    ChampionType = 5,
-    Item = 6,
-    Loadout = 7,
-    StartingPerk = 8,
-}
+local CONTENT = {}
+local get_content_flag = function( content_id, content_table )
+    if content_table == nil then content_table = CONTENT end
+    local content = content_table[content_id]
+    if content ~= nil then
+        local content_flag = string.lower("GKBRKN_"..find_content_type( content.type ).id.."_"..content.key)
+        return content_flag
+    end
+end
 
-CONTENT_TYPE_PREFIX = {
-    [CONTENT_TYPE.Action] = "action_",
-    [CONTENT_TYPE.Perk] = "perk_",
-    --[CONTENT_TYPE.Misc] = "misc_",
-    [CONTENT_TYPE.Tweak] = "tweak_",
-    [CONTENT_TYPE.ChampionType] = "champion_type_",
-    [CONTENT_TYPE.Item] = "item_",
-    [CONTENT_TYPE.Loadout] = "loadout_",
-    [CONTENT_TYPE.StartingPerk] = "starting_perk_",
-}
-
-CONTENT_TYPE_DISPLAY_NAME = {
-    [CONTENT_TYPE.Action] = gkbrkn_localization.config_content_type_name_action,
-    [CONTENT_TYPE.Perk] = gkbrkn_localization.config_content_type_name_perk,
-    --[CONTENT_TYPE.Misc] = gkbrkn_localization.config_content_type_name_misc,
-    [CONTENT_TYPE.Tweak] = gkbrkn_localization.config_content_type_name_tweak,
-    [CONTENT_TYPE.ChampionType] = gkbrkn_localization.config_content_type_name_champion,
-    [CONTENT_TYPE.Item] = gkbrkn_localization.config_content_type_name_item,
-    [CONTENT_TYPE.Loadout] = gkbrkn_localization.config_content_type_name_loadout,
-    [CONTENT_TYPE.StartingPerk] = gkbrkn_localization.config_content_type_name_starting_perk,
-}
-
-
-CONTENT = {};
-function register_content( type, key, display_name, options, disabled_by_default, deprecated, inverted, init_function )
-    local content_id = #CONTENT + 1;
+local register_content = function( content_table, content_data, content_type, key, display_name, description, options, default, deprecated, init_function, development_mode_only, tags, sprite, author, local_content )
+    if key == nil then
+        print_error("[goki's things] Content key is nil! "..display_name.." "..content_type.." "..description)
+        return
+    end
+    local content_id = #content_table + 1
+    local complete_display_name = display_name or ("missing display name: "..key)
+    local complete_description = description or ("missing description: "..key)
+    local settings_key = content_type .."_".. key
     local content = {
+        data = content_data,
         id = content_id,
-        type = type,
+        type = content_type,
         key = key,
-        --name = CONTENT_TYPE_DISPLAY_NAME[type]..": "..display_name,
-        name = display_name or ("missing display name: "..key),
-        disabled_by_default = disabled_by_default,
+        settings_key = settings_key,
+        name = complete_display_name,
+        description = complete_description,
         deprecated = deprecated,
+        default = default,
+        development_mode_only = development_mode_only,
+        sprite = sprite,
+        author = author or "Unknown",
+        local_content = local_content or false,
+        loaded = true,
         enabled = function()
-            if SETTINGS.ShowDeprecatedContent == true or deprecated ~= true then
-                if inverted ~= true then
-                    return HasFlagPersistent( get_content_flag( content_id ) ) == false;
-                else
-                    return HasFlagPersistent( get_content_flag( content_id ) ) == true;
-                end
+            if deprecated ~= true or setting_get( FLAGS.ShowDeprecatedContent, false ) == true then
+                return setting_get( settings_key, default ) == true
             end
+            return false
         end,
         visible = function()
-            return SETTINGS.ShowDeprecatedContent == true or deprecated ~= true
+            return true
         end,
         toggle = function( force )
-            local flag = get_content_flag( content_id );
-            local enable = true;
+            local flag = get_content_flag( content_id, content_table )
+            local enable = true
             if force == true then
-                enable = true;
+                enable = true
             elseif force == false then
-                enable = false;
+                enable = false
             else
-                if HasFlagPersistent( flag ) then
-                    enable = true;
+                if setting_get( settings_key, default ) then
+                    enable = false
                 else
-                    enable = false;
+                    enable = true
                 end
-            end
-            if force ~= nil and inverted then
-                enable = not enable;
             end
             if enable then
-                RemoveFlagPersistent( flag );
+                setting_set( settings_key, true )
             else
-                AddFlagPersistent( flag );
+                setting_set( settings_key, false )
             end
         end,
-        options = options,
+        options = options or {},
         init_function = init_function,
+        tags = tags or {}
     }
-    table.insert( CONTENT, content );
-    return content.id;
+    if default ~= nil and not setting_has( settings_key ) then
+        setting_set( settings_key, default )
+    end
+    if not content.enabled() then
+        content.loaded = false
+    end
+    table.insert( content_table, content )
+    return content.id
 end
 
-function get_content( content_id )
-    return CONTENT[content_id];
+-- Options Menu Start
+    local register_option = function( key, label, tooltip, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags, hidden )
+        if activationType == nil then
+            activationType = CONTENT_ACTIVATION_TYPE.Immediate
+        end
+        return {
+            key = key,
+            label = label,
+            tooltip = tooltip,
+            default = default,
+            disable = disable,
+            type = settingType,
+            type_data = settingTypeData,
+            activation_type = activationType,
+            toggle_callback = toggleCallback,
+            tags = tags or {},
+            hidden = hidden
+        }
+    end
+
+    local register_option_localized = function( key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags, hidden )
+        if key ~= nil then
+            return register_option( key, "$option_name_"..key, "$option_desc_"..key, default, disable, settingType, settingTypeData, activationType, toggleCallback, tags, hidden )
+        end
+    end
+
+    local register_boolean_option_localized = function( key, default, disable, activationType, toggleCallback, tags, hidden )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Boolean, {}, activationType, toggleCallback, tags, hidden )
+    end
+
+    local register_range_option_localized = function( key, default, min, max, disable, value_callback, text_callback, log, activationType, toggleCallback, tags, hidden )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Range, { min = min, max = max, value_callback = value_callback, text_callback = text_callback, log = log }, activationType, toggleCallback, tags, hidden )
+    end
+
+    local register_input_option_localized = function( key, default, disable, allowed_characters, max_length, activationType, toggleCallback, tags, hidden )
+        return register_option_localized( key, default, disable, SETTING_TYPE.Input, { allowed_characters = allowed_characters, max_length = max_length }, activationType, toggleCallback, tags, hidden )
+    end
+
+    local register_button_option_localized = function( key, click_callback )
+        return register_option_localized( key, nil, nil, SETTING_TYPE.Button, { click_callback = click_callback } )
+    end
+
+    local register_option_tab = function( key, name, columns, ... )
+        return {
+            tab_key = key,
+            tab_label = name,
+            columns = columns or 1,
+            settings = {...}
+        }
+    end
+
+    local register_option_tab_localized = function( key, columns, ... )
+        return register_option_tab( key, "$option_tab_name_"..key, columns, ... )
+    end
+
+    local register_option_group = function( name, custom_callback, ... )
+        return {
+            group_label = name,
+            custom_callback = custom_callback,
+            settings = {...}
+        }
+    end
+
+    local register_option_group_localized = function( key, custom_callback, ... )
+        return register_option_group( "$option_group_name_"..key, custom_callback, ... )
+    end
+
+    local OPTIONS = {
+        register_option_tab_localized( "gkbrkn_options", 2,
+            register_option_group_localized( "gkbrkn_mod_core", nil,
+                register_boolean_option_localized( MISC.ManageExternalContent.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( MISC.ShowModTips.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.AutoHide.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowDeprecatedContent, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( FLAGS.DisableNewContent, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowWhileInInventory, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.LockControlsWhenPanelOpen, true, false, CONTENT_ACTIVATION_TYPE.Immediate, function( enabled )
+                    if not enabled then
+                        GlobalsSetValue("gkbrkn_enable_controls", "1")
+                    end
+                end ),
+                register_boolean_option_localized( FLAGS.PersistentSpecialEntities, true, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                
+                register_button_option_localized( "gkbrkn_delete_all_settings", function( left_click, right_click )
+                    if left_click == true then
+                        local to_remove = {}
+                        for i=0,ModSettingGetCount() do
+                            local name, value, value_next = ModSettingGetAtIndex( i )
+                            if name ~= nil and setting_is_ours(name) then
+                                table.insert(to_remove, name)
+                            end
+                        end
+                        for _,key in ipairs(to_remove) do
+                            ModSettingRemove(key)
+                        end
+                        GlobalsSetValue( "gkbrkn_parse_mod_settings", "0" )
+                        GamePrint("Goki's Things settings have been cleared")
+                    end
+                end )
+            ),
+            register_option_group_localized( "gkbrkn_hero_mode", nil,
+                register_boolean_option_localized( MISC.HeroMode.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {ultimate_challenge = true, hero_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.HeroMode.OrbsDifficultyFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, function( enabled )
+                    if not enabled then RemoveFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ) end
+                end, {ultimate_challenge = true, hero_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.HeroMode.DistanceDifficultyFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, function( enabled )
+                    if not enabled then RemoveFlagPersistent( MISC.HeroMode.CarnageDifficultyFlag ) end
+                end, {ultimate_challenge = true, hero_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.HeroMode.CarnageDifficultyFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, function( enabled )
+                    if enabled then
+                        AddFlagPersistent( MISC.HeroMode.OrbsDifficultyFlag )
+                        AddFlagPersistent( MISC.HeroMode.DistanceDifficultyFlag )
+                    end
+                end, {carnage = true} )
+            ),
+            register_option_group_localized( "gkbrkn_champion_enemies", nil,
+                register_boolean_option_localized( MISC.ChampionEnemies.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {ultimate_challenge = true, champions_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.ChampionEnemies.SuperChampionsFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {ultimate_challenge = true, champions_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.ChampionEnemies.AlwaysChampionsFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {ultimate_challenge = true, champions_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.ChampionEnemies.MiniBossesFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {ultimate_challenge = true, champions_mode = true, carnage = true} ),
+                register_boolean_option_localized( MISC.ChampionEnemies.ValourFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {carnage = true} ),
+                register_boolean_option_localized( MISC.ChampionEnemies.ShowIconsFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {ultimate_challenge = true, champions_mode = true, carnage = true} )
+            ),
+            register_option_group_localized( "gkbrkn_random_start", nil,
+                register_boolean_option_localized( MISC.RandomStart.RandomPrimaryWandFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {random_starts = true} ),
+                register_boolean_option_localized( MISC.RandomStart.RandomSecondaryWandFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {random_starts = true} ),
+                register_boolean_option_localized( MISC.RandomStart.RandomExtraWandFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame ),
+                register_boolean_option_localized( MISC.RandomStart.CustomWandGenerationFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame ),
+                register_boolean_option_localized( MISC.RandomStart.RandomCapeColorFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {random_starts = true} ),
+                register_boolean_option_localized( MISC.RandomStart.RandomHealthFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame ),
+                register_boolean_option_localized( MISC.RandomStart.RandomFlaskFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {random_starts = true} ),
+                register_range_option_localized( MISC.RandomStart.RandomPerksFlag, 0, 0, 100, 0,
+                function( value ) return math.floor( value ) end,
+                function( value ) return (value == 0 and "Disabled") or (value == 1 and (value.." perk")) or (value.." perks") end,
+                false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {random_starts = true} )
+            ),
+            register_option_group_localized( "gkbrkn_gold", nil,
+                register_boolean_option_localized( MISC.GoldPickupTracker.ShowMessageFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.GoldPickupTracker.ShowTrackerFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.GoldDecay.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( MISC.GoldLifetime.MultiplierFlag, 1.0, 0.0, 10.0, 1.0,
+                function( value ) return math.floor(value * 10 + 0.5) / 10 end,
+                function( value ) return tostring(value).."x Lifetime" end,
+                false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.PersistentGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.AutoPickupGold.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( FLAGS.CombineGoldLimit, 0, 0, 10, 0,
+                function( value ) return math.floor( value ) end,
+                function( value ) return (value == 0 and "Disabled") or ("Limit to "..tostring(value)) end,
+                false, CONTENT_ACTIVATION_TYPE.Restart, nil, {carnage = 5}),
+                register_range_option_localized( MISC.JumpyGold.MultiplierFlag, 0, 0, 50, 0,
+                function( value ) return math.floor( value ) end,
+                function( value ) return (value == 0 and "Disabled") or (tostring(value).."x Force") end,
+                false, CONTENT_ACTIVATION_TYPE.Immediate, nil, {carnage = 10})
+            ),
+            register_option_group_localized( "gkbrkn_wands", nil,
+                register_boolean_option_localized( MISC.LegendaryWands.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( MISC.LooseSpellGeneration.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( MISC.AlternativeWandGeneration.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                    if enabled then
+                        RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag )
+                        RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag )
+                    end
+                end ),
+                register_boolean_option_localized( MISC.ChaoticWandGeneration.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                    if enabled then
+                        RemoveFlagPersistent( MISC.ExtendedWandGeneration.EnabledFlag )
+                        RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag )
+                    end
+                end ),
+                register_boolean_option_localized( MISC.ExtendedWandGeneration.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart, function( enabled )
+                    if enabled then
+                        RemoveFlagPersistent( MISC.ChaoticWandGeneration.EnabledFlag )
+                        RemoveFlagPersistent( MISC.AlternativeWandGeneration.EnabledFlag )
+                    end
+                end ),
+                register_boolean_option_localized( MISC.NoPregenWands.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame )
+                --register_boolean_option_localized( MISC.PassiveRecharge.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
+            ),
+            register_option_group_localized( "gkbrkn_loadouts", nil,
+                register_boolean_option_localized( MISC.Loadouts.ManageFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true} ),
+                register_boolean_option_localized( MISC.Loadouts.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true, developer = true} ),
+                register_boolean_option_localized( MISC.Loadouts.CapeColorFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true} ),
+                register_boolean_option_localized( MISC.Loadouts.PlayerSpritesFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true} ),
+                register_boolean_option_localized( MISC.Loadouts.SelectableClassesIntegrationFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true} ),
+                register_boolean_option_localized( MISC.Loadouts.ClassyFrameworkIntegrationFlag, false, false, CONTENT_ACTIVATION_TYPE.NewGame, nil, {loadouts = true} ),
+                register_boolean_option_localized( MISC.Loadouts.UnlockLoadouts, false, false, CONTENT_ACTIVATION_TYPE.NewGame )
+            ),
+            register_option_group_localized( "gkbrkn_less_particles", nil,
+                register_boolean_option_localized( MISC.LessParticles.PlayerProjectilesFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.LessParticles.OtherStuffFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.LessParticles.ExplosionStainsFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.LessParticles.DisableCosmeticsFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
+            ),
+            register_option_group_localized( "gkbrkn_seeded_runs", nil,
+                register_boolean_option_localized( MISC.SeededRuns.UseSeedNextRunFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_input_option_localized( MISC.SeededRuns.SeedFlag, "", "", nil, nil, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_button_option_localized( MISC.SeededRuns.ClearSeedButtonFlag, function( left_click, right_click )
+                    if left_click == true then
+                        setting_set( MISC.SeededRuns.SeedFlag, "" )
+                        GlobalsSetValue( "gkbrkn_force_settings_refresh", "1" )
+                    end
+                end ),
+                register_button_option_localized( MISC.SeededRuns.CopySeedButtonFlag, function( left_click, right_click )
+                    if left_click == true then
+                        setting_set( MISC.SeededRuns.SeedFlag, tostring( StatsGetValue("world_seed") ) )
+                        GlobalsSetValue( "gkbrkn_force_settings_refresh", "1" )
+                    end
+                end )
+            ),
+            register_option_group_localized( "gkbrkn_perk_options", nil,
+                register_boolean_option_localized( MISC.PerkRewrite.StackableChangesFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                --register_boolean_option_localized( MISC.PerkRewrite.NewLogicFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.PerkRewrite.ShowBarGraphFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate )
+            ),
+            register_option_group_localized( "gkbrkn_health_damage", nil,
+                register_range_option_localized( MISC.InvincibilityFrames.Duration, 0, 0, 60, 0,
+                    function( value ) return math.floor( value + 0.5 ) end,
+                    function( value ) return (value == 0 and "Disabled") or (value == 1 and (value.." frame")) or (value.." frames") end,
+                    false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.InvincibilityFrames.FlashingFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( MISC.HealOnMaxHealthUp.RangeFlag, 0, 0, 2, 0,
+                    function( value ) return math.floor( value + 0.5 ) end,
+                    function( value ) return (value == 0 and "Disabled") or (value == 1 and ("Heal Gained")) or ("Heal to Full") end,
+                    false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( MISC.HealthBars.RangeFlag,  0, 0, 2, 0,
+                    function( value ) return math.floor( value + 0.5 ) end,
+                    function( value ) return (value == 0 and "Disabled") or (value == 1 and ("Simple Health Bars")) or ("Pretty Health Bars") end,
+                    false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.NoDamageFlashing, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.NoLowHealthWarning, false, false, CONTENT_ACTIVATION_TYPE.Restart )
+            ),
+            register_option_group_localized( "gkbrkn_ui", nil,
+                register_boolean_option_localized( MISC.ShowEntityNames.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowSpellDescriptions, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.ShowDamageNumbers.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.ShowFPS.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.Badges.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.NewGame ),
+                register_boolean_option_localized( FLAGS.RunInfoIcon, false, false, CONTENT_ACTIVATION_TYPE.NewGame )
+            ),
+            register_option_group_localized( "gkbrkn_target_dummy", nil,
+                register_boolean_option_localized( MISC.TargetDummy.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.TargetDummy.AllowEnvironmentalDamage, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.QuickTargetDummyButton, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_button_option_localized( "gkbrkn_spawn_target_dummy", function( left_click, right_click )
+                    if left_click == true then
+                        local player = EntityGetWithTag( "player_unit")[1]
+                        if player then
+                            local x,y = EntityGetTransform( player )
+                            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x, y - 10 )
+                        end
+                    end
+                end ),
+                register_button_option_localized( "gkbrkn_spawn_boss_target_dummy", function( left_click, right_click )
+                    if left_click == true then
+                        local player = EntityGetWithTag( "player_unit")[1]
+                        if player then
+                            local x,y = EntityGetTransform( player )
+                            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target_final.xml", x, y - 10 )
+                        end
+                    end
+                end ),
+                register_button_option_localized( "gkbrkn_remove_target_dummies", function( left_click, right_click )
+                    if left_click == true then
+                        for _,e in ipairs(EntityGetWithTag("gkbrkn_target_dummy")) do
+                            EntityKill(e)
+                        end
+                    end
+                end )
+            ),
+            register_option_group_localized( "gkbrkn_game_balance", nil,
+                register_boolean_option_localized( MISC.ChestsContainPerks.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( MISC.SlotMachine.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.ShopReroll.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.InfiniteItemInventory, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.InfiniteSpellInventory, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.PackShops.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( MISC.QuickSwap.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.MimicsAreChests, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( MISC.StrayPixelCleanup.RadiusFlag, 0, 0, MISC.StrayPixelCleanup.RadiusMaximum, 0,
+                    function( value ) return math.floor( value + 0.5 ) end,
+                    function( value ) return (value == 0 and "Disabled") or tostring(value) end,
+                    false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( FLAGS.UberBossCount, -1, -1, 100, -1, 
+                    function( value ) return math.floor( value ) end,
+                    function( value ) return (value == -1 and "Disabled") or (value == 1 and (value.." orb")) or (value.." orbs") end,
+                    false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_range_option_localized( FLAGS.WandGhostThreshold, 35, 0, 51, 35,
+                    function( value ) return math.floor(value + 0.5) end,
+                    function( value ) return (value == 0 and "Always") or (value == 51 and "Never") or tostring(value).." Bones" end,
+                    false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_range_option_localized( FLAGS.WandGhostChance, 30, 1, 100, 30,
+                    function( value ) return math.floor( value + 0.5 ) end,
+                    function( value ) return (value == 1 and "Always") or tostring( math.floor( 1.0 / value * 100 + 0.5 ) ).."%" end,
+                    true, CONTENT_ACTIVATION_TYPE.Restart )
+            ),
+            register_option_group_localized( "gkbrkn_game_feel", nil,
+                register_boolean_option_localized( MISC.RemoveEditPrompt.EnabledFlag, true, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.FixedCamera.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( MISC.FixedCamera.OldBehaviourFlag, false, false, CONTENT_ACTIVATION_TYPE.Restart, nil, nil ),
+                register_range_option_localized( FLAGS.CameraInterpolationSpeed, 0, 0, 100.0, 0,
+                    function( value ) return value end,
+                    function( value ) return (value == 0 and "Disabled") or tostring(math.floor(value / 20.0 * 10.0 + 0.5)/ 10.0) end,
+                    false, CONTENT_ACTIVATION_TYPE.Restart )
+            ),
+            register_option_group_localized( "gkbrkn_cosmetic", nil,
+                register_input_option_localized( FLAGS.SetHeldItemName, "", "", nil, nil, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_button_option_localized( FLAGS.SetHeldItemNameButton, function( left_click, right_click )
+                    if not left_click == true then return end
+                    local player = EntityGetWithTag( "player_unit")[1]
+                    if not player then return end
+                    local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" )
+                    if not inventory2 then return end
+                    local active_item = ComponentGetValue2( inventory2, "mActiveItem" )
+                    if not active_item then return end
+                    local name = setting_get( FLAGS.SetHeldItemName )
+                    local ui = EntityGetFirstComponentIncludingDisabled( active_item, "UIInfoComponent" )
+                    if ui then ComponentSetValue2( ui, "name", name ) end
+                    local ability = EntityGetFirstComponentIncludingDisabled( active_item, "AbilityComponent" )
+                    if ability then ComponentSetValue2( ability, "ui_name", name ) end
+                    local item = EntityGetFirstComponentIncludingDisabled( active_item, "ItemComponent" )
+                    if item then
+                        ComponentSetValue2( item, "item_name", name )
+                        ComponentSetValue2( item, "always_use_item_name_in_ui", true )
+                    end
+                    GamePrint("Changed held item name to "..name )
+                    end ),
+                register_boolean_option_localized( MISC.RainbowProjectiles.EnabledFlag, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.NoIconWobble, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( FLAGS.ReplaceGoldenIdol, true, false, CONTENT_ACTIVATION_TYPE.Restart )
+            ),
+            register_option_group_localized( "gkbrkn_development", nil,
+                register_boolean_option_localized( FLAGS.DebugMode, false, false, CONTENT_ACTIVATION_TYPE.Restart ),
+                register_boolean_option_localized( FLAGS.EnableLogging, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowDrawActions, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.WandOrganizationButtons, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowWandScores, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_boolean_option_localized( FLAGS.ShowHitboxes, false, false, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_input_option_localized( FLAGS.ShowHitboxesString, "mortal", "", nil, nil, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_input_option_localized( FLAGS.PlaySoundBank, "", "", nil, nil, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_input_option_localized( FLAGS.PlaySoundEvent, "", "", nil, nil, CONTENT_ACTIVATION_TYPE.Immediate ),
+                register_button_option_localized( FLAGS.PlaySound, function( left_click, right_click )
+                    GamePlaySound( "data/audio/Desktop/"..setting_get( FLAGS.PlaySoundBank, "")..".bank", setting_get( FLAGS.PlaySoundEvent, ""), GameGetCameraPos() )
+                    end ),
+                register_button_option_localized( FLAGS.ClearSoundEvent, function( left_click, right_click )
+                    setting_set( FLAGS.PlaySoundEvent, "" )
+                    GlobalsSetValue("gkbrkn_force_settings_refresh", "1")
+                    end )
+            )
+        ),
+    }
+-- Options Menu End
+
+local cache_content = function()
+    local content_types_id_cache = {}
+    for _,content_type in pairs( content_types ) do
+        content_types_id_cache[ content_type ] = ( content_types_id_cache[ content_type ] or {} )
+        dofile( content_type.content_filepath )
+        local content_table = _G[ content_type.content_table ]
+        print("[goki's things] caching "..#( content_table or {} ).." "..content_type.short_name )
+        local cache_append = content_type.cache_table.." = {};"
+        for i,cache_content in pairs( content_table or {} ) do
+            cache_append = cache_append .. string.format( "\r\ntable.insert( %s, %s[%s] );", content_type.cache_table, content_type.content_table, i )
+        end
+        ModTextFileSetContent( content_type.cache_filepath, cache_append )
+        ModLuaFileAppend( content_type.content_filepath, content_type.cache_filepath )
+    end
+
+    has_content_been_cached = true
+    print("[goki's things] content cached" )
 end
 
-function get_content_flag( content_id )
-    local content = CONTENT[content_id];
-    if content ~= nil then
-        return string.lower("GKBRKN_"..CONTENT_TYPE_PREFIX[content.type]..content.key);
+-- NOTE first_parse should only ever be true ONE time in goki's things. do not use it
+local parse_content = function( first_parse, force_cached, content_table )
+    if content_table == nil then content_table = CONTENT end
+    local load_cached = force_cached
+    if load_cached == nil then
+        load_cached = has_content_been_cached or GameHasFlagRun( "gkbrkn_content_cached" )
+    end
+    for _,content_type_data in pairs( content_types ) do dofile( content_type_data.content_filepath ) end
+    if load_cached then
+    end
+
+    for _,content_type_data in pairs( content_types ) do
+        local index = content_type_data.id
+        local starting_perk_string = "starting_perks = {};\r\n"
+        local content_type_table = _G[content_type_data.cache_table] or _G[content_type_data.content_table]
+        if content_type_table then
+            print("[goki's things] registering "..#content_type_table.." "..content_type_data.short_name.. ( ( load_cached and " cached" ) or "") )
+            for content_index,content_data in pairs( content_type_table ) do
+                content_data.tags = content_data.tags or {}
+                local options = content_data.options or {}
+                options.index = content_index
+                options.author = content_data.author
+                options.menu_note = "("..GameTextGetTranslatedOrNot(content_data.author or "Unknown")..")"
+                if id == "loadout" then
+                    options.display_name = string_trim(GameTextGetTranslatedOrNot(content_data.name):gsub("TYPE",""))
+                end
+                local content_name = content_data.ui_name or content_data.name
+                local content_description = content_data.ui_description or content_data.description
+                local content_default = content_data.default
+                if content_default == nil then
+                    if index == "action" or
+                        index == "perk" or
+                        index == "champion_type" or
+                        index == "legendary_wand" or
+                        index == "loadout" then
+                        content_default = true
+                    elseif index == "game_modifier" or
+                        index == "item" or
+                        index == "pack" or
+                        index == "tweak" or
+                        index == "cheat" then
+                        content_default = false
+                    end
+                end
+                if index == "perk" then
+                    options.preview_callback = function( player_entity )
+                        dofile_once( "data/scripts/perks/perk.lua" )
+                        local perk_entity = perk_spawn( x, y, content_data.id )
+                        if perk_entity ~= nil then
+                            perk_pickup( perk_entity, player_entity, EntityGetName( perk_entity ), false, false )
+                            GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() )
+                        end
+                    end
+                elseif index == "action" then
+                    options.preview_callback = function( player_entity )
+                        local x, y = EntityGetTransform( player_entity )
+                        local action_entity = CreateItemActionEntity( content_data.id, x, y )
+                        GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() )
+                    end
+                elseif index == "legendary_wand" then
+                    options.preview_callback = function( player_entity )
+                        dofile( "mods/gkbrkn_noita/files/gkbrkn/content/legendary_wands.lua" )
+                        dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" )
+                        local x, y = EntityGetTransform( player_entity )
+                        local wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.xml", x, y )
+                        initialize_legendary_wand( wand, x, y, nil, find_legendary_wand( content_data.id ) )
+                        GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() )
+                    end
+                elseif index == "item" then
+                    if content_data.item_path then
+                        options.preview_callback = function( player_entity )
+                            local x, y = EntityGetTransform( player_entity )
+                            EntityLoad( content_data.item_path, x, y )
+                            GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() )
+                        end
+                    end
+                elseif index == "loadout" then
+                    options.preview_callback = function( player_entity )
+                        dofile( "mods/gkbrkn_noita/files/gkbrkn/content/loadouts.lua" )
+                        dofile_once( "mods/gkbrkn_noita/files/gkbrkn/misc/loadouts/helper.lua" )
+                        handle_loadout( player_entity, find_loadout( content_data.id ) )
+                        GamePlaySound( "data/audio/Desktop/event_cues.bank", "event_cues/shop_item/create", GameGetCameraPos() )
+                    end
+                    content_data.tags["loadout"] = true
+                end
+                register_content( content_table, content_data, index, content_data.id, content_name, content_description, options, content_default, content_data.deprecated, content_data.init_function, content_data.development_mode_only, content_data.tags, content_data.perk_icon or content_data.sprite, content_data.author, content_data.local_content )
+            end
+        else
+        print("[goki's things] no cache or content table found for "..index )
+        end
     end
 end
 
-local register_perk = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Perk, key, gkbrkn_localization["perk_name_"..key], options, disabled_by_default, deprecated, inverted, function()
-        ModLuaFileAppend( "data/scripts/perks/perk_list.lua", "mods/gkbrkn_noita/files/gkbrkn/perks/"..key.."/init.lua" );
-    end );
-end
-
-PERKS = {
-    ShortTemper = register_perk( "short_temper" ),
-    LivingWand = register_perk( "living_wand", {
-        TeleportDistance = 128
-    }, true, true ),
-    DuplicateWand = register_perk( "duplicate_wand" ),
-    GoldenBlood = register_perk( "golden_blood", nil, true, true ),
-    SpellEfficiency = register_perk( "spell_efficiency", {
-        RetainChance = 0.33
-    }, true, true ),
-    MaterialCompression = register_perk( "material_compression" ),
-    ManaEfficiency = register_perk( "mana_efficiency", {
-        Discount = 0.33
-    }, true, true ),
-    RapidFire = register_perk( "rapid_fire" ),
-    KnockbackImmunity = register_perk( "knockback_immunity" ),
-    Resilience = register_perk( "resilience", { Resistances = {
-        fire=0.35,
-        radioactive=0.35,
-        poison=0.35,
-        electricity=0.35,
-        ice=0.35,
-    }} ),
-    PassiveRecharge = register_perk( "passive_recharge" ),
-    LostTreasure = register_perk( "lost_treasure" ),
-    AlwaysCast = register_perk( "always_cast" ),
-    HealthierHeart = register_perk( "healthier_heart" ),
-    InvincibilityFrames = register_perk( "invincibility_frames" ),
-    ExtraProjectile = register_perk( "extra_projectile" ),
-    ManaRecovery = register_perk( "mana_recovery" ),
-    Protagonist = register_perk( "protagonist" ),
-    FragileEgo = register_perk( "fragile_ego" ),
-    ThriftyShopper = register_perk( "thrifty_shopper" ),
-    Swapper = register_perk( "swapper" ),
-    Demolitionist = register_perk( "demolitionist" ),
-    Multicast = register_perk( "multicast" ),
-    MagicLight = register_perk( "magic_light", nil, true, true ),
-    ChainCasting = register_perk( "chain_casting" ),
-    WIP = register_perk( "wip", nil, true, not SETTINGS.Debug ),
-}
-
-local register_action = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Action, key, gkbrkn_localization["action_name_"..key], options, disabled_by_default, deprecated, inverted, function()
-        ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/gkbrkn_noita/files/gkbrkn/actions/"..key.."/init.lua" );
-    end );
-end
-
-ACTIONS = {
-    ManaEfficiency = register_action( "mana_efficiency", nil, true, true ),
-    SpellEfficiency =  register_action( "spell_efficiency", nil, true, true ),
-    GoldenBlessing = register_action( "golden_blessing", nil, true, true ),
-    MagicLight = register_action( "magic_light" ),
-    Revelation = register_action( "revelation" ),
-    MicroShield = register_action( "micro_shield", nil, true, true ),
-    ModificationField = register_action( "modification_field" ),
-    SpectralShot = register_action( "spectral_shot", nil, true, true ),
-    ArcaneBuckshot = register_action( "arcane_buckshot", nil, true, true ),
-    ArcaneShot = register_action( "arcane_shot", nil, true, true ),
-    DoubleCast = register_action( "double_cast" ),
-    SpellMerge = register_action( "spell_merge" ),
-    ExtraProjectile = register_action( "extra_projectile" ),
-    OrderDeck = register_action( "order_deck" ),
-    PerfectCritical = register_action( "perfect_critical" ),
-    ProjectileBurst = register_action( "projectile_burst" ),
-    TriggerHit = register_action( "trigger_hit" ),
-    TriggerTimer = register_action( "trigger_timer" ),
-    TriggerDeath = register_action( "trigger_death" ),
-    DrawDeck = register_action( "draw_deck", nil, true, true ),
-    ProjectileGravityWell = register_action( "projectile_gravity_well" ),
-    DamageLifetime = register_action( "damage_lifetime" ),
-    DamageBounce = register_action( "damage_bounce" ),
-    PathCorrection = register_action( "path_correction" ),
-    CollisionDetection = register_action( "collision_detection", nil, true, true ),
-    PowerShot = register_action( "power_shot" ),
-    ShimmeringTreasure = register_action( "shimmering_treasure" ),
-    NgonShape = register_action( "ngon_shape", nil, true, true ),
-    ShuffleDeck = register_action( "shuffle_deck", nil, true, true ),
-    BreakCast = register_action( "break_cast" ),
-    ProjectileOrbit = register_action( "projectile_orbit" ),
-    PassiveRecharge = register_action( "passive_recharge" ),
-    ManaRecharge = register_action( "mana_recharge" ),
-    SuperBounce = register_action( "super_bounce" ),
-    CopySpell = register_action( "copy_spell" ),
-    TimeSplit = register_action( "time_split" ),
-    FormationStack = register_action( "formation_stack" ),
-    PiercingShot = register_action( "piercing_shot", nil, true, true ),
-    BarrierTrail = register_action( "barrier_trail" ),
-    GlitteringTrail = register_action( "glittering_trail" ),
-    ChaoticBurst = register_action( "chaotic_burst" ),
-    WIP = register_action( "wip", nil, true, not SETTINGS.Debug )
-}
-
-local register_tweak = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.Tweak, key, GameTextGetTranslatedOrNot( gkbrkn_localization["tweak_name_"..key] ),  options, disabled_by_default, deprecated, inverted );
-end
-
-TWEAKS = {
-    Chainsaw = register_tweak( "chainsaw", { action_id="CHAINSAW" }, true, nil, true ),
-    HeavyShot = register_tweak( "heavy_shot", { action_id="HEAVY_SHOT" }, true, nil, true ),
-    Damage = register_tweak( "damage", { action_id="DAMAGE" }, true, nil, true ),
-    Freeze = register_tweak( "freeze", { action_id="FREEZE" }, true, nil, true ),
-    IncreaseMana = register_tweak( "increase_mana", { action_id="MANA_REDUCE" }, true, nil, true ),
-    Blindness = register_tweak( "blindness","Shorten Blindness", nil, true, true, true ),
-    RevengeExplosion = register_tweak( "revenge_explosion", { perk_id="REVENGE_EXPLOSION" }, true, true, true ),
-    GlassCannon = register_tweak( "glass_cannon", { perk_id="GLASS_CANNON" }, true ),
-    AreaDamage = register_tweak( "area_damage", { action_id="AREA_DAMAGE" }, true ),
-}
-
-LOADOUTS = {}
-
-local register_champion_type = function( key, options, disabled_by_default, deprecated, inverted )
-    return register_content( CONTENT_TYPE.ChampionType, key, gkbrkn_localization["champion_type_name_"..key], options, disabled_by_default, deprecated, inverted );
-end
-
-CHAMPION_TYPES = {
-    Damage = register_champion_type( "damage_buff", {
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/damage.xml",
-        particle_material = "spark_red",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true; end,
-        apply = function( entity )
-            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ai > 0 then
-                for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue( ai, "attack_melee_damage_min", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_min" ) ) * 2 ) );
-                    ComponentSetValue( ai, "attack_melee_damage_max", tostring( tonumber( ComponentGetValue( ai, "attack_melee_damage_max" ) ) * 2 ) );
-                    --ComponentSetValue( ai, "attack_melee_frames_between", tostring( math.ceil( tonumber( ComponentGetValue( ai, "attack_melee_frames_between" ) ) / 2 ) ) );
-                    ComponentSetValue( ai, "attack_dash_damage", tostring( tonumber( ComponentGetValue( ai, "attack_dash_damage" ) ) * 2 ) );
-                    --ComponentSetValue( ai, "attack_dash_frames_between", tostring( tonumber( ComponentGetValue( ai, "attack_dash_frames_between" ) ) / 2 ) );
-                end
-            end
-            EntityAddComponent( entity, "LuaComponent", {
-                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_damage_buff.lua"
-            });
-        end
-    }),
-    Projectile = register_champion_type( "projectile_buff", {
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile.xml",
-        particle_material = "spark_purple",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity )
-            local has_projectile_attack = false;
-            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ais > 0 then
-                for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
-                        has_projectile_attack = true;
-                        break;
-                    end
-                end
-            end
-            return has_projectile_attack;
-        end,
-        apply = function( entity )
-            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ai > 0 then
-                for _,ai in pairs( animal_ai ) do
-                    ComponentSetValue( ai, "attack_ranged_predict", "1" );
-                    ComponentSetValue( ai, "attack_ranged_min_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_min_distance" ) * 1.33 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_max_distance", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_max_distance" ) * 1.33 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_entity_count_min", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_min" ) + 1 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_entity_count_max", tostring( tonumber( ComponentGetValue( ai, "attack_ranged_entity_count_max" ) + 2 ) ) );
-                    ComponentSetValue( ai, "attack_ranged_state_duration_frames", "1" );
+-- This function is to be called once by init.lua at the very latest it can be to ensure that disabled content is properly removed from their files
+local disable_content = function( content_table )
+    print("[goki's things] disable content" )
+    if content_table == nil then content_table = CONTENT end
+    local disable_strings = {}
+    for i = #content_table, 1, -1 do
+        local content = content_table[i]
+        for _,content_type in pairs( content_types ) do
+            if content.type == content_type.id then
+                if content.enabled() == false and ( content.local_content == true or setting_get( MISC.ManageExternalContent.EnabledFlag, false ) == true ) then
+                    disable_strings[ content_type.id ] = content_type.content_disable_callback( content, (disable_strings[ content_type.id ] or "") )
                 end
             end
         end
-    }),
-    Haste = register_champion_type( "rapid_attack", {
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/haste.xml",
-        particle_material = "spark_purple",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true;
-        end,
-        apply = function( entity )
-            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ai > 0 then
-                for _,ai in pairs( animal_ai ) do
-                    ComponentAdjustValues( ai, {
-                        attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.5 ) end,
-                        attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.5 ) end,
-                        attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.5 ) end,
-                    });
-                end
-            end
-        end
-    }),
-    Fast = register_champion_type( "faster_movement", {
-        particle_material = "spark_green",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/movement_faster.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local character_platforming = EntityGetFirstComponent( entity, "CharacterPlatformingComponent" );
-            if character_platforming ~= nil then
-                ComponentSetMetaCustom( character_platforming, "run_velocity", tostring( tonumber( ComponentGetMetaCustom( character_platforming, "run_velocity" ) ) * 3 ) );
-                ComponentSetValue( character_platforming, "jump_velocity_x", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_x" ) ) * 2 ) );
-                ComponentSetValue( character_platforming, "jump_velocity_y", tostring( tonumber( ComponentGetValue( character_platforming, "jump_velocity_y" ) ) * 2 ) );
-                ComponentSetValue( character_platforming, "fly_speed_max_up", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_up" ) ) * 2 ) );
-                ComponentSetValue( character_platforming, "fly_speed_max_down", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_max_down" ) ) * 2 ) );
-                ComponentSetValue( character_platforming, "fly_speed_change_spd", tostring( tonumber( ComponentGetValue( character_platforming, "fly_speed_change_spd" ) ) * 2 ) );
-            end
-        end
-    }),
-    Teleport = register_champion_type( "teleporting", {
-        particle_material = "spark_white",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/teleporting.xml",
-        game_effects = {"TELEPORTATION"},
-        validator = function( entity ) return true end,
-    }),
-    Burning = register_champion_type( "burning", {
-        particle_material = nil,
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/burning.xml",
-        game_effects = {"PROTECTION_FIRE"},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local x,y = EntityGetTransform( entity );
-            local burn = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/fire.xml", x, y );
-            if burn ~= nil then
-                EntityAddChild( entity, burn );
-            end
-            EntityAddComponent( entity, "LuaComponent", {
-                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_burning.lua",
-            });
-        end
-    }),
-    Freezing = register_champion_type( "freezing", {
-        particle_material = "blood_cold_vapour",
-        sprite_particle_sprite_file = "data/particles/snowflake_$[1-2].xml",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/freezing.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local x,y = EntityGetTransform( entity );
-            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/freeze_field.xml", x, y );
-            if field ~= nil then
-                EntityAddChild( entity, field );
-            end
-            EntityAddComponent( entity, "LuaComponent", {
-                execute_every_n_frame="60",
-                execute_on_added="1",
-                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/freeze.lua",
-            });
-            EntityAddComponent( entity, "LuaComponent", {
-                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_freeze.lua",
-            });
-        end
-    }),
-    Shoot = register_champion_type( "shoot", {
-        particle_material = "spark_purple",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-    }, true, true),
-    -- TODO Update this when Invisible game effect doesn't crash
-    Invisible = register_champion_type( "invisible", {
-        particle_material = nil,
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/invisible.xml",
-        game_effects = {"STAINS_DROP_FASTER"},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/invisible.lua",
-                execute_on_added="1",
-                execute_every_n_frame="10",
-            });
-        end
-    } ),
-    Loot =register_champion_type( "loot", {
-        particle_material = "spark_white",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-    }, true, true),
-    Regeneration = register_champion_type( "regenerating", {
-        particle_material = "spark_green",
-        sprite_particle_sprite_file = "data/particles/heal.xml",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/regeneration.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", { 
-                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/regeneration.lua",
-                execute_every_n_frame = "60",
-            } );
-            EntityAddComponent( entity, "LuaComponent", { 
-                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/regeneration_damage_received.lua",
-            } );
-        end
-    }),
-    WormBait = register_champion_type( "worm_bait", {
-        particle_material = "meat",
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        game_effects = {"WORM_ATTRACTOR"},
-        validator = function( entity ) return true end,
-    }, true, true ),
-    RevengeExplosion = register_champion_type( "revenge_explosion", {
-        particle_material = "spark_yellow",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/revenge_explosion.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", { 
-                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/revenge_explosion.lua",
-                execute_every_n_frame = "-1",
-            } );
-        end
-    }),
-    EnergyShield = register_champion_type( "energy_shield", {
-        particle_material = nil,
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/energy_shield.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local x, y = EntityGetTransform( entity );
-            local hitbox = EntityGetFirstComponent( entity, "HitboxComponent" );
-            local radius = nil;
-            local height = 18;
-            local width = 18;
-            if hitbox ~= nil then
-                height = tonumber( ComponentGetValue( hitbox, "aabb_max_y" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_y" ) );
-                width = tonumber( ComponentGetValue( hitbox, "aabb_max_x" ) ) - tonumber( ComponentGetValue( hitbox, "aabb_min_x" ) );
-            end
-            radius = math.max( height, width ) + 6;
-            local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/energy_shield.xml", x, y );
-            local emitters = EntityGetComponent( shield, "ParticleEmitterComponent" ) or {};
-            for _,emitter in pairs( emitters ) do
-                ComponentSetValueValueRange( emitter, "area_circle_radius", radius, radius );
-            end
-            local energy_shield = EntityGetFirstComponent( shield, "EnergyShieldComponent" );
-            ComponentSetValue( energy_shield, "radius", tostring( radius ) );
-
-            local hotspot = EntityAddComponent( entity, "HotspotComponent",{
-                _tags="gkbrkn_center"
-            } );
-            ComponentSetValueVector2( hotspot, "offset", 0, -height * 0.3 );
-
-            if shield ~= nil then EntityAddChild( entity, shield ); end
-        end
-    }),
-    Electricity = register_champion_type( "electric", {
-        particle_material = nil,
-        sprite_particle_sprite_file = "data/particles/spark_electric.xml",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/electricity.xml",
-        game_effects = {"PROTECTION_ELECTRICITY"},
-        validator = function( entity ) return true end,
-        apply = function( entity ) 
-            local electric = EntityAddComponent( entity, "ElectricChargeComponent", { 
-                _tags="enabled_in_world",
-                radius="128",
-                charge_time_frames="15",
-                electricity_emission_interval_frames="15",
-                fx_velocity_max="10",
-            });
-            local x,y = EntityGetTransform( entity );
-            local electrocution = EntityLoad( "data/entities/particles/water_electrocution.xml", x, y );
-            if electrocution ~= nil then
-                EntityAddChild( entity, electrocution );
-            end
-            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/electricity_field.xml", x, y );
-            if field ~= nil then
-                EntityAddChild( entity, field );
-            end
-            EntityAddComponent( entity, "LuaComponent", {
-                execute_every_n_frame="60",
-                execute_on_added="1",
-                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/electricity.lua",
-            });
-            EntityAddComponent( entity, "LuaComponent", {
-                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_electricity.lua",
-            });
-        end
-    }),
-    ProjectileRepulsionField = register_champion_type( "projectile_repulsion_field", {
-        particle_material = nil,
-        sprite_particle_sprite_file = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile_repulsion_field.xml",
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/entities/projectile_repulsion_field.xml" );
-            if shield ~= nil then EntityAddChild( entity, shield ); end
-        end
-    }),
-    Healthy = register_champion_type( "healthy", {
-        particle_material = "plasma_fading_pink",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/healthy.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local damage_models = EntityGetComponent( entity, "DamageModelComponent" );
-            for index,damage_model in pairs( damage_models ) do
-                local current_hp = tonumber(ComponentGetValue( damage_model, "hp" ));
-                local max_hp = tonumber(ComponentGetValue( damage_model, "max_hp" ));
-                local new_max = max_hp * 1.5;
-                local regained = new_max - current_hp;
-                ComponentSetValue( damage_model, "max_hp", tostring( new_max ) );
-                ComponentSetValue( damage_model, "hp", tostring( current_hp + regained ) );
-            end
-        end
-    }),
-    HotBlooded = register_champion_type( "hot_blooded", {
-        particle_material = "fire",
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/hot_blooded.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {};
-            for _,damage_model in pairs( damage_models ) do
-                ComponentSetValue( damage_model, "blood_material", "lava" );
-                ComponentSetValue( damage_model, "blood_spray_material", "lava" );
-            end
-        end
-    }),
-    ProjectileBounce =  register_champion_type( "projectile_bounce", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/projectile_bounce.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity )
-            local has_projectile_attack = false;
-            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ais > 0 then
-                for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
-                        has_projectile_attack = true;
-                        break;
-                    end
-                end
-            end
-            return has_projectile_attack;
-        end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_projectile_bounce.lua",
-            });
-        end
-    }),
-    Eldritch =  register_champion_type( "eldritch", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/eldritch.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity )
-            local has_projectile_attack = false;
-            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ais > 0 then
-                for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
-                        has_projectile_attack = true;
-                        break;
-                    end
-                end
-            end
-            return has_projectile_attack == false;
-        end,
-        apply = function( entity )
-            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ai > 0 then
-                for _,ai in pairs( animal_ai ) do
-                    ComponentSetValues( ai, {
-                        attack_ranged_action_frame="4",
-                        attack_ranged_min_distance="0",
-                        attack_ranged_max_distance="120",
-                        attack_ranged_entity_file="data/entities/projectiles/tongue.xml",
-                        attack_ranged_offset_x="0",
-                        attack_ranged_offset_y="0",
-                        attack_ranged_enabled="1",
-                    });
-                end
-            end
-        end
-    }),
-    InvincibilityFrames = register_champion_type( "invincibility_frames", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/invincibility_frames.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/invincibility_frames.lua",
-            });
-        end
-    }),
-    ToxicTrail =  register_champion_type( "toxic_trail", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/toxic_trail.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity )
-            local has_projectile_attack = false;
-            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {};
-            if #animal_ais > 0 then
-                for _,ai in pairs( animal_ais ) do
-                    if ComponentGetValue( ai, "attack_ranged_enabled" ) == "1" or ComponentGetValue( ai, "attack_landing_ranged_enabled" ) == "1" then
-                        has_projectile_attack = true;
-                        break;
-                    end
-                end
-            end
-            return has_projectile_attack;
-        end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                script_shot="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/shot_toxic_trail.lua",
-            });
-        end
-    }),
-    Counter =  register_champion_type( "counter", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/counter.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                execute_every_n_frame="99999999",
-		        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/counter_damage_received.lua",
-            });
-        end
-    }),
-    Infested =  register_champion_type( "infested", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/infested.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                execute_every_n_frame="99999999",
-		        script_death="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/infested_death.lua",
-            });
-        end
-    }),
-    --[[
-    Leader = register_content( CONTENT_TYPE.ChampionType, "leader", "Leader", {
-        particle_material = nil,
-        badge = "mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/sprites/champion.xml",
-        sprite_particle_sprite_file = nil,
-        game_effects = {},
-        validator = function( entity ) return true end,
-        apply = function( entity )
-            EntityAddComponent( entity, "LuaComponent", {
-                script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/champion_enemies/scripts/leader.lua",
-                execute_every_n_frame="30",
-            });
-        end
-    }),
-    ]]
-}
-
-local register_item = function( key, options )
-    return register_content( CONTENT_TYPE.Item, key, gkbrkn_localization["item_name_"..key], options );
-end
-
-ITEMS = {
-    SpellBag = register_item( "spell_bag", nil, true, nil, true ),
-}
-
-OPTIONS = {
-    {
-        Name = gkbrkn_localization.option_gold_tracking,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_gold_tracking_show_log_message,
-        PersistentFlag = "gkbrkn_gold_tracking_message",
-        SubOption = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_gold_tracking_show_in_world,
-        PersistentFlag = "gkbrkn_gold_tracking_in_world",
-        SubOption = true,
-        EnabledByDefault = true,
-    },
-    {
-        Name = gkbrkn_localization.option_invincibility_frames,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_invincibility_frames_enabled,
-        PersistentFlag = "gkbrkn_invincibility_frames",
-        SubOption = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_invincibility_frames_show_flashing,
-        PersistentFlag = "gkbrkn_invincibility_frames_flashing",
-        SubOption = true,
-    },
-    {
-        Name = gkbrkn_localization.option_heal_new_health,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_heal_new_health_enabled,
-        PersistentFlag = "gkbrkn_max_health_heal",
-        SubOption = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_heal_new_health_heal_to_full,
-        PersistentFlag = "gkbrkn_max_health_heal_full",
-        SubOption = true,
-    },
-    {
-        Name = gkbrkn_localization.option_less_particles,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_less_particles_enabled,
-        PersistentFlag = "gkbrkn_less_particles",
-        SubOption = true,
-        ToggleCallback = function()
-            for _,entity in pairs( EntityGetWithTag("gkbrkn_less_particles") or {} ) do
-                EntityRemoveTag( entity, "gkbrkn_less_particles" );
-            end
-        end
-    },
-    {
-        Name = gkbrkn_localization.sub_option_less_particles_disable_cosmetic_particles,
-        PersistentFlag = "gkbrkn_less_particles_disable",
-        SubOption = true,
-        ToggleCallback = function()
-            for _,entity in pairs( EntityGetWithTag("gkbrkn_less_particles") or {} ) do
-                EntityRemoveTag( entity, "gkbrkn_less_particles" );
-            end
-        end
-    },
-    {
-        Name = gkbrkn_localization.option_random_start,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_random_start_random_wands,
-        PersistentFlag = "gkbrkn_random_start_random_wand",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_random_start_default_wand_generation,
-        PersistentFlag = "gkbrkn_random_start_default_wands",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_random_start_random_cape_colour,
-        PersistentFlag = "gkbrkn_random_start_random_cape",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_random_start_random_health,
-        PersistentFlag = "gkbrkn_random_start_random_health",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_random_start_random_flask,
-        PersistentFlag = "gkbrkn_random_start_random_flask",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_random_start_random_perk,
-        PersistentFlag = "gkbrkn_random_start_random_perk",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_champion_enemies,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_champion_enemies_enabled,
-        SubOption = true,
-        PersistentFlag = "gkbrkn_champion_enemies",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_champion_enemies_super_champions,
-        SubOption = true,
-        PersistentFlag = "gkbrkn_champion_enemies_super",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_champion_enemies_champions_only,
-        SubOption = true,
-        PersistentFlag = "gkbrkn_champion_enemies_always",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_hero_mode,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_hero_mode_enabled,
-        SubOption = true,
-        PersistentFlag = "gkbrkn_hero_mode",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_hero_mode_orbs_difficulty,
-        SubOption = true,
-        PersistentFlag = "gkbrkn_hero_mode_orb_scale",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_hero_mode_distance_difficulty,
-        SubOption = true,
-        PersistentFlag = "gkbrkn_hero_mode_distance_scale",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_loadouts,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_loadouts_manage,
-        PersistentFlag = "gkbrkn_loadouts_manage",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_loadouts_enabled,
-        PersistentFlag = "gkbrkn_loadouts_enabled",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_loadouts_custom_cape_color,
-        PersistentFlag = "gkbrkn_loadouts_cape_color",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.sub_option_loadouts_custom_player_sprites,
-        PersistentFlag = "gkbrkn_loadouts_player_sprites",
-        SubOption = true,
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_disable_random_spells,
-        PersistentFlag = "gkbrkn_disable_spells",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_charm_nerf,
-        PersistentFlag = "gkbrkn_charm_nerf",
-    },
-    {
-        Name = gkbrkn_localization.option_limited_ammo,
-        PersistentFlag = "gkbrkn_limited_ammo",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_unlimited_ammo,
-        PersistentFlag = "gkbrkn_unlimited_ammo",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_quick_swap,
-        PersistentFlag = "gkbrkn_quick_swap",
-    },
-    {
-        Name = gkbrkn_localization.option_passive_recharge,
-        PersistentFlag = "gkbrkn_passive_recharge",
-    },
-    {
-        Name = gkbrkn_localization.option_wand_shops_only,
-        PersistentFlag = "gkbrkn_wand_shops_only",
-    },
-    {
-        Name = gkbrkn_localization.option_loose_spell_generation,
-        PersistentFlag = "gkbrkn_loose_spell_generation",
-        RequiresRestart = true,
-    },
-    {
-        Name = gkbrkn_localization.option_extended_wand_generation,
-        PersistentFlag = "gkbrkn_extended_wand_generation",
-    },
-    {
-        Name = gkbrkn_localization.option_chaotic_wand_generation,
-        PersistentFlag = "gkbrkn_chaotic_wand_generation",
-    },
-    {
-        Name = gkbrkn_localization.option_no_pregen_wands,
-        PersistentFlag = "gkbrkn_no_pregen_wands",
-        RequiresRestart = true,
-    },
-    --{
-    --    Name = gkbrkn_localization.option_gold_decay,
-    --    PersistentFlag = "gkbrkn_gold_decay",
-    --},
-    {
-        Name = gkbrkn_localization.option_persistent_gold,
-        PersistentFlag = "gkbrkn_persistent_gold",
-    },
-    {
-        Name = gkbrkn_localization.option_target_dummy,
-        PersistentFlag = "gkbrkn_target_dummy",
-    },
-    {
-        Name = gkbrkn_localization.option_health_bars,
-        PersistentFlag = "gkbrkn_health_bars",
-    },
-    {
-        Name = gkbrkn_localization.option_show_fps,
-        PersistentFlag = "gkbrkn_show_fps",
-    },
-    {
-        Name = gkbrkn_localization.option_show_badges,
-        PersistentFlag = "gkbrkn_show_badges",
-        RequiresRestart = true,
-        EnabledByDefault = true,
-    },
-    {
-        Name = gkbrkn_localization.option_auto_hide,
-        PersistentFlag = "gkbrkn_auto_hide",
-    }
-}
-
-MISC = {
-    GoldPickupTracker = {
-        TrackDuration = 180, -- in game frames
-        ShowMessageEnabled = "gkbrkn_gold_tracking_message",
-        ShowTrackerEnabled = "gkbrkn_gold_tracking_in_world",
-    },
-    CharmNerf = {
-        Enabled = "gkbrkn_charm_nerf",
-    },
-    InvincibilityFrames = {
-        Duration = 40,
-        Enabled = "gkbrkn_invincibility_frames",
-        FlashEnabled = "gkbrkn_invincibility_frames_flashing",
-    },
-    HealOnMaxHealthUp = {
-        Enabled = "gkbrkn_max_health_heal",
-        FullHeal = "gkbrkn_max_health_heal_full",
-    },
-    LooseSpellGeneration = {
-        Enabled = "gkbrkn_loose_spell_generation",
-    },
-    LimitedAmmo = {
-        Enabled = "gkbrkn_limited_ammo",
-    },
-    UnlimitedAmmo = {
-        Enabled = "gkbrkn_unlimited_ammo",
-    },
-    DisableSpells = {
-        Enabled = "gkbrkn_disable_spells",
-    },
-    ChampionEnemies = {
-        Enabled = "gkbrkn_champion_enemies",
-        SuperChampionsEnabled = "gkbrkn_champion_enemies_super",
-        AlwaysChampionsEnabled = "gkbrkn_champion_enemies_always",
-        ChampionChance = 0.125,
-        ExtraTypeChance = 0.25,
-    },
-    QuickSwap = {
-        Enabled = "gkbrkn_quick_swap",
-    },
-    LessParticles = {
-        Enabled = "gkbrkn_less_particles",
-        DisableEnabled = "gkbrkn_less_particles_disable"
-    },
-    RandomStart = {
-        RandomWandEnabled = "gkbrkn_random_start_random_wand",
-        RandomHealthEnabled = "gkbrkn_random_start_random_health",
-        MinimumHP = 50,
-        MaximumHP = 150,
-        DefaultWandGenerationEnabled = "gkbrkn_random_start_default_wands",
-        RandomCapeColorEnabled = "gkbrkn_random_start_random_cape",
-        RandomFlaskEnabled = "gkbrkn_random_start_random_flask",
-        RandomPerkEnabled = "gkbrkn_random_start_random_perk",
-        RandomPerks = 1,
-    },
-    WandShopsOnly = {
-        Enabled = "gkbrkn_wand_shops_only",
-    },
-    ExtendedWandGeneration = {
-        Enabled = "gkbrkn_extended_wand_generation",
-    },
-    ChaoticWandGeneration = {
-        Enabled = "gkbrkn_chaotic_wand_generation",
-    },
-    ShowFPS = {
-        Enabled = "gkbrkn_show_fps",
-    },
-    HealthBars = {
-        Enabled = "gkbrkn_health_bars",
-    },
-    --GoldDecay = {
-    --    Enabled = "gkbrkn_gold_decay",
-    --},
-    PersistentGold = {
-        Enabled = "gkbrkn_persistent_gold",
-    },
-    PassiveRecharge = {
-        Enabled = "gkbrkn_passive_recharge",
-        Speed = 1
-    },
-    TargetDummy = {
-        Enabled = "gkbrkn_target_dummy",
-    },
-    Loadouts = {
-        Manage = "gkbrkn_loadouts_manage",
-        Enabled = "gkbrkn_loadouts_enabled",
-        CapeColorEnabled = "gkbrkn_loadouts_cape_color",
-        PlayerSpritesEnabled = "gkbrkn_loadouts_player_sprites",
-    },
-    HeroMode = {
-        Enabled = "gkbrkn_hero_mode",
-        OrbsIncreaseDifficultyEnabled = "gkbrkn_hero_mode_orb_scale",
-        DistanceDifficultyEnabled = "gkbrkn_hero_mode_distance_scale",
-    },
-    NoPregenWands = {
-        Enabled = "gkbrkn_no_pregen_wands",
-    },
-    Badges = {
-        Enabled = "gkbrkn_show_badges",
-    },
-    AutoHide = {
-        Enabled = "gkbrkn_auto_hide",
-    }
-}
-
-function trim(s)
-   local from = s:match"^%s*()"
-   return from > #s and "" or s:match(".*%S", from)
-end
-
-function register_loadout( id, name, author, cape_color, cape_color_edge, wands, potions, items, perks, actions, sprites, custom_message, callback )
-    local display_name = trim(string.gsub( name, "TYPE", "" ));
-    if author ~= nil then
-        display_name = display_name .. " ("..author..")";
     end
-    local content_id = register_content( CONTENT_TYPE.Loadout, id, display_name, {
-        name = name,
-        author = author,
-        cape_color = cape_color,
-        cape_color_edge = cape_color_edge,
-        wands = wands,
-        potions = potions,
-        items = items,
-        perks = perks,
-        actions = actions,
-        sprites = sprites,
-        custom_message = custom_message,
-        callback = callback,
-    } );
-    LOADOUTS[id] = content_id;
-end
-
-if SETTINGS.Debug then
-    -- Debug
-    register_loadout(
-        "gkbrkn_debug", -- unique identifier
-        gkbrkn_localization.loadout_debug, -- displayed loadout name
-        "goki",
-        nil, -- cape color (ABGR)
-        nil, -- cape edge color (ABGR)
-        { -- wands
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
-                    mana_max = {5000,5000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {},
-                actions = {
-                    { "GKBRKN_COPY_SPELL" },
-                    { "SCATTER_2" },
-                    { "SLOW_BULLET" },
-                    { "SLOW_BULLET" },
-                    { "SLOW_BULLET" },
-                    { "SLOW_BULLET" },
-                }
-            },
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
-                    mana_max = {5000,5000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {},
-                actions = {
-                    { "SCATTER_4" },
-                    { "DEATH_CROSS" },
-                    { "DEATH_CROSS" },
-                    { "DEATH_CROSS" },
-                    { "CHAINSAW" },
-                }
-            },
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {25,25}, -- capacity
-                    reload_time = {10,10}, -- recharge time in frames
-                    fire_rate_wait = {5,5}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {1000,1000}, -- mana charge speed
-                    mana_max = {5000,5000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {},
-                actions = {
-                    { "SPEED" },
-                    { "SPEED" },
-                    { "LIFETIME" },
-                    { "BLACK_HOLE" },
-                    { "BLACK_HOLE" },
-                    { "BLACK_HOLE" },
-                    { "BLACK_HOLE" },
-                }
-            },
-            {
-                name = "Debug Wand",
-                stats = {
-                    shuffle_deck_when_empty = 0, -- shuffle
-                    actions_per_round = 1, -- spells per cast
-                    speed_multiplier = 1 -- projectile speed multiplier (hidden)
-                },
-                stat_ranges = {
-                    deck_capacity = {15,15}, -- capacity
-                    reload_time = {40,40}, -- recharge time in frames
-                    fire_rate_wait = {20,20}, -- cast delay in frames
-                    spread_degrees = {0,0}, -- spread
-                    mana_charge_speed = {200,200}, -- mana charge speed
-                    mana_max = {1000,1000}, -- mana max
-                },
-                stat_randoms = {},
-                permanent_actions = {
-                },
-                actions = {
-                    { "GKBRKN_SPELL_MERGE" },
-                    { "SCATTER_4" },
-                    { "RUBBER_BALL" },
-                    { "LIGHT_BULLET" },
-                    { "CHAINSAW" },
-                    { "CHAINSAW" },
-                }
-            }
-        },
-        { -- potions
-            { { {"water", 1000} } }, -- a list of random choices of material amount pairs
-        },
-        { -- items
-        },
-        { -- perks
-        },
-        { -- actions
-            {"LIGHT_BULLET"},
-            {"GKBRKN_MAGIC_LIGHT"},
-            {"LIGHT_BULLET","HEAVY_BULLET","SLOW_BULLET"},
-            {"CHAINSAW"},
-            {"DIGGER"},
-            {"POWERDIGGER"},
-            {"GKBRKN_SPELL_MERGE"},
-            {"BURST_2"},
-            {"GKBRKN_GLITTERING_TRAIL"},
-            --[[
-            {"GKBRKN_ACTION_WIP"},
-            {"GKBRKN_MANA_EFFICIENCY"},
-            {"GKBRKN_SPELL_EFFICIENCY"},
-            {"GKBRKN_GOLDEN_BLESSING"},
-            {"GKBRKN_MAGIC_LIGHT"},
-            {"GKBRKN_REVELATION"},
-            {"GKBRKN_MICRO_SHIELD"},
-            {"GKBRKN_MODIFICATION_FIELD"},
-            {"GKBRKN_SPECTRAL_SHOT"},
-            {"GKBRKN_ARCANE_BUCKSHOT"},
-            {"GKBRKN_ARCANE_SHOT"},
-            {"GKBRKN_DOUBLE_CAST"},
-            {"GKBRKN_SPELL_MERGE"},
-            {"GKBRKN_EXTRA_PROJECTILE"},
-            {"GKBRKN_ORDER_DECK"},
-            {"GKBRKN_PERFECT_CRITICAL"},
-            {"GKBRKN_PROJECTILE_BURST"},
-            {"GKBRKN_TRIGGER_HIT"},
-            {"GKBRKN_TRIGGER_TIMER"},
-            {"GKBRKN_TRIGGER_DEATH"},
-            {"GKBRKN_DRAW_DECK"},
-            {"GKBRKN_PROJECTILE_GRAVITY_WELL"},
-            {"GKBRKN_DAMAGE_LIFETIME"},
-            {"GKBRKN_DAMAGE_BOUNCE"},
-            {"GKBRKN_PATH_CORRECTION"},
-            {"GKBRKN_COLLISION_DETECTION"},
-            {"GKBRKN_POWER_SHOT"},
-            {"GKBRKN_SHIMMERING_TREASURE"},
-            {"GKBRKN_NGON_SHAPE"},
-            {"GKBRKN_SHUFFLE_DECK"},
-            {"GKBRKN_BREAK_CAST"},
-            {"GKBRKN_PROJECTILE_ORBIT"},
-            {"GKBRKN_PASSIVE_RECHARGE"},
-            {"GKBRKN_MANA_RECHARGE"},
-            {"GKBRKN_SUPER_BOUNCE"},
-            {"GKBRKN_COPY_SPELL"},
-            {"GKBRKN_TIME_SPLIT"},
-            {"GKBRKN_FORMATION_STACK"},
-            {"GKBRKN_PIERCING_SHOT"},
-            {"GKBRKN_ACTION_WIP"},
-            ]]
-        },
-        nil, -- sprites
-        "", -- custom message
-        function( player )
-            local x, y = EntityGetTransform( player );
-            local target_dummy = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.xml", x - 80, y - 40 );
-            local effect = GetGameEffectLoadTo( player, "EDIT_WANDS_EVERYWHERE", true );
-            if effect ~= nil then ComponentSetValue( effect, "frames", "-1" ); end
-            local inventory2 = EntityGetFirstComponent( player, "Inventory2Component" );
-            if inventory2 ~= nil then
-                ComponentSetValue( inventory2, "full_inventory_slots_y", 5 );
-            end
-            --EntityAddComponent( player, "LuaComponent", {
-            --    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/regen.lua"
-            --});
+    for _,content_type in pairs( content_types ) do
+        if #(disable_strings[ content_type.id ] or "") > 0 then
+            local disable_filepath = "mods/gkbrkn_noita/files/gkbrkn/scratch/disable_"..content_type.id..".lua"
+            ModTextFileSetContent( disable_filepath, disable_strings[ content_type.id ] )
+            ModLuaFileAppend( content_type.content_filepath, disable_filepath )
         end
-
-    );
+    end
+    print("[goki's things] disable content complete" )
 end
+
+GKBRKN_CONFIG = {
+    SETTINGS = SETTINGS,
+    CONTENT_ACTIVATION_TYPE = CONTENT_ACTIVATION_TYPE,
+    CONTENT = CONTENT,
+    OPTIONS = OPTIONS,
+    get_content = get_content,
+    get_content_flag = get_content_flag,
+    parse_content = parse_content,
+    cache_content = cache_content,
+    disable_content = disable_content,
+    register_option = register_option,
+    register_option_localized = register_option_localized,
+    register_boolean_option_localized = register_boolean_option_localized,
+    register_range_option_localized = register_range_option_localized,
+    register_input_option_localized = register_input_option_localized,
+    register_button_option_localized = register_button_option_localized,
+    register_option_tab = register_option_tab,
+    register_option_tab_localized = register_option_tab_localized,
+    register_option_group = register_option_group,
+    register_option_group_localized = register_option_group_localized,
+}

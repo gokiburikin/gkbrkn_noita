@@ -1,0 +1,80 @@
+<Entity name="$projectile_default" tags="teleportable_NOT,gkbrkn_trigger_take_damage_projectile">
+  <VelocityComponent
+    gravity_x="0"
+    gravity_y="0"
+    mass="0"
+    air_friction="0"
+    apply_terminal_velocity="0"
+    updates_velocity="0"
+    displace_liquid="0"
+    liquid_death_threshold="0"
+    liquid_drag="0"
+  />
+
+  <ParticleEmitterComponent 
+		emitted_material_name="spark_red"
+    area_circle_sector_degrees="360"
+		gravity.y="0.0"
+		lifetime_min="0.1"
+		lifetime_max="0.3"
+		count_min="2"
+		count_max="6"
+		render_on_grid="1"
+		fade_based_on_lifetime="0"
+		area_circle_radius.min="0"
+		area_circle_radius.max="0"
+		cosmetic_force_create="0"
+    x_vel_min="-8"
+    x_vel_max="8"
+    y_vel_min="-8"
+    y_vel_max="8"
+		airflow_force="0.3"
+		airflow_time="0.01"
+		airflow_scale="0.05"
+		emission_interval_min_frames="1"
+		emission_interval_max_frames="1"
+		emit_cosmetic_particles="1"
+		is_emitting="1" >
+	</ParticleEmitterComponent>
+
+  <ProjectileComponent 
+    _enabled="1" 
+    lob_min="0.8"
+    lob_max="1.0"
+    speed_min="10"
+    speed_max="10"
+    friction="0"
+    direction_random_rad="0"
+    on_death_explode="0"
+    on_death_gfx_leave_sprite="0" 
+    on_lifetime_out_explode="0"
+    explosion_dont_damage_shooter="1" 
+    on_collision_die="0"
+    collide_with_world="0"
+    lifetime="-1"
+    damage="0"
+    knockback_force="0"
+    velocity_sets_scale="0"
+    lifetime_randomness="0"
+	  velocity_sets_rotation="0"
+    ragdoll_force_multiplier="0"
+    hit_particle_force_multiplier="0"
+    camera_shake_when_shot="0.4"
+    muzzle_flash_file="data/entities/particles/muzzle_flashes/muzzle_flash_magic_launcher_blue.xml"
+	  knockback_force="0"
+    damage_every_x_frames="-1"
+		never_hit_player="1"
+	  physics_impulse_coeff="0"
+    collide_with_tag="">
+    <config_explosion
+      damage="0.0"
+      explosion_radius="0"/>
+  </ProjectileComponent>
+
+  <LifetimeComponent lifetime="-1"/>
+  <LuaComponent execute_every_n_frame="1" remove_after_executed="1"
+  script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/trigger_take_damage/projectile_init.lua"/>
+  <LuaComponent
+  execute_every_n_frame="1"
+  script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/trigger_take_damage/projectile_update.lua"/>
+</Entity>

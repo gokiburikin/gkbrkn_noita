@@ -1,0 +1,17 @@
+<Entity>
+    <InheritTransformComponent
+        _tags="enabled_in_world,enabled_in_hand"
+        only_position="1"
+    >
+    </InheritTransformComponent>
+    <LightComponent
+        update_properties="1"
+        radius="32"
+        r="1"
+        g="0"
+        b="0"
+        offset_x="0"
+        offset_y="0"
+    >
+    </LightComponent>
+</Entity>

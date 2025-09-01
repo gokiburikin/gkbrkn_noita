@@ -1,0 +1,6 @@
+<Entity >
+    <LuaComponent 
+		remove_after_executed="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/sticky_shot/projectile_init.lua" >
+	</LuaComponent>
+</Entity>

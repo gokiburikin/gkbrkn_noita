@@ -1,0 +1,27 @@
+<Materials>
+<CellData name="gkbrkn_edit_wands"
+	ui_name="$material_name_gkbrkn_edit_wands"
+	tags="[liquid],[water],[magic_liquid]"
+	burnable="0"
+	density="4.921"
+	cell_type="liquid"
+	wang_color="CEDEFEEE"
+	generates_smoke="0"
+	liquid_gravity="0.8"
+	liquid_sand="0"
+	gfx_glow="130"
+	on_fire="0"
+	requires_oxygen="0"
+	liquid_stains="0"
+	audio_materialaudio_type="MAGICAL" 
+	show_in_creative_mode="1"
+	ignore_self_reaction_warning="1"
+>
+<StatusEffects>
+	<Ingestion><StatusEffect type="GKBRKN_EDIT_WANDS" amount="0.1"/></Ingestion>
+</StatusEffects>
+</CellData>
+
+<Reaction probability="10" fast_reaction="1" input_cell1="gkbrkn_edit_wands" input_cell2="air" output_cell1="air" output_cell2="air"/>
+<Reaction probability="10" fast_reaction="1" input_cell1="gkbrkn_edit_wands" input_cell2="[any_liquid]" output_cell1="air" output_cell2="air"/>
+</Materials>

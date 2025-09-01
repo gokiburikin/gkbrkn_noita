@@ -1,0 +1,6 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" )
+local entity = GetUpdatedEntityID()
+EntityAddTag( entity, "projectile_player" )
+
+-- TODO move to player_shot

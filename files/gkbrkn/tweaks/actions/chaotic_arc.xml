@@ -1,0 +1,9 @@
+<Entity >
+   
+	<LuaComponent
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/tweaks/actions/chaotic_arc.lua"
+		execute_every_n_frame="2"
+		>
+	</LuaComponent>
+  
+</Entity>

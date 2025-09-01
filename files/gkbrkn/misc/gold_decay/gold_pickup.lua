@@ -1,3 +1,4 @@
-function item_pickup( entity_item, entity_pickupper, item_name )
-    EntityRemoveComponent( entity_item, EntityGetFirstComponent( entity_item, "LuaComponent", "gkbrkn_gold_decay"));
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/vartags.lua")
+function item_pickup()
+    EntityRemoveVarTag( GetUpdatedEntityID(), "gkbrkn_gold_decay" )
 end 

@@ -1,0 +1,6 @@
+<Entity tags="gkbrkn_trigger_bounce" name="trigger bounce entity" >
+	<_Transform rotation="0" scale.x="1" scale.y="1" ></_Transform>
+	<VelocityComponent updates_velocity="1"></VelocityComponent>
+	<HitboxComponent aabb_max_x="10" aabb_max_y="10" aabb_min_x="-10" aabb_min_y="-10"> </HitboxComponent>
+	<InheritTransformComponent _tags="enabled_in_world" ></InheritTransformComponent>
+</Entity>

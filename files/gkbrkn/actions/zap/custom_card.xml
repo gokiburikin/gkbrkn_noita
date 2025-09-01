@@ -1,0 +1,31 @@
+<Entity tags="card_action">
+    <Base file="data/entities/base_custom_card.xml" > 
+		<SpriteComponent 
+			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/zap/icon.png" 
+			>
+		</SpriteComponent>
+		
+		<ItemActionComponent 
+			_tags="enabled_in_world"
+			action_id="GKBRKN_ZAP" >
+		</ItemActionComponent>
+	</Base>
+
+    <InheritTransformComponent
+		_tags="enabled_in_world,enabled_in_hand" >
+	</InheritTransformComponent>
+
+    <LightComponent 
+    	_tags="enabled_in_hand,item_identified"
+        _enabled="1" 
+        radius="40"
+        fade_out_time="1.5" 
+    	r="0"
+    	g="255"
+    	b="255" >
+	</LightComponent>
+
+	<Base file="data/entities/particles/water_electrocution.xml">
+	</Base>
+
+</Entity>

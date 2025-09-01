@@ -9,14 +9,12 @@
 	</InheritTransformComponent>
 
     <EnergyShieldComponent 
-        _tags="enabled_in_hand,item_identified__LEGACY"
         recharge_speed="1.00"
         energy_required_to_shield="0.0"
 		radius="8.0" >
     </EnergyShieldComponent>
 
     <ParticleEmitterComponent
-		_tags="character,enabled_in_hand,item_identified__LEGACY"
 		emitted_material_name="plasma_fading"
 		gravity.y="0.0"
 		lifetime_min="0.1"
@@ -37,7 +35,7 @@
 	</ParticleEmitterComponent>
 
 	<ParticleEmitterComponent
-		_tags="character,enabled_in_hand,item_identified__LEGACY,shield_ring"
+		_tags="shield_ring"
 		emitted_material_name="plasma_fading"
 		gravity.y="0.0"
 		lifetime_min="0.02"
@@ -59,7 +57,7 @@
 	</ParticleEmitterComponent>
 
 	<ParticleEmitterComponent
-		_tags="character,enabled_in_hand,item_identified__LEGACY,shield_hit"
+		_tags="shield_hit"
 		emitted_material_name="plasma_fading"
 		gravity.y="0.0"
 		lifetime_min="0.3"

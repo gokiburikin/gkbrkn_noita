@@ -1,0 +1,1 @@
+for _,action in pairs(actions) do action.never_unlimited = false end

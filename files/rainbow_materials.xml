@@ -1,0 +1,154 @@
+<Materials> 
+    <CellData 
+        name="gkbrkn_red"
+        ui_name="Rainbow Red"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510001"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FFDD0000">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_orange"
+        ui_name="Rainbow Orange"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510002"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FFFE6230">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_yellow"
+        ui_name="Rainbow Yellow"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510003"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FFFEF600">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_green"
+        ui_name="Rainbow Green"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510004"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FF00BB00">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_blue"
+        ui_name="Rainbow Blue"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510005"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FF009BFE">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_indigo"
+        ui_name="Rainbow Indigo"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510006"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FF000083">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_violet"
+        ui_name="Rainbow Violet"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510007"
+        generates_smoke="0"
+        liquid_gravity="0"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FF30009B">
+        </Graphics>
+    </CellData>
+    <CellData 
+        name="gkbrkn_liliumpurple"
+        ui_name="Liliumpurple"
+        tags="[sand_other]"
+        burnable="0"
+        density="1"
+        cell_type="liquid"
+        wang_color="60510008"
+        generates_smoke="0"
+        liquid_gravity="0.5"
+        liquid_sand="0"
+        on_fire="0"
+        requires_oxygen="0"
+        temperature_of_fire="0"
+        gfx_glow="0" >
+        <Graphics
+            color="FFBFABEC">
+        </Graphics>
+    </CellData>
+</Materials>

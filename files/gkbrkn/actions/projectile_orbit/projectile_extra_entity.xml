@@ -1,8 +1,7 @@
 <Entity>
-	<LuaComponent 
-        execute_on_added="1"
-        remove_after_executed="1"
-		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/projectile_orbit/projectile_init.lua"
-        >
-	</LuaComponent>
+<LuaComponent
+    execute_on_added="1"
+    remove_after_executed="1"
+    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/projectile_capture_tag.lua"/>
+<VariableStorageComponent name="gkbrkn_projectile_orbit"/>
 </Entity>

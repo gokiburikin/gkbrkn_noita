@@ -1,0 +1,8 @@
+<Entity >
+	<LuaComponent 
+	execute_on_added="1"
+	script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/proximity_field/projectile_init.lua" />
+	<LuaComponent 
+	execute_every_n_frame="1"
+	script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/proximity_field/projectile_update.lua" />
+</Entity>

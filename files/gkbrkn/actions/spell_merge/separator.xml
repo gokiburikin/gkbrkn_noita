@@ -1,0 +1,4 @@
+<Entity>
+<VariableStorageComponent name="gkbrkn_spell_merge_separator"/>
+<Base file="mods/gkbrkn_noita/files/gkbrkn/actions/separator.xml"/>
+</Entity>

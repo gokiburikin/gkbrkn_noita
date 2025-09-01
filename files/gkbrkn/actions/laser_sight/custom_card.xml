@@ -1,0 +1,24 @@
+<Entity tags="card_action">
+<VariableStorageComponent name="gkbrkn_laser_sight"/>
+<Base file="data/entities/base_custom_card.xml">
+	<SpriteComponent image_file="mods/gkbrkn_noita/files/gkbrkn/actions/laser_sight/icon.png"/>
+	<ItemActionComponent 
+	_tags="enabled_in_world"
+	action_id="GKBRKN_LASER_SIGHT"/>
+</Base>
+<InheritTransformComponent _tags="enabled_in_hand" parent_hotspot_tag="shoot_pos"/>
+<ShotEffectComponent extra_modifier="gkbrkn_laser_sight"/>
+<LaserEmitterComponent _tags="enabled_in_hand">
+	<laser
+	damage_to_entities="0"
+	damage_to_cells="0"
+	max_length="312"
+	beam_radius="0.5"
+	max_cell_durability_to_destroy="0"
+	audio_enabled="0"
+	hit_particle_chance="0"
+	beam_particle_chance="50"
+	beam_particle_type="spark"
+	/>
+</LaserEmitterComponent>
+</Entity>

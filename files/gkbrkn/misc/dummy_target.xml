@@ -1,53 +1,141 @@
-<Entity  tags="prop,hittable,mortal,homing_target" >
-	<VelocityComponent />
+<Entity tags="prop,hittable,mortal,homing_target,enemy,touchmagic_immunity,teleportable_NOT,polymorphable_NOT,gkbrkn_target_dummy" >
+<VariableStorageComponent name="gkbrkn_no_health_bar"/>
+<VariableStorageComponent name="gkbrkn_no_custom_damage_numbers"/>
+<VariableStorageComponent name="gkbrkn_no_champion"/>
+	<VelocityComponent gravity_y="0"/>
     <SimplePhysicsComponent/>
-
 	<SpriteComponent 
 		z_index="1"
-		image_file="data/props_gfx/dummy_target.xml" 
-		offset_x="0"
-		offset_y="0" >
-	</SpriteComponent>
-	
-	<DamageModelComponent 
-        air_needed="0" 
-        blood_material="sand" 
-        drop_items_on_death="0" 
-        falling_damages="0" 
-        fire_damage_amount="0" 
-        fire_probability_of_ignition="0"
-        hp="100000" 
-        blood_multiplier="0"
-        is_on_fire="0" 
-        materials_create_messages="0" 
-        materials_damage="0" 
-        ragdoll_filenames_file="" 
-        ragdoll_material="" >
-        <damage_multipliers
-            ice="1"
-            electricity="1"
-            radioactive="1"
-            slice="1"
-            projectile="1"
-            healing="1"
-            physics_hit="1"
-            explosion="1"
-            poison="1"
-            melee="1"
-            drill="1"
-            fire="1" >
-        </damage_multipliers>
-    </DamageModelComponent>
+		image_file="mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target_sprite.xml"/>
+	<SpriteOffsetAnimatorComponent
+        _tags="enabled_in_world"
+        y_amount="2"
+        y_speed="2.5"
+        sprite_id="0"/>
+	<AnimalAIComponent 
+        attack_melee_enabled="0"
+        needs_food="0"
+        sense_creatures="0"
+        can_fly="0"
+        can_walk="0"/>
 
-    <HitboxComponent
+	<DamageModelComponent
+		wait_for_kill_flag_on_death="1" 
+		air_in_lungs="1"
+		air_in_lungs_max="1" 
+		air_lack_of_damage="1" 
+		air_needed="1" 
+		falling_damage_damage_max="1.2" 
+		falling_damage_damage_min="0.1" 
+		falling_damage_height_max="250" 
+		falling_damage_height_min="70" 
+		falling_damages="0" 
+		fire_damage_amount="1.0" 
+		fire_probability_of_ignition="1.0" 
+		hp="1" 
+		is_on_fire="0" 
+		materials_damage="1" 
+		materials_that_damage="acid,lava,poison,blood_cold,blood_cold_vapour,radioactive_gas,radioactive_gas_static,rock_static_radioactive,rock_static_poison,ice_radioactive_static,ice_radioactive_glass,ice_acid_static,ice_acid_glass,rock_static_cursed" 
+		materials_how_much_damage="0.004,0.004,0.001,0.0008,0.0007,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.005"
+		ragdoll_filenames_file="data/ragdolls/player/filenames.txt"
+		ragdoll_material="meat"
+        blood_multiplier="0"
+		physics_objects_damage="1"
+		ragdoll_offset_y="-6" >
+        <damage_multipliers
+            ice="1.00"
+            electricity="1.00"
+            slice="1.00"
+            projectile="1.00"
+            healing="1.00"
+            physics_hit="1.00"
+            explosion="1.00"
+            melee="1.00"
+            drill="1.00"
+            fire="1.00"
+        >
+        </damage_multipliers>
+	</DamageModelComponent>
+    
+	<HitboxComponent
 		aabb_min_x="-8.5"
 		aabb_max_x="8.5"
-		aabb_min_y="-22"
-		aabb_max_y="0"
-	>
-	</HitboxComponent>
-    <LuaComponent
-        script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dps_tracker.lua"
-    >
-    </LuaComponent>
+		aabb_min_y="-10"
+		aabb_max_y="10"/>
+    <LuaComponent 
+	execute_every_n_frame="1"
+	script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.lua"
+	script_damage_received="mods/gkbrkn_noita/files/gkbrkn/misc/dummy_target.lua"/>
+    <LuaComponent script_death="mods/gkbrkn_noita/files/gkbrkn/misc/respawn_dummy.lua"/>
+	
+	<GenomeDataComponent 
+		herd_id="orcs"
+		food_chain_rank="9"
+		is_predator="1"/>
+    <SpriteAnimatorComponent/>
+	<StatusEffectDataComponent/>
+	<SpriteComponent 
+		_tags="enabled_in_world,gkbrkn_dps_total,ui,no_hitbox"
+		image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_damage.xml"
+		emissive="1"
+		is_text_sprite="1"
+		offset_x="0"
+		offset_y="0"
+		update_transform="1" 
+		update_transform_rotation="0"
+		text=""
+		has_special_scale="1"
+		special_scale_x="0.6667"
+		special_scale_y="0.6667"
+		z_index="-9000"
+		never_ragdollify_on_death="1"
+	/>
+	<SpriteComponent 
+		_tags="enabled_in_world,gkbrkn_dps_current,ui,no_hitbox"
+		image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers.xml"
+		emissive="1"
+		is_text_sprite="1"
+		offset_x="0"
+		offset_y="0"
+		update_transform="1" 
+		update_transform_rotation="0"
+		text=""
+		has_special_scale="1"
+		special_scale_x="0.6667"
+		special_scale_y="0.6667"
+		z_index="-9000"
+		never_ragdollify_on_death="1"
+	/>
+	<SpriteComponent 
+		_tags="enabled_in_world,gkbrkn_dps_highest,ui,no_hitbox"
+		image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_grey.xml"
+		emissive="1"
+		is_text_sprite="1"
+		offset_x="0"
+		offset_y="0"
+		update_transform="1" 
+		update_transform_rotation="0"
+		text=""
+		has_special_scale="1"
+		special_scale_x="0.6667"
+		special_scale_y="0.6667"
+		z_index="-9000"
+		never_ragdollify_on_death="1"
+	/>
+	<SpriteComponent 
+		_tags="enabled_in_world,gkbrkn_dps_true,ui,no_hitbox"
+		image_file="mods/gkbrkn_noita/files/gkbrkn/font/font_small_numbers_true_damage.xml"
+		emissive="1"
+		is_text_sprite="1"
+		offset_x="0"
+		offset_y="0"
+		update_transform="1" 
+		update_transform_rotation="0"
+		text=""
+		has_special_scale="1"
+		special_scale_x="0.6667"
+		special_scale_y="0.6667"
+		z_index="-9000"
+		never_ragdollify_on_death="1"
+	/>
 </Entity>

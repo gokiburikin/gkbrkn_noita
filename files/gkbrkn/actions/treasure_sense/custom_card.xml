@@ -1,0 +1,24 @@
+<Entity tags="card_action">
+    <Base file="data/entities/base_custom_card.xml" > 
+		<SpriteComponent 
+			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/treasure_sense/icon.png" 
+			>
+		</SpriteComponent>
+		
+		<ItemActionComponent 
+			_tags="enabled_in_world"
+			action_id="GKBRKN_TREASURE_SENSE" >
+		</ItemActionComponent>
+	</Base>
+
+    <InheritTransformComponent
+		_tags="enabled_in_world,enabled_in_hand" >
+	</InheritTransformComponent>
+
+	<LuaComponent
+	    _tags="enabled_in_hand"
+	    execute_every_n_frame="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/treasure_sense/action_update.lua"
+		>
+	</LuaComponent>
+</Entity>

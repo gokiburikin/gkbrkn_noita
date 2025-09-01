@@ -1,0 +1,598 @@
+dofile_once( "data/scripts/lib/utilities.lua" )
+dofile_once( "data/scripts/gun/procedural/gun_procedural.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/helper.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/flags.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua" )
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/wands.lua" )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_DEMOLITIONIST", "demolitionist", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_demolitionist_bonus", 0.0, function(value) return tonumber( value ) + 2 end )
+	end
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_DIPLOMATIC_IMMUNITY", "diplomatic_immunity", false, function( entity_perk_item, entity_who_picked, item_name )
+        GameAddFlagRun( FLAGS.DiplomaticImmunity )
+        for _,e in pairs(EntityGetWithTag("workshop_exit")) do
+            EntityKill(e)
+        end
+	end, nil, nil, false
+) )
+
+function does_wand_have_an_always_cast( wand )
+    local children = EntityGetAllChildren( wand ) or {}
+    for _,action in pairs( children ) do
+        local item_component = EntityGetFirstComponentIncludingDisabled( action, "ItemComponent" )
+        if item_component ~= nil then
+            if ComponentGetValue2( item_component, "permanently_attached" ) == true then
+                return true
+            end
+        end
+    end
+end
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_EXTRA_PROJECTILE", "extra_projectile", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_extra_projectiles", 0.0, function( value ) return value + 1 end )
+	end, true
+) )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_FRAGILE_EGO", "fragile_ego", true, function( entity_perk_item, entity_who_picked, item_name )
+        TryAdjustDamageMultipliers( entity_who_picked, {
+            ice = 0.25,
+            electricity = 0.25,
+            radioactive = 0.25,
+            slice = 0.25,
+            projectile = 0.25,
+            healing = 0.25,
+            physics_hit = 0.25,
+            explosion = 0.25,
+            poison = 0.25,
+            melee = 0.25,
+            drill = 0.25,
+            fire = 0.25,
+        })
+        EntityAddComponent( entity_who_picked, "LuaComponent",{
+            script_damage_received="mods/gkbrkn_noita/files/gkbrkn/perks/fragile_ego/damage_received.lua",
+            execute_every_n_frame="-1"
+        })
+	end, nil, nil, false
+))
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_GOLDEN_BLOOD", "golden_blood", true, function( entity_perk_item, entity_who_picked, item_name )
+        local damagemodels = EntityGetComponent( entity_who_picked, "DamageModelComponent" )
+        if damagemodels ~= nil then
+            for i,damagemodel in ipairs( damagemodels ) do
+                ComponentSetValue2( damagemodel, "blood_material", "gold" )
+                ComponentSetValue2( damagemodel, "blood_spray_material", "gold" )
+                ComponentSetValue2( damagemodel, "blood_multiplier", 0.2 )
+                ComponentSetValue2( damagemodel, "blood_sprite_directional", "data/particles/bloodsplatters/bloodsplatter_directional_yellow_$[1-3].xml" )
+                ComponentSetValue2( damagemodel, "blood_sprite_large", "data/particles/bloodsplatters/bloodsplatter_yellow_$[1-3].xml" )
+            end
+        end
+	end, true
+))
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_HEALTHIER_HEART", "healthier_heart", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_max_health_recovery", 0.0, function( value ) return value + 1.0 end )
+	end
+))
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_HYPER_CASTING", "hyper_casting", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_hyper_casting", 0, function( value ) return tonumber( value ) + 1 end )
+	end, nil, nil, false
+))
+
+table.insert( perk_list,
+    -- TODO this can be made into an enemy usable perk
+    generate_perk_entry( "GKBRKN_INVINCIBILITY_FRAMES", "invincibility_frames", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_invincibility_frames", 0.0, function( value ) return value + 20.0 end )
+	end
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_KNOCKBACK_IMMUNITY", "knockback_immunity", true, function( entity_perk_item, entity_who_picked, item_name )
+        local components = EntityGetComponent( entity_who_picked, "DamageModelComponent" )
+        if components ~= nil then
+            for i,dataComponent in pairs( components ) do
+                ComponentSetValue2( dataComponent, "minimum_knockback_force", 100000 )
+            end
+        end
+	end, true, nil, false
+))
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_LEAD_BOOTS", "lead_boots", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_lead_boots", 1 )
+	end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_BARRAGE", "barrage", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_barrage", 1 )
+	end, nil, nil, false
+) )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_LIVING_WAND", "living_wand", false, function( entity_perk_item, entity_who_picked, item_name )
+        local x, y = EntityGetTransform( entity_who_picked )
+        local chosen_wand = nil
+        
+        local wands = {}
+        local children = EntityGetAllChildren( entity_who_picked )
+		for key, child in pairs(children) do
+			if EntityGetName( child ) == "inventory_quick" then
+                wands = EntityGetChildrenWithTag( child, "wand" )
+                break
+			end
+        end
+
+        local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" )
+        if #wands > 0 then
+            local active_item = ComponentGetValue2( inventory2, "mActiveItem" )
+            for _,wand in pairs( wands ) do
+                if wand == active_item then
+                    chosen_wand = wand
+                    break
+                end
+            end
+        end
+
+        if not chosen_wand then
+            SetRandomSeed( x, y )
+            chosen_wand = random_from_array( wands )
+        end
+
+        if chosen_wand then
+            EntityRemoveFromParent( chosen_wand )
+            EntitySetTransform( chosen_wand, x, y )
+            
+            EntitySetComponentsWithTagEnabled( chosen_wand, "enabled_in_world", false )
+            EntitySetComponentsWithTagEnabled( chosen_wand, "enabled_in_hand", true )
+            EntitySetComponentsWithTagEnabled( chosen_wand, "enabled_in_inventory", true )
+            
+            EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/living_wand/ghost.xml", x, y )
+        end
+	end, nil, nil, false
+) )
+
+local tracker_variable = "gkbrkn_lost_treasure_tracker"
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_LOST_TREASURE", "lost_treasure", false, function( entity_perk_item, entity_who_picked, item_name )
+        local x, y = EntityGetTransform( entity_who_picked )
+        local tracker = EntityGetFirstComponent( entity_who_picked, "VariableStorageComponent", tracker_variable )
+        if tracker ~= nil then
+            local spawner = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/lost_treasure/spawner.xml", 0, 0 )
+            local current_lost_treasure_count = tonumber(ComponentGetValue2( tracker, "value_string" ))
+            EntityAddComponent( spawner, "VariableStorageComponent", {
+                _tags=tracker_variable,
+                name=tracker_variable,
+                value_string=tostring(current_lost_treasure_count)
+            })
+            ComponentSetValue2( tracker, "value_string", "0" )
+            EntityAddChild( entity_who_picked, spawner )
+        end
+	end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MAGIC_LIGHT", "magic_light", false, function( entity_perk_item, entity_who_picked, item_name )
+        local magic_light = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/magic_light/magic_light.xml" )
+        EntityAddChild( entity_who_picked, magic_light )
+	end, true
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MANA_EFFICIENCY", "mana_efficiency", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAddComponent( entity_who_picked, "ShotEffectComponent", { extra_modifier = "gkbrkn_mana_efficiency", } )
+	end, true
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MANA_MASTERY", "mana_mastery", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_mana_mastery", 0.0, function( value ) return value + 1.0 end )
+	end, true, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MANA_RECOVERY", "mana_recovery", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_mana_recovery", 0.0, function( value ) return value + 1.6666667 end )
+	end
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MEGACAST", "megacast", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_draw_remaining", 1 )
+	end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_DISINTEGRATE_CORPSES", "disintegrate_corpses", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_disintegrate_corpses", 1 )
+	end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MULTICAST", "multicast", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_draw_actions_bonus", 0, function(value) return tonumber( value ) + 2 end )
+	end, true
+) )
+
+table.insert( perk_list,
+    -- TODO this can be made to support enemies
+    generate_perk_entry( "GKBRKN_PROTAGONIST", "protagonist", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_low_health_damage_bonus", 0.0, function( value ) return value + 2.00 end )
+	end
+) )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_QUEUE_CASTING", "queue_casting", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_force_trigger_death", 1 )
+	end, true
+))
+
+table.insert( perk_list,
+    -- TODO this can be made to support enemies
+    generate_perk_entry( "GKBRKN_RAPID_FIRE", "rapid_fire", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_rapid_fire", 0.0, function( value ) return value + 1 end )
+	end
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_RESILIENCE", "resilience", true, function( entity_perk_item, entity_who_picked, item_name )
+        TryAdjustDamageMultipliers( entity_who_picked, {
+            fire=0.5,
+            radioactive=0.5,
+            poison=0.5,
+            electricity=0.5,
+        } )
+	end, nil, nil, true, true
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_SHORT_TEMPER", "short_temper", true, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAddComponent( entity_who_picked, "LuaComponent", {
+            script_damage_received="mods/gkbrkn_noita/files/gkbrkn/perks/short_temper/damage_received.lua"
+        })
+    end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_MAGIC_FOCUS", "magic_focus", true, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_magic_focus_stacks", 0.0, function( value ) return value + 1 end )
+    end, true
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_SPELL_EFFICIENCY", "spell_efficiency", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAddComponent( entity_who_picked, "ShotEffectComponent", { extra_modifier = "gkbrkn_spell_efficiency", } )
+	end, true
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_SWAPPER", "swapper", true, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAddComponent( entity_who_picked, "LuaComponent", {
+            script_damage_received="mods/gkbrkn_noita/files/gkbrkn/perks/swapper/damage_received.lua"
+        })
+	end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_THRIFTY_SHOPPER", "thrifty_shopper", false, function( entity_perk_item, entity_who_picked, item_name )
+        GlobalsSetValue( "TEMPLE_SHOP_ITEM_COUNT", tostring( tonumber( GlobalsGetValue( "TEMPLE_SHOP_ITEM_COUNT", "5" ) ) + 2 ) )
+	end, true
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_TREASURE_RADAR", "treasure_radar", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAddComponent( entity_who_picked, "LuaComponent", 
+        { 
+            script_source_file = "mods/gkbrkn_noita/files/gkbrkn/perks/treasure_radar/update.lua",
+            execute_every_n_frame = "1",
+        } )
+	end, true, nil, false
+) )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_PROMOTE_SPELL", "promote_spell", false, function( entity_perk_item, entity_who_picked, item_name )
+        local base_wand = nil
+        local wands = {}
+        local children = EntityGetAllChildren( entity_who_picked )
+        for key,child in pairs( children ) do
+            if EntityGetName( child ) == "inventory_quick" then
+                wands = EntityGetChildrenWithTag( child, "wand" )
+                break
+            end
+        end
+        if #wands > 0 then
+            local filtered_wands = {}
+            for _,wand in pairs( wands ) do
+                if wand_is_always_cast_valid( wand ) then
+                    table.insert( filtered_wands, wand )
+                end
+            end
+            if #filtered_wands > 0 then
+                wands = filtered_wands
+                local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" )
+                local active_item = ComponentGetValue2( inventory2, "mActiveItem" )
+                for _,wand in pairs( wands ) do
+                    if wand == active_item then
+                        base_wand = wand
+                        break
+                    end
+                end
+                if base_wand == nil then
+                    base_wand =  random_from_array( wands )
+                end
+            end
+        end
+        if base_wand ~= nil then
+            local children = EntityGetAllChildren( base_wand )
+            local ability_component = WandGetAbilityComponent( base_wand )
+                if ability_component ~= nil then
+                local deck_capacity = ComponentObjectGetValue2( ability_component, "gun_config", "deck_capacity" )
+                ComponentObjectSetValue2( ability_component, "gun_config", "deck_capacity", deck_capacity + 1 )
+            end
+
+            local actions = {}
+            for i,v in ipairs( children ) do
+            local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" ) or {}
+                for _,item in pairs(items) do
+                    if ComponentGetValue2( item, "permanently_attached" ) == false then
+                        table.insert( actions, item )
+                    end
+                end
+            end
+            if #actions > 0 then
+                local to_attach = random_from_array( actions )
+                if to_attach ~= nil then
+                    ComponentSetValue2( to_attach, "permanently_attached", true )
+                end
+            end
+        end
+	end
+))
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_DISENCHANT_SPELL", "disenchant_spell", false, function( entity_perk_item, entity_who_picked, item_name )
+        local base_wand = nil
+        local wands = {}
+        local children = EntityGetAllChildren( entity_who_picked )
+        for key,child in pairs( children ) do
+            if EntityGetName( child ) == "inventory_quick" then
+                wands = EntityGetChildrenWithTag( child, "wand" )
+                break
+            end
+        end
+        if #wands > 0 then
+            local filtered_wands = {}
+            for _,wand in pairs(wands) do
+                if does_wand_have_an_always_cast( wand ) then
+                    table.insert( filtered_wands, wand )
+                end
+            end
+            if #filtered_wands > 0 then
+                wands = filtered_wands
+                local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" )
+                local active_item = ComponentGetValue2( inventory2, "mActiveItem" )
+                for _,wand in pairs( wands ) do
+                    if wand == active_item then
+                        base_wand = wand
+                        break
+                    end
+                end
+                if base_wand == nil then
+                    base_wand =  random_from_array( wands )
+                end
+            end
+        end
+        if base_wand ~= nil then
+            local children = EntityGetAllChildren( base_wand )
+            --[[ TODO this is probably fine to not run since the slot should exist already
+            local ability_component = WandGetAbilityComponent( base_wand )
+                if ability_component ~= nil then
+                local deck_capacity = ComponentObjectGetValue2( ability_component, "gun_config", "deck_capacity" )
+                ComponentObjectSetValue2( ability_component, "gun_config", "deck_capacity", deck_capacity - 1 )
+            end
+            ]]
+
+            local actions = {}
+            for i,v in ipairs( children ) do
+                local items = EntityGetComponentIncludingDisabled( v, "ItemComponent" )
+                for _,item in pairs( items or {}) do
+                    if ComponentGetValue2( item, "permanently_attached" ) == true then
+                        table.insert( actions, item )
+                    end
+                end
+            end
+            if #actions > 0 then
+                local to_attach = random_from_array( actions )
+                if to_attach ~= nil then
+                    ComponentSetValue2( to_attach, "permanently_attached", false )
+                end
+            end
+        end
+	end
+))
+
+--function generate_perk_entry( perk_id, key, usable_by_enemies, pickup_function, deprecated, author, stackable, stackable_is_rare, stackable_maximum, max_in_perk_pool )
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_WANDSMITH", "wandsmith", false, function( entity_perk_item, entity_who_picked, item_name )
+        EntityAdjustVariableNumber( entity_who_picked, "gkbrkn_wandsmith_stacks", 0.0, function( value ) return value + 1 end )
+	end, nil, nil, false
+) )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_MERGE_WANDS", "merge_wands", false, function( entity_perk_item, entity_who_picked, item_name )
+        local x, y = EntityGetTransform( entity_who_picked )
+
+        local held_wands = {}
+        local first_wand = nil
+        local active_wand = nil
+        local children = EntityGetAllChildren( entity_who_picked ) or {}
+        local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" )
+        if inventory2 ~= nil then
+            for key, child in pairs( children ) do
+                if EntityGetName( child ) == "inventory_quick" then
+                    held_wands = EntityGetChildrenWithTag( child, "wand" ) or {}
+                    break
+                end
+            end
+            for _,wand in pairs( held_wands ) do
+                local active_item = ComponentGetValue2( inventory2, "mActiveItem" )
+                if wand == active_item then
+                    active_wand = wand
+                end
+                if first_wand == nil then
+                    first_wand = wand
+                end
+            end
+        end
+
+        if active_wand == nil then
+            active_wand = first_wand
+        end
+
+        if #held_wands > 0 then
+            local comparisons = {
+                shuffle_deck_when_empty     = function( current_value, previous_value ) if current_value == false then return current_value end end,
+                actions_per_round           = function( current_value, previous_value ) if previous_value < current_value then return current_value end end,
+                speed_multiplier            = function( current_value, previous_value ) if previous_value < current_value then return current_value end end,
+                deck_capacity               = function( current_value, previous_value ) if previous_value < current_value then return current_value end end,
+                reload_time                 = function( current_value, previous_value ) if previous_value > current_value then return current_value end end,
+                fire_rate_wait              = function( current_value, previous_value ) if previous_value > current_value then return current_value end end,
+                spread_degrees              = function( current_value, previous_value ) if previous_value > current_value then return current_value end end,
+                mana_charge_speed           = function( current_value, previous_value ) if previous_value < current_value then return current_value end end,
+                mana_max                    = function( current_value, previous_value ) if previous_value < current_value then return current_value end end,
+                mana                        = function( current_value, previous_value ) if previous_value < current_value then return current_value end end,
+            }
+
+            local best_values = {
+                shuffle_deck_when_empty=true,
+                actions_per_round=1,
+                speed_multiplier=1,
+                deck_capacity=0,
+                reload_time=99999,
+                fire_rate_wait=99999,
+                spread_degrees=0,
+                mana_charge_speed=0,
+                mana_max=0,
+                mana=0,
+            }
+
+            for _,wand in pairs( held_wands ) do
+                local ability = WandGetAbilityComponent( wand, "AbilityComponent" )
+                for stat,comparison in pairs( comparisons ) do
+                    local current_value = best_values[stat]
+                    local outcome = comparison( ability_component_get_stat( ability, stat ), current_value )
+                    if outcome ~= nil then
+                        best_values[stat] = outcome
+                    end
+                end
+            end
+
+            local held_actions = {}
+            for _,wand in pairs( held_wands ) do
+                while true do
+                    if wand == active_wand then
+                        local removed_spell = wand_remove_first_action( wand, true, true )
+                        if not removed_spell then
+                            break
+                        else
+                            table.insert( held_actions, removed_spell )
+                        end
+                    else
+                        if not wand_explode_random_action( wand, true, true, x, y ) then
+                            break
+                        end
+                    end
+                end
+                GameKillInventoryItem( entity_who_picked, wand )
+                EntitySetTransform( item, -9999, -9999 )
+                EntityRemoveFromParent( wand )
+            end
+            
+            if inventory2 ~= nil then
+                local inventory2 = EntityGetFirstComponent( entity_who_picked, "Inventory2Component" )
+                if inventory2 ~= nil then
+                    ComponentSetValue2( inventory2, "mInitialized", false )
+                    ComponentSetValue2( inventory2, "mForceRefresh", true )
+                end
+            end
+
+            local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/placeholder_wand.xml", x, y-8 )
+            EntityAddVarTag( copy_wand, "gkbrkn_merged_wand", 1 )
+
+            initialize_wand( copy_wand, { name="merged wand", stats=best_values } )
+
+            for _,held_action in pairs( held_actions ) do
+                wand_attach_action( copy_wand, held_action )
+            end
+
+            local item = EntityGetFirstComponent( copy_wand, "ItemComponent" )
+            if item ~= nil then
+                ComponentSetValue2( item, "play_hover_animation", true )
+            end
+        end
+	end, nil, nil, false
+) )
+
+table.insert( perk_list, 
+    generate_perk_entry( "GKBRKN_DUPLICATE_WAND", "duplicate_wand", false, function( entity_perk_item, entity_who_picked, item_name )
+        local x, y = EntityGetTransform( entity_who_picked )
+        local base_wand = WandGetActiveOrRandom( entity_who_picked )
+        if base_wand ~= nil then
+            local copy_wand = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/placeholder_wand.xml", x, y-8 )
+            EntityAddVarTag( copy_wand, "gkbrkn_duplicate_wand" )
+            wand_copy( base_wand, copy_wand )
+            local item = EntityGetFirstComponent( copy_wand, "ItemComponent" )
+            if item ~= nil then
+                ComponentSetValue2( item, "play_hover_animation", true )
+            end
+        end
+	end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_UPGRADE_WAND", "upgrade_wand", false, function( entity_perk_item, entity_who_picked, item_name )
+        local wand = get_entity_held_or_random_wand( entity_who_picked )
+		local x,y = EntityGetTransform( entity_who_picked )
+        if wand ~= 0 then
+            local ability = EntityGetFirstComponentIncludingDisabled( wand, "AbilityComponent" )
+            SetRandomSeed( entity_who_picked, wand + x + y )
+            if ability ~= 0 then
+                ability_component_adjust_stats( ability, {
+                    mana_max=function(value) return tonumber( value ) * ( Random() * 0.25 + 1.0 ) end,
+                    mana_charge_speed=function(value) return ( tonumber( value ) + Random( 10, 20 ) ) * ( Random() * 0.25 + 1.0 ) end,
+                    deck_capacity=function(value) return math.min( math.max( value, 26 ), math.floor( tonumber( value ) + Random( 2, 4 ) ) ) end,
+                    reload_time=function(value) return tonumber( value ) - Random( 8, 16 ) end,
+                    fire_rate_wait=function(value) return tonumber( value ) - Random( 4, 8 ) end,
+                    spread_degrees=function(value) return tonumber( value ) - Random( 2, 4 ) end,
+                } )
+                initialize_wand( wand, { name="upgraded wand", stats=ability_component_get_stats( ability ) } )
+            end
+        end
+	end, nil, nil, true, true, 3, 1
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_RECURSION", "recursion", true, function( entity_perk_item, entity_who_picked, item_name )
+        EntitySetVariableNumber( entity_who_picked, "gkbrkn_recursion_stacks", EntityGetVariableNumber( entity_who_picked, "gkbrkn_recursion_stacks", 0 ) + 3 )
+        TryAdjustMaxHealth( entity_who_picked, function( max_health ) return max_health * 0.67 end )
+    end, nil, nil, false
+) )
+
+table.insert( perk_list,
+    generate_perk_entry( "GKBRKN_POLY_TO_ACID", "poly_to_acid", true, function( entity_perk_item, entity_who_picked, item_name )
+        local x,y = EntityGetTransform( entity_who_picked )
+        local child_id = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/perks/poly_to_acid/poly_to_acid.xml", x, y )
+        EntityAddChild( entity_who_picked, child_id )
+    end, true, nil, false
+) )
+

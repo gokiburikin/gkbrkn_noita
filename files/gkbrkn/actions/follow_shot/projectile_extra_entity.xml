@@ -1,0 +1,10 @@
+<Entity>
+    <LuaComponent execute_on_added="1" remove_after_executed="1" script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/projectile_capture_tag.lua"/>
+	<LuaComponent
+        execute_every_n_frame="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/follow_shot/projectile_update.lua"/>
+    <LuaComponent
+        execute_on_added="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/follow_shot/projectile_init.lua"
+        remove_after_executed="1"/>
+</Entity>

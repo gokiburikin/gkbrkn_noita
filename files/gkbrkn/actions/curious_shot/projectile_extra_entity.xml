@@ -1,0 +1,18 @@
+<Entity>
+	<LuaComponent 
+		execute_on_added="1"
+        remove_after_executed="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/curious_shot/projectile_init.lua" >
+	</LuaComponent>
+    <VariableStorageComponent
+		name="angle"
+		value_string="-1"
+		>
+	</VariableStorageComponent>
+	
+	<VariableStorageComponent
+		name="speed"
+		value_string="-1"
+		>
+	</VariableStorageComponent>
+</Entity>

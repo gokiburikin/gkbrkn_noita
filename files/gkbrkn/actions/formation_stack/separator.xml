@@ -1,0 +1,4 @@
+<Entity>
+<Base file="mods/gkbrkn_noita/files/gkbrkn/actions/separator.xml"/>
+<VariableStorageComponent name="gkbrkn_formation_stack_separator"/>
+</Entity>

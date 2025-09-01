@@ -1,0 +1,11 @@
+<Entity>
+<LuaComponent
+    execute_on_added="1"
+    remove_after_executed="1"
+    script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/projectile_capture_tag.lua"/>
+<LuaComponent 
+  execute_on_added="1"
+  remove_after_executed="1"
+  script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/formation_sword/projectile_init.lua"/>
+<VariableStorageComponent name="gkbrkn_formation_sword"/>
+</Entity>

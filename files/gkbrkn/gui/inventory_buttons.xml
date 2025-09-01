@@ -1,0 +1,19 @@
+<Sprite 
+  filename="mods/gkbrkn_noita/files/gkbrkn/gui/inventory_buttons.png" 
+  offset_x="0" 
+  offset_y="0" >
+
+  <RectAnimation name="quick_swap_left_up_idle" pos_x="0" pos_y="0" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_left_up_active" pos_x="34" pos_y="0" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_left_up_down" pos_x="68" pos_y="0" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_left_down_idle" pos_x="0" pos_y="13" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_left_down_active" pos_x="34" pos_y="13" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_left_down_down" pos_x="68" pos_y="13" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_right_up_idle" pos_x="17" pos_y="0" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_right_up_active" pos_x="51" pos_y="0" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_right_up_down" pos_x="85" pos_y="0" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_right_down_idle" pos_x="17" pos_y="13" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_right_down_active" pos_x="51" pos_y="13" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+  <RectAnimation name="quick_swap_right_down_down" pos_x="85" pos_y="13" frame_count="1" frame_width="17" frame_height="13" frame_wait="1" frames_per_row="1" shrink_by_one_pixel="0"/>
+</Sprite>
+

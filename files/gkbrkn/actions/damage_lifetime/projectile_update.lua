@@ -1,17 +1,15 @@
-dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua");
-local entity = GetUpdatedEntityID();
-local x, y = EntityGetTransform( entity );
-local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" );
-if projectile ~= nil then
-    local current_damage = tonumber( ComponentGetValue( projectile, "damage" ) );
-    local initial_damage = EntityGetVariableNumber( entity, "gkbrkn_lifetime_initial_damage" );
-    ComponentSetValue( projectile, "damage", tostring( current_damage + initial_damage / 30 ) );
-    local damage_by_types = ComponentObjectGetMembers( projectile, "damage_by_type" ) or {};
-    for type,_ in pairs( damage_by_types ) do
-        local current_type_damage = tonumber( ComponentObjectGetValue( projectile, "damage_by_type", type ) );
-        local initial_type_damage = EntityGetVariableNumber( entity, "gkbrkn_lifetime_initial_damage_"..type, 0.0 );
-        if initial_type_damage ~= 0 then
-            ComponentObjectSetValue( projectile, "damage_by_type", type, tostring( current_type_damage + initial_type_damage / 30 ) );
-        end
-    end
-end
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua")
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/helper.lua")
+
+local entity = GetUpdatedEntityID()
+local projectile = EntityGetFirstComponent( entity, "ProjectileComponent" )
+if not projectile then return end
+
+local damage_plus_lifetime_limit = EntityGetVariableNumber( entity, "gkbrkn_damage_plus_lifetime_limit", 0 )
+-- TODO remove this script when we can't buff anymore
+if GameGetFrameNum() > damage_plus_lifetime_limit then return end
+
+local damage_plus_lifetime_stacks = EntityGetVariableNumber( entity, "gkbrkn_damage_plus_lifetime_stacks", 0 )
+
+-- Nx damage over 60 frames
+adjust_all_entity_damage( entity, function( current ) return current * (math.pow( damage_plus_lifetime_stacks + 1.0, 1.0 / 60.0 )) end )

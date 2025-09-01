@@ -1,19 +1,10 @@
 <Entity tags="card_action">
     <Base file="data/entities/base_custom_card.xml" > 
-		<SpriteComponent 
-			image_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/icon.png" 
-			>
-		</SpriteComponent>
-		
-		<ItemActionComponent 
-			_tags="enabled_in_world"
-			action_id="GKBRKN_MAGIC_LIGHT" >
-		</ItemActionComponent>
+		<SpriteComponent image_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/icon.png"/>
+		<ItemActionComponent _tags="enabled_in_world" action_id="GKBRKN_MAGIC_LIGHT" />
 	</Base>
 
-    <InheritTransformComponent
-		_tags="enabled_in_world,enabled_in_hand" >
-	</InheritTransformComponent>
+    <InheritTransformComponent _tags="enabled_in_world,enabled_in_hand"/>
 
     <SpriteComponent 
         _tags="enabled_in_hand"
@@ -23,8 +14,7 @@
         fog_of_war_hole="1"
         has_special_scale="1"
         special_scale_x="3.0"
-        special_scale_y="3.0" >
-    </SpriteComponent>
+        special_scale_y="3.0"/>
 
     <ParticleEmitterComponent 
 		_tags="enabled_in_hand,item_identified"
@@ -52,12 +42,29 @@
 		emission_interval_min_frames="1"
 		emission_interval_max_frames="4"
         fade_based_on_lifetime="1"
-		is_emitting="1" >
-	</ParticleEmitterComponent>
+		is_emitting="1"/>
 
-    <LuaComponent
-	    _tags="enabled_in_hand"
-        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/action_update.lua"
-    >
-    </LuaComponent>
+    <SpriteParticleEmitterComponent
+		sprite_file="data/particles/spark_glitter.xml"
+		emission_interval_min_frames="2"
+		emission_interval_max_frames="16"
+		additive="1"
+		emissive="1"
+		scale.x="1.0"
+		scale.y="1.0"
+		randomize_lifetime.min="0.5"
+		randomize_lifetime.max="2.0"
+		scale_velocity.x="0"
+		scale_velocity.y="0"
+		randomize_velocity.min_x="-10"
+		randomize_velocity.max_x="10"
+		randomize_velocity.min_y="-10"
+		randomize_velocity.max_y="10"
+		randomize_position.min_x="-6"
+		randomize_position.max_x="6"
+		randomize_position.min_y="-6"
+		randomize_position.max_y="6"
+		/>
+
+    <LuaComponent _tags="enabled_in_hand" script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_light/action_update.lua"/>
 </Entity>

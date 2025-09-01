@@ -1,4 +1,4 @@
-<Entity tags="gkbrkn_screen_fill">
+<Entity>
     <SpriteComponent
         _enabled="1"
         _tags="enabled_in_world"

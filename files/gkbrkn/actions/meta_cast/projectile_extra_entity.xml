@@ -1,0 +1,6 @@
+<Entity>
+    <LuaComponent
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/clinging_shot/projectile_update.lua"
+        >
+    </LuaComponent>
+</Entity>

@@ -1,0 +1,5 @@
+<Entity>
+	<VariableStorageComponent name="gkbkrn_inner_homing"/>
+	<LuaComponent execute_every_n_frame="1"
+	script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/inner_homing/projectile_update.lua"/>
+</Entity>

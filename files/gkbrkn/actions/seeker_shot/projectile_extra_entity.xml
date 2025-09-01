@@ -1,0 +1,79 @@
+<Entity >
+    <LuaComponent 
+        execute_every_n_frame="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/seeker_shot/projectile_update.lua" >
+	</LuaComponent>
+    <LuaComponent 
+		execute_on_added="1"
+        remove_after_executed="1"
+		script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/seeker_shot/projectile_init.lua" >
+	</LuaComponent>
+    <ParticleEmitterComponent 
+		emitted_material_name="spark"
+		offset.x="0"
+		offset.y="0"
+		count_min="1"
+		count_max="8"
+        gravity.y="10"
+		lifetime_min="0.3"
+		lifetime_max="0.5"
+        airflow_force="0.6"
+        airflow_time="0.1"
+        airflow_scale="0.03"
+		is_trail="1"
+		trail_gap="0.5"
+		render_on_grid="1"
+		fade_based_on_lifetime="1"
+		create_real_particles="0"
+		emit_cosmetic_particles="1"
+		emission_interval_min_frames="1"
+		emission_interval_max_frames="2"
+		is_emitting="1" >
+	</ParticleEmitterComponent>
+
+    <ParticleEmitterComponent 
+    emitted_material_name="spark"
+    offset.x="0"
+    offset.y="0"
+    count_min="1"
+    count_max="8"
+    gravity.y="-10"
+    lifetime_min="0.3"
+    lifetime_max="0.5"
+    airflow_force="0.6"
+    airflow_time="0.1"
+    airflow_scale="0.03"
+    is_trail="1"
+    trail_gap="0.5"
+    render_on_grid="1"
+    fade_based_on_lifetime="1"
+    create_real_particles="0"
+    emit_cosmetic_particles="1"
+    emission_interval_min_frames="1"
+    emission_interval_max_frames="2"
+    is_emitting="1" >
+  </ParticleEmitterComponent>
+
+    <ParticleEmitterComponent 
+    emitted_material_name="spark"
+    offset.x="0"
+    offset.y="0"
+    count_min="1"
+    count_max="8"
+    gravity.y="0.0"
+    lifetime_min="0.3"
+    lifetime_max="0.5"
+    airflow_force="0.6"
+    airflow_time="0.1"
+    airflow_scale="0.03"
+    is_trail="1"
+    trail_gap="0.5"
+    render_on_grid="1"
+    fade_based_on_lifetime="1"
+    create_real_particles="0"
+    emit_cosmetic_particles="1"
+    emission_interval_min_frames="1"
+    emission_interval_max_frames="2"
+    is_emitting="1" >
+  </ParticleEmitterComponent>
+</Entity>

@@ -1,0 +1,11 @@
+<Entity tags="card_action">
+<VariableStorageComponent name="gkbrkn_siphon"/>
+<Base file="data/entities/base_custom_card.xml" > 
+	<SpriteComponent image_file="mods/gkbrkn_noita/files/gkbrkn/actions/siphon/icon.png"/>
+	<ItemActionComponent 
+	_tags="enabled_in_world"
+	action_id="GKBRKN_SIPHON"/>
+</Base>
+<InheritTransformComponent _tags="enabled_in_world,enabled_in_hand"/>
+<LuaComponent _tags="enabled_in_hand"/>
+</Entity>

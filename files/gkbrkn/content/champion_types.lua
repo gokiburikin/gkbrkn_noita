@@ -1,0 +1,1664 @@
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/variables.lua")
+dofile_once( "mods/gkbrkn_noita/files/gkbrkn/lib/vartags.lua")
+
+local champion_type_map
+function get_champion_type( id )
+    if champion_type_map == nil then
+        champion_type_map = {}
+        for _,entry in ipairs(champion_types) do
+            champion_type_map[entry.id] = entry
+        end
+    end
+    return champion_type_map[id]
+end
+
+local has_ranged_attack = function( entity, to_apply )
+    local has_projectile_attack = false
+    local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+    if #animal_ais > 0 then
+        for _,ai in pairs( animal_ais ) do
+            if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                has_projectile_attack = true
+                break
+            end
+        end
+    end
+    if not has_projectile_attack then
+        for id,amount in pairs(to_apply) do
+            if get_champion_type(id).adds_ranged_attack then
+                has_projectile_attack = true
+                break
+            end
+        end
+    end
+    return has_projectile_attack
+end
+
+local can_fly = function( entity, to_apply )
+    local can_fly = false
+    local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+    if #animal_ais > 0 then
+        for _,ai in pairs( animal_ais ) do
+            if ComponentGetValue2( ai, "can_fly" ) == true then
+                can_fly = true
+                break
+            end
+        end
+    end
+    if not can_fly then
+        if to_apply["jetpack"] ~= nil then
+            can_fly = true
+        end
+    end
+    return can_fly
+end
+
+champion_types = {
+    { id = "armored",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/armored/badge.png",
+        name = "$champion_type_name_armored",
+        description = "$champion_type_desc_armored",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local resistances = {
+                ice = 0.50,
+                electricity = 0.50,
+                radioactive = 0.50,
+                slice = 0.50,
+                projectile = 0.50,
+                healing = 0.50,
+                physics_hit = 0.50,
+                explosion = 0.50,
+                poison = 0.50,
+                melee = 0.00,
+                drill = 0.50,
+                fire = 0.50,
+            }
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for index,damage_model in pairs( damage_models ) do
+                for damage_type,multiplier in pairs( resistances ) do
+                    local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type )
+                    resistance = resistance * multiplier
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance )
+                end
+                local minimum_knockback_force = ComponentGetValue2( damage_model, "minimum_knockback_force" )
+                ComponentSetValue2( damage_model, "minimum_knockback_force", 99999 )
+            end
+        end,
+        deprecated = true,
+        stackable = true
+    },
+    { id = "melee_immune",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/melee_immune/badge.png",
+        name = "$champion_type_name_melee_immune",
+        description = "$champion_type_desc_melee_immune",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.3,
+        game_effects = {"PROTECTION_MELEE"},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total ) end
+    },
+    { id = "explosion_immune",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/explosion_immune/badge.png",
+        name = "$champion_type_name_explosion_immune",
+        description = "$champion_type_desc_explosion_immune",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {"PROTECTION_EXPLOSION"},
+        reward = 1.5,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total ) end
+    },
+    { id = "knockback_immune",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback_immune/badge.png",
+        name = "$champion_type_name_knockback_immune",
+        description = "$champion_type_desc_knockback_immune",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {"KNOCKBACK_IMMUNITY"},
+        reward = 1.2,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total ) end,
+        weight = 1.2
+    },
+    { id = "burning",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/burning/badge.png",
+        name = "$champion_type_name_burning",
+        description = "$champion_type_desc_burning",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {"PROTECTION_FIRE"},
+        reward = 1.1,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local x,y = EntityGetTransform( entity )
+            local burn = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/burning/fire.xml", x, y )
+            if burn ~= nil then
+                EntityAddChild( entity, burn )
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/burning/shot.lua",
+            })
+            TryAdjustDamageMultipliers( entity, { ice = 0.00 } )
+        end
+    },
+    { id = "counter",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/counter/badge.png",
+        name = "$champion_type_name_counter",
+        description = "$champion_type_desc_counter",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        reward = 1.3,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/counter/damage_received.lua",
+            })
+        end,
+        weight = 0.7
+    },
+    { id = "damage_buff",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/badge.png",
+        name = "$champion_type_name_damage_buff",
+        description = "$champion_type_desc_damage_buff",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_melee_damage_min", ComponentGetValue2( ai, "attack_melee_damage_min" ) + 0.2 )
+                    ComponentSetValue2( ai, "attack_melee_damage_max", ComponentGetValue2( ai, "attack_melee_damage_max" ) + 0.2 )
+                    ComponentSetValue2( ai, "attack_dash_damage", ComponentGetValue2( ai, "attack_dash_damage" ) + 0.2 )
+                end
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/damage_buff/shot.lua"
+            })
+        end,
+        stackable = true,
+        weight = 1.1
+    },
+    { id = "heavy_shot",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/heavy_shot/badge.png",
+        name = "$champion_type_name_heavy_shot",
+        description = "$champion_type_desc_heavy_shot",
+        author = "lilyhops",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_melee_damage_min", ComponentGetValue2( ai, "attack_melee_damage_min" ) * 2 )
+                    ComponentSetValue2( ai, "attack_melee_damage_max", ComponentGetValue2( ai, "attack_melee_damage_max" )  * 2 )
+                    ComponentSetValue2( ai, "attack_dash_damage", ComponentGetValue2( ai, "attack_dash_damage" ) * 2 )
+                    ComponentSetValue2( ai, "attack_ranged_max_distance", ComponentGetValue2( ai, "attack_ranged_max_distance" ) * 0.5 )
+                    
+                end
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/heavy_shot/shot.lua"
+            })
+        end,
+        weight = 0.3
+    },
+    { id = "faster_projectiles",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/faster_projectiles/badge.png",
+        name = "$champion_type_name_faster_projectiles",
+        description = "$champion_type_desc_faster_projectiles",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        exclusion_groups = {"projectile_speed"},
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return has_ranged_attack( entity, to_apply ) end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/faster_projectiles/shot.lua"
+            })
+        end,
+    },
+    { id = "slower_projectiles",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/slower_projectiles/badge.png",
+        name = "$champion_type_name_slower_projectiles",
+        description = "$champion_type_desc_slower_projectiles",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        exclusion_groups = {"projectile_speed"},
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return has_ranged_attack( entity, to_apply ) end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/slower_projectiles/shot.lua"
+            })
+        end,
+    },
+    { id = "brain_destroyer",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/brain_destroyer/badge.png",
+        name = "$champion_type_name_brain_destroyer",
+        description = "$champion_type_desc_brain_destroyer",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return has_ranged_attack( entity, to_apply ) end,
+        apply = function( entity, index, total )
+            for _,ai in pairs(EntityGetComponent( entity, "AnimalAIComponent" ) or {}) do
+                ComponentAdjustValues( ai, {attack_ranged_predict=function(value) return not value end})
+            end
+        end,
+    },
+    { id = "digging",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/digging/badge.png",
+        name = "$champion_type_name_digging",
+        description = "$champion_type_desc_digging",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.0,
+        stackable = true,
+        game_effects = {},
+        exclusion_groups = {"projectile_world_penetration"},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            if index ~= 1 then return end
+            EntitySetVariableNumber( entity, "gkbrkn_digging_champion_stacks", total )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/digging/shot.lua",
+            })
+        end
+    },
+    { id = "eldritch",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/eldritch/badge.png",
+        name = "$champion_type_name_eldritch",
+        description = "$champion_type_desc_eldritch",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        adds_ranged_attack = true,
+        reward = 1.0,
+        validator = function( entity, to_apply )
+            return not has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValues( ai, {
+                        attack_ranged_action_frame=4,
+                        attack_ranged_min_distance=0,
+                        attack_ranged_max_distance=80,
+                        attack_ranged_entity_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/eldritch/tongue.xml",
+                        attack_ranged_offset_x=0,
+                        attack_ranged_offset_y=0,
+                        attack_ranged_enabled=true,
+                    })
+                    ComponentAdjustValues( ai, {
+                        attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) * 2.0 ) end,
+                    })
+                end
+            end
+        end,
+        weight = 0.9
+    },
+    { id = "electric",
+        particle_material = nil,
+        sprite_particle_sprite_file = "data/particles/spark_electric.xml",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/electric/badge.png",
+        name = "$champion_type_name_electric",
+        description = "$champion_type_desc_electric",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {"PROTECTION_ELECTRICITY"},
+        reward = 1.1,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total ) 
+            local electric = EntityAddComponent( entity, "ElectricChargeComponent", { 
+                _tags="enabled_in_world",
+                charge_time_frames="15",
+                electricity_emission_interval_frames="15",
+                fx_velocity_max="10",
+            })
+            local x,y = EntityGetTransform( entity )
+            --local electrocution = EntityLoad( "data/entities/particles/water_electrocution.xml", x, y )
+            --if electrocution ~= nil then
+            --    EntityAddChild( entity, electrocution )
+            --end
+            EntityAddComponent2( entity, "ElectricChargeComponent", {
+                charge_time_frames=120,
+                electricity_emission_interval_frames=10,
+                fx_velocity_max=10,
+            })
+            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/electric/electricity_field.xml", x, y )
+            if field ~= nil then
+                EntityAddChild( entity, field )
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="60",
+                execute_on_added="1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/electric/update.lua",
+            })
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/electric/shot.lua",
+            })
+            TryAdjustDamageMultipliers( entity, { electricity = 0.00 } )
+        end
+    },
+    { id = "energy_shield",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/energy_shield/badge.png",
+        name = "$champion_type_name_energy_shield",
+        description = "$champion_type_desc_energy_shield",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {},
+        stackable = true,
+        reward = 1.1,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local x, y = EntityGetTransform( entity )
+            local radius = nil
+            local width,height = EntityGetFirstHitboxSize( entity, 18, 18 )
+            radius = math.max( height, width ) + 4 * index
+
+            local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/energy_shield/energy_shield.xml", x, y )
+            
+            local energy_shield = EntityGetFirstComponent( shield, "EnergyShieldComponent" )
+            ComponentSetValue2( energy_shield, "radius", radius )
+
+            for _,emitter in pairs( EntityGetComponent( shield, "ParticleEmitterComponent" ) or {} ) do
+                ComponentSetValueValueRange( emitter, "area_circle_radius", radius, radius )
+            end
+
+            local inherit = EntityGetFirstComponent( shield, "InheritTransformComponent" )
+            if inherit then
+                local  itx, ity, itsx, itsy, itr = ComponentGetValue2( inherit, "Transform" )
+                ity = -height * 0.3
+                ComponentSetValue2( inherit, "Transform", itx, ity, itsx, itsy, itr )
+                --ComponentSetValue2( inherit, "mUpdateFrame", GameGetFrameNum() )
+            end
+
+            EntityAddChild( entity, shield )
+        end,
+        weight = 0.8
+    },
+    { id = "faster_movement",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/faster_movement/badge.png",
+        name = "$champion_type_name_faster_movement",
+        description = "$champion_type_desc_faster_movement",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            -- Only apply this once using total
+            if index > 1 then return end
+            local character_platforming = EntityGetFirstComponent( entity, "CharacterPlatformingComponent" )
+            if character_platforming ~= nil then
+                ComponentSetValue2( character_platforming, "run_velocity", ComponentGetValue2( character_platforming, "run_velocity" ) * (1 + 0.5 * total) )
+                ComponentSetValue2( character_platforming, "jump_velocity_x", ComponentGetValue2( character_platforming, "jump_velocity_x" ) * (1 + 0.5 * total) )
+                ComponentSetValue2( character_platforming, "jump_velocity_y", ComponentGetValue2( character_platforming, "jump_velocity_y" ) * (1 + 0.5 * total) )
+                ComponentSetValue2( character_platforming, "fly_speed_max_up", ComponentGetValue2( character_platforming, "fly_speed_max_up" ) * (1 + 0.5 * total) )
+                ComponentSetValue2( character_platforming, "fly_speed_max_down", ComponentGetValue2( character_platforming, "fly_speed_max_down" ) * (1 + 0.5 * total) )
+                ComponentSetValue2( character_platforming, "fly_speed_change_spd", ComponentGetValue2( character_platforming, "fly_speed_change_spd" ) * (1 + 0.5 * total) )
+                ComponentSetValue2( character_platforming, "fly_smooth_y", false )
+                ComponentSetValue2( character_platforming, "accel_x_air", 1.0 )
+            end
+        end,
+        stackable = true
+    },
+    { id = "freezing",
+        particle_material = nil,
+        sprite_particle_sprite_file = "data/particles/snowflake_$[1-2].xml",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/freezing/badge.png",
+        name = "$champion_type_name_freezing",
+        description = "$champion_type_desc_freezing",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {"PROTECTION_FREEZE"},
+        reward = 1.1,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local x,y = EntityGetTransform( entity )
+            local field = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/freezing/freeze_field.xml", x, y )
+            if field ~= nil then
+                EntityAddChild( entity, field )
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="60",
+                execute_on_added="1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/freezing/freeze.lua",
+            })
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/freezing/shot.lua",
+            })
+            TryAdjustDamageMultipliers( entity, { ice = 0.00 } )
+        end
+    },
+    { id = "tremor",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/tremor/badge.png",
+        name = "$champion_type_name_tremor",
+        description = "$champion_type_desc_tremor",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        reward = 1.0,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/tremor/damage_received.lua",
+            })
+        end,
+        weight = 0.4
+    },
+    { id = "poison_blood",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poison_blood/badge.png",
+        name = "$champion_type_name_poison_blood",
+        description = "$champion_type_desc_poison_blood",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        reward = 1.1,
+        exclusion_groups = { "blood" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue2( damage_model, "blood_material", "poison" )
+                ComponentSetValue2( damage_model, "blood_spray_material", "poison" )
+                ComponentSetValue2( damage_model, "blood_multiplier", ComponentGetValue2( damage_model, "blood_multiplier" ) + 1 )
+            end
+            TryAdjustDamageMultipliers( entity, { poison = 0.00 } )
+            change_materials_that_damage( entity, { poison = 0, poison_gas = 0 } )
+        end
+    },
+    { id = "frozen_blood",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/frozen_blood/badge.png",
+        name = "$champion_type_name_frozen_blood",
+        description = "$champion_type_desc_frozen_blood",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        exclusion_groups = { "blood" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue2( damage_model, "blood_material", "blood_cold" )
+                ComponentSetValue2( damage_model, "blood_spray_material", "blood_cold" )
+                ComponentSetValue2( damage_model, "blood_multiplier", ComponentGetValue2( damage_model, "blood_multiplier" ) + 1 )
+            end
+            change_materials_that_damage( entity, { blood_cold_vapour = 0, blood_cold = 0 } )
+        end
+    },
+    { id = "gunpowder_blood",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/gunpowder_blood/badge.png",
+        name = "$champion_type_name_gunpowder_blood",
+        description = "$champion_type_desc_gunpowder_blood",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.0,
+        game_effects = {"PROTECTION_FIRE"},
+        exclusion_groups = { "blood" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue2( damage_model, "blood_material", "gunpowder_unstable" )
+                ComponentSetValue2( damage_model, "blood_spray_material", "gunpowder_unstable" )
+                ComponentSetValue2( damage_model, "blood_multiplier", ComponentGetValue2( damage_model, "blood_multiplier" ) + 1 )
+            end
+        end
+    },
+    { id = "hot_blooded",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/hot_blooded/badge.png",
+        name = "$champion_type_name_hot_blooded",
+        description = "$champion_type_desc_hot_blooded",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {"PROTECTION_FIRE"},
+        reward = 1.1,
+        exclusion_groups = { "blood" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue2( damage_model, "blood_material", "lava" )
+                ComponentSetValue2( damage_model, "blood_spray_material", "lava" )
+                ComponentSetValue2( damage_model, "blood_multiplier", ComponentGetValue2( damage_model, "blood_multiplier" ) + 1 )
+            end
+            change_materials_that_damage( entity, { lava = 0 } )
+        end
+    },
+    { id = "strange_blood",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/strange_blood/badge.png",
+        name = "$champion_type_name_strange_blood",
+        description = "$champion_type_desc_strange_blood",
+        author = "goki_dev",
+        local_content = true,
+        reward = 0.8,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        exclusion_groups = { "blood" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local entries = {
+                water = 1.0,
+                magic_liquid_berserk = 0.3,
+                magic_liquid_charm = 0.3,
+                material_confusion = 0.3,
+                blood_worm = 0.1,
+                magic_liquid_worm_attractor = 0.3,
+                magic_liquid_mana_regeneration = 0.2,
+                diamond = 0.3,
+                oil = 0.5,
+            }
+            local blood_choice = WeightedRandomTable( entries )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue2( damage_model, "blood_material", blood_choice )
+                ComponentSetValue2( damage_model, "blood_spray_material", blood_choice )
+                ComponentSetValue2( damage_model, "blood_multiplier", ComponentGetValue2( damage_model, "blood_multiplier" ) + 1 )
+            end
+        end,
+    },
+    { id = "poly_blood",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/poly_blood/badge.png",
+        name = "$champion_type_name_poly_blood",
+        description = "$champion_type_desc_poly_blood",
+        author = "goki_dev",
+        reward = 1.2,
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        exclusion_groups = { "blood" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                ComponentSetValue2( damage_model, "blood_material", "magic_liquid_random_polymorph" )
+                ComponentSetValue2( damage_model, "blood_spray_material", "magic_liquid_random_polymorph" )
+                ComponentSetValue2( damage_model, "blood_multiplier", ComponentGetValue2( damage_model, "blood_multiplier" ) + 1 )
+            end
+            EntityAddTag( entity, "polymorphable_NOT" )
+        end,
+        weight = 0.1
+    },
+    { id = "blood_spray",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/blood_spray/badge.png",
+        name = "$champion_type_name_blood_spray",
+        description = "$champion_type_desc_blood_spray",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        reward = 1.0,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local blood_materials = {}
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for _,damage_model in pairs( damage_models ) do
+                table.insert( blood_materials, ComponentGetValue2( damage_model, "blood_material", "blood" ) )
+            end
+            local material_inventory = EntityAddComponent2( entity, "MaterialInventoryComponent",{
+                drop_as_item = false,
+                leak_on_damage_percent = 0.999
+            })
+            if material_inventory then
+                for _,material in pairs( blood_materials ) do
+                    AddMaterialInventoryMaterial( entity, material, 1000 )
+                end
+            end
+        end
+    },
+    { id = "healthy",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/healthy/badge.png",
+        name = "$champion_type_name_healthy",
+        description = "$champion_type_desc_healthy",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        reward = 1.0,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" )
+            for index,damage_model in pairs( damage_models ) do
+                local current_hp = ComponentGetValue2( damage_model, "hp" )
+                local max_hp = ComponentGetValue2( damage_model, "max_hp" )
+                local new_max = max_hp * 1.5
+                local regained = new_max - current_hp
+                ComponentSetValue2( damage_model, "max_hp", new_max )
+                ComponentSetValue2( damage_model, "hp", current_hp + regained )
+            end
+        end,
+        deprecated = true,
+        stackable = true
+    },
+    { id = "mini_boss",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/mini_boss/badge.png",
+        name = "$champion_type_name_mini_boss",
+        description = "$champion_type_desc_mini_boss",
+        author = "goki_dev",
+        reward = 2.0,
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply ) return false end,
+        apply = function( entity, index, total )
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" )
+            for index,damage_model in pairs( damage_models ) do
+                local current_hp = ComponentGetValue2( damage_model, "hp" )
+                local max_hp = ComponentGetValue2( damage_model, "max_hp" )
+                local new_max = max_hp * 2 + 2
+                local regained = new_max - current_hp
+                ComponentSetValue2( damage_model, "max_hp", new_max )
+                ComponentSetValue2( damage_model, "hp", current_hp + regained )
+                EntityAddTag( entity, "polymorphable_NOT" )
+    			EntityAddTag( entity, "touchmagic_immunity" )
+            end
+        end,
+    },
+    { id = "ice_burst",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/ice_burst/badge.png",
+        name = "$champion_type_name_ice_burst",
+        description = "$champion_type_desc_ice_burst",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        adds_ranged_attack = true,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            if index ~= 1 then return end
+            EntitySetVariableNumber( entity, "gkbrkn_ice_burst_champion_stack", total )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/ice_burst/damage_received.lua",
+            })
+            TryAdjustDamageMultipliers( entity, { ice = 0.00 } )
+        end,
+        stackable = true,
+        weight = 0.8
+    },
+    { id = "infested",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/infested/badge.png",
+        name = "$champion_type_name_infested",
+        description = "$champion_type_desc_infested",
+        reward = 1.1,
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="-1",
+                script_death="mods/gkbrkn_noita/files/gkbrkn/champion_types/infested/death.lua",
+            })
+        end,
+        stackable = true,
+        weight = 0.6
+    },
+    { id = "intangibility_frames",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/badge.png",
+        name = "$champion_type_name_intangibility_frames",
+        description = "$champion_type_desc_intangibility_frames",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/intangibility_frames/damage_received.lua",
+            })
+        end,
+        deprecated = true,
+        weight = 0.5
+    },
+    { id = "invincibility_frames",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/invincibility_frames/badge.png",
+        name = "$champion_type_name_invincibility_frames",
+        description = "$champion_type_desc_invincibility_frames",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/invincibility_frames/damage_received.lua",
+            })
+        end,
+        deprecated = true
+    },
+    { id = "invisible",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/invisible/badge.png",
+        name = "$champion_type_name_invisible",
+        description = "$champion_type_desc_invisible",
+        author = "goki_dev",
+        reward = 1.1,
+        local_content = true,
+        game_effects = {"STAINS_DROP_FASTER"},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/invisible/update.lua",
+                execute_on_added="1",
+                execute_every_n_frame="10",
+            })
+        end,
+        weight = 0.8
+    },
+    { id = "jetpack",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/jetpack/badge.png",
+        name = "$champion_type_name_jetpack",
+        description = "$champion_type_desc_jetpack",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return can_fly( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            for _,ai in pairs( animal_ais ) do
+                ComponentSetValues( ai, {can_fly=true})
+            end
+            local path_finding = EntityGetFirstComponent( entity, "PathFindingComponent" )
+            if path_finding ~= nil then
+                ComponentSetValues( path_finding, { can_fly=true } )
+            end
+            
+            local jetpack_particles = EntityAddComponent( entity, "ParticleEmitterComponent", {
+                _tags="jetpack",
+                emitted_material_name="rocket_particles",
+                x_pos_offset_min="-1",
+                x_pos_offset_max="1",
+                y_pos_offset_min="",
+                y_pos_offset_max="0",
+                x_vel_min="-7",
+                x_vel_max="7",
+                y_vel_min="80",
+                y_vel_max="180",
+                count_min="3",
+                count_max="7",
+                lifetime_min="0.1",
+                lifetime_max="0.2",
+                create_real_particles="0",
+                emit_cosmetic_particles="1",
+                emission_interval_min_frames="0",
+                emission_interval_max_frames="1",
+                is_emitting="1",
+            } )
+        end,
+        weight = 1.5
+    },
+    { id = "knockback",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/badge.png",
+        name = "$champion_type_name_knockback",
+        description = "$champion_type_desc_knockback",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_knockback_multiplier", ComponentGetValue2( ai, "attack_knockback_multiplier" ) + 0.5 )
+                end
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/knockback/shot.lua"
+            })
+        end,
+        stackable = true,
+        weight = 1.2
+    },
+    { id = "leaping",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/leaping/badge.png",
+        name = "$champion_type_name_leaping",
+        description = "$champion_type_desc_leaping",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            local has_dash_attack = false
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_dash_enabled" ) == true then
+                        has_dash_attack = true
+                        break
+                    end
+                end
+            end
+            return not has_dash_attack
+        end,
+        apply = function( entity, index, total )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    ComponentSetValues( ai, {
+                        attack_dash_enabled=true,
+                        attack_dash_frames_between=180,
+                    })
+                    ComponentAdjustValues( ai, {
+                        attack_dash_distance=function(value) return math.max( tonumber( value ), 100 ) end,
+                    })
+                end
+            end
+        end,
+        weight = 1.0
+    },
+    { id = "projectile_bounce",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_bounce/badge.png",
+        name = "$champion_type_name_projectile_bounce",
+        description = "$champion_type_desc_projectile_bounce",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        exclusion_groups = {"projectile_world_penetration"},
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_bounce/shot.lua",
+            })
+        end,
+        stackable = true,
+        weight = 0.9
+    },
+    { id = "multi_shot",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/multi_shot/badge.png",
+        name = "$champion_type_name_multi_shot",
+        description = "$champion_type_desc_multi_shot",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.2,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_ranged_entity_count_min", ComponentGetValue2( ai, "attack_ranged_entity_count_min" ) + 1 ) 
+                    ComponentSetValue2( ai, "attack_ranged_entity_count_max", ComponentGetValue2( ai, "attack_ranged_entity_count_max" ) + 2 ) 
+                    ComponentAdjustValues( ai, {
+                        attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) * 1.5 ) end,
+                        attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) * 1.5 ) end,
+                        attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) * 1.5 ) end,
+                    })
+                end
+            end
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/multi_shot/shot.lua",
+            })
+        end,
+        stackable = true,
+        weight = 0.8
+    },
+    { id = "long_range",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/long_range/badge.png",
+        name = "$champion_type_name_long_range",
+        description = "$champion_type_desc_long_range",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.2,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentSetValue2( ai, "attack_ranged_min_distance", ComponentGetValue2( ai, "attack_ranged_min_distance" ) * 1.5 )
+                    ComponentSetValue2( ai, "attack_ranged_max_distance", ComponentGetValue2( ai, "attack_ranged_max_distance" ) * 1.5 )
+                    ComponentSetValue2( ai, "attack_ranged_use_laser_sight", true )
+                end
+            end
+            local s = EntityAddComponent( entity, "SpriteComponent",{
+                alpha="1",
+                image_file="data/particles/laser_orange.png",
+                offset_x="5" ,
+                offset_y="1",
+                emissive="1",
+                additive="1",
+                visible="0",
+                update_transform="0",
+                next_rect_animation="" ,
+                rect_animation="default" ,
+            })
+            ComponentAddTag( s, "laser_sight" )
+        end,
+        stackable = true,
+    },
+    { id = "projectile_repulsion_field",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_repulsion_field/badge.png",
+        name = "$champion_type_name_projectile_repulsion_field",
+        description = "$champion_type_desc_projectile_repulsion_field",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {},
+        reward = 1.1,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            local shield = EntityLoad( "mods/gkbrkn_noita/files/gkbrkn/champion_types/projectile_repulsion_field/projectile_repulsion_field.xml" )
+            if shield ~= nil then EntityAddChild( entity, shield ) end
+        end,
+        weight = 0.5
+    },
+    { id = "rapid_attack",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/rapid_attack/badge.png",
+        name = "$champion_type_name_rapid_attack",
+        description = "$champion_type_desc_rapid_attack",
+        author = "goki_dev",
+        local_content = true,
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true
+        end,
+        apply = function( entity, index, total )
+            local animal_ai = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ai > 0 then
+                for _,ai in pairs( animal_ai ) do
+                    ComponentAdjustValues( ai, {
+                        attack_melee_frames_between=function(value) return math.ceil( tonumber( value ) / 1.6667 ) end,
+                        attack_dash_frames_between=function(value) return math.ceil( tonumber( value ) / 1.6667 ) end,
+                        attack_ranged_frames_between=function(value) return math.ceil( tonumber( value ) / 1.6667 ) end,
+                    })
+                end
+            end
+        end,
+        stackable = true,
+        weight = 0.9
+    },
+    { id = "regenerating",
+        particle_material = "spark_green",
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/regenerating/badge.png",
+        name = "$champion_type_name_regenerating",
+        description = "$champion_type_desc_regenerating",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.3,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/champion_types/regenerating/update.lua",
+                execute_every_n_frame = "60",
+            } )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/regenerating/damage_received.lua",
+            } )
+        end,
+        weight = 0.5
+    },
+    { id = "revenge_explosion",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/revenge_explosion/badge.png",
+        name = "$champion_type_name_revenge_explosion",
+        description = "$champion_type_desc_revenge_explosion",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 0.9,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/revenge_explosion/damage_received.lua",
+                execute_every_n_frame = "-1",
+            } )
+        end
+    },
+    { id = "reward",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/reward/badge.png",
+        name = "$champion_type_name_reward",
+        description = "$champion_type_desc_reward",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 0.0,
+        game_effects = {},
+        validator = function( entity, to_apply ) return false end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_damage_received="mods/gkbrkn_noita/files/gkbrkn/champion_types/reward/damage_received.lua"
+            })
+        end
+    },
+    { id = "sparkbolt",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/sparkbolt/badge.png",
+        name = "$champion_type_name_sparkbolt",
+        description = "$champion_type_desc_sparkbolt",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        adds_ranged_attack = true,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            for _, animal_ai in pairs( animal_ais ) do
+                ComponentSetValue2( animal_ai, "attack_ranged_enabled", true )
+                ComponentSetValue2( animal_ai, "attack_landing_ranged_enabled", true )
+                ComponentSetValue2( animal_ai, "attack_ranged_entity_file", "data/entities/projectiles/deck/light_bullet.xml" )
+                ComponentSetValue2( animal_ai, "attack_ranged_predict", false )
+                ComponentSetValue2( animal_ai, "attack_ranged_aim_rotation_speed", 0.5 )
+                
+            end
+        end,
+        weight = 0.8,
+        deprecated = true
+    },
+    { id = "red_sparkbolt",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/red_sparkbolt/badge.png",
+        name = "$champion_type_name_red_sparkbolt",
+        description = "$champion_type_desc_red_sparkbolt",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        adds_ranged_attack = true,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            local has_projectile_attack = false
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            if #animal_ais > 0 then
+                for _,ai in pairs( animal_ais ) do
+                    if ComponentGetValue2( ai, "attack_ranged_enabled" ) == true or ComponentGetValue2( ai, "attack_landing_ranged_enabled" ) == true then
+                        has_projectile_attack = true
+                        break
+                    end
+                end
+            end
+            return not has_projectile_attack
+        end,
+        apply = function( entity, index, total )
+            local animal_ais = EntityGetComponent( entity, "AnimalAIComponent" ) or {}
+            for _, animal_ai in pairs( animal_ais ) do
+                ComponentSetValue2( animal_ai, "attack_ranged_enabled", true )
+                ComponentSetValue2( animal_ai, "attack_landing_ranged_enabled", true )
+                ComponentSetValue2( animal_ai, "attack_ranged_entity_file", "mods/gkbrkn_noita/files/gkbrkn/champion_types/red_sparkbolt/weak_red_sparkbolt.xml" )
+                ComponentSetValue2( animal_ai, "attack_ranged_predict", false )
+                ComponentSetValue2( animal_ai, "attack_ranged_aim_rotation_speed", 0.5 )
+                
+            end
+        end,
+        weight = 0.5
+    },
+    { id = "teleporting",
+        particle_material = "spark_white",
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/teleporting/badge.png",
+        name = "$champion_type_name_teleporting",
+        description = "$champion_type_desc_teleporting",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/teleporting/damage_received.lua",
+                execute_every_n_frame = "-1",
+            } )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_source_file = "mods/gkbrkn_noita/files/gkbrkn/champion_types/teleporting/teleport_nearby.lua",
+                execute_every_n_frame = "180",
+            } )
+        end,
+        weight = 0.6
+    },
+    { id = "cell_eater",
+        particle_material = "spark_white",
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/cell_eater/badge.png",
+        name = "$champion_type_name_cell_eater",
+        description = "$champion_type_desc_cell_eater",
+        author = "goki_dev",
+        local_content = true,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply ) return can_fly( entity, to_apply ) end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "CellEaterComponent", { 
+                eat_probability=1,
+		        radius=30,
+            } )
+        end,
+        weight = 0.1,
+        deprecated = true, -- This just angers the gods every run, not fun
+    },
+    { id = "toxic_trail",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/toxic_trail/badge.png",
+        name = "$champion_type_name_toxic_trail",
+        description = "$champion_type_desc_toxic_trail",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        exclusion_groups = { "projectile_trail" },
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/toxic_trail/shot.lua",
+            })
+        end
+    },
+    { id = "lava_trail",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/lava_trail/badge.png",
+        name = "$champion_type_name_lava_trail",
+        description = "$champion_type_desc_lava_trail",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.2,
+        game_effects = {},
+        exclusion_groups = { "projectile_trail" },
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/lava_trail/shot.lua",
+            })
+            change_materials_that_damage( entity, { lava = 0 } )
+        end
+    },
+    { id = "janitor",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/janitor/badge.png",
+        name = "$champion_type_name_janitor",
+        description = "$champion_type_desc_janitor",
+        author = "lilyhops",
+        local_content = true,
+        reward = 0.4,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent2( entity, "LuaComponent", {
+                execute_every_n_frame = 120,
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/janitor/update.lua"
+            })
+        end,
+    },
+    { id = "no_homing",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/no_homing/badge.png",
+        name = "$champion_type_name_no_homing",
+        description = "$champion_type_desc_no_homing",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {},
+        reward = 1.2,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent2( entity, "LuaComponent", {
+                remove_after_executed = true,
+                execute_on_added = true,
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/no_homing/init.lua"
+            })
+        end,
+    },
+    { id = "parting_gift",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/parting_gift/badge.png",
+        name = "$champion_type_name_parting_gift",
+        description = "$champion_type_desc_parting_gift",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {},
+        reward = 0.8,
+        weight = 0.2,
+        exclusion_groups = { "parting_gift" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent2( entity, "LuaComponent", {
+                execute_on_added=false,
+                execute_every_n_frame=-1,
+                script_death="mods/gkbrkn_noita/files/gkbrkn/champion_types/parting_gift/death.lua"
+            })
+        end,
+    },
+    { id = "parting_gift_thunder",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/parting_gift_thunder/badge.png",
+        name = "$champion_type_name_parting_gift_thunder",
+        description = "$champion_type_desc_parting_gift_thunder",
+        author = "goki_dev",
+        local_content = true,
+        game_effects = {},
+        reward = 0.8,
+        weight = 0.2,
+        exclusion_groups = { "parting_gift" },
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent2( entity, "LuaComponent", {
+                execute_on_added=false,
+                execute_every_n_frame=-1,
+                script_death="mods/gkbrkn_noita/files/gkbrkn/champion_types/parting_gift_thunder/death.lua"
+            })
+        end,
+    },
+    { id = "thief",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/thief/badge.png",
+        name = "$champion_type_name_thief",
+        description = "$champion_type_desc_thief",
+        author = "lilyhops",
+        local_content = true,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return true
+        end,
+        apply = function( entity, index, total )
+            EntityAddVarTag( entity, "gkbrkn_champion_thief" )
+        end,
+    },
+    { id = "saving_grace",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/saving_grace/badge.png",
+        name = "$champion_type_name_saving_grace",
+        description = "$champion_type_desc_saving_grace",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {"SAVING_GRACE"},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            --[[
+            EntityAddComponent( entity, "LuaComponent", { 
+                --remove_after_executed="1",
+                execute_every_n_frame="-1",
+                script_damage_about_to_be_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/saving_grace/pre_damage.lua",
+            } )
+            ]]
+        end,
+        -- TODO both manual and game_effect saving grace don't work
+        deprecated = true
+    },
+    { id = "precursor",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/precursor/badge.png",
+        name = "$champion_type_name_precursor",
+        description = "$champion_type_desc_precursor",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        reward = 0.0,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", { 
+                script_damage_received = "mods/gkbrkn_noita/files/gkbrkn/champion_types/precursor/damage_received.lua",
+            } )
+        end,
+        weight = 0.05,
+        deprecated = true,
+    },
+    { id = "all_seeing_eye",
+        particle_material = nil,
+        sprite_particle_sprite_file = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/all_seeing_eye/badge.png",
+        name = "$champion_type_name_all_seeing_eye",
+        description = "$champion_type_desc_all_seeing_eye",
+        author = "lilyhops",
+        local_content = true,
+        game_effects = {},
+        reward = 1.5,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                execute_every_n_frame="10",
+                execute_on_added="1",
+                script_source_file="mods/gkbrkn_noita/files/gkbrkn/champion_types/all_seeing_eye/update.lua",
+            })
+            EntityAddComponent2( entity, "SpriteComponent", {
+                alpha=0.5,
+                image_file="data/particles/torch_fog_of_war_hole.xml",
+                smooth_filtering=true,
+                fog_of_war_hole=true,
+                has_special_scale=true,
+                special_scale_x=2.0,
+                special_scale_y=2.0,
+            })
+            --local reveal = EntityCreateNew( "mods/gkbrkn_noita/files/gkbrkn/champion_types/all_seeing_eye/reveal.xml" )
+            --EntityAddChild( entity, reveal )
+        end
+    },
+    { id = "explosive_projectile",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/explosive_projectile/badge.png",
+        name = "$champion_type_name_explosive_projectile",
+        description = "$champion_type_desc_explosive_projectile",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.3,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/explosive_projectile/shot.lua",
+            })
+        end
+    },
+    { id = "antagonist",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/antagonist/badge.png",
+        name = "$champion_type_name_antagonist",
+        description = "$champion_type_desc_antagonist",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        game_effects = {},
+        reward = 1.2,
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAdjustVariableNumber( entity, "gkbrkn_low_health_damage_bonus", 0, function( value ) return value + 3 end )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/antagonist/shot.lua",
+            })
+        end
+    },
+    { id = "armed",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/armed/badge.png",
+        name = "$champion_type_name_armed",
+        description = "$champion_type_desc_armed",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 2.0,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            local can_pick_up_wands = false
+            local animal_ais = EntityGetComponent( entity, "ItemPickUpperComponent" ) or {}
+            if #animal_ais > 0 then
+                can_pick_up_wands = true
+            end
+            return can_pick_up_wands
+        end,
+        apply = function( entity, index, total )
+            local x, y = EntityGetTransform( entity )
+            local wand = EntityLoad( "data/entities/items/wand_level_02.xml", x, y )
+        end,
+        deprecated = true
+    },
+    { id = "heart_breaker",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/heart_breaker/badge.png",
+        name = "$champion_type_name_heart_breaker",
+        description = "$champion_type_desc_heart_breaker",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.5,
+        game_effects = {},
+        weight = 0.1,
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddVarTag( entity, "gkbrkn_champion_heart_breaker" )
+        end,
+    },
+    { id = "hard_headed",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/hard_headed/badge.png",
+        name = "$champion_type_name_hard_headed",
+        description = "$champion_type_desc_hard_headed",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) end,
+        apply = function( entity, index, total )
+            local resistances = { physics_hit = 0.0 }
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for index,damage_model in pairs( damage_models ) do
+                for damage_type,multiplier in pairs( resistances ) do
+                    local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type )
+                    resistance = resistance * multiplier
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance )
+                end
+            end
+        end
+    },
+    { id = "neurotoxin",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/neurotoxin/badge.png",
+        name = "$champion_type_name_neurotoxin",
+        description = "$champion_type_desc_neurotoxin",
+        author = "lilyhops",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/neurotoxin/shot.lua",
+            } )
+        end,
+        deprecated = true
+    },
+    { id = "neutralize",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/neutralize/badge.png",
+        name = "$champion_type_name_neutralize",
+        description = "$champion_type_desc_neutralize",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply ) return true end,
+        apply = function( entity, index, total )
+            EntityAddVarTag( entity, "gkbrkn_champion_neutralize" )
+        end,
+    },
+    { id = "toxin",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/toxin/badge.png",
+        name = "$champion_type_name_toxin",
+        description = "$champion_type_desc_toxin",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.1,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/toxin/shot.lua",
+            } )
+        end,
+    },
+    { id = "flummox",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/flummox/badge.png",
+        name = "$champion_type_name_flummox",
+        description = "$champion_type_desc_flummox",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.2,
+        game_effects = {},
+        validator = function( entity, to_apply )
+            return has_ranged_attack( entity, to_apply )
+        end,
+        apply = function( entity, index, total )
+            EntityAddComponent( entity, "LuaComponent", {
+                script_shot="mods/gkbrkn_noita/files/gkbrkn/champion_types/flummox/shot.lua",
+            } )
+        end,
+    },
+    { id = "robotic",
+        particle_material = nil,
+        sprite = "mods/gkbrkn_noita/files/gkbrkn/champion_types/robotic/badge.png",
+        name = "$champion_type_name_robotic",
+        description = "$champion_type_desc_robotic",
+        author = "goki_dev",
+        local_content = true,
+        sprite_particle_sprite_file = nil,
+        reward = 1.3,
+        deprecated = true,
+        game_effects = {},
+        validator = function( entity, to_apply ) end,
+        apply = function( entity, index, total )
+            local resistances = {
+                fire=0.0,
+                drill=0.1,
+                slice=0.1,
+                melee=0.3,
+                projectile=0.5,
+                radioactive=0.0,
+                explosion=1.0,
+                electricity=2.0,
+            }
+            local damage_models = EntityGetComponent( entity, "DamageModelComponent" ) or {}
+            for index,damage_model in pairs( damage_models ) do
+                for damage_type,multiplier in pairs( resistances ) do
+                    local resistance = ComponentObjectGetValue2( damage_model, "damage_multipliers", damage_type )
+                    resistance = resistance * multiplier
+                    ComponentObjectSetValue2( damage_model, "damage_multipliers", damage_type, resistance )
+                end
+            end
+            --[[ Removed because it prevents shotgunner audio
+            local audio = EntityGetFirstComponent( entity, "AudioComponent" )
+            if audio then
+                ComponentSetValue2( audio, "file", "data/audio/Desktop/animals.bank" )
+                ComponentSetValue2( audio, "event_root", "animals/robot" )
+            else
+                EntityAddComponent2( entity, "AudioComponent", {
+                    file="data/audio/Desktop/animals.bank",
+                    event_root="animals/robot"
+                } )
+            end
+            ]]
+        end,
+        weight = 0.4
+    },
+}

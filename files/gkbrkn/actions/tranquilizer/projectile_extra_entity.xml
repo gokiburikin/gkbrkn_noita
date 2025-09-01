@@ -1,0 +1,15 @@
+<Entity>
+<LuaComponent 
+execute_on_added="1"
+remove_after_executed="1"
+script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/tranquilizer/projectile_init.lua"/>
+<LuaComponent 
+execute_on_added="0"
+execute_every_n_frame="-1"
+execute_on_removed="1"
+remove_after_executed="1"
+script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/tranquilizer/projectile_remove.lua"/>
+<HitEffectComponent
+effect_hit="LOAD_ENTITY"
+value_string="mods/gkbrkn_noita/files/gkbrkn/actions/tranquilizer/projectile_hit_effect.xml"/>
+</Entity>

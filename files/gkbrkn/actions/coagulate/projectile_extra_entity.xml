@@ -1,0 +1,5 @@
+<Entity>
+<HitEffectComponent
+effect_hit="LOAD_ENTITY"
+value_string="mods/gkbrkn_noita/files/gkbrkn/actions/coagulate/projectile_hit_effect.xml"/>
+</Entity>

@@ -1,0 +1,91 @@
+<Entity tags="wand">
+<VariableStorageComponent name="gkbrkn_legendary_wand"/>
+
+	<AbilityComponent
+		_enabled="1" 
+		sprite_file="mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand_sprite.xml"
+		swim_propel_amount="0"
+		ui_name="Base Wand"
+		drop_as_item_on_death="0"
+		cooldown_frames="1"
+		entity_count="1"
+		reload_time_frames="0"
+		mana_charge_speed="1"
+		mana_max="1"
+		use_gun_script="1" 
+		>
+		<gun_config 
+			shuffle_deck_when_empty="0"
+			reload_time="1"
+			deck_capacity="1" >
+		</gun_config>
+		<gunaction_config 
+			fire_rate_wait="1" >
+		</gunaction_config>
+	</AbilityComponent>
+
+	<HotspotComponent 
+		_tags="shoot_pos" 
+		offset.x="6" 
+		offset.y="-0.5" >
+	</HotspotComponent>
+
+	<Base file="data/entities/base_item.xml">
+        <SpriteComponent 
+            next_rect_animation="JobAbilityMachinegun" >
+        </SpriteComponent>
+        
+        <ItemComponent
+			item_name="Legendary Wand"
+            play_hover_animation="1">
+        </ItemComponent>
+
+        <SimplePhysicsComponent
+            _enabled="0">
+        </SimplePhysicsComponent>
+    </Base>
+    
+    <Base file="data/entities/base_wand.xml">
+        <SpriteParticleEmitterComponent
+            sprite_file="data/particles/ray.xml" 
+            delay="0"
+            lifetime="1.5"
+            color.r="1" color.g="0.5" color.b="0" color.a="0.75"
+            color_change.r="0" color_change.g="0" color_change.b="0" color_change.a="-0.5"
+            velocity.x="0" velocity.y="0"
+            gravity.x="0" gravity.y="0"
+            velocity_slowdown="0"
+            rotation="0"
+            angular_velocity="0"
+            scale.x="1" scale.y="0"
+            scale_velocity.x="-0.2" scale_velocity.y="3"
+            emission_interval_min_frames="3"
+            emission_interval_max_frames="6"
+            emissive="1"
+            additive="1"
+            count_min="1" count_max="1"
+            use_velocity_as_rotation="1"
+            randomize_position.min_x="-5"
+            randomize_position.max_x="5"
+            randomize_position.min_y="-5"
+            randomize_position.max_y="5"
+            randomize_velocity.min_x="0"
+            randomize_velocity.max_x="0"
+            randomize_velocity.min_y="-100"
+            randomize_velocity.max_y="-20"
+            velocity_always_away_from_center="0">
+        </SpriteParticleEmitterComponent>
+    </Base>
+    
+    <ManaReloaderComponent
+		_tags="enabled_in_world,enabled_in_hand,enabled_in_inventory" >
+	</ManaReloaderComponent>
+
+    <LuaComponent
+        remove_after_executed="1"
+        execute_on_added="1"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/misc/legendary_wands/legendary_wand.lua"
+    ></LuaComponent>
+   
+</Entity>
+

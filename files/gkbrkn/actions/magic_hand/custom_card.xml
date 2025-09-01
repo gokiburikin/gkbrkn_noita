@@ -1,0 +1,8 @@
+<Entity tags="card_action">
+	<VariableStorageComponent name="gkbrkn_magic_hand"/>
+	<Base file="data/entities/base_custom_card.xml" > 
+		<SpriteComponent image_file="mods/gkbrkn_noita/files/gkbrkn/actions/magic_hand/icon.png" />
+		<ItemActionComponent _tags="enabled_in_world" action_id="GKBRKN_MAGIC_HAND"/>
+	</Base>
+	<InheritTransformComponent _tags="enabled_in_world,enabled_in_hand"/>
+</Entity>

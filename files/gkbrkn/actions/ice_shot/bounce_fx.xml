@@ -1,0 +1,23 @@
+<Entity>
+    <MagicConvertMaterialComponent
+        radius="20"
+        is_circle="1"
+        steps_per_frame="5"
+        from_material="ice"
+        to_material="ice_static"
+        clean_stains="0"
+        extinguish_fire="1"
+        loop="0"
+        kill_when_finished="1"
+        convert_entities="0"
+        stain_frozen="0"
+    >
+    </MagicConvertMaterialComponent>
+    <LuaComponent
+        execute_every_n_frame="-1"
+        execute_on_added="1"
+        remove_on_executed="1"
+        script_source_file="mods/gkbrkn_noita/files/gkbrkn/actions/ice_shot/projectile_convert.lua"
+    >
+    </LuaComponent>
+</Entity>
